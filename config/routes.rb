@@ -16,6 +16,7 @@ Rails.application.routes.draw do
     root to: "auth/sessions#new"
   end
 
+  resources :minions, only: :index
   resources :nodes, only: [:index, :show, :destroy]
   resources :updates, only: [:index]
   resources :admin, only: [:index]
