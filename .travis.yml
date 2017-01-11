@@ -1,0 +1,25 @@
+language: ruby
+rvm:
+  - 2.3.3
+
+  # Future versions
+  - ruby-head
+matrix:
+  allow_failures:
+    - rvm: ruby-head
+
+before_install:
+  - |
+    bash -c " # Install MariaDB
+    sudo bash .travis_mariadb.sh
+    "
+  - gem update --system
+
+before_script:
+  - mysql -e 'create database pharos_test;'
+
+script:
+  - bundle exec rspec spec
+  - bundle exec rubocop -V
+  - bundle exec rubocop -F
+  - bundle exec brakeman -z -A

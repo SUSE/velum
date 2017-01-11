@@ -1,0 +1,25 @@
+inherit_from:
+  - ./config/rubocop-suse.yml
+
+Metrics/MethodLength:
+  Max: 50
+
+# It's convenient to mix both. This is something that SUSE's style guide does
+# not specify, so we take the approach that we were following already.
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Rails:
+  Enabled: true
+
+# Nope.
+Bundler/OrderedGems:
+  Enabled: false
+
+AllCops:
+  Exclude:
+    # Files that are out of our control and that are not excluded in the
+    # default config of rubocop.
+    - db/schema.rb
+    - db/migrate/*
+    - vendor/**/*

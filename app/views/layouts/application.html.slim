@@ -1,0 +1,26 @@
+doctype html
+html
+  head
+    title Pharos
+    = stylesheet_link_tag 'application', media: 'all'
+    = javascript_include_tag 'application'
+    = csrf_meta_tags
+    meta content="width=device-width, initial-scale=1" name="viewport"
+
+  body
+    header
+      = render 'shared/header'
+    .container-fluid
+      = render 'shared/aside'
+      section
+        = render 'shared/notifications'
+        = yield
+  footer
+    .aside-footer
+    .container-footer
+      .row-0
+        .col-xs-6
+          p
+            'Created with
+            i.fa.fa-heart
+            'by the SUSE team

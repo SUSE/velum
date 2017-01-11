@@ -1,0 +1,30 @@
+aside
+  ul
+    li.active
+      a[href="#{url_for root_path}"]
+        i[class="fa fa-dashboard"]
+        | Dashboard
+      - if current_page?(url_for root_path) || current_page?(root_path)
+        .list-selected
+    li.active
+      a[href="#{url_for nodes_path}"]
+        i[class="fa fa-ship"]
+        | Nodes
+      - if current_page?(url_for nodes_path)
+        .list-selected
+    li.active
+      a[href="#{url_for updates_path}"]
+        i[class="fa fa-users"]
+        | Updates
+      - if current_page?(url_for updates_path)
+        .list-selected
+    li.active
+      a[href="#{url_for controller: 'admin', action: 'index'}"]
+        i[class="fa fa-cogs"]
+        | Admin
+      - if current_page?(url_for controller: 'admin', action: 'index')
+        .list-selected
+    li.active
+      a[href="http://port.us.org/documentation" target="_blank"]
+        i[class="fa fa-life-ring"]
+        | Help

@@ -1,0 +1,11 @@
+/.bundle
+/bundle
+/**/*.swp
+/log/*
+/tmp
+/coverage
+/public/assets
+/config/config-local.yml
+/bin/pharos
+/env.sh
+.rspec
