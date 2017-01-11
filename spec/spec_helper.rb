@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require "simplecov"
 require "webmock/rspec"
 require "vcr"

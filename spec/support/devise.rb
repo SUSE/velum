@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Setup devise for tests.
 RSpec.configure do |config|
   config.include Devise::TestHelpers, type: :controller

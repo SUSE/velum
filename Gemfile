@@ -62,7 +62,7 @@ unless ENV["PACKAGING"] && ENV["PACKAGING"] == "yes"
     gem "poltergeist", require: false
     gem "json-schema"
     gem "timecop"
-    gem "codeclimate-test-reporter", group: :test, require: nil
+    gem "codeclimate-test-reporter", "~> 1.0.0", require: nil
     gem "factory_girl_rails"
     gem "ffaker"
   end

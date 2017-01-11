@@ -28,6 +28,6 @@ module ApplicationHelper
       end
     end
 
-    (res + "</ul>").html_safe
+    res + "</ul>"
   end
 end

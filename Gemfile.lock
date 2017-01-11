@@ -279,7 +279,7 @@ DEPENDENCIES
   bootstrap-sass
   brakeman
   capybara
-  codeclimate-test-reporter
+  codeclimate-test-reporter (~> 1.0.0)
   database_cleaner
   devise
   factory_girl_rails
