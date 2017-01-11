@@ -2,10 +2,11 @@ section.sign-up
   .center-panel
     .col-md-4.col-sm-2.col-xs-1
     .col-md-4.col-sm-8.col-xs-10.text-center
+      div
+        = resource.errors.full_messages.to_sentence
       = render 'shared/notifications'
       = form_for(resource, as: resource_name, url: { action: 'create' }, :html => {:autocomplete => "off"}) do |f|
-        = f.text_field :name, autofocus: true, class: 'form-control input-lg first', placeholder: 'Username', required: true
-        = f.email_field :email, class: 'form-control input-lg', placeholder: 'Email', required: true
+        = f.email_field :email, autofocus: true, class: 'form-control input-lg', placeholder: 'Email', required: true
         = f.password_field :password, class: 'form-control input-lg', placeholder: 'Password (8 characters min.)', required: true
         = f.password_field :password_confirmation, class: 'form-control input-lg last', placeholder: 'Password again', required: true
 
