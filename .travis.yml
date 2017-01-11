@@ -23,3 +23,7 @@ script:
   - bundle exec rubocop -V
   - bundle exec rubocop -F
   - bundle exec brakeman -z -A
+
+addons:
+  code_climate:
+    repo_token: f0411fcc65176d10a86774d0c6434f4621fcbfd898a59f385d08dfff0698c7d4
