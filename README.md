@@ -1,5 +1,10 @@
 # Pharos
 
+
+| master | Code Climate |
+|--------|------|--------------|
+| [![Build Status](https://travis-ci.org/SUSE/pharos.svg?branch=master)](https://travis-ci.org/SUSE/pharos) | [![Code Climate](https://codeclimate.com/github/SUSE/pharos/badges/gpa.svg)](https://codeclimate.com/github/SUSE/pharos) [![Test Coverage](https://codeclimate.com/github/SUSE/pharos/badges/coverage.svg)](https://codeclimate.com/github/SUSE/pharos/coverage) |
+
 From an existing Kubernetes application, set the following environment variables
 and start the server:
 
