@@ -1,11 +1,7 @@
 h1
   | Nodes
 
-- @nodes.each do |n|
-  ul
-    li
-      | #{n[:metadata][:name]} (#{n[:status][:addresses].first[:address]})
-      = " | "
-      = link_to 'Show', node_path(n[:metadata][:name])
-      = " | "
-      = link_to 'Destroy', node_path(n[:metadata][:name]), :method => :delete
+div id="nodes" data-url="#{nodes_path}"
+
+script
+  | MinionPoller.poll();
