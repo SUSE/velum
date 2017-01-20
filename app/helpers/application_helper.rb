@@ -9,6 +9,8 @@ module ApplicationHelper
   end
 
   # render_bare_node renders a Kubernetes node in HTML.
+  # TODO: this and render_hash were used during mockups. Maybe we want to get
+  # rid of this in the future.
   def render_bare_node(node)
     render_hash(node[:table])
   end
