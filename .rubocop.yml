@@ -29,6 +29,11 @@ Bundler/OrderedGems:
 RSpec/DescribeClass:
   Enabled: false
 
+# Sometimes we need more than one "expect" command to build our actual
+# expectation.
+RSpec/MultipleExpectations:
+  Max: 2
+
 AllCops:
   Exclude:
     # Files that are out of our control and that are not excluded in the

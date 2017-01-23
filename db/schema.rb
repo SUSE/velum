@@ -10,13 +10,43 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170111154919) do
+ActiveRecord::Schema.define(version: 20170124141701) do
+
+  create_table "jids", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "jid",                   null: false
+    t.text   "load", limit: 16777215, null: false
+    t.index ["jid"], name: "jid", unique: true, using: :btree
+  end
 
   create_table "minions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "hostname"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["hostname"], name: "index_minions_on_hostname", using: :btree
+    t.index ["hostname"], name: "index_minions_on_hostname", unique: true, using: :btree
+  end
+
+  create_table "salt_events", id: :bigint, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string   "tag",                                                                null: false
+    t.text     "data",         limit: 16777215,                                      null: false
+    t.datetime "alter_time",                    default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.string   "master_id",                                                          null: false
+    t.datetime "taken_at"
+    t.datetime "processed_at"
+    t.string   "worker_id"
+    t.index ["tag"], name: "tag", using: :btree
+  end
+
+  create_table "salt_returns", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string   "fun",        limit: 50,                                            null: false
+    t.string   "jid",                                                              null: false
+    t.text     "return",     limit: 16777215,                                      null: false
+    t.string   "id",                                                               null: false
+    t.string   "success",    limit: 10,                                            null: false
+    t.text     "full_ret",   limit: 16777215,                                      null: false
+    t.datetime "alter_time",                  default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.index ["fun"], name: "fun", using: :btree
+    t.index ["id"], name: "id", using: :btree
+    t.index ["jid"], name: "jid", using: :btree
   end
 
   create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
