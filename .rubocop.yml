@@ -1,8 +1,17 @@
+require:
+  - rubocop-rspec
+
 inherit_from:
   - ./config/rubocop-suse.yml
 
 Metrics/MethodLength:
   Max: 50
+
+# Disable the block length cop for tests.
+Metrics/BlockLength:
+  Enabled: true
+  Exclude:
+    - spec/**/*
 
 # It's convenient to mix both. This is something that SUSE's style guide does
 # not specify, so we take the approach that we were following already.
@@ -14,6 +23,10 @@ Rails:
 
 # Nope.
 Bundler/OrderedGems:
+  Enabled: false
+
+# This does not happen when testing views.
+RSpec/DescribeClass:
   Enabled: false
 
 AllCops:

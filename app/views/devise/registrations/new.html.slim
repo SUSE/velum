@@ -4,20 +4,17 @@ section.sign-up
     .col-md-4.col-sm-8.col-xs-10.text-center
       div
         = resource.errors.full_messages.to_sentence
+
       = render 'shared/notifications'
-      = form_for(resource, as: resource_name, url: { action: 'create' }, :html => {:autocomplete => "off"}) do |f|
+
+      = form_for(resource, as: resource_name, url: user_registration_path, :html => {:autocomplete => "off"}) do |f|
+
         = f.email_field :email, autofocus: true, class: 'form-control input-lg', placeholder: 'Email', required: true
         = f.password_field :password, class: 'form-control input-lg', placeholder: 'Password (8 characters min.)', required: true
         = f.password_field :password_confirmation, class: 'form-control input-lg last', placeholder: 'Password again', required: true
 
-        - if !@admin && @first_user_admin
-          = f.hidden_field :admin, value: true
-
         button.btn.btn-primary.btn-block.btn-lg type="submit"
           i.fa.fa-check
-          - if @admin || !@first_user_admin
-            | Create account
-          - else
-            | Create admin
+            |  Create admin
         - if @have_users
-          .text-center = link_to 'I already have an account. Login.', new_user_session_path, class: 'btn btn-link'
+          .text-center = link_to 'I already have an account. Login.', new_user_session_path, id: "sign-in", class: 'btn btn-link'

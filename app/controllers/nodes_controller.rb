@@ -16,6 +16,6 @@ class NodesController < ApplicationController
     @minion = Minion.find(params[:id])
   end
 
-  def destroy
-  end
+  # TODO
+  def destroy; end
 end

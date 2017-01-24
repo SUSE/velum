@@ -35,14 +35,6 @@ module Pharos
       JSON.parse(res.body)["return"].first
     end
 
-    # Returns the statistics collected from the API server.
-    def stats
-      login! unless @token
-
-      res = perform_request("/stats", "get")
-      JSON.parse(res.body)
-    end
-
     protected
 
     # Performs a log in request and sets the @token instance variable on success.
@@ -65,7 +57,7 @@ module Pharos
       uri = URI.join("http://#{@hostname}", endpoint)
 
       req = Net::HTTP.const_get(method.capitalize).new(uri)
-      req["Accept"]       = "application/json"
+      req["Accept"]       = "application/json; charset=utf-8"
       req["Content-Type"] = "application/x-www-form-urlencoded"
       req["X-Auth-Token"] = @token if @token
       req.set_form_data(data)

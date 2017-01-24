@@ -17,6 +17,7 @@ before_install:
 
 before_script:
   - mysql -e 'create database pharos_test;'
+  - bundle exec rake db:migrate
 
 script:
   - bundle exec rspec spec

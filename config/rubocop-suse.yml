@@ -11,7 +11,7 @@
 # This file contains the rules with derive from this.
 
 Lint/EndAlignment:
-  AlignWith: variable
+  EnforcedStyleAlignWith: variable
 
 Metrics/AbcSize:
   Max: 30
