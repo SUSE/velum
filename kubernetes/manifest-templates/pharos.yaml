@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pharos
+  labels:
+    name: pharos
+spec:
+  hostNetwork: true
+  containers:
+  - name: pharos-dashboard
+    image: ereslibre/pharos:development
+    env:
+    - name: RAILS_ENV
+      value: development
+    - name: SECRET_KEY_BASE
+      value: fc0ece3811c0b1e0118dd7d619b385955e3ed146b37315d67d1c2d201c42531da398941ef27aab42493fff23afcba540390a26db51b5889e96d850a14178aabdc1926c013936a3c41abdbeb696ce440685c5d7be3a6c548434699d526a9e37657a76a43ca975b824905fd949f7e8d50aa1196a58e7e79dcfb08e2e397ee4f7b7
+    - name: PHAROS_DB_HOST
+      value: "127.0.0.1"
+    - name: PHAROS_DB_PORT
+      value: "3306"
+    - name: PHAROS_SALT_HOST
+      value:
+    - name: PHAROS_SALT_PORT
+      value:
+    - name: PHAROS_SALT_USER
+      value:
+    - name: PHAROS_KUBERNETES_HOST
+      value:
+    - name: PHAROS_KUBERNETES_PORT
+      value:
+    - name: PHAROS_KUBERNETES_CERT_DIRECTORY
+      value:
+    volumeMounts:
+      - mountPath: /usr/src/app
+        name: pharos-source-code
+    command: ["/bin/sh","-c"]
+    args: ["bundle exec rails s -b 0.0.0.0 -p 3000 --pid /tmp/puma.pid Puma"]
+  - name: pharos-mariadb
+    image: library/mariadb:10
+    env:
+    - name: MYSQL_ALLOW_EMPTY_PASSWORD
+      value: "1"
+  volumes:
+    - name: pharos-source-code
+      hostPath:
+        path: ${project_dir}

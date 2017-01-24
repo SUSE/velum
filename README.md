@@ -16,6 +16,29 @@ and start the server:
 - `PHAROS_KUBERNETES_CERT_DIRECTORY`: directory where the Kubernetes
   certificates are located.
 
+## Development
+
+You can develop on pharos with all its required dependencies right away using the `start` script
+within the `kubernetes` folder. You will need a [standalone kubelet](https://kubernetes.io/docs/admin/kubelet/) running in your machine.
+
+### Start the development container
+
+`> cd kubernetes`
+`> ./start`
+
+This will start the pharos container as well as other required containers.
+
+Your pharos folder will be mounted on the pharos container, so any change you do locally to pharos
+will be seen inside the container. Once that the service is up, you should be able to see the
+pharos service at `http://localhost:3000/` on your local machine.
+
+After any change that you have performed you can run any rails/rake task as if it was local, with
+the docker prefix, like `docker exec -it $(docker ps | grep pharos-dashboard | awk '{print $1}') rspec`.
+
+### Setup the database
+
+`> docker exec -it $(docker ps | grep pharos-dashboard | awk '{print $1}') rake db:setup`
+
 ## Licensing
 
 Pharos is licensed under the Apache License, Version 2.0. See

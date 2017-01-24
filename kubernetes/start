@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+log()   { echo ">>> $1" ; }
+
+[[ -d manifest-templates ]] || { echo >&2 "Please run this script from within the kubernetes folder"; exit 1; }
+
+for template in $(ls manifest-templates)
+do
+    log "Processing template $template..."
+    sed -e "s#\${project_dir}#$(dirname $PWD)#" manifest-templates/$template > manifests/$template
+done
+
+log "Launching kubelet"
+
+sudo kubelet --config=$PWD/manifests --root-dir=$PWD/tmp --v=0 --address=127.0.0.1 --hostname-override=127.0.0.1 --allow-privileged=false

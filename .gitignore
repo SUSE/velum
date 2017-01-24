@@ -9,3 +9,5 @@
 /bin/pharos
 /env.sh
 .rspec
+/kubernetes/tmp
+/kubernetes/manifests
