@@ -65,5 +65,7 @@ unless ENV["PACKAGING"] && ENV["PACKAGING"] == "yes"
     gem "codeclimate-test-reporter", "~> 1.0.0", require: nil
     gem "factory_girl_rails"
     gem "ffaker"
+    gem "rails-controller-testing"
+    gem "rubocop-rspec"
   end
 end

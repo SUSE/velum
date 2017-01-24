@@ -7,29 +7,4 @@ module ApplicationHelper
     email = owner.nil? ? nil : owner.email
     gravatar_image_tag(email)
   end
-
-  # render_bare_node renders a Kubernetes node in HTML.
-  # TODO: this and render_hash were used during mockups. Maybe we want to get
-  # rid of this in the future.
-  def render_bare_node(node)
-    render_hash(node[:table])
-  end
-
-  protected
-
-  # render_hash renders the given hash in HTML.
-  def render_hash(hsh)
-    res = "<ul>"
-
-    hsh.each do |k, v|
-      res += "<li><b>#{k}</b>"
-      res += if v.is_a? Hash
-        ":</li>" + render_hash(v)
-      else
-        ": #{v}</li>"
-      end
-    end
-
-    res + "</ul>"
-  end
 end

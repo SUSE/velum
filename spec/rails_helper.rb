@@ -14,7 +14,7 @@ ActiveRecord::Migration.maintain_test_schema!
 
 # All the configuration that is specific for a gem (or set of related gems) has
 # been pushed into individual files inside the `spec/support` directory.
-Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
+Dir[Rails.root.join("spec", "support", "**", "*.rb")].each { |f| require f }
 
 RSpec.configure do |config|
   # If we want Capybara + DatabaseCleaner + Poltergeist to work correctly, we

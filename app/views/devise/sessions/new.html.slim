@@ -1,0 +1,25 @@
+h2
+  | Log in
+
+= render 'shared/notifications'
+
+= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
+  div.field
+    = f.label :email
+    br
+    = f.email_field :email, autofocus: true
+
+  div.field
+    = f.label :password
+    br
+    = f.password_field :password, autocomplete: "off"
+
+  - if devise_mapping.rememberable?
+    div.field
+      = f.check_box :remember_me
+      = f.label :remember_me
+
+  div.actions
+    = f.submit "Log in"
+
+= render "devise/shared/links"
