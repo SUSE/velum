@@ -16,7 +16,11 @@ Rails.application.routes.draw do
     root to: "auth/sessions#new"
   end
 
-  resources :nodes, only: [:index, :show, :destroy]
+  resources :nodes, only: [:index, :show, :destroy] do
+    collection do
+      post :bootstrap
+    end
+  end
   resources :updates, only: [:index]
   resources :admin, only: [:index]
 end
