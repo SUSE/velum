@@ -1,0 +1,457 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://127.0.0.1:8000/login
+    body:
+      encoding: UTF-8
+      string: '{"username":"saltapi","password":"saltapi","eauth":"pam"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '217'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Thu, 26 Jan 2017 12:34:22 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Auth-Token:
+      - 26f5584c6a952b50aea191d9d4902dd0cf476a63
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=26f5584c6a952b50aea191d9d4902dd0cf476a63; expires=Thu, 26 Jan 2017
+        22:34:22 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"perms": [".*", "@wheel", "@runner", "@jobs", "@events"],
+        "start": 1485434062.916784, "token": "26f5584c6a952b50aea191d9d4902dd0cf476a63",
+        "expire": 1485477262.916785, "user": "saltapi", "eauth": "pam"}]}'
+    http_version: 
+  recorded_at: Thu, 26 Jan 2017 12:34:22 GMT
+- request:
+    method: get
+    uri: http://127.0.0.1:8000/minions/master
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Auth-Token:
+      - 26f5584c6a952b50aea191d9d4902dd0cf476a63
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '3905'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Cache-Control:
+      - private
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Thu, 26 Jan 2017 12:34:22 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=26f5584c6a952b50aea191d9d4902dd0cf476a63; expires=Thu, 26 Jan 2017
+        22:34:22 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"master": {"kernel": "Linux", "domain": "", "uid": 0,
+        "zmqversion": "4.1.2", "kernelrelease": "4.9.3-1-default", "pythonpath": ["/usr/bin",
+        "/usr/lib/python27.zip", "/usr/lib64/python2.7", "/usr/lib64/python2.7/plat-linux2",
+        "/usr/lib64/python2.7/lib-tk", "/usr/lib64/python2.7/lib-old", "/usr/lib64/python2.7/lib-dynload",
+        "/usr/lib64/python2.7/site-packages", "/usr/local/lib64/python2.7/site-packages",
+        "/usr/local/lib/python2.7/site-packages", "/usr/lib/python2.7/site-packages"],
+        "pid": 12, "ip_interfaces": {"br-5f3f8c": ["172.18.0.1"], "docker0": ["172.17.0.1"],
+        "lo": ["127.0.0.1"], "tun0": ["10.100.201.166"], "enp0s31f6": ["192.168.1.109",
+        "fe80::31c:d42f:2aab:53f7"], "wlp1s0": []}, "groupname": "root", "shell":
+        "/bin/sh", "mem_total": 7868, "saltversioninfo": [2016, 3, 4, 0], "host":
+        "master", "SSDs": ["sda"], "id": "master", "osrelease": "42.2", "ps": "ps
+        -efH", "server_id": 1033846505, "ip6_interfaces": {"br-5f3f8c": [], "docker0":
+        [], "lo": [], "tun0": [], "enp0s31f6": ["fe80::31c:d42f:2aab:53f7"], "wlp1s0":
+        []}, "num_cpus": 4, "hwaddr_interfaces": {"br-5f3f8c": "02:42:86:54:A2:03",
+        "docker0": "02:42:31:2B:3B:C1", "tun0": "00", "enp0s31f6": "28:F1:0E:45:3A:45",
+        "wlp1s0": "A6:28:A2:9A:DC:20"}, "init": "unknown", "ip4_interfaces": {"br-5f3f8c":
+        ["172.18.0.1"], "docker0": ["172.17.0.1"], "lo": ["127.0.0.1"], "tun0": ["10.100.201.166"],
+        "enp0s31f6": ["192.168.1.109"], "wlp1s0": []}, "osfullname": "Leap", "gid":
+        0, "master": "localhost", "lsb_distrib_id": "openSUSE Leap", "dns": {"nameservers":
+        ["10.160.2.88", "10.160.0.1"], "domain": "", "ip4_nameservers": ["10.160.2.88",
+        "10.160.0.1"], "search": [], "ip6_nameservers": []}, "ipv6": ["fe80::31c:d42f:2aab:53f7"],
+        "cpu_flags": ["fpu", "vme", "de", "pse", "tsc", "msr", "pae", "mce", "cx8",
+        "apic", "sep", "mtrr", "pge", "mca", "cmov", "pat", "pse36", "clflush", "dts",
+        "acpi", "mmx", "fxsr", "sse", "sse2", "ss", "ht", "tm", "pbe", "syscall",
+        "nx", "pdpe1gb", "rdtscp", "lm", "constant_tsc", "art", "arch_perfmon", "pebs",
+        "bts", "rep_good", "nopl", "xtopology", "nonstop_tsc", "aperfmperf", "eagerfpu",
+        "pni", "pclmulqdq", "dtes64", "monitor", "ds_cpl", "vmx", "smx", "est", "tm2",
+        "ssse3", "sdbg", "fma", "cx16", "xtpr", "pdcm", "pcid", "sse4_1", "sse4_2",
+        "x2apic", "movbe", "popcnt", "tsc_deadline_timer", "aes", "xsave", "avx",
+        "f16c", "rdrand", "lahf_lm", "abm", "3dnowprefetch", "epb", "intel_pt", "tpr_shadow",
+        "vnmi", "flexpriority", "ept", "vpid", "fsgsbase", "tsc_adjust", "bmi1", "hle",
+        "avx2", "smep", "bmi2", "erms", "invpcid", "rtm", "mpx", "rdseed", "adx",
+        "smap", "clflushopt", "xsaveopt", "xsavec", "xgetbv1", "xsaves", "dtherm",
+        "ida", "arat", "pln", "pts", "hwp", "hwp_notify", "hwp_act_window", "hwp_epp"],
+        "ipv4": ["10.100.201.166", "127.0.0.1", "172.17.0.1", "172.18.0.1", "192.168.1.109"],
+        "localhost": "master", "virtual_subtype": "Docker", "username": "root", "fqdn_ip4":
+        [], "fqdn_ip6": [], "nodename": "master", "saltversion": "2016.3.4", "lsb_distrib_release":
+        "42.2", "systemd": {"version": "228", "features": "+PAM -AUDIT +SELINUX -IMA
+        +APPARMOR -SMACK +SYSVINIT +UTMP +LIBCRYPTSETUP +GCRYPT -GNUTLS +ACL +XZ -LZ4
+        +SECCOMP +BLKID -ELFUTILS +KMOD -IDN"}, "saltpath": "/usr/lib/python2.7/site-packages/salt",
+        "osmajorrelease": "42", "os_family": "Suse", "oscodename": "openSUSE Leap
+        42.2", "osfinger": "Leap-42", "pythonversion": [2, 7, 12, "final", 0], "num_gpus":
+        0, "virtual": "physical", "disks": [], "cpu_model": "Intel(R) Core(TM) i7-6600U
+        CPU @ 2.60GHz", "fqdn": "master", "pythonexecutable": "/usr/bin/python", "osarch":
+        "x86_64", "cpuarch": "x86_64", "lsb_distrib_codename": "openSUSE Leap 42.2",
+        "osrelease_info": [42, 2], "locale_info": {"detectedencoding": "ascii", "defaultlanguage":
+        null, "defaultencoding": null}, "gpus": [], "path": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "machine_id": "f5c7971b6083c77151b9b992582fd51d", "os": "SUSE"}}]}'
+    http_version: 
+  recorded_at: Thu, 26 Jan 2017 12:34:23 GMT
+- request:
+    method: post
+    uri: http://127.0.0.1:8000/minions
+    body:
+      encoding: UTF-8
+      string: '{"client":"local","tgt":"master","fun":"grains.append","kwarg":{"key":"roles","val":["kube-master","etcd"]}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Auth-Token:
+      - 26f5584c6a952b50aea191d9d4902dd0cf476a63
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Content-Length:
+      - '131'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Cache-Control:
+      - private
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Thu, 26 Jan 2017 12:34:23 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=26f5584c6a952b50aea191d9d4902dd0cf476a63; expires=Thu, 26 Jan 2017
+        22:34:23 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"_links": {"jobs": [{"href": "/jobs/20170126123423100266"}]}, "return":
+        [{"jid": "20170126123423100266", "minions": ["master"]}]}'
+    http_version: 
+  recorded_at: Thu, 26 Jan 2017 12:34:23 GMT
+- request:
+    method: get
+    uri: http://127.0.0.1:8000/minions/minion0
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Auth-Token:
+      - 26f5584c6a952b50aea191d9d4902dd0cf476a63
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '3905'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Cache-Control:
+      - private
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Thu, 26 Jan 2017 12:34:22 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=26f5584c6a952b50aea191d9d4902dd0cf476a63; expires=Thu, 26 Jan 2017
+        22:34:22 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"minion0": {"kernel": "Linux", "domain": "", "uid": 0,
+        "zmqversion": "4.1.2", "kernelrelease": "4.9.3-1-default", "pythonpath": ["/usr/bin",
+        "/usr/lib/python27.zip", "/usr/lib64/python2.7", "/usr/lib64/python2.7/plat-linux2",
+        "/usr/lib64/python2.7/lib-tk", "/usr/lib64/python2.7/lib-old", "/usr/lib64/python2.7/lib-dynload",
+        "/usr/lib64/python2.7/site-packages", "/usr/local/lib64/python2.7/site-packages",
+        "/usr/local/lib/python2.7/site-packages", "/usr/lib/python2.7/site-packages"],
+        "pid": 12, "ip_interfaces": {"br-5f3f8c": ["172.18.0.1"], "docker0": ["172.17.0.1"],
+        "lo": ["127.0.0.1"], "tun0": ["10.100.201.166"], "enp0s31f6": ["192.168.1.109",
+        "fe80::31c:d42f:2aab:53f7"], "wlp1s0": []}, "groupname": "root", "shell":
+        "/bin/sh", "mem_total": 7868, "saltversioninfo": [2016, 3, 4, 0], "host":
+        "minion0", "SSDs": ["sda"], "id": "minion0", "osrelease": "42.2", "ps": "ps
+        -efH", "server_id": 1033846505, "ip6_interfaces": {"br-5f3f8c": [], "docker0":
+        [], "lo": [], "tun0": [], "enp0s31f6": ["fe80::31c:d42f:2aab:53f7"], "wlp1s0":
+        []}, "num_cpus": 4, "hwaddr_interfaces": {"br-5f3f8c": "02:42:86:54:A2:03",
+        "docker0": "02:42:31:2B:3B:C1", "tun0": "00", "enp0s31f6": "28:F1:0E:45:3A:45",
+        "wlp1s0": "A6:28:A2:9A:DC:20"}, "init": "unknown", "ip4_interfaces": {"br-5f3f8c":
+        ["172.18.0.1"], "docker0": ["172.17.0.1"], "lo": ["127.0.0.1"], "tun0": ["10.100.201.166"],
+        "enp0s31f6": ["192.168.1.109"], "wlp1s0": []}, "osfullname": "Leap", "gid":
+        0, "minion0": "localhost", "lsb_distrib_id": "openSUSE Leap", "dns": {"nameservers":
+        ["10.160.2.88", "10.160.0.1"], "domain": "", "ip4_nameservers": ["10.160.2.88",
+        "10.160.0.1"], "search": [], "ip6_nameservers": []}, "ipv6": ["fe80::31c:d42f:2aab:53f7"],
+        "cpu_flags": ["fpu", "vme", "de", "pse", "tsc", "msr", "pae", "mce", "cx8",
+        "apic", "sep", "mtrr", "pge", "mca", "cmov", "pat", "pse36", "clflush", "dts",
+        "acpi", "mmx", "fxsr", "sse", "sse2", "ss", "ht", "tm", "pbe", "syscall",
+        "nx", "pdpe1gb", "rdtscp", "lm", "constant_tsc", "art", "arch_perfmon", "pebs",
+        "bts", "rep_good", "nopl", "xtopology", "nonstop_tsc", "aperfmperf", "eagerfpu",
+        "pni", "pclmulqdq", "dtes64", "monitor", "ds_cpl", "vmx", "smx", "est", "tm2",
+        "ssse3", "sdbg", "fma", "cx16", "xtpr", "pdcm", "pcid", "sse4_1", "sse4_2",
+        "x2apic", "movbe", "popcnt", "tsc_deadline_timer", "aes", "xsave", "avx",
+        "f16c", "rdrand", "lahf_lm", "abm", "3dnowprefetch", "epb", "intel_pt", "tpr_shadow",
+        "vnmi", "flexpriority", "ept", "vpid", "fsgsbase", "tsc_adjust", "bmi1", "hle",
+        "avx2", "smep", "bmi2", "erms", "invpcid", "rtm", "mpx", "rdseed", "adx",
+        "smap", "clflushopt", "xsaveopt", "xsavec", "xgetbv1", "xsaves", "dtherm",
+        "ida", "arat", "pln", "pts", "hwp", "hwp_notify", "hwp_act_window", "hwp_epp"],
+        "ipv4": ["10.100.201.166", "127.0.0.1", "172.17.0.1", "172.18.0.1", "192.168.1.109"],
+        "localhost": "minion0", "virtual_subtype": "Docker", "username": "root", "fqdn_ip4":
+        [], "fqdn_ip6": [], "nodename": "minion0", "saltversion": "2016.3.4", "lsb_distrib_release":
+        "42.2", "systemd": {"version": "228", "features": "+PAM -AUDIT +SELINUX -IMA
+        +APPARMOR -SMACK +SYSVINIT +UTMP +LIBCRYPTSETUP +GCRYPT -GNUTLS +ACL +XZ -LZ4
+        +SECCOMP +BLKID -ELFUTILS +KMOD -IDN"}, "saltpath": "/usr/lib/python2.7/site-packages/salt",
+        "osmajorrelease": "42", "os_family": "Suse", "oscodename": "openSUSE Leap
+        42.2", "osfinger": "Leap-42", "pythonversion": [2, 7, 12, "final", 0], "num_gpus":
+        0, "virtual": "physical", "disks": [], "cpu_model": "Intel(R) Core(TM) i7-6600U
+        CPU @ 2.60GHz", "fqdn": "minion0", "pythonexecutable": "/usr/bin/python",
+        "osarch": "x86_64", "cpuarch": "x86_64", "lsb_distrib_codename": "openSUSE
+        Leap 42.2", "osrelease_info": [42, 2], "locale_info": {"detectedencoding":
+        "ascii", "defaultlanguage": null, "defaultencoding": null}, "gpus": [], "path":
+        "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "machine_id":
+        "f5c7971b6083c77151b9b992582fd51d", "os": "SUSE"}}]}'
+    http_version: 
+  recorded_at: Thu, 26 Jan 2017 12:34:23 GMT
+- request:
+    method: post
+    uri: http://127.0.0.1:8000/minions
+    body:
+      encoding: UTF-8
+      string: '{"client":"local","tgt":"minion0","fun":"grains.append","kwarg":{"key":"roles","val":["kube-minion"]}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Auth-Token:
+      - 26f5584c6a952b50aea191d9d4902dd0cf476a63
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Content-Length:
+      - '131'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Cache-Control:
+      - private
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Thu, 26 Jan 2017 12:34:23 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=26f5584c6a952b50aea191d9d4902dd0cf476a63; expires=Thu, 26 Jan 2017
+        22:34:23 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"_links": {"jobs": [{"href": "/jobs/20170126123423100267"}]}, "return":
+        [{"jid": "20170126123423100267", "minions": ["minion0"]}]}'
+    http_version: 
+  recorded_at: Thu, 26 Jan 2017 12:34:23 GMT
+- request:
+    method: post
+    uri: http://127.0.0.1:8000/run
+    body:
+      encoding: UTF-8
+      string: '{"client":"runner_async","fun":"state.orchestrate","kwargs":{"mods":"orch.kubernetes"},"username":"saltapi","password":"saltapi","eauth":"pam"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '85'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Thu, 26 Jan 2017 12:34:23 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Type:
+      - application/json
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"jid": "20170126123423134992", "tag": "salt/run/20170126123423134992"}]}'
+    http_version: 
+  recorded_at: Thu, 26 Jan 2017 12:34:23 GMT
+- request:
+    method: post
+    uri: http://127.0.0.1:8000/login
+    body:
+      encoding: UTF-8
+      string: '{"username":"saltapi","password":"saltapi","eauth":"pam"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '216'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Thu, 26 Jan 2017 12:54:10 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Auth-Token:
+      - d41893c77b9d956a0f3d030b1204c2f3e33d0fc8
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=d41893c77b9d956a0f3d030b1204c2f3e33d0fc8; expires=Thu, 26 Jan 2017
+        22:54:10 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"perms": [".*", "@wheel", "@runner", "@jobs", "@events"],
+        "start": 1485435250.96626, "token": "d41893c77b9d956a0f3d030b1204c2f3e33d0fc8",
+        "expire": 1485478450.966261, "user": "saltapi", "eauth": "pam"}]}'
+    http_version: 
+  recorded_at: Thu, 26 Jan 2017 12:54:10 GMT
+recorded_with: VCR 3.0.3

@@ -16,8 +16,7 @@ before_install:
   - gem update --system
 
 before_script:
-  - mysql -e 'create database pharos_test;'
-  - bundle exec rake db:migrate
+  - bundle exec rake db:setup
 
 script:
   - bundle exec rspec spec

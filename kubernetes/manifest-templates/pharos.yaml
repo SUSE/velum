@@ -23,11 +23,13 @@ spec:
     - name: PHAROS_DB_PASSWORD
       value: "salt"
     - name: PHAROS_SALT_HOST
-      value:
+      value: "127.0.0.1"
     - name: PHAROS_SALT_PORT
-      value:
+      value: "8000"
     - name: PHAROS_SALT_USER
-      value:
+      value: saltapi
+    - name: PHAROS_SALT_PASSWORD
+      value: saltapi
     - name: PHAROS_KUBERNETES_HOST
       value:
     - name: PHAROS_KUBERNETES_PORT

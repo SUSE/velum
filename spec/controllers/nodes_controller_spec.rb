@@ -52,16 +52,14 @@ RSpec.describe NodesController, type: :controller do
     end
 
     context "known minion" do
-      it "returns a 200 response" do
-        sign_in user
+      before { sign_in user }
 
+      it "returns a 200 response" do
         get :show, params: { id: minion.id }
         expect(response.status).to eq 200
       end
 
       it "fetches the requested minion" do
-        sign_in user
-
         get :show, params: { id: minion.id }
         expect(assigns(:minion)).to eq(minion)
       end
@@ -73,6 +71,29 @@ RSpec.describe NodesController, type: :controller do
       expect do
         get :show, params: { id: minion.id + 1 }
       end.to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
+  describe "POST /nodes/bootstrap" do
+    let(:salt) { Pharos::Salt }
+    before do
+      sign_in user
+      Minion.create! [{ hostname: "master" }, { hostname: "minion0" }]
+    end
+
+    it "calls the orchestration" do
+      allow(salt).to receive(:orchestrate)
+      VCR.use_cassette("salt/bootstrap", record: :none) do
+        post :bootstrap
+      end
+      expect(salt).to have_received(:orchestrate)
+    end
+
+    it "gets redirected to the list of nodes" do
+      VCR.use_cassette("salt/bootstrap", record: :none) do
+        post :bootstrap
+      end
+      expect(response.status).to eq 302
     end
   end
 end

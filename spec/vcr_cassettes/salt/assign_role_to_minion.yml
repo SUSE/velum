@@ -1,0 +1,108 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://127.0.0.1:8000/login
+    body:
+      encoding: UTF-8
+      string: '{"username":"saltapi","password":"saltapi","eauth":"pam"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '217'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Thu, 26 Jan 2017 12:21:51 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Auth-Token:
+      - 7afae68fd3b9a44d456cfa464836bb7c78d49e38
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=7afae68fd3b9a44d456cfa464836bb7c78d49e38; expires=Thu, 26 Jan 2017
+        22:21:51 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"perms": [".*", "@wheel", "@runner", "@jobs", "@events"],
+        "start": 1485433311.182769, "token": "7afae68fd3b9a44d456cfa464836bb7c78d49e38",
+        "expire": 1485476511.182769, "user": "saltapi", "eauth": "pam"}]}'
+    http_version:
+  recorded_at: Thu, 26 Jan 2017 12:21:51 GMT
+- request:
+    method: post
+    uri: http://127.0.0.1:8000/minions
+    body:
+      encoding: UTF-8
+      string: '{"client":"local","tgt":"minion1","fun":"grains.append","kwarg":{"key":"roles","val":["kube-master","etcd"]}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Auth-Token:
+      - 7afae68fd3b9a44d456cfa464836bb7c78d49e38
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Content-Length:
+      - '131'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Cache-Control:
+      - private
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Thu, 26 Jan 2017 12:21:51 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=7afae68fd3b9a44d456cfa464836bb7c78d49e38; expires=Thu, 26 Jan 2017
+        22:21:51 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"_links": {"jobs": [{"href": "/jobs/20170126122151197077"}]}, "return":
+        [{"jid": "20170126122151197077", "minions": ["minion1"]}]}'
+    http_version:
+  recorded_at: Thu, 26 Jan 2017 12:21:51 GMT
+recorded_with: VCR 3.0.3

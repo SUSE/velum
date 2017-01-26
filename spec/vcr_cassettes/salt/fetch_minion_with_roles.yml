@@ -35,23 +35,23 @@ http_interactions:
       Access-Control-Allow-Credentials:
       - 'true'
       Date:
-      - Thu, 26 Jan 2017 12:10:54 GMT
+      - Thu, 26 Jan 2017 12:14:44 GMT
       Access-Control-Allow-Origin:
       - "*"
       X-Auth-Token:
-      - 263f8f1f55b0fd747d894029c2faa5685ef0c144
+      - 610d3838d742bfae4798056beab7e5636c172832
       Content-Type:
       - application/json
       Set-Cookie:
-      - session_id=263f8f1f55b0fd747d894029c2faa5685ef0c144; expires=Thu, 26 Jan 2017
-        22:10:54 GMT; Path=/
+      - session_id=610d3838d742bfae4798056beab7e5636c172832; expires=Thu, 26 Jan 2017
+        22:14:44 GMT; Path=/
     body:
       encoding: UTF-8
       string: '{"return": [{"perms": [".*", "@wheel", "@runner", "@jobs", "@events"],
-        "start": 1485432654.801215, "token": "263f8f1f55b0fd747d894029c2faa5685ef0c144",
-        "expire": 1485475854.801215, "user": "saltapi", "eauth": "pam"}]}'
+        "start": 1485432884.273799, "token": "610d3838d742bfae4798056beab7e5636c172832",
+        "expire": 1485476084.273799, "user": "saltapi", "eauth": "pam"}]}'
     http_version:
-  recorded_at: Thu, 26 Jan 2017 12:10:54 GMT
+  recorded_at: Thu, 26 Jan 2017 12:14:44 GMT
 - request:
     method: get
     uri: http://127.0.0.1:8000/minions/minion1
@@ -70,7 +70,7 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       X-Auth-Token:
-      - 263f8f1f55b0fd747d894029c2faa5685ef0c144
+      - 610d3838d742bfae4798056beab7e5636c172832
   response:
     status:
       code: 200
@@ -91,14 +91,14 @@ http_interactions:
       Access-Control-Allow-Credentials:
       - 'true'
       Date:
-      - Thu, 26 Jan 2017 12:10:54 GMT
+      - Thu, 26 Jan 2017 12:14:44 GMT
       Access-Control-Allow-Origin:
       - "*"
       Content-Type:
       - application/json
       Set-Cookie:
-      - session_id=263f8f1f55b0fd747d894029c2faa5685ef0c144; expires=Thu, 26 Jan 2017
-        22:10:54 GMT; Path=/
+      - session_id=610d3838d742bfae4798056beab7e5636c172832; expires=Thu, 26 Jan 2017
+        22:14:44 GMT; Path=/
     body:
       encoding: UTF-8
       string: '{"return": [{"minion1": {"kernel": "Linux", "domain": "", "uid": 0,
@@ -142,8 +142,8 @@ http_interactions:
         +APPARMOR -SMACK +SYSVINIT +UTMP +LIBCRYPTSETUP +GCRYPT -GNUTLS +ACL +XZ -LZ4
         +SECCOMP +BLKID -ELFUTILS +KMOD -IDN"}, "saltpath": "/usr/lib/python2.7/site-packages/salt",
         "osmajorrelease": "42", "os_family": "Suse", "oscodename": "openSUSE Leap
-        42.2", "osfinger": "Leap-42", "pythonversion": [2, 7, 12, "final", 0],  "num_gpus": 0,
-         "virtual": "physical", "disks": [],
+        42.2", "osfinger": "Leap-42", "pythonversion": [2, 7, 12, "final", 0], "roles":
+        ["kube-master", "etcd"], "num_gpus": 0, "virtual": "physical", "disks": [],
         "cpu_model": "Intel(R) Core(TM) i7-6600U CPU @ 2.60GHz", "fqdn": "minion1",
         "pythonexecutable": "/usr/bin/python", "osarch": "x86_64", "cpuarch": "x86_64",
         "lsb_distrib_codename": "openSUSE Leap 42.2", "osrelease_info": [42, 2], "locale_info":
@@ -151,5 +151,5 @@ http_interactions:
         null}, "gpus": [], "path": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
         "machine_id": "f5c7971b6083c77151b9b992582fd51d", "os": "SUSE"}}]}'
     http_version:
-  recorded_at: Thu, 26 Jan 2017 12:10:54 GMT
+  recorded_at: Thu, 26 Jan 2017 12:14:44 GMT
 recorded_with: VCR 3.0.3

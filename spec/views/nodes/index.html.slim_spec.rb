@@ -10,6 +10,14 @@ describe "nodes/index" do
       expect(section.attribute("data-url").value).to eq nodes_path
     end
 
+    it "has a button to bootstrap the cluster" do
+      render
+
+      section = assert_select("#bootstrap-cluster")
+      l = link?(section[0], bootstrap_nodes_path, "Bootstrap cluster")
+      expect(l).to be_truthy
+    end
+
     it "polls for minions" do
       render
 

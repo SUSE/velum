@@ -4,21 +4,21 @@ require "pharos/salt"
 
 describe Pharos::Salt do
   before do
-    ENV["PHAROS_SALT_HOST"] = "example.test.lan"
-    ENV["PHAROS_SALT_PORT"] = "5900"
+    ENV["PHAROS_SALT_HOST"] = "127.0.0.1"
+    ENV["PHAROS_SALT_PORT"] = "8000"
   end
 
   describe "call" do
     it "returns the bare response object and its parsed body" do
       VCR.use_cassette("salt/request_no_args", record: :none) do
-        res, hsh = described_class.new.call("*", "test.ping")
+        res, hsh = described_class.call(tgt: "*", fun: "test.ping")
         expect(hsh).to eq JSON.parse(res.body)
       end
     end
 
     it "performs a request with no arguments" do
       VCR.use_cassette("salt/request_no_args", record: :none) do
-        _, hsh = described_class.new.call("*", "test.ping")
+        _, hsh = described_class.call(tgt: "*", fun: "test.ping")
         expect(hsh["return"][0]["local"]).to be_truthy
       end
     end
@@ -27,13 +27,16 @@ describe Pharos::Salt do
   describe "minions" do
     it "fetches a list of minions" do
       VCR.use_cassette("salt/fetch_minions", record: :none) do
-        expect(described_class.new.minions.size).to eq 2
+        expect(described_class.minions.size).to eq 2
       end
     end
+  end
 
-    it "fetches a single minion" do
-      VCR.use_cassette("salt/fetch_minion", record: :none) do
-        expect(described_class.new.minions(1).size).to eq 1
+  describe "orchestration" do
+    it "runs the orchestration in async mode" do
+      VCR.use_cassette("salt/orchestrate_async", record: :none) do
+        _, hsh = described_class.orchestrate
+        expect(hsh["return"].count).to eq 1
       end
     end
   end
