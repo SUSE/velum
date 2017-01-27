@@ -27,5 +27,10 @@ RSpec.configure do |config|
     mocks.verify_partial_doubles = true
   end
 
+  config.before :all do
+    ENV["PHAROS_SALT_HOST"] ||= "127.0.0.1"
+    ENV["PHAROS_SALT_PORT"] ||= "8000"
+  end
+
   config.order = :random
 end

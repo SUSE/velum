@@ -3,11 +3,6 @@ require "rails_helper"
 require "pharos/salt_minion"
 
 describe Pharos::SaltMinion do
-  before do
-    ENV["PHAROS_SALT_HOST"] = "127.0.0.1"
-    ENV["PHAROS_SALT_PORT"] = "8000"
-  end
-
   describe "minions" do
     it "fetches a single minion" do
       VCR.use_cassette("salt/fetch_minion", record: :none) do
