@@ -5,11 +5,6 @@ RSpec.describe NodesController, type: :controller do
   let(:user)   { create(:user)   }
   let(:minion) { create(:minion) }
 
-  before do
-    ENV["PHAROS_SALT_HOST"] = "127.0.0.1"
-    ENV["PHAROS_SALT_PORT"] = "8000"
-  end
-
   describe "GET /nodes" do
     it "gets redirected if not logged in" do
       get :index

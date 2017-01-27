@@ -3,11 +3,6 @@ require "rails_helper"
 require "pharos/salt"
 
 describe Pharos::SaltApi do
-  before do
-    ENV["PHAROS_SALT_HOST"] = "127.0.0.1"
-    ENV["PHAROS_SALT_PORT"] = "8000"
-  end
-
   let(:salt_api) { Class.new { include Pharos::SaltApi } }
 
   it "the instance responds to token" do
