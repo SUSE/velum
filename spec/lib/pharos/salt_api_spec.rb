@@ -27,4 +27,14 @@ describe Pharos::SaltApi do
       end
     end
   end
+
+  context "when a HTTP/socket error happens" do
+    before { allow(Net::HTTP).to receive(:start) { raise Errno::ECONNREFUSED } }
+
+    it "raises SaltConnectionException" do
+      expect do
+        salt_api.perform_request(endpoint: "/minions/minion1", method: "get")
+      end.to raise_error(Pharos::SaltApi::SaltConnectionException)
+    end
+  end
 end

@@ -33,10 +33,14 @@ describe Minion do
 
     context "role fails to be assigned on the remote" do
       before do
-        allow(minion.salt).to receive(:assign_role) { raise Net::HTTPBadResponse }
+        allow(minion.salt).to receive(:assign_role) do
+          raise Pharos::SaltApi::SaltConnectionException
+        end
       end
 
-      it "saves the role locally" do
+      it "does not save the role in the database" do
+        expect(minion.assign_role(role: :master)).to be false
+        expect(minion.reload.role).to be_nil
       end
     end
   end

@@ -18,6 +18,8 @@ class Minion < ApplicationRecord
       salt.assign_role role: role
     end
     true
+  rescue Pharos::SaltApi::SaltConnectionException
+    false
   end
   # rubocop:enable SkipsModelValidations
 

@@ -4,6 +4,24 @@ require "net/http"
 module Pharos
   # This class offers the integration between ruby and the Saltstack API.
   module SaltApi
+    class SaltConnectionException < StandardError; end
+
+    HTTP_EXCEPTIONS = [
+      SocketError,
+      Errno::ETIMEDOUT,
+      Net::ReadTimeout,
+      Net::OpenTimeout,
+      Net::ProtocolError,
+      Errno::ECONNREFUSED,
+      Errno::EHOSTDOWN,
+      Errno::ECONNRESET,
+      Errno::ENETUNREACH,
+      Errno::EHOSTUNREACH,
+      Errno::ECONNABORTED,
+      OpenSSL::SSL::SSLError,
+      EOFError
+    ].freeze
+
     def self.included(base)
       base.extend(ClassMethods)
     end
@@ -76,6 +94,10 @@ module Pharos
 
         opts = { use_ssl: false, open_timeout: 2 }
         Net::HTTP.start(uri.hostname, uri.port, opts) { |http| http.request(req) }
+      rescue *HTTP_EXCEPTIONS
+        # TODO: we might want to wrap the original exception inside the SaltConnectionException
+        # so we can show detailed problems to the user in the future.
+        raise SaltConnectionException
       end
     end
   end
