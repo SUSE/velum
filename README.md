@@ -28,16 +28,15 @@ within the `kubernetes` folder. You will need a [standalone kubelet](https://kub
 
 This will start the pharos container as well as other required containers.
 
+If you want to use your own set of salt states you can provide `SALT_DIR` environment variable
+to the start script, so that directory will be used as salt root.
+
 Your pharos folder will be mounted on the pharos container, so any change you do locally to pharos
 will be seen inside the container. Once that the service is up, you should be able to see the
 pharos service at `http://localhost:3000/` on your local machine.
 
 After any change that you have performed you can run any rails/rake task as if it was local, with
-the docker prefix, like `docker exec -it $(docker ps | grep pharos-dashboard | awk '{print $1}') rspec`.
-
-### Setup the database
-
-`> docker exec -it $(docker ps | grep pharos-dashboard | awk '{print $1}') rake db:setup`
+the docker prefix, like `docker exec -it $(docker ps | grep pharos-dashboard | awk '{print $1}') bash -c "RAILS_ENV=test rspec"` or `docker exec -it $(docker ps | grep pharos-dashboard | awk '{print $1}') bash -c "RAILS_ENV=test rubocop"`.
 
 ## Licensing
 

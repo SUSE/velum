@@ -4,12 +4,37 @@ log()   { echo ">>> $1" ; }
 
 [[ -d manifest-templates ]] || { echo >&2 "Please run this script from within the kubernetes folder"; exit 1; }
 
+while true; do
+    read -e -i "y" -p "Do you want to cleanup old containers? [Y/n] " yn
+    case $yn in
+        [Yy]* ) ./cleanup; break;;
+        [Nn]* ) exit 0;;
+        * ) echo "Please answer yes (y) or no (n).";;
+    esac
+done
+
 for template in $(ls manifest-templates)
 do
     log "Processing template $template..."
     sed -e "s#\${project_dir}#$(dirname $PWD)#" manifest-templates/$template > manifests/$template
+
+
+    # Use SALT_DIR is set and not empty else use our default directory
+    # This can be used to point to different state files for orchestration.
+    if [ -z ${SALT_DIR+x} ]
+    then
+      log "You did not provide a SALT_DIR. $(dirname $PWD)/kubernetes/salt will be used..."
+      salt_dir="$(dirname $PWD)/kubernetes/salt"
+      sleep 5
+    else
+      salt_dir=$SALT_DIR
+    fi
+
+    sed -i -e "s#\${salt_dir}#$salt_dir#" manifests/$template
 done
 
-log "Launching kubelet"
+log "Running setup-environment script"
+bash setup-environment &
 
+log "Launching kubelet"
 sudo kubelet --config=$PWD/manifests --root-dir=$PWD/tmp --v=0 --address=127.0.0.1 --hostname-override=127.0.0.1 --allow-privileged=false
