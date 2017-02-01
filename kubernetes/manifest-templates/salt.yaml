@@ -14,6 +14,8 @@ spec:
       name: salt-master-config
     - mountPath: /srv/salt
       name: salt-master
+    - mountPath: /srv/pillar
+      name: salt-pillar
     - mountPath: /var/run/salt/master
       name: salt-sock-dir
   - name: salt-api
@@ -23,21 +25,34 @@ spec:
       name: salt-master-config
     - mountPath: /var/run/salt/master
       name: salt-sock-dir
-  - name: salt-minion
+  - name: salt-minion-ca
     image: opensuse/salt-minion:boron
     volumeMounts:
-    - mountPath: /etc/salt/minion.d
-      name: salt-minion-config
+    - mountPath: /etc/salt/minion.d/minion.conf
+      name: salt-minion-ca-config
+    - mountPath: /etc/salt/minion.d/signing_policies.conf
+      name: salt-minion-ca-signing-policies
+    - mountPath: /etc/salt/grains
+      name: salt-minion-ca-grains
   volumes:
     - name: salt-master-config
       hostPath:
         path: ${project_dir}/kubernetes/salt/config/master.d
     - name: salt-master
       hostPath:
-        path: ${project_dir}/kubernetes/salt/salt
+        path: ${salt_dir}/salt
+    - name: salt-pillar
+      hostPath:
+        path: ${salt_dir}/pillar
     - name: salt-sock-dir
       hostPath:
         path: ${project_dir}/kubernetes/tmp/salt-sock-dir
-    - name: salt-minion-config
+    - name: salt-minion-ca-grains
       hostPath:
-        path: ${project_dir}/kubernetes/salt/config/minion.d
+        path: ${project_dir}/kubernetes/salt/grains/ca
+    - name: salt-minion-ca-config
+      hostPath:
+        path: ${project_dir}/kubernetes/salt/config/minion.d-ca/minion.conf
+    - name: salt-minion-ca-signing-policies
+      hostPath:
+        path: ${project_dir}/kubernetes/salt/config/minion.d-ca/signing_policies.conf

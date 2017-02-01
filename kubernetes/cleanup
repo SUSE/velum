@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+log()   { echo ">>> $1" ; }
+
+log "Cleaning up old containers"
+docker ps -a | grep k8s | awk '{print $1}' | xargs docker rm -vf
