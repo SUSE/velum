@@ -22,17 +22,17 @@ class NodesController < ApplicationController
   # assigned role, assign a random role to it, and then call the salt
   # orchestration.
   def bootstrap
-    available_roles = [:master]
-    Minion.where(role: nil).find_each do |minion|
-      random_role = if available_roles.blank?
-        :minion
-      else
-        available_roles.delete_at(rand(available_roles.length))
-      end
-      minion.assign_role(role: random_role)
+    if Minion.where(role: nil).count > 1
+      Minion.assign_roles(roles: [:master], default_role: :minion)
+      Pharos::Salt.orchestrate
+
+      redirect_to nodes_path
+    else
+      redirect_back(
+        fallback_location: nodes_path,
+        alert:             "Not enough Workers to bootstrap. Please start at least one worker."
+      )
     end
-    Pharos::Salt.orchestrate
-    redirect_to nodes_path
   end
 
   # TODO

@@ -76,24 +76,47 @@ RSpec.describe NodesController, type: :controller do
 
   describe "POST /nodes/bootstrap" do
     let(:salt) { Pharos::Salt }
-    before do
-      sign_in user
-      Minion.create! [{ hostname: "master" }, { hostname: "minion0" }]
+    context "when there are enough minions" do
+      before do
+        sign_in user
+        Minion.create! [{ hostname: "master" }, { hostname: "minion0" }]
+      end
+
+      it "calls the orchestration" do
+        allow(salt).to receive(:orchestrate)
+        VCR.use_cassette("salt/bootstrap", record: :none) do
+          post :bootstrap
+        end
+        expect(salt).to have_received(:orchestrate)
+      end
+
+      it "gets redirected to the list of nodes" do
+        VCR.use_cassette("salt/bootstrap", record: :none) do
+          post :bootstrap
+        end
+        expect(response.status).to eq 302
+      end
     end
 
-    it "calls the orchestration" do
-      allow(salt).to receive(:orchestrate)
-      VCR.use_cassette("salt/bootstrap", record: :none) do
-        post :bootstrap
+    context "when there are not enough minions" do
+      before do
+        sign_in user
+        request.env["HTTP_REFERER"] = "/back"
       end
-      expect(salt).to have_received(:orchestrate)
-    end
 
-    it "gets redirected to the list of nodes" do
-      VCR.use_cassette("salt/bootstrap", record: :none) do
+      it "doesn't call the orchestration" do
+        allow(salt).to receive(:orchestrate)
         post :bootstrap
+        expect(salt).to have_received(:orchestrate).exactly(0).times
       end
-      expect(response.status).to eq 302
+
+      it "gets redirected to the list of nodes" do
+        VCR.use_cassette("salt/bootstrap", record: :none) do
+          post :bootstrap
+        end
+        expect(response.status).to eq 302
+        expect(response.redirect_url).to eq "http://test.host/back"
+      end
     end
   end
 end

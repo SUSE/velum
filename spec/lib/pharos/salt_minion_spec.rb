@@ -29,7 +29,7 @@ describe Pharos::SaltMinion do
 
       it "assigns a role when called assign_role" do
         VCR.use_cassette("salt/assign_role_to_minion", record: :none) do
-          expect(described_class.new(minion_id: "minion1").assign_role(role: :master)).to eq :master
+          expect(described_class.new(minion_id: "minion1").assign_role(:master)).to eq :master
         end
       end
     end
