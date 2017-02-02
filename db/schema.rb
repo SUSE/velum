@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170124170136) do
+ActiveRecord::Schema.define(version: 20170201155426) do
 
   create_table "jids", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "jid",                   null: false
@@ -21,8 +21,9 @@ ActiveRecord::Schema.define(version: 20170124170136) do
   create_table "minions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "hostname"
     t.integer  "role"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "highstate",  default: 0
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
     t.index ["hostname"], name: "index_minions_on_hostname", unique: true, using: :btree
   end
 

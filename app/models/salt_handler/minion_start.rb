@@ -6,6 +6,10 @@
 class SaltHandler::MinionStart
   attr_reader :salt_event
 
+  def self.can_handle_event?(event)
+    event.tag == "minion_start"
+  end
+
   def initialize(salt_event)
     @salt_event = salt_event
   end

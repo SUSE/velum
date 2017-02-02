@@ -94,5 +94,14 @@ describe SaltEvent do
 
       expect(handler).to be_an_instance_of(SaltHandler::MinionStart)
     end
+
+    it "must return an instance of SaltHandler::MinionHighstate" do
+      salt_event = described_class.new(
+        tag:  "salt/job/12345/ret/MyMinion",
+        data: { fun: "state.highstate" }.to_json
+      )
+
+      expect(salt_event.handler).to be_an_instance_of(SaltHandler::MinionHighstate)
+    end
   end
 end

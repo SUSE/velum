@@ -10,6 +10,7 @@ class Minion < ApplicationRecord
   # Raised when we fail to assign a role on a minion
   class CouldNotAssignRole < StandardError; end
 
+  enum highstate: [:not_applied, :pending, :failed, :applied]
   enum role: [:master, :minion]
 
   validates :hostname, uniqueness: true
@@ -20,6 +21,7 @@ class Minion < ApplicationRecord
   # one of those, the method will raise.
   # default_role param can be set if we want all the rest of the available
   # minions to get a default role.
+  # Returns the ids of the minions on which a roles has been assigned.
   def self.assign_roles(roles: [], default_role: nil)
     minions = Minion.where(role: nil)
 
@@ -28,11 +30,15 @@ class Minion < ApplicationRecord
 
     raise NotEnoughMinions if minions.count < roles.size
 
+    assigned_ids = []
     minions.find_each do |minion|
       unless minion.assign_role(roles.pop || default_role)
         raise CouldNotAssignRole
       end
+      assigned_ids << minion.id
     end
+
+    assigned_ids
   end
 
   # rubocop:disable SkipsModelValidations
@@ -42,7 +48,8 @@ class Minion < ApplicationRecord
     return false if role.present?
 
     Minion.transaction do
-      update_column :role, new_role
+      # We set highstate to pending since we just assigned a new role
+      update_columns(role: new_role, highstate: :pending)
       salt.assign_role new_role
     end
     true

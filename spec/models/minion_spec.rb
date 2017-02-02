@@ -61,6 +61,17 @@ describe Minion do
         expect(described_class.all.map(&:role)).to eq(["master", nil, nil])
       end
     end
+
+    it "returns the ids of the minions that were assigned a role" do
+      minions
+      # rubocop:disable RSpec/AnyInstance
+      allow_any_instance_of(Pharos::SaltMinion).to receive(:assign_role)
+        .and_return(true)
+      # rubocop:enable RSpec/AnyInstance
+      ids = described_class.assign_roles(roles: [:master], default_role: :minion)
+
+      expect(ids.sort).to eq(minions.map(&:id).sort)
+    end
   end
 
   context "with some roles assigned" do
@@ -89,6 +100,13 @@ describe Minion do
     it "updates the role in the database" do
       minion.assign_role(:master)
       expect(minion.reload.role).to eq("master")
+    end
+
+    it "updates the highstate column to 'pending' in the database" do
+      minion.update!(highstate: :applied)
+      expect { minion.assign_role(:master) }
+        .to change { minion.reload.highstate }.from("applied")
+        .to("pending")
     end
 
     context "role fails to be assigned on the remote" do

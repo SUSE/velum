@@ -10,6 +10,11 @@ class SaltEvent < ApplicationRecord
   PROCESS_TIMEOUT_MIN = 5
   NO_EVENTS_TIMEOUT_SEC = 5
 
+  ENABLED_EVENT_HANDLERS = [
+    SaltHandler::MinionStart,
+    SaltHandler::MinionHighstate
+  ].freeze
+
   scope :not_processed, -> { where(processed_at: nil) }
   scope :not_assigned, -> { where(worker_id: nil) }
 
@@ -46,6 +51,7 @@ class SaltEvent < ApplicationRecord
     taken_event = SaltEvent
                   .not_processed.assignable_to_worker(worker_id)
                   .limit(1).update_all(worker_id: worker_id, taken_at: Time.current)
+    # rubocop:enable SkipsModelValidations
 
     return false if taken_event.zero?
 
@@ -57,17 +63,20 @@ class SaltEvent < ApplicationRecord
   def handler
     return @handler if @handler
 
-    case tag
-    when "minion_start"
-      @handler = SaltHandler::MinionStart.new(self)
+    klass = ENABLED_EVENT_HANDLERS.find do |handler_class|
+      handler_class.can_handle_event?(self)
     end
+
+    klass&.new(self)
   end
 
   # Calls the handler and marks this event as processed.
   def process!
     handler&.process_event
 
+    # rubocop:disable SkipsModelValidations
     update_column(:processed_at, Time.current)
+    # rubocop:enable SkipsModelValidations
   end
 
   def parsed_data
