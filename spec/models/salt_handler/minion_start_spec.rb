@@ -13,6 +13,17 @@ describe SaltHandler::MinionStart do
     FactoryGirl.create(:salt_event, tag: "minion_start", data: event_data)
   end
 
+  let(:ca_salt_event) do
+    event_data = {
+      "_stamp" => "2017-01-24T13:30:20.794326",
+      "pretag" => nil, "cmd" => "_minion_event", "tag" => "minion_start",
+      "data" => "Minion MyMinion started at Tue Jan 24 13:30:20 2017",
+      "id" => "ca"
+    }.to_json
+
+    FactoryGirl.create(:salt_event, tag: "minion_start", data: event_data)
+  end
+
   describe "process_event" do
     it "creates a new Minion when one with the specified id does not exist" do
       handler = described_class.new(salt_event)
@@ -26,6 +37,13 @@ describe SaltHandler::MinionStart do
 
       expect { handler.process_event }
         .not_to change { Minion.where(hostname: "MyMinion").count }
+    end
+
+    it "does not create a new Minion if the event has id: 'ca'" do
+      handler = described_class.new(ca_salt_event)
+
+      expect { handler.process_event }
+        .not_to change { Minion.where(hostname: "ca").count }
     end
   end
 end
