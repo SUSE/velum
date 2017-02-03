@@ -7,14 +7,13 @@ module Pharos
     include SaltApi
 
     # This method is the entrypoint of any Salt call. It will simply apply the
-    # given function 'fun' with the given arguments 'arg' to the given target
-    # machines.
+    # given function 'action' with the given arguments 'arg' to the given targets.
     #
     # Returns two values:
     #   - The response object.
     #   - A hash containing the parsed JSON response.
-    def self.call(tgt:, fun:, arg: nil)
-      hsh = { tgt: tgt, fun: fun, client: "local" }
+    def self.call(action:, targets: "*", arg: nil)
+      hsh = { tgt: targets, fun: action, client: "local" }
       hsh[:arg] = arg if arg
 
       res = perform_request(endpoint: "/", method: "post", data: hsh)

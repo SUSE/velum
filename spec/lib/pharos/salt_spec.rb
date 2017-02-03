@@ -6,14 +6,14 @@ describe Pharos::Salt do
   describe "call" do
     it "returns the bare response object and its parsed body" do
       VCR.use_cassette("salt/request_no_args", record: :none) do
-        res, hsh = described_class.call(tgt: "*", fun: "test.ping")
+        res, hsh = described_class.call(action: "test.ping")
         expect(hsh).to eq JSON.parse(res.body)
       end
     end
 
     it "performs a request with no arguments" do
       VCR.use_cassette("salt/request_no_args", record: :none) do
-        _, hsh = described_class.call(tgt: "*", fun: "test.ping")
+        _, hsh = described_class.call(action: "test.ping")
         expect(hsh["return"][0]["local"]).to be_truthy
       end
     end
