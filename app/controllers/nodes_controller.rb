@@ -25,14 +25,11 @@ class NodesController < ApplicationController
     if Minion.where(role: nil).count > 1
       Minion.assign_roles(roles: [:master], default_role: :minion)
       Pharos::Salt.orchestrate
-
-      redirect_to nodes_path
     else
-      redirect_back(
-        fallback_location: nodes_path,
-        alert:             "Not enough Workers to bootstrap. Please start at least one worker."
-      )
+      flash[:alert] = "Not enough Workers to bootstrap. Please start at least one worker."
     end
+
+    redirect_to nodes_path
   end
 
   # TODO

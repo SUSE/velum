@@ -99,10 +99,7 @@ RSpec.describe NodesController, type: :controller do
     end
 
     context "when there are not enough minions" do
-      before do
-        sign_in user
-        request.env["HTTP_REFERER"] = "/back"
-      end
+      before { sign_in user }
 
       it "doesn't call the orchestration" do
         allow(salt).to receive(:orchestrate)
@@ -115,7 +112,7 @@ RSpec.describe NodesController, type: :controller do
           post :bootstrap
         end
         expect(response.status).to eq 302
-        expect(response.redirect_url).to eq "http://test.host/back"
+        expect(response.redirect_url).to eq "http://test.host/nodes"
       end
     end
   end
