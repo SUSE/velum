@@ -32,7 +32,6 @@ module Pharos
     # Assign role to this minion.
     def assign_role(role)
       append_grain key: "roles", val: ROLES_MAP[role]
-
       role
     end
 

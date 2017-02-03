@@ -4,7 +4,10 @@ require "pharos/salt_minion"
 
 # Minion represents the minions that have been registered in this application.
 class Minion < ApplicationRecord
+  # Raised when trying to bootstrap more minions than those available
+  # (E.g. assign roles [:master, :minion] when there is only one minion)
   class NotEnoughMinions < StandardError; end
+  # Raised when we fail to assign a role on a minion
   class CouldNotAssignRole < StandardError; end
 
   enum role: [:master, :minion]
