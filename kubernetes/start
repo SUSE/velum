@@ -33,8 +33,13 @@ do
     sed -i -e "s#\${salt_dir}#$salt_dir#" manifests/$template
 done
 
-log "Running setup-environment script"
-bash setup-environment &
+if $(which kubelet >&/dev/null); then
+  log "Running setup-environment script"
+  bash setup-environment &
+else
+  log "To launch kubelet make sure to install kubernetes-node package first and run this script again..."
+  exit 1
+fi
 
 log "Launching kubelet"
 sudo kubelet --config=$PWD/manifests --root-dir=$PWD/tmp --v=0 --address=127.0.0.1 --hostname-override=127.0.0.1 --allow-privileged=false
