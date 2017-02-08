@@ -1,9 +1,19 @@
 language: ruby
 rvm:
-  - 2.3.3
+  # The version used at SLE12
+  - 2.1.2
+
+  # The version used at openSUSE 13.2
+  - 2.1.3
+
+  # Other Ruby Versions
+  - 2.1.10
+  - 2.2.4
+  - 2.3.0
 
   # Future versions
   - ruby-head
+
 matrix:
   allow_failures:
     - rvm: ruby-head

@@ -1,4 +1,4 @@
-class AddRoleToMinions < ActiveRecord::Migration[5.0]
+class AddRoleToMinions < ActiveRecord::Migration
   def change
     add_column :minions, :role, :integer, index: true, after: :hostname
   end

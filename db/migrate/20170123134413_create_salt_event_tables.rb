@@ -1,7 +1,7 @@
 # This migrations inserts the tables needed by salt's MySQL returner in our
 # database.
 # https://github.com/saltstack/salt/blob/2016.3/salt/returners/mysql.py
-class CreateSaltEventTables < ActiveRecord::Migration[5.0]
+class CreateSaltEventTables < ActiveRecord::Migration
   def up
     query = <<-'SQL'
       CREATE TABLE `jids` (

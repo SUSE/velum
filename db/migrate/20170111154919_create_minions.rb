@@ -1,8 +1,9 @@
-class CreateMinions < ActiveRecord::Migration[5.0]
+class CreateMinions < ActiveRecord::Migration
   def change
     create_table :minions do |t|
-      t.string :hostname, index: true
+      t.string :hostname
       t.timestamps
     end
+    add_index :minions, :hostname
   end
 end

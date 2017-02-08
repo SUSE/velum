@@ -41,11 +41,12 @@ module Pharos
       # Performs a log in request and sets the @token instance variable on success at
       # client object.
       def login!(client:)
-        return client.token if client&.token
+        return client.token if client.try(:token)
         token = perform_request(endpoint: "/login",
                                 method:   "post",
                                 data:     auth_details)["X-Auth-Token"]
-        client&.token = token
+        client.token = token if client
+
         token
       end
 

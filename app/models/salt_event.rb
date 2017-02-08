@@ -67,12 +67,12 @@ class SaltEvent < ApplicationRecord
       handler_class.can_handle_event?(self)
     end
 
-    klass&.new(self)
+    klass.new(self) if klass
   end
 
   # Calls the handler and marks this event as processed.
   def process!
-    handler&.process_event
+    handler.try(:process_event)
 
     # rubocop:disable SkipsModelValidations
     update_column(:processed_at, Time.current)

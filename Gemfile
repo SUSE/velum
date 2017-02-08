@@ -1,19 +1,17 @@
 # frozen_string_literal: true
 source "https://rubygems.org"
 
-gem "listen"
-gem "puma", "~> 3.0"
-gem "rails", "~> 5.0.0"
+gem "puma"
+gem "rails", "4.2.7.1"
 
 gem "jbuilder", "~> 2.5"
 gem "jquery-rails"
-gem "therubyracer", platforms: :ruby
 gem "slim"
 gem "font-awesome-rails"
 gem "rails_stdout_logging", group: [:development, :staging, :production]
 
 gem "bcrypt", "~> 3.1.7"
-gem "mysql2"
+gem "mysql2", "0.3.18"
 
 gem "gravatar_image_tag"
 gem "devise"
@@ -67,7 +65,6 @@ unless ENV["PACKAGING"] && ENV["PACKAGING"] == "yes"
     gem "codeclimate-test-reporter", "~> 1.0.0", require: nil
     gem "factory_girl_rails"
     gem "ffaker"
-    gem "rails-controller-testing"
     gem "rubocop-rspec"
   end
 end

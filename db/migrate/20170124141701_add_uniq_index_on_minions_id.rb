@@ -1,4 +1,4 @@
-class AddUniqIndexOnMinionsId < ActiveRecord::Migration[5.0]
+class AddUniqIndexOnMinionsId < ActiveRecord::Migration
   def up
     remove_index :minions, :hostname
     add_index :minions, :hostname, unique: true
