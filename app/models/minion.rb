@@ -49,7 +49,8 @@ class Minion < ApplicationRecord
 
     Minion.transaction do
       # We set highstate to pending since we just assigned a new role
-      update_columns(role: new_role, highstate: :pending)
+      update_columns(role:      Minion.roles[new_role],
+                     highstate: Minion.highstates[:pending])
       salt.assign_role new_role
     end
     true

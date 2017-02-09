@@ -55,12 +55,12 @@ RSpec.describe NodesController, type: :controller do
       before { sign_in user }
 
       it "returns a 200 response" do
-        get :show, params: { id: minion.id }
+        get :show, id: minion.id
         expect(response.status).to eq 200
       end
 
       it "fetches the requested minion" do
-        get :show, params: { id: minion.id }
+        get :show, id: minion.id
         expect(assigns(:minion)).to eq(minion)
       end
     end
@@ -69,7 +69,7 @@ RSpec.describe NodesController, type: :controller do
       sign_in user
 
       expect do
-        get :show, params: { id: minion.id + 1 }
+        get :show, id: minion.id + 1
       end.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
