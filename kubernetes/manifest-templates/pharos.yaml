@@ -76,7 +76,7 @@ spec:
     command: ["/bin/sh","-c"]
     args: ["bundle exec bin/rake salt:process"]
   - name: pharos-mariadb
-    image: library/mariadb:10
+    image: library/mariadb:10.0.29
     env:
     - name: MYSQL_ROOT_PASSWORD
       value: "salt"
