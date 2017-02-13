@@ -28,14 +28,15 @@ class SaltHandler::MinionHighstate
     # those events. We only need to process a highstate if one is pending.
     minion = Minion.find_by(
       hostname:  minion_id,
-      highstate: :pending
+      highstate: Minion.highstates[:pending]
     )
     return false unless minion
 
     data = JSON.parse(salt_event.data)
 
+    new_highstate = Minion.highstates[data["success"] ? :applied : :failed]
     # rubocop:disable SkipsModelValidations
-    minion.update_column(:highstate, data["success"] ? :applied : :failed)
+    minion.update_column(:highstate, new_highstate)
     # rubocop:enable SkipsModelValidations
   end
 end

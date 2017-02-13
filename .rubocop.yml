@@ -29,6 +29,11 @@ Bundler/OrderedGems:
 RSpec/DescribeClass:
   Enabled: false
 
+# NOTE: drop this when switching to [Rails 5] as it's no longer needed there"
+# https://github.com/bbatsov/rubocop/issues/3629
+Rails/HttpPositionalArguments:
+  Enabled: false
+
 # Sometimes we need more than one "expect" command to build our actual
 # expectation.
 RSpec/MultipleExpectations:

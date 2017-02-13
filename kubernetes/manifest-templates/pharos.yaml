@@ -8,7 +8,7 @@ spec:
   hostNetwork: true
   containers:
   - name: pharos-dashboard
-    image: ereslibre/pharos:development
+    image: mmeister/pharos_dev:latest
     env:
     - name: RAILS_ENV
       value: development
@@ -42,7 +42,7 @@ spec:
     command: ["/bin/sh","-c"]
     args: ["bundle exec rails s -b 0.0.0.0 -p 3000 --pid /tmp/puma.pid Puma"]
   - name: pharos-event-processor
-    image: ereslibre/pharos:development
+    image: mmeister/pharos_dev:latest
     env:
     - name: WORKER_ID
       value: Worker_1
@@ -76,7 +76,7 @@ spec:
     command: ["/bin/sh","-c"]
     args: ["bundle exec bin/rake salt:process"]
   - name: pharos-mariadb
-    image: library/mariadb:10
+    image: library/mariadb:10.0.29
     env:
     - name: MYSQL_ROOT_PASSWORD
       value: "salt"
