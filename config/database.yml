@@ -1,13 +1,13 @@
 default: &default
   adapter:  "mysql2"
 
-  host:     <%= ENV['PHAROS_DB_HOST']     || "localhost" %>
-  port:     <%= ENV['PHAROS_DB_PORT']     || 0           %>
-  username: <%= ENV['PHAROS_DB_USERNAME'] || "root"      %>
-  password: <%= ENV['PHAROS_DB_PASSWORD'] || ""          %>
+  host:     <%= ENV['VELUM_DB_HOST']     || "localhost" %>
+  port:     <%= ENV['VELUM_DB_PORT']     || 0           %>
+  username: <%= ENV['VELUM_DB_USERNAME'] || "root"      %>
+  password: <%= ENV['VELUM_DB_PASSWORD'] || ""          %>
   encoding: utf8
-  pool:     <%= ENV['PHAROS_DB_POOL']     || 5           %>
+  pool:     <%= ENV['VELUM_DB_POOL']     || 5           %>
 
 <%= Rails.env.downcase %>:
   <<: *default
-  database: pharos_<%= Rails.env.downcase %>
+  database: velum_<%= Rails.env.downcase %>

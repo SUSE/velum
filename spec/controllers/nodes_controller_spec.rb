@@ -75,7 +75,7 @@ RSpec.describe NodesController, type: :controller do
   end
 
   describe "POST /nodes/bootstrap" do
-    let(:salt) { Pharos::Salt }
+    let(:salt) { Velum::Salt }
     context "when there are enough minions" do
       before do
         sign_in user

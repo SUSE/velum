@@ -34,7 +34,7 @@ describe Minion do
       before do
         minions
         # rubocop:disable RSpec/AnyInstance
-        allow_any_instance_of(Pharos::SaltMinion).to receive(:assign_role)
+        allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role)
           .and_return(true)
         # rubocop:enable RSpec/AnyInstance
       end
@@ -50,7 +50,7 @@ describe Minion do
       before do
         minions
         # rubocop:disable RSpec/AnyInstance
-        allow_any_instance_of(Pharos::SaltMinion).to receive(:assign_role)
+        allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role)
           .and_return(true)
         # rubocop:enable RSpec/AnyInstance
       end
@@ -65,7 +65,7 @@ describe Minion do
     it "returns the ids of the minions that were assigned a role" do
       minions
       # rubocop:disable RSpec/AnyInstance
-      allow_any_instance_of(Pharos::SaltMinion).to receive(:assign_role)
+      allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role)
         .and_return(true)
       # rubocop:enable RSpec/AnyInstance
       ids = described_class.assign_roles(roles: [:master], default_role: :minion)
@@ -112,7 +112,7 @@ describe Minion do
     context "role fails to be assigned on the remote" do
       before do
         allow(minion.salt).to receive(:assign_role) do
-          raise Pharos::SaltApi::SaltConnectionException
+          raise Velum::SaltApi::SaltConnectionException
         end
       end
 

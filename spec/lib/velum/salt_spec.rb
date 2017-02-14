@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 require "rails_helper"
-require "pharos/salt"
+require "velum/salt"
 
-describe Pharos::Salt do
+describe Velum::Salt do
   describe "call" do
     it "returns the bare response object and its parsed body" do
       VCR.use_cassette("salt/request_no_args", record: :none) do

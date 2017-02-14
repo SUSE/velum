@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "pharos/salt"
+require "velum/salt"
 
 # NodesController is responsible for everything related to nodes: showing
 # information on nodes, deleting them, etc.
@@ -24,7 +24,7 @@ class NodesController < ApplicationController
   def bootstrap
     if Minion.where(role: nil).count > 1
       Minion.assign_roles(roles: [:master], default_role: :minion)
-      Pharos::Salt.orchestrate
+      Velum::Salt.orchestrate
     else
       flash[:alert] = "Not enough Workers to bootstrap. Please start at least one worker."
     end

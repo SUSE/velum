@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 require "rails_helper"
-require "pharos/salt"
+require "velum/salt"
 
-describe Pharos::SaltApi do
-  let(:salt_api) { Class.new { include Pharos::SaltApi } }
+describe Velum::SaltApi do
+  let(:salt_api) { Class.new { include Velum::SaltApi } }
 
   it "the instance responds to token" do
     expect(salt_api.new).to respond_to(:token)
@@ -34,7 +34,7 @@ describe Pharos::SaltApi do
     it "raises SaltConnectionException" do
       expect do
         salt_api.perform_request(endpoint: "/minions/minion1", method: "get")
-      end.to raise_error(Pharos::SaltApi::SaltConnectionException)
+      end.to raise_error(Velum::SaltApi::SaltConnectionException)
     end
   end
 end

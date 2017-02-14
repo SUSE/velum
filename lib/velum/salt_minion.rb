@@ -1,7 +1,7 @@
 # frozen_string_literal: true
-require "pharos/salt_api"
+require "velum/salt_api"
 
-module Pharos
+module Velum
   # This class represents a salt minion
   class SaltMinion
     include SaltApi

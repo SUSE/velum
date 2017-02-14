@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 require "net/http"
 
-module Pharos
+module Velum
   # This class offers the integration between ruby and the Saltstack API.
   module SaltApi
     class SaltConnectionException < StandardError; end
@@ -53,15 +53,15 @@ module Pharos
       # Returns the authentication details for the current environment.
       def auth_details
         {
-          username: ENV["PHAROS_SALT_USER"],
-          password: ENV["PHAROS_SALT_PASSWORD"],
+          username: ENV["VELUM_SALT_USER"],
+          password: ENV["VELUM_SALT_PASSWORD"],
           eauth:    "pam"
         }.freeze
       end
 
       # Returns salt hostname for the current environment.
       def hostname
-        "#{ENV["PHAROS_SALT_HOST"]}:#{ENV["PHAROS_SALT_PORT"]}"
+        "#{ENV["VELUM_SALT_HOST"]}:#{ENV["VELUM_SALT_PORT"]}"
       end
 
       # Returns true if it is a tokenless request

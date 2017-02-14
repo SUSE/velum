@@ -1,13 +1,13 @@
 # frozen_string_literal: true
-module Pharos
+module Velum
   # Kubernetes deals with the Kubernetes integration of this application.
   class Kubernetes
     attr_reader :client
 
     def initialize
-      host = ENV["PHAROS_KUBERNETES_HOST"]
-      port = ENV["PHAROS_KUBERNETES_PORT"]
-      base = ENV["PHAROS_KUBERNETES_CERT_DIRECTORY"]
+      host = ENV["VELUM_KUBERNETES_HOST"]
+      port = ENV["VELUM_KUBERNETES_PORT"]
+      base = ENV["VELUM_KUBERNETES_CERT_DIRECTORY"]
 
       ssl = {
         client_cert: OpenSSL::X509::Certificate.new(File.read(File.join(base, "admin.crt"))),

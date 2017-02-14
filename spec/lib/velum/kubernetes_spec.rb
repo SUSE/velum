@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 require "rails_helper"
-require "pharos/kubernetes"
+require "velum/kubernetes"
 
-describe Pharos::Kubernetes do
+describe Velum::Kubernetes do
   before do
-    ENV["PHAROS_KUBERNETES_HOST"] = "example.test.lan"
-    ENV["PHAROS_KUBERNETES_PORT"] = "5900"
-    ENV["PHAROS_KUBERNETES_CERT_DIRECTORY"] = Rails.root.join("spec", "fixtures").to_s
+    ENV["VELUM_KUBERNETES_HOST"] = "example.test.lan"
+    ENV["VELUM_KUBERNETES_PORT"] = "5900"
+    ENV["VELUM_KUBERNETES_CERT_DIRECTORY"] = Rails.root.join("spec", "fixtures").to_s
   end
 
   it "initializes properly" do

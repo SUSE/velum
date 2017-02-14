@@ -8,8 +8,8 @@ done
 
 log "MariaDB container is ready"
 log "Setting up database"
-docker exec -i $(docker ps | grep pharos-dashboard | awk '{print $1}') rake db:setup &> /dev/null
-docker exec -i $(docker ps | grep pharos-dashboard | awk '{print $1}') bash -c "RAILS_ENV=test rake db:setup" &> /dev/null
+docker exec -i $(docker ps | grep velum-dashboard | awk '{print $1}') rake db:setup &> /dev/null
+docker exec -i $(docker ps | grep velum-dashboard | awk '{print $1}') bash -c "RAILS_ENV=test rake db:setup" &> /dev/null
 log "Cleaning up exited containers"
 docker ps -a | grep k8s | grep Exited | awk '{print $1}' | xargs docker rm  &> /dev/null
 

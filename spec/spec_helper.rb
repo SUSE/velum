@@ -28,8 +28,8 @@ RSpec.configure do |config|
   end
 
   config.before :all do
-    ENV["PHAROS_SALT_HOST"] ||= "127.0.0.1"
-    ENV["PHAROS_SALT_PORT"] ||= "8000"
+    ENV["VELUM_SALT_HOST"] ||= "127.0.0.1"
+    ENV["VELUM_SALT_PORT"] ||= "8000"
   end
 
   config.order = :random

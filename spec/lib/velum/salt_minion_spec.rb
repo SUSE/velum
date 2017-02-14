@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 require "rails_helper"
-require "pharos/salt_minion"
+require "velum/salt_minion"
 
-describe Pharos::SaltMinion do
+describe Velum::SaltMinion do
   describe "minions" do
     it "fetches a single minion" do
       VCR.use_cassette("salt/fetch_minion", record: :none) do

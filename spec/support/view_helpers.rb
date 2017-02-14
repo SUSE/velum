@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Pharos
+module Velum
   # ViewHelpers adds some methods to view specs.
   module ViewHelpers
     # link? returns true if the given element is a link that points to the given
@@ -34,4 +34,4 @@ module Pharos
   end
 end
 
-RSpec.configure { |cfg| cfg.include Pharos::ViewHelpers, type: :view }
+RSpec.configure { |cfg| cfg.include Velum::ViewHelpers, type: :view }

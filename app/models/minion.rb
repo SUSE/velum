@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "pharos/salt_minion"
+require "velum/salt_minion"
 
 # Minion represents the minions that have been registered in this application.
 class Minion < ApplicationRecord
@@ -54,13 +54,13 @@ class Minion < ApplicationRecord
       salt.assign_role new_role
     end
     true
-  rescue Pharos::SaltApi::SaltConnectionException
+  rescue Velum::SaltApi::SaltConnectionException
     false
   end
   # rubocop:enable SkipsModelValidations
 
   # Returns the proxy for the salt minion
   def salt
-    @salt ||= Pharos::SaltMinion.new minion_id: hostname
+    @salt ||= Velum::SaltMinion.new minion_id: hostname
   end
 end
