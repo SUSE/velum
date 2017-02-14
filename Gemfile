@@ -11,7 +11,7 @@ gem "font-awesome-rails"
 gem "rails_stdout_logging", group: [:development, :staging, :production]
 
 gem "bcrypt", "~> 3.1.7"
-gem "mysql2", "0.3.18"
+gem "mysql2"
 
 gem "gravatar_image_tag"
 gem "devise"
