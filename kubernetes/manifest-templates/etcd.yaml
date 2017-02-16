@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: etcd
+  labels:
+    name: etcd
+spec:
+  hostNetwork: true
+  containers:
+  - name: etcd
+    image: ereslibre/etcd:latest
+    env:
+    - name: ETCD_NAME
+      value: default
+    - name: ETCD_DATA_DIR
+      value: /var/lib/etcd/default.etcd
+    - name: ETCD_LISTEN_PEER_URLS
+      value: http://0.0.0.0:2380
+    - name: ETCD_LISTEN_CLIENT_URLS
+      value: http://0.0.0.0:2379
+    - name: ETCD_ADVERTISE_CLIENT_URLS
+      value: http://${ip_address}:2379

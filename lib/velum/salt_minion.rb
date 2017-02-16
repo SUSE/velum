@@ -9,7 +9,7 @@ module Velum
     attr_accessor :minion_id
 
     ROLES_MAP = {
-      master: ["kube-master", "etcd"],
+      master: ["kube-master"],
       minion: ["kube-minion"]
     }.freeze
 
