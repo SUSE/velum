@@ -4,14 +4,32 @@ log()   { echo ">>> $1" ; }
 
 [[ -d manifest-templates ]] || { echo >&2 "Please run this script from within the kubernetes folder"; exit 1; }
 
-while true; do
-    read -e -i "y" -p "Do you want to cleanup old containers? [Y/n] " yn
-    case $yn in
-        [Yy]* ) ./cleanup; break;;
-        [Nn]* ) exit 0;;
-        * ) echo "Please answer yes (y) or no (n).";;
-    esac
+# interactive by default
+interactive_mode=1
+
+while [ $# -gt 0 ] ; do
+  case $1 in
+    --non-interactive)
+      interactive_mode=0
+      ;;
+    *)
+      log "Unknown argument $1"
+      exit 1
+      ;;
+  esac
+  shift
 done
+
+while (( $interactive_mode == 1)) ; do
+  read -e -i "y" -p "Do you want to cleanup old containers? [Y/n] " yn
+  case $yn in
+      [Yy]* ) break;;
+      [Nn]* ) exit 0;;
+      * ) echo "Please answer yes (y) or no (n).";;
+  esac
+done
+
+./cleanup
 
 default_interface=$(awk '$2 == 00000000 { print $1 }' /proc/net/route)
 ip_address=$(ip addr show $default_interface | awk '$1 == "inet" {print $2}' | cut -f1 -d/)

@@ -28,6 +28,13 @@ within the `kubernetes` folder. You will need a [standalone kubelet](https://kub
 
 This will start the velum container as well as other required containers.
 
+You can use the `--non-interactive` flag if you prefer to run in non interactive mode.
+In that case you will be asked before old containers are removed.
+
+E.g.
+
+`> ./start --non-interactive`
+
 If you want to use your own set of salt states you can provide `SALT_DIR` environment variable
 to the start script, so that directory will be used as salt root.
 
