@@ -8,7 +8,7 @@ spec:
   hostNetwork: true
   containers:
   - name: etcd
-    image: ereslibre/etcd:latest
+    image: opensuse/etcd:development
     env:
     - name: ETCD_NAME
       value: default
