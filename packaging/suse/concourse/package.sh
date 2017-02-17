@@ -18,6 +18,8 @@ pushd velum-osc-resource/Virtualization:containers:Velum/velum 1> /dev/null
   osc rm velum.spec
   log "adding new specfile"
   cp ../../../velum-git-resource/packaging/suse/velum.spec .
+  log "fetching newest release from github"
+  wget --no-check-certificate -O master.tar.gz https://github.com/kubic-project/velum/archive/master.tar.gz
 popd 1> /dev/null
 
 cp -a velum-osc-resource/Virtualization:containers:Velum/velum/. velum-osc-updated-resource/
