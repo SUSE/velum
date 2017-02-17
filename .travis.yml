@@ -19,10 +19,6 @@ matrix:
     - rvm: ruby-head
 
 before_install:
-  - |
-    bash -c " # Install MariaDB
-    sudo bash .travis_mariadb.sh
-    "
   - gem update --system
 
 before_script:
@@ -37,6 +33,7 @@ script:
 addons:
   code_climate:
     repo_token: f6e3f94baf7a2d672fa17cd11deb8d3e0709be5350ad0dd11e33f44f54d540bd
+  mariadb: '10.0'
 
 after_success:
   - bundle exec codeclimate-test-reporter
