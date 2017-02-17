@@ -6,4 +6,41 @@ h2 Nodes
 div id="nodes" data-url="#{nodes_path}"
   | Nodes
 
-= render "polling"
+  .row
+    .col-xs-12
+      span.glyphicon.glyphicon-refresh aria-hidden="true"
+      span 10 Nodes found
+      button.btn.btn-default type='button' Pause Discovery
+      button.btn.btn-success.pull-right type='button' Add Nodes to Cluster
+
+  .row
+    .col-xs-12
+      .panel.panel-default
+        .panel-heading
+          h2 Section title
+        .panel-body
+          .table-responsive
+            table.table.table-condensed.table-hover
+              thead
+                tr
+                  th Status
+                  th Node Identifier
+                  th RAM
+                  th CPU
+                  th Network
+                  th Master
+              tbody
+                - test_nodes.each do |n|
+                  tr
+                    td
+                      span.text-success.glyphicon.glyphicon-ok-sign aria-hidden="true"
+                    td
+                      = render partial: "test", locals: { name: n[:name] }
+                    td
+                      = render partial: "test", locals: { name: "other name" }
+                    td #{n[:name]}
+                    td ipsum
+                    td dolor
+                    td sit
+                    td
+                      input id="blankRadio1" type='radio' name='blankRadio' value='option1' aria-label='...' checked=true

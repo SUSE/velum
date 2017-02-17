@@ -1,0 +1,28 @@
+.discovery-control {
+    margin-bottom: 10px;
+
+    i {
+        margin-left: 10px;
+    }
+
+    span {
+        margin-right: 15px;
+    }
+
+    .btn {
+        font-weight: normal;
+    }
+}
+
+.nodes-container {
+    form {
+        height: 450px;
+        margin-bottom: $line-height-computed;
+        overflow-x: hidden;
+        overflow-y: scroll;
+
+        table {
+            margin-bottom: 0px;
+        }
+    }
+}

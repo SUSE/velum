@@ -1,26 +1,29 @@
 doctype html
-html
+html(lang='en')
   head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    // The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags
+    meta(name='description', content='')
+    meta(name='author', content='')
+    link(rel='icon', href='/favicon.ico')
     title Velum
     = stylesheet_link_tag 'application', media: 'all'
     = javascript_include_tag 'application'
     = csrf_meta_tags
-    meta content="width=device-width, initial-scale=1" name="viewport"
 
   body
     header
       = render 'shared/header'
-    .container-fluid
-      = render 'shared/aside'
-      section
-        = render 'shared/notifications'
-        = yield
-  footer
-    .aside-footer
-    .container-footer
-      .row-0
-        .col-xs-6
-          p
-            'Created with
-            i.fa.fa-heart
-            'by the SUSE team
+    .container
+      .row
+        .col-xs-12
+          = yield
+        .col-xs-12
+          footer
+            p.text-center
+              span
+                'Created with
+                i.fa.fa-heart.fa-fw
+                'by the SUSE team
