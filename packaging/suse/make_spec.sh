@@ -20,6 +20,8 @@ if [ $TRAVIS_BRANCH ];then
   branch=$TRAVIS_BRANCH
 else
   branch=$(git rev-parse --abbrev-ref HEAD)
+  # the concourse git resource renders HEAD, but in this case we need master
+  [ $branch = "HEAD" ] && branch=master
 fi
 if [ $TRAVIS_COMMIT ];then
   commit=$TRAVIS_COMMIT
