@@ -55,6 +55,7 @@ class Minion < ApplicationRecord
     end
     true
   rescue Velum::SaltApi::SaltConnectionException
+    errors.add(:base, "Failed to apply role #{new_role} to #{self.hostname}")
     false
   end
   # rubocop:enable SkipsModelValidations
