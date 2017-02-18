@@ -96,7 +96,7 @@ module Velum
         opts = { use_ssl: false, open_timeout: 2 }
         Net::HTTP.start(uri.hostname, uri.port, opts) { |http| http.request(req) }
       rescue *HTTP_EXCEPTIONS => e
-        raise SaltConnectionException.new(e)
+        raise SaltConnectionException, e
       end
     end
   end
