@@ -10,15 +10,15 @@ EOF
   exit 1
 fi
 
+sed -i "s|<username>|$OSC_USERNAME|g" /root/.oscrc
+sed -i "s|<password>|$OSC_PASSWORD|g" /root/.oscrc
+
 log() { echo ">>> $1" ; }
 get_result() { osc results Virtualization:containers:Velum velum ; }
 
 repository=$1
 arch=$2
 result=$(get_result | grep "$repository.*$arch")
-
-sed -i "s|<username>|$OSC_USERNAME|g" /root/.oscrc
-sed -i "s|<password>|$OSC_PASSWORD|g" /root/.oscrc
 
 log "fetching build results"
 until get_result | grep -Eq "^$repository.*$arch.*(succeeded|failed|excluded|unresolvable)$";
