@@ -13,7 +13,7 @@ class Minion < ApplicationRecord
   enum highstate: [:not_applied, :pending, :failed, :applied]
   enum role: [:master, :minion]
 
-  validates :hostname, uniqueness: true
+  validates :hostname, presence: true, uniqueness: true
 
   # This method is used to assign the specified roles to Minions which do not
   # have a roles already assigned (available minions).
