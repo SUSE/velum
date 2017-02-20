@@ -21,7 +21,7 @@ arch=$2
 result=$(get_result | grep "$repository.*$arch")
 
 log "fetching build results"
-until get_result | grep -Eq "^$repository.*$arch.*(succeeded|failed|excluded|unresolvable)$";
+until get_result | grep -Eq "^$repository.*$arch.*(succeeded|failed|excluded|unresolvable)(\*|)$";
 do
     result=$(get_result | grep "$repository.*$arch")
     log "Waiting for $repository $arch build to finish"
