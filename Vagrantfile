@@ -1,7 +1,8 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-$provision_script = <<SCRIPT
+def provision_script
+  <<SCRIPT
   sudo apt-get update -y
   sudo apt-get install -y curl linux-image-extra-$(uname -r) linux-image-extra-virtual
   sudo apt-get install -y apt-transport-https software-properties-common ca-certificates
@@ -20,11 +21,12 @@ $provision_script = <<SCRIPT
   sudo usermod -aG docker,root vagrant
   sudo chown -R vagrant:vagrant .
 SCRIPT
+end
 
 Vagrant.configure("2") do |config|
   config.vm.box = "boxcutter/ubuntu1610"
   config.vm.network "forwarded_port", guest: 3000, host: 3000
-  config.vm.provision "shell", inline: $provision_script
+  config.vm.provision "shell", inline: provision_script
   config.vm.synced_folder ".", "/vagrant"
   config.vm.provider "virtualbox" do |v|
     v.memory = 4096
