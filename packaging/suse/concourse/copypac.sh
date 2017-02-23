@@ -20,6 +20,9 @@ if [ -z "$4" ]; then
   apiurl=https://api.opensuse.org
 else
   apiurl=$4
+  if ! [[ $apiurl =~ "https://api.opensuse.org" ]]; then
+    sed -i "s|https://api.opensuse.org|$apiurl|g" /root/.oscrc
+  fi
 fi
 
 log() { echo ">>> $1" ; }

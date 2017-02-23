@@ -21,20 +21,24 @@ if [ -z "$5" ]; then
   apiurl=https://api.opensuse.org
 else
   apiurl=$5
+  if ! [[ "$apiurl" =~ "https://api.opensuse.org" ]]; then
+    sed -i "s|https://api.opensuse.org|$apiurl|g" /root/.oscrc
+  fi
 fi
 
 log() { echo ">>> $1" ; }
 get_result() { osc -A $apiurl results $project $package ; }
+cache_result() { result=$(get_result | grep "$repository.*$arch") ; }
 
-result=$(get_result | grep "$repository.*$arch")
-
-log "fetching build results"
+cache_result
+log "fetching build results for $apiurl/package/show/$project/$package"
 until get_result | grep -Eq "^$repository.*$arch.*(succeeded|failed|excluded|unresolvable)(\*|)$";
 do
-    result=$(get_result | grep "$repository.*$arch")
-    log "Waiting for $repository $arch build to finish"
+    cache_result
+    log "Waiting for $project $package $repository $arch build to finish"
     sleep 10
 done
+cache_result
 
 echo $result | grep "succeeded" && exit 0
 
