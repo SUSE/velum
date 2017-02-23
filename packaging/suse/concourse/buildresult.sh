@@ -22,10 +22,11 @@ if [ -z "$5" ]; then
 else
   apiurl=$5
 fi
-result=$(get_result | grep "$repository.*$arch")
 
 log() { echo ">>> $1" ; }
 get_result() { osc -A $apiurl results $project $package ; }
+
+result=$(get_result | grep "$repository.*$arch")
 
 log "fetching build results"
 until get_result | grep -Eq "^$repository.*$arch.*(succeeded|failed|excluded|unresolvable)(\*|)$";
