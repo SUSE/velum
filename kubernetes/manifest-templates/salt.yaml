@@ -16,6 +16,8 @@ spec:
       name: salt-master
     - mountPath: /srv/pillar
       name: salt-pillar
+    - mountPath: /srv/pillar/vars.sls
+      name: salt-pillar-vars
     - mountPath: /var/run/salt/master
       name: salt-sock-dir
   - name: salt-api
@@ -44,6 +46,9 @@ spec:
     - name: salt-pillar
       hostPath:
         path: ${salt_dir}/pillar
+    - name: salt-pillar-vars
+      hostPath:
+        path: ${project_dir}/kubernetes/salt/pillar/vars.sls
     - name: salt-sock-dir
       hostPath:
         path: ${project_dir}/kubernetes/tmp/salt-sock-dir

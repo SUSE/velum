@@ -34,24 +34,31 @@ done
 default_interface=$(awk '$2 == 00000000 { print $1 }' /proc/net/route)
 ip_address=$(ip addr show $default_interface | awk '$1 == "inet" {print $2}' | cut -f1 -d/)
 
+# Use SALT_DIR is set and not empty else use our default directory
+# This can be used to point to different state files for orchestration.
+if [ -z ${SALT_DIR+x} ]
+then
+    log "You did not provide a SALT_DIR. $(dirname $PWD)/kubernetes/salt will be used..."
+    salt_dir="$(dirname $PWD)/kubernetes/salt"
+    sleep 5
+else
+    salt_dir=$SALT_DIR
+fi
+
 for template in $(ls manifest-templates)
 do
     log "Processing template $template..."
     sed -e "s#\${project_dir}#$(dirname $PWD)#" \
-        -e "s#\${ip_address}#$ip_address#" manifest-templates/$template > manifests/$template
+        -e "s#\${ip_address}#$ip_address#" \
+        -e "s#\${salt_dir}#$salt_dir#" manifest-templates/$template > manifests/$template
+done
 
-    # Use SALT_DIR is set and not empty else use our default directory
-    # This can be used to point to different state files for orchestration.
-    if [ -z ${SALT_DIR+x} ]
-    then
-      log "You did not provide a SALT_DIR. $(dirname $PWD)/kubernetes/salt will be used..."
-      salt_dir="$(dirname $PWD)/kubernetes/salt"
-      sleep 5
-    else
-      salt_dir=$SALT_DIR
-    fi
-
-    sed -i -e "s#\${salt_dir}#$salt_dir#" manifests/$template
+for template in $(find salt-templates -type f | cut -d'/' -f2-)
+do
+    log "Processing template $template..."
+    sed -e "s#\${project_dir}#$(dirname $PWD)#" \
+        -e "s#\${ip_address}#$ip_address#" \
+        -e "s#\${salt_dir}#$salt_dir#" salt-templates/$template > salt/$template
 done
 
 if $(which kubelet >&/dev/null); then
