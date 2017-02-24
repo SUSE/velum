@@ -11,5 +11,6 @@
 .rspec
 /kubernetes/tmp
 /kubernetes/manifests
+/kubernetes/salt/pillar
 /kubernetes/salt/config/minion.d/_schedule.conf
 /.vagrant
