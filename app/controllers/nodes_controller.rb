@@ -42,12 +42,11 @@ class NodesController < ApplicationController
   # assigned role, assign a random role to it, and then call the salt
   # orchestration.
   def bootstrap
-    if Minion.where(role: nil).count > 1
-      # choose first minion to be the master
-      Minion.assign_roles!(roles: { Minion.first.hostname => ["master"] })
+    if Minion.all.collect(&:role).include?("master")
       Velum::Salt.orchestrate
+      flash[:info] = "Successfully triggered orchestration on all Salt minions."
     else
-      flash[:alert] = "Not enough Workers to bootstrap. Please start at least one worker."
+      flash[:alert] = "There is no minion with the master role assigned yet."
     end
 
     redirect_to nodes_path

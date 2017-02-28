@@ -10,20 +10,21 @@ html(lang='en')
     link(rel='icon', href='/favicon.ico')
     title Velum
     = stylesheet_link_tag 'application', media: 'all'
-    = javascript_include_tag 'application'
     = csrf_meta_tags
 
-  body
-    header
-      = render 'shared/header'
+  body class="#{yield :body_class}"
     .container
+      = render :partial => "shared/header"
+      .row
+        .col-xs-12
+          = render :partial => "shared/notifications"
       .row
         .col-xs-12
           = yield
+      footer.row
         .col-xs-12
-          footer
-            p.text-center
-              span
-                'Created with
-                i.fa.fa-heart.fa-fw
-                'by the SUSE team
+          p.text-center
+            span
+              'SUSE CaaSP&reg; #{Rails.root.join("VERSION").read} | &copy; SUSE Linux #{Time.now.year}
+
+    = javascript_include_tag 'application'

@@ -84,6 +84,11 @@ RSpec.describe NodesController, type: :controller do
 
       it "calls the orchestration" do
         allow(salt).to receive(:orchestrate)
+        allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(:master)
+          .and_return(:master)
+        allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(:minion)
+          .and_return(:minion)
+        Minion.assign_roles!(roles: { Minion.first.hostname => ["master"] })
         VCR.use_cassette("salt/bootstrap", record: :none) do
           post :bootstrap
         end
