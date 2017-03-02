@@ -20,8 +20,8 @@ class NodesController < ApplicationController
     @minion = Minion.find(params[:id])
   end
 
-  def update
-    assigned = Minion.assign_roles!(roles: nodes_params)
+  def update_nodes
+    assigned = Minion.assign_roles!(roles: update_nodes_params)
 
     respond_to do |format|
       if assigned.values.include?(false)
@@ -57,7 +57,7 @@ class NodesController < ApplicationController
 
   protected
 
-  def nodes_params
+  def update_nodes_params
     params.require(:roles)
   end
 

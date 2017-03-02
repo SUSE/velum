@@ -18,7 +18,7 @@ Rails.application.routes.draw do
 
   resources :nodes, only: [:index, :show, :destroy] do
     collection do
-      put :update
+      put :update, action: "update_nodes"
       post :bootstrap
     end
   end
