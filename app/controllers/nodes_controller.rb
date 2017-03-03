@@ -42,7 +42,7 @@ class NodesController < ApplicationController
   # assigned role, assign a random role to it, and then call the salt
   # orchestration.
   def bootstrap
-    if Minion.all.collect(&:role).include?("master")
+    if Minion.exists?(role: "master")
       Velum::Salt.orchestrate
       flash[:info] = "Successfully triggered orchestration on all Salt minions."
     else

@@ -15,20 +15,20 @@ class Minion < ApplicationRecord
   # Example:
   #   Minion.assign_roles(
   #     roles: {
-  #       "master.example.com" => ["master"],
-  #       "minion1.example.com" => ["minion"]
+  #       master: 1,
+  #       minion: [2, 3]
   #     },
   #     default_role: :dns
   #   )
   def self.assign_roles!(roles: {}, default_role: :minion)
-    requested_master = roles.detect { |_name, r| r.include?("master") }.first
-    requested_minions = roles.select { |_name, r| r.include?("minion") }.keys
-    if roles.values.flatten.include?("master") && !Minion.exists?(hostname: requested_master)
-      raise NonExistingMinion, "Failed to process non existing minion: #{requested_master}"
+    requested_master = roles[:master]
+    requested_minions = roles[:minion]
+    if !requested_master.blank? && !Minion.exists?(id: requested_master)
+      raise NonExistingMinion, "Failed to process non existing minion id: #{requested_master}"
     end
-    master = Minion.find_by(hostname: requested_master)
+    master = Minion.find(requested_master)
     # choose requested minions or all other than master
-    minions = Minion.where(hostname: requested_minions).where.not(hostname: requested_master)
+    minions = Minion.where(id: requested_minions).where.not(id: requested_master)
 
     # assign master if requested
     {}.tap do |ret|

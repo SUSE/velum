@@ -80,18 +80,18 @@ RSpec.describe NodesController, type: :controller do
       before do
         sign_in user
         Minion.create! [{ hostname: "master" }, { hostname: "minion0" }]
+        # rubocop:disable RSpec/AnyInstance
+        [:minion, :master].each do |role|
+          allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(role)
+            .and_return(role)
+        end
+        # rubocop:enable RSpec/AnyInstance
       end
 
       it "calls the orchestration" do
         allow(salt).to receive(:orchestrate)
-        allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(:master)
-          .and_return(:master)
-        allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(:minion)
-          .and_return(:minion)
-        Minion.assign_roles!(roles: { Minion.first.hostname => ["master"] })
-        VCR.use_cassette("salt/bootstrap", record: :none) do
-          post :bootstrap
-        end
+        Minion.assign_roles!(roles: { master: Minion.first.id })
+        VCR.use_cassette("salt/bootstrap", record: :none) { post :bootstrap }
         expect(salt).to have_received(:orchestrate)
       end
 
@@ -126,14 +126,6 @@ RSpec.describe NodesController, type: :controller do
   # rubocop:disable RSpec/ExampleLength
   # rubocop:disable RSpec/NestedGroups
   describe "PUT /nodes/update" do
-    let(:role_payload) do
-      {
-        "master.example.com"  => ["master"],
-        "minion0.example.com" => ["minion"],
-        "minion1.example.com" => ["minion"]
-      }
-    end
-
     context "HTML rendering" do
       before do
         sign_in user
@@ -149,7 +141,7 @@ RSpec.describe NodesController, type: :controller do
             .and_return(:master)
           allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(:minion)
             .and_return(:minion)
-          put :update_nodes, roles: role_payload
+          put :update_nodes, roles: { master: Minion.first, minion: Minion.all[1..-1].map(&:id) }
           expect(response.redirect_url).to eq "http://test.host/nodes"
           # check that all minions are set to minion role
           expect(Minion.where("hostname REGEXP ?", "minion*").map(&:role).uniq).to eq ["minion"]
@@ -158,7 +150,7 @@ RSpec.describe NodesController, type: :controller do
         it "fails to assign the master role" do
           allow_any_instance_of(Minion).to receive(:assign_role).with(:master).and_return(false)
           allow_any_instance_of(Minion).to receive(:assign_role).with(:minion).and_return(false)
-          put :update_nodes, roles: role_payload
+          put :update_nodes, roles: { master: Minion.first, minion: Minion.all[1..-1].map(&:id) }
           expect(flash[:error]).to be_present
           expect(response.redirect_url).to eq "http://test.host/nodes"
         end
@@ -166,7 +158,7 @@ RSpec.describe NodesController, type: :controller do
         it "fails to assign the minion role" do
           allow_any_instance_of(Minion).to receive(:assign_role).with(:master).and_return(true)
           allow_any_instance_of(Minion).to receive(:assign_role).with(:minion).and_return(false)
-          put :update_nodes, roles: role_payload
+          put :update_nodes, roles: { master: Minion.first, minion: Minion.all[1..-1].map(&:id) }
           expect(flash[:error]).to be_present
           expect(response.redirect_url).to eq "http://test.host/nodes"
         end
@@ -174,7 +166,7 @@ RSpec.describe NodesController, type: :controller do
 
       context "when the minion doesn't exist" do
         it "fails to assign the master role" do
-          put :update_nodes, roles: { "doesntexist" => ["master"] }
+          put :update_nodes, roles: { master: [99999999] }
           expect(flash[:error]).to be_present
           expect(response.redirect_url).to eq "http://test.host/nodes"
         end
@@ -197,7 +189,7 @@ RSpec.describe NodesController, type: :controller do
             .and_return(:master)
           allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(:minion)
             .and_return(:minion)
-          put :update_nodes, roles: role_payload
+          put :update_nodes, roles: { master: Minion.first, minion: Minion.all[1..-1].map(&:id) }
           expect(response).to have_http_status(:ok)
           # check that all minions are set to minion role
           expect(Minion.where("hostname REGEXP ?", "minion*").map(&:role).uniq).to eq ["minion"]
@@ -209,21 +201,21 @@ RSpec.describe NodesController, type: :controller do
           allow_any_instance_of(Minion).to receive(:errors).and_return(
             ActiveModel::Errors.new(Minion.find_by(hostname: "master"))
           )
-          put :update_nodes, roles: role_payload
+          put :update_nodes, roles: { master: Minion.first, minion: Minion.all[1..-1].map(&:id) }
           expect(response).to have_http_status(:unprocessable_entity)
         end
 
         it "fails to assign the minion role" do
           allow_any_instance_of(Minion).to receive(:assign_role).with(:master).and_return(true)
           allow_any_instance_of(Minion).to receive(:assign_role).with(:minion).and_return(false)
-          put :update_nodes, roles: role_payload
+          put :update_nodes, roles: { master: Minion.first, minion: Minion.all[1..-1].map(&:id) }
           expect(response).to have_http_status(:unprocessable_entity)
         end
       end
 
       context "when the minion doesn't exist" do
         it "fails to assign the master role" do
-          put :update_nodes, roles: { "doesntexist" => ["master"] }
+          put :update_nodes, roles: { master: [9999999] }
           expect(response).to have_http_status(:not_found)
         end
       end
