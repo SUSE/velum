@@ -48,13 +48,13 @@ h1 Nodes
           td.text-center
             - if m.role == "master"
               = radio_button_tag "roles[master]", m.id, true, disabled: true
-            - elsif Minion.all.collect(&:role).include?("master")
+            - elsif Minion.exists?(role: "master")
               = radio_button_tag "roles[master]", m.id, false, disabled: true
             - else
               = radio_button_tag "roles[master]", m.id
   .clearfix.text-right.steps-container
     a.btn.btn-danger[href="/"] Back
-    - if Minion.all.collect(&:role).include?("master")
+    - if Minion.exists?(role: "master")
       = submit_tag "Bootstrap Cluster", class: "btn btn-primary", disabled: true
     - else
       = submit_tag "Bootstrap Cluster", class: "btn btn-primary"
