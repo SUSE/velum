@@ -7,6 +7,9 @@ class Minion < ApplicationRecord
   # Raised when Minion doesn't exist
   class NonExistingMinion < StandardError; end
 
+  scope :assigned_role, -> { where.not role: nil }
+  scope :unassigned_role, -> { where role: nil }
+
   enum highstate: [:not_applied, :pending, :failed, :applied]
   enum role: [:master, :minion]
 
@@ -22,7 +25,7 @@ class Minion < ApplicationRecord
   #   )
   def self.assign_roles!(roles: {}, default_role: :minion)
     requested_master = roles[:master]
-    requested_minions = roles[:minion]
+    requested_minions = roles[:minion] || (Minion.unassigned_role.pluck(:id) - [requested_master])
     if !requested_master.blank? && !Minion.exists?(id: requested_master)
       raise NonExistingMinion, "Failed to process non existing minion id: #{requested_master}"
     end

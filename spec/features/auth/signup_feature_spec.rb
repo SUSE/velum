@@ -28,7 +28,7 @@ feature "Signup feature" do
     fill_in "user_password_confirmation", with: user.password
     click_button("Create admin")
 
-    expect(page).to have_content("Dashboard")
+    expect(page).to have_content("You have signed in successfully")
   end
 
   scenario "It reports a wrong email format" do

@@ -1,4 +1,53 @@
-h1 Dashboard
+h1 Simple Monitoring
 .row
   .col-xs-12.discovery-control
-    a.btn.btn-primary[href="/nodes"] Choose master
+    span #{Minion.count} Nodes found
+.nodes-container
+  table.table
+    thead
+      tr
+        th
+          | Id
+        th.text-center
+          | Status
+        th
+          | Hostname
+        th
+          | Role
+        th
+          | Highstate
+        th.text-center
+          | Master
+    tbody
+      - Minion.all.each do |m|
+        tr
+          th
+            | #{m.id}
+          td.text-center
+            - if m.role
+              i.fa.fa-check-circle-o.text-success.fa-2x aria-hidden="true"
+            - else
+              span.fa-stack aria-hidden="true"
+                i.fa.fa-circle.fa-stack-2x.text-success aria-hidden="true"
+                i.fa.fa-refresh.fa-stack-1x.fa-spin.fa-inverse aria-hidden="true"
+          td
+            | #{m.hostname}
+          td
+            | #{m.role}
+          td
+            | #{m.highstate}
+          td.text-center
+            - if m.role == "master"
+              = radio_button_tag "roles[master]", m.id, true, disabled: true
+            - elsif Minion.all.collect(&:role).include?("master")
+              = radio_button_tag "roles[master]", m.id, false, disabled: true
+            - else
+              = radio_button_tag "roles[master]", m.id
+
+script
+  .clearfix.text-right.steps-container
+    a.btn.btn-danger[href="/"] Back
+    - if Minion.all.collect(&:role).include?("master")
+      = submit_tag "Apply", class: "btn btn-primary", disabled: true
+    - else
+    = submit_tag "Apply", class: "btn btn-primary"

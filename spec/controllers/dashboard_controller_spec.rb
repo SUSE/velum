@@ -3,6 +3,7 @@ require "rails_helper"
 
 RSpec.describe DashboardController, type: :controller do
   let(:user)   { create(:user) }
+  let(:minion) { create(:minion) }
 
   describe "GET /" do
     it "gets redirected if not logged in" do

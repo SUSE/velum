@@ -1,0 +1,34 @@
+.alert.alert-info.alert-dismissible role="alert"
+  button.close[type="button" data-dismiss="alert" aria-label="Close"]
+    span[aria-hidden="true"]
+      | &times;
+  i.fa.fa-4x.pull-left aria-hidden="true"
+  span
+    | After choosing the master and clicking "Bootstrap cluster" all other nodes will be set to the minion role
+h1 Nodes
+.row
+  .col-xs-12.discovery-control
+    span #{Minion.count} Nodes found
+= form_tag(setup_bootstrap_path, method: "post")
+.nodes-container
+  table.table
+    thead
+      tr
+        th
+          | Id
+        th
+          | Hostname
+        th.text-center
+          | Master
+    tbody
+      - Minion.all.each do |m|
+        tr
+          th
+            | #{m.id}
+          td
+            | #{m.hostname}
+          td.text-center
+            = radio_button_tag "roles[master]", m.id
+  .clearfix.text-right.steps-container
+    = link_to "Back", setup_worker_bootstrap_path, class: "btn btn-danger"
+    = submit_tag "Bootstrap cluster", class: "btn btn-primary"

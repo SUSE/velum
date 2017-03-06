@@ -37,17 +37,17 @@ feature "Login feature" do
   end
 
   scenario "User is redirected to the login page when trying to access a protected page" do
-    visit nodes_path
+    visit setup_path
     expect(page).to have_content("You need to sign in or sign up before continuing.")
   end
 
   scenario "Successful login when trying to access a page redirects back the guest" do
-    visit nodes_path
+    visit setup_path
 
     fill_in "user_email", with: user.email
     fill_in "user_password", with: user.password
     find("input[type=submit]").click
 
-    expect(current_path).to eq nodes_path
+    expect(current_path).to eq setup_path
   end
 end
