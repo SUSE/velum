@@ -32,6 +32,7 @@ class NodesController < ApplicationController
         end
         format.json { render json: message, status: :unprocessable_entity }
       else
+        Velum::Salt.orchestrate
         format.html { redirect_to nodes_path }
         format.json { head :ok }
       end

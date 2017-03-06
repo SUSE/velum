@@ -14,9 +14,10 @@ describe "nodes/index" do
     it "has a button to bootstrap the cluster" do
       render
 
-      section = assert_select("#bootstrap-cluster")
-      l = link?(section[0], bootstrap_nodes_path, "Bootstrap cluster")
-      expect(l).to be_truthy
+      section = assert_select("input") { assert_select("[value='Bootstrap Cluster']") }
+
+      text = section[2].attributes["value"].value
+      expect(text).to eq "Bootstrap Cluster"
     end
 
     it "polls for minions" do
