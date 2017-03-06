@@ -20,8 +20,8 @@ class NodesController < ApplicationController
     @minion = Minion.find(params[:id])
   end
 
-  def update
-    assigned = Minion.assign_roles!(roles: nodes_params)
+  def update_nodes
+    assigned = Minion.assign_roles!(roles: update_nodes_params)
 
     respond_to do |format|
       if assigned.values.include?(false)
@@ -42,12 +42,11 @@ class NodesController < ApplicationController
   # assigned role, assign a random role to it, and then call the salt
   # orchestration.
   def bootstrap
-    if Minion.where(role: nil).count > 1
-      # choose first minion to be the master
-      Minion.assign_roles!(roles: { Minion.first.hostname => ["master"] })
+    if Minion.exists?(role: "master")
       Velum::Salt.orchestrate
+      flash[:info] = "Successfully triggered orchestration on all Salt minions."
     else
-      flash[:alert] = "Not enough Workers to bootstrap. Please start at least one worker."
+      flash[:alert] = "There is no minion with the master role assigned yet."
     end
 
     redirect_to nodes_path
@@ -58,7 +57,7 @@ class NodesController < ApplicationController
 
   protected
 
-  def nodes_params
+  def update_nodes_params
     params.require(:roles)
   end
 

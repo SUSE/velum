@@ -1,9 +1,4 @@
-h1
-  | Dashboard
-
-h2 Nodes
-
-div id="nodes" data-url="#{nodes_path}"
-  | Nodes
-
-= render "polling"
+h1 Dashboard
+.row
+  .col-xs-12.discovery-control
+    a.btn.btn-primary[href="/nodes"] Choose master

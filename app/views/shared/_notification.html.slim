@@ -6,7 +6,7 @@ div [id="#{float == true ? 'float' : 'fixed'}-alert" class="#{messages && messag
     .alert-message
       .alert-icon.pull-left
         i.fa.fa-3x class=(alert == 'alert' ? 'fa-exclamation-circle' : 'fa-info-circle')
-      p
+      span
         - if messages.is_a?(String)
           = messages
         - elsif messages.is_a?(Array)

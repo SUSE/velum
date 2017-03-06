@@ -1,14 +1,7 @@
-.logo-header.col-xs-12
-  a[href="#{url_for root_path}"]
-    | CASP
-  i#open_main_menu.fa.fa-bars.fa-lg.pull-left.visible-xs
-
-.text-right.user-header
-  .button-container
-    .username-logout
-      .hidden-xs
-        = link_to edit_user_registration_path, class: 'btn-inline-header', data: {placement: 'bottom', toggle: 'tooltip'}, title: 'My profile' do
-          = user_image_tag(current_user)
-          span.username = current_user.email
-      = link_to destroy_user_session_path, method: :delete, class: 'topbar btn btn-default', id: 'logout', data: {placement: 'bottom', toggle: 'tooltip'}, title: 'Logout' do
-        i.fa.fa-sign-out
+header.row
+  .col-xs-12
+    .page-header.col-xs-6
+        h2 SUSE&reg; Container as a Service Platform
+    .col-xs-6
+      - if user_signed_in?
+      = link_to('Logout', destroy_user_session_path, class: "btn btn-default pull-right", :method => :delete)

@@ -1,26 +1,30 @@
 doctype html
-html
+html(lang='en')
   head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    // The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags
+    meta(name='description', content='')
+    meta(name='author', content='')
+    link(rel='icon', href='/favicon.ico')
     title Velum
     = stylesheet_link_tag 'application', media: 'all'
-    = javascript_include_tag 'application'
     = csrf_meta_tags
-    meta content="width=device-width, initial-scale=1" name="viewport"
 
-  body
-    header
-      = render 'shared/header'
-    .container-fluid
-      = render 'shared/aside'
-      section
-        = render 'shared/notifications'
-        = yield
-  footer
-    .aside-footer
-    .container-footer
-      .row-0
-        .col-xs-6
-          p
-            'Created with
-            i.fa.fa-heart
-            'by the SUSE team
+  body class="#{yield :body_class}"
+    .container
+      = render :partial => "shared/header"
+      .row
+        .col-xs-12
+          = render :partial => "shared/notifications"
+      .row
+        .col-xs-12
+          = yield
+      footer.row
+        .col-xs-12
+          p.text-center
+            span
+              'SUSE CaaSP&reg; #{Rails.root.join("VERSION").read} | &copy; SUSE Linux #{Time.now.year}
+
+    = javascript_include_tag 'application'
