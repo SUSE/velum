@@ -60,6 +60,3 @@ h1 Nodes
       = submit_tag "Apply", class: "btn btn-primary"
 
 = link_to "Bootstrap cluster", bootstrap_nodes_path, method: :post, class: "btn btn-success btn-lg", id: "bootstrap-cluster"
-
-script
-  | MinionPoller.poll();
