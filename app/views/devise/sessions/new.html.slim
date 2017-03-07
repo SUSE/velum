@@ -1,25 +1,30 @@
-h2
-  | Log in
-
-= render 'shared/notifications'
-
-= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
-  div.field
-    = f.label :email
-    br
-    = f.email_field :email, autofocus: true
-
-  div.field
-    = f.label :password
-    br
-    = f.password_field :password, autocomplete: "off"
-
-  - if devise_mapping.rememberable?
-    div.field
-      = f.check_box :remember_me
-      = f.label :remember_me
-
-  div.actions
-    = f.submit "Log in"
-
-= render "devise/shared/links"
+.row
+  .col-sm-6
+    h1.Raleway-font.green-dark
+      | SUSE
+      br
+      small Containers as a Service Platform
+    p.margins-updown
+      | Ut non dapibus lacus. Donec eu imperdiet sem, sit amet ultrices augue. Cras a auctor dolor, vitae aliquet leo. 
+    p
+      | Don't have an account? 
+      a.btn.btn-default[href="/users/sign_up"]
+        | Create an account
+  .col-sm-4.col-sm-offset-1
+    h2.Raleway-font
+      | Sign In
+    form.margins-updown
+      .form-group
+        input.form-control[type="email" placeholder="Enter your username"]
+      .form-group
+        input.form-control[type="password" placeholder="Enter your password"]
+      button.btn.btn-success.btn-block
+        | Log in
+      .row.login-options
+        .col-xs-6
+          a[href="#"]
+            | Can't access your account?
+        .col-xs-6.text-right
+          .checkbox
+            label
+              input#remember-me[type="checkbox"] Remember me
