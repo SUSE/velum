@@ -124,6 +124,7 @@ RSpec.describe NodesController, type: :controller do
 
   # rubocop:disable RSpec/AnyInstance
   # rubocop:disable RSpec/ExampleLength
+  # rubocop:disable RSpec/MultipleExpectations
   # rubocop:disable RSpec/NestedGroups
   describe "PUT /nodes/update" do
     context "HTML rendering" do
@@ -134,6 +135,7 @@ RSpec.describe NodesController, type: :controller do
           { hostname: "minion0.example.com" },
           { hostname: "minion1.example.com" }
         ]
+        allow(Velum::Salt).to receive(:orchestrate)
       end
       context "when the minion exists" do
         it "assigns the master role" do
@@ -145,6 +147,7 @@ RSpec.describe NodesController, type: :controller do
           expect(response.redirect_url).to eq "http://test.host/nodes"
           # check that all minions are set to minion role
           expect(Minion.where("hostname REGEXP ?", "minion*").map(&:role).uniq).to eq ["minion"]
+          expect(Velum::Salt).to have_received(:orchestrate)
         end
 
         it "fails to assign the master role" do
@@ -153,6 +156,7 @@ RSpec.describe NodesController, type: :controller do
           put :update_nodes, roles: { master: Minion.first, minion: Minion.all[1..-1].map(&:id) }
           expect(flash[:error]).to be_present
           expect(response.redirect_url).to eq "http://test.host/nodes"
+          expect(Velum::Salt).to have_received(:orchestrate).exactly(0).times
         end
 
         it "fails to assign the minion role" do
@@ -161,6 +165,7 @@ RSpec.describe NodesController, type: :controller do
           put :update_nodes, roles: { master: Minion.first, minion: Minion.all[1..-1].map(&:id) }
           expect(flash[:error]).to be_present
           expect(response.redirect_url).to eq "http://test.host/nodes"
+          expect(Velum::Salt).to have_received(:orchestrate).exactly(0).times
         end
       end
 
@@ -169,6 +174,7 @@ RSpec.describe NodesController, type: :controller do
           put :update_nodes, roles: { master: [99999999] }
           expect(flash[:error]).to be_present
           expect(response.redirect_url).to eq "http://test.host/nodes"
+          expect(Velum::Salt).to have_received(:orchestrate).exactly(0).times
         end
       end
     end
@@ -181,6 +187,7 @@ RSpec.describe NodesController, type: :controller do
           { hostname: "minion0.example.com" },
           { hostname: "minion1.example.com" }
         ]
+        allow(Velum::Salt).to receive(:orchestrate)
         request.accept = "application/json"
       end
       context "when the minion exists" do
@@ -193,6 +200,7 @@ RSpec.describe NodesController, type: :controller do
           expect(response).to have_http_status(:ok)
           # check that all minions are set to minion role
           expect(Minion.where("hostname REGEXP ?", "minion*").map(&:role).uniq).to eq ["minion"]
+          expect(Velum::Salt).to have_received(:orchestrate)
         end
 
         it "fails to assign the master role" do
@@ -203,6 +211,7 @@ RSpec.describe NodesController, type: :controller do
           )
           put :update_nodes, roles: { master: Minion.first, minion: Minion.all[1..-1].map(&:id) }
           expect(response).to have_http_status(:unprocessable_entity)
+          expect(Velum::Salt).to have_received(:orchestrate).exactly(0).times
         end
 
         it "fails to assign the minion role" do
@@ -210,6 +219,7 @@ RSpec.describe NodesController, type: :controller do
           allow_any_instance_of(Minion).to receive(:assign_role).with(:minion).and_return(false)
           put :update_nodes, roles: { master: Minion.first, minion: Minion.all[1..-1].map(&:id) }
           expect(response).to have_http_status(:unprocessable_entity)
+          expect(Velum::Salt).to have_received(:orchestrate).exactly(0).times
         end
       end
 
@@ -217,11 +227,13 @@ RSpec.describe NodesController, type: :controller do
         it "fails to assign the master role" do
           put :update_nodes, roles: { master: [9999999] }
           expect(response).to have_http_status(:not_found)
+          expect(Velum::Salt).to have_received(:orchestrate).exactly(0).times
         end
       end
     end
   end
   # rubocop:enable RSpec/AnyInstance
   # rubocop:enable RSpec/ExampleLength
+  # rubocop:enable RSpec/MultipleExpectations
   # rubocop:enable RSpec/NestedGroups
 end

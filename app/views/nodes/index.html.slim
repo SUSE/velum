@@ -4,12 +4,11 @@
       | &times;
   i.fa.fa-4x.pull-left aria-hidden="true"
   span
-    | After choosing the master and clicking "Apply" all other nodes will be set to the minion role
+    | After choosing the master and clicking "Bootstrap Cluster" all other nodes will be set to the minion role
 h1 Nodes
 .row
   .col-xs-12.discovery-control
     span #{Minion.count} Nodes found
-    a.btn.btn-default[href="/nodes"] Refresh
 = form_tag(nodes_path, method: "put")
 .nodes-container
   table.table
@@ -48,15 +47,13 @@ h1 Nodes
           td.text-center
             - if m.role == "master"
               = radio_button_tag "roles[master]", m.id, true, disabled: true
-            - elsif Minion.all.collect(&:role).include?("master")
+            - elsif Minion.exists?(role: "master")
               = radio_button_tag "roles[master]", m.id, false, disabled: true
             - else
               = radio_button_tag "roles[master]", m.id
   .clearfix.text-right.steps-container
     a.btn.btn-danger[href="/"] Back
-    - if Minion.all.collect(&:role).include?("master")
-      = submit_tag "Apply", class: "btn btn-primary", disabled: true
+    - if Minion.exists?(role: "master")
+      = submit_tag "Bootstrap Cluster", class: "btn btn-primary", disabled: true
     - else
-      = submit_tag "Apply", class: "btn btn-primary"
-
-= link_to "Bootstrap cluster", bootstrap_nodes_path, method: :post, class: "btn btn-success btn-lg", id: "bootstrap-cluster"
+      = submit_tag "Bootstrap Cluster", class: "btn btn-primary"
