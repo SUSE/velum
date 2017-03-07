@@ -11,7 +11,6 @@ class SetupController < ApplicationController
 
   skip_before_action :redirect_to_setup
   before_action :redirect_to_dashboard
-  before_action :update_nodes, only: :bootstrap
 
   def configure
     Pillar.all_pillars.each do |key, pillar_key|
@@ -32,23 +31,6 @@ class SetupController < ApplicationController
   end
 
   def bootstrap
-    if Minion.exists?(role: "master")
-      Velum::Salt.orchestrate
-      flash[:info] = "Successfully triggered orchestration on all Salt minions."
-    else
-      flash[:alert] = "There is no minion with the master role assigned yet."
-    end
-
-    redirect_to root_path
-  end
-
-  private
-
-  def redirect_to_dashboard
-    redirect_to root_path unless Minion.assigned_role.count.zero?
-  end
-
-  def update_nodes
     assigned = Minion.assign_roles!(roles: update_nodes_params)
 
     respond_to do |format|
@@ -59,8 +41,18 @@ class SetupController < ApplicationController
           redirect_to nodes_path
         end
         format.json { render json: message, status: :unprocessable_entity }
+      else
+        Velum::Salt.orchestrate
+        format.html { redirect_to_dashboard }
+        format.json { head :ok }
       end
     end
+  end
+
+  private
+
+  def redirect_to_dashboard
+    redirect_to root_path unless Minion.assigned_role.count.zero?
   end
 
   def settings_params
