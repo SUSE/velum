@@ -13,14 +13,14 @@ feature "Login feature" do
     expect(page).not_to have_content("You need to sign in or sign up before continuing.")
   end
 
-  scenario "Existing user is able using his login and password to login into Portus" do
+  scenario "Existing user is able using his login and password to login into velum" do
     # We don't use Capybara's `login_as` method on purpose, because we are
     # testing the UI for logging in.
     fill_in "user_email", with: user.email
     fill_in "user_password", with: user.password
     find("input[type=submit]").click
 
-    expect(page).to have_content("Dashboard")
+    expect(page).to have_content("Configuration")
   end
 
   scenario "Wrong password results in an error message" do
