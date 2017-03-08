@@ -12,12 +12,15 @@
   .col-sm-4.col-sm-offset-1
     h2.Raleway-font
       | Sign Up
-    form.margins-updown
+    / form.margins-updown
+    = form_for(resource, as: resource_name, url: user_registration_path, :html => {class: 'margins-updown', :autocomplete => "off"}) do |f|
+
       .form-group
-        input.form-control[type="email" placeholder="Select your username"]
+        = f.email_field :email, autofocus: true, class: 'form-control', placeholder: 'Introduce your Email', required: true
       .form-group
-        input.form-control[type="password" placeholder="Select your password"]
+        = f.password_field :password, class: 'form-control', placeholder: 'Select your password (8 characters min.)', required: true
       .form-group
-        input.form-control[type="password" placeholder="Confirm your password"]
+        = f.password_field :password_confirmation, class: 'form-control', placeholder: 'Confirm your password', required: true
+
       button.btn.btn-success.btn-block
         | Create Admin

@@ -13,11 +13,11 @@
   .col-sm-4.col-sm-offset-1
     h2.Raleway-font
       | Sign In
-    form.margins-updown
+    = form_for(resource, as: resource_name, url: session_path(resource_name), :html => {class: 'margins-updown'}) do |f|
       .form-group
-        input.form-control[type="email" placeholder="Enter your username"]
+        = f.email_field :email, autofocus: true, class: 'form-control', placeholder: 'Enter your Email', required: true
       .form-group
-        input.form-control[type="password" placeholder="Enter your password"]
+        = f.password_field :password, class: 'form-control', placeholder: 'Enter your password', required: true
       button.btn.btn-success.btn-block
         | Log in
       .row.login-options
@@ -27,4 +27,5 @@
         .col-xs-6.text-right
           .checkbox
             label
-              input#remember-me[type="checkbox"] Remember me
+              = f.check_box :remember_me
+              | Remember me
