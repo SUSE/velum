@@ -36,4 +36,21 @@ class Pillar < ApplicationRecord
   validates :value, presence: true
 
   scope :global, -> { where minion_id: nil }
+
+  class << self
+    def value(pillar:)
+      Pillar.find_by(pillar: all_pillars[pillar]).try(:value)
+    end
+
+    def all_pillars
+      {
+        company_name: "certificate_information.subject_properties.O",
+        company_unit: "certificate_information.subject_properties.OU",
+        email:        "certificate_information.subject_properties.Email",
+        country:      "certificate_information.subject_properties.C",
+        state:        "certificate_information.subject_properties.ST",
+        city:         "certificate_information.subject_properties.L"
+      }
+    end
+  end
 end

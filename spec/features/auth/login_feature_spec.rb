@@ -13,14 +13,14 @@ feature "Login feature" do
     expect(page).not_to have_content("You need to sign in or sign up before continuing.")
   end
 
-  scenario "Existing user is able using his login and password to login into Portus" do
+  scenario "Existing user is able using his login and password to login into velum" do
     # We don't use Capybara's `login_as` method on purpose, because we are
     # testing the UI for logging in.
     fill_in "user_email", with: user.email
     fill_in "user_password", with: user.password
     find("input[type=submit]").click
 
-    expect(page).to have_content("Dashboard")
+    expect(page).to have_content("Configuration")
   end
 
   scenario "Wrong password results in an error message" do
@@ -37,17 +37,17 @@ feature "Login feature" do
   end
 
   scenario "User is redirected to the login page when trying to access a protected page" do
-    visit nodes_path
+    visit setup_path
     expect(page).to have_content("You need to sign in or sign up before continuing.")
   end
 
   scenario "Successful login when trying to access a page redirects back the guest" do
-    visit nodes_path
+    visit setup_path
 
     fill_in "user_email", with: user.email
     fill_in "user_password", with: user.password
     find("input[type=submit]").click
 
-    expect(current_path).to eq nodes_path
+    expect(current_path).to eq setup_path
   end
 end

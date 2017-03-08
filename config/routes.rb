@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 Rails.application.routes.draw do
-  get "updates/index"
-  get "nodes/index"
-
   devise_for :users, controllers: { registrations: "auth/registrations",
                                     sessions:      "auth/sessions" }
 
@@ -16,12 +13,11 @@ Rails.application.routes.draw do
     root to: "auth/sessions#new"
   end
 
-  resources :nodes, only: [:index, :show, :destroy] do
-    collection do
-      put :update, action: "update_nodes"
-      post :bootstrap
-    end
+  namespace :setup do
+    get "/", action: :welcome
+    match "/", action: :configure, via: [:put, :patch]
+    get :"worker-bootstrap"
+    get :discovery
+    post :bootstrap
   end
-  resources :updates, only: [:index]
-  resources :admin, only: [:index]
 end
