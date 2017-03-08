@@ -1,20 +1,23 @@
-section.sign-up
-  .center-panel
-    .col-md-4.col-sm-2.col-xs-1
-    .col-md-4.col-sm-8.col-xs-10.text-center
-      div
-        = resource.errors.full_messages.to_sentence
-
-      = render 'shared/notifications'
-
-      = form_for(resource, as: resource_name, url: user_registration_path, :html => {:autocomplete => "off"}) do |f|
-
-        = f.email_field :email, autofocus: true, class: 'form-control input-lg', placeholder: 'Email', required: true
-        = f.password_field :password, class: 'form-control input-lg', placeholder: 'Password (8 characters min.)', required: true
-        = f.password_field :password_confirmation, class: 'form-control input-lg last', placeholder: 'Password again', required: true
-
-        button.btn.btn-primary.btn-block.btn-lg type="submit"
-          i.fa.fa-check
-            |  Create admin
-        - if @have_users
-          .text-center = link_to 'I already have an account. Login.', new_user_session_path, id: "sign-in", class: 'btn btn-link'
+.row
+  .col-sm-6
+    h1.Raleway-font.green-dark
+      | SUSE
+      br
+      small Containers as a Service Platform
+    p.margins-updown
+      | Ut non dapibus lacus. Donec eu imperdiet sem, sit amet ultrices augue. Cras a auctor dolor, vitae aliquet leo. 
+    p
+      | I already have an account.
+      = link_to 'Log in', new_user_session_path, id: "sign-in", class: 'btn btn-default'
+  .col-sm-4.col-sm-offset-1
+    h2.Raleway-font
+      | Sign Up
+    form.margins-updown
+      .form-group
+        input.form-control[type="email" placeholder="Select your username"]
+      .form-group
+        input.form-control[type="password" placeholder="Select your password"]
+      .form-group
+        input.form-control[type="password" placeholder="Confirm your password"]
+      button.btn.btn-success.btn-block
+        | Create Admin
