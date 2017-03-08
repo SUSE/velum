@@ -1,0 +1,21 @@
+diff -Naur a/Gemfile.lock b/Gemfile.lock
+--- a/Gemfile.lock	2017-03-08 11:25:41.560269944 +0100
++++ b/Gemfile.lock	2017-03-08 11:26:30.536272280 +0100
+@@ -112,7 +112,7 @@
+       addressable (>= 2.4)
+     kubeclient (2.3.0)
+       http (= 0.9.8)
+-      recursive-open-struct (= 1.0.0)
++      recursive-open-struct (~> 1.0.0)
+       rest-client
+     loofah (2.0.3)
+       nokogiri (>= 1.5.9)
+@@ -175,7 +175,7 @@
+       thor (>= 0.18.1, < 2.0)
+     rainbow (2.2.1)
+     rake (12.0.0)
+-    recursive-open-struct (1.0.0)
++    recursive-open-struct (1.0.2)
+     responders (2.3.0)
+       railties (>= 4.2.0, < 5.1)
+     rest-client (2.0.0)
