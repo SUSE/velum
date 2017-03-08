@@ -14,37 +14,45 @@ $suse-brand-yellow:        #ffef8d;
 $suse-brand-orange:        #fd9a2b;
 $suse-brand-red:           #a42800;
 
+$font-raleway-family:     Raleway, sans-serif;
+$font-weight-light:       300;
+
 
 // Bootstrap Variables
-$brand-success:                   $suse-brand-green;
+$brand-success:                     $suse-brand-green;
 
-$btn-default-color:               $suse-brand-green;
-$btn-default-bg:                  transparent;
-$btn-default-border:              $suse-brand-green;
+$btn-default-color:                 $suse-brand-green;
+$btn-default-bg:                    transparent;
+$btn-default-border:                $suse-brand-green;
 
-$link-color:                      $suse-brand-gray-lighter;
-$link-hover-color:                darken($suse-brand-green, 6.5%);
-$link-hover-decoration:           underline;
+$link-color:                        $suse-brand-gray-lighter;
+$link-hover-color:                  darken($suse-brand-green, 6.5%);
+$link-hover-decoration:             underline;
 
 // Login page colours
-$velum-login-title-color:         $suse-brand-green;
-$velum-login-title-size:          52px;
+$velum-login-title-color:           $suse-brand-green;
+$velum-login-title-font-family:     $font-raleway-family;
+$velum-login-title-font-size:       52px;
+$velum-login-title-font-weight:     $font-weight-light;
+$velum-login-subtitle-font-family:  $font-raleway-family;
+$velum-login-subtitle-font-size:    32px;
+$velum-login-subtitle-font-weight:  $font-weight-light;
 
-$velum-login-text-color:          $suse-brand-gray-lighter;
+$velum-login-text-color:            $suse-brand-gray-lighter;
 
-$velum-link-hover-login:          $suse-brand-green;
-$velum-header-login:              $suse-brand-blue;
-$velum-background-login:          $suse-brand-blue-light;
+$velum-link-hover-login:            $suse-brand-green;
+$velum-header-login:                $suse-brand-blue;
+$velum-background-login:            $suse-brand-blue-light;
 
 
-$velum-input-login-background:    darken($velum-background-login, 4%);
-$velum-input-login-shadow-inset:  darken($velum-background-login, 8%);
-$velum-input-login-shadow:        lighten($velum-background-login, 8%);
-$velum-input-login-text:          $suse-brand-gray-light;
-$velum-input-login-color:         $suse-brand-white;
+$velum-input-login-background:      darken($velum-background-login, 4%);
+$velum-input-login-shadow-inset:    darken($velum-background-login, 8%);
+$velum-input-login-shadow:          lighten($velum-background-login, 8%);
+$velum-input-login-text:            $suse-brand-gray-light;
+$velum-input-login-color:           $suse-brand-white;
 
-$velum-hr-login-top:              darken($velum-background-login, 8%);
-$velum-hr-login-bottom:           lighten($velum-background-login, 8%);
+$velum-hr-login-top:                darken($velum-background-login, 8%);
+$velum-hr-login-bottom:             lighten($velum-background-login, 8%);
 
 $velum-login-footer-line:         $suse-brand-green;
 

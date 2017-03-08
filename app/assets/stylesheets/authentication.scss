@@ -1,5 +1,6 @@
 // Vendored fonts and styles.
 @import 'font-awesome';
+@import "raleway";
 
 // Core libraries.
 @import 'bootstrap-sprockets';
@@ -52,7 +53,9 @@ html {
       // Title & Product Description section
       h1 {
         color: $velum-login-title-color;
-        font-size: $velum-login-title-size;
+        font-family: $velum-login-title-font-family;
+        font-size: $velum-login-title-font-size;
+        font-weight: $velum-login-title-font-weight;
 
         small {
           color: $velum-login-title-color;
@@ -69,7 +72,9 @@ html {
 
       // Form Section
       h2 {
-        font-size: 32px;
+        font-family: $velum-login-subtitle-font-family;
+        font-size: $velum-login-subtitle-font-size;
+        font-weight: $velum-login-subtitle-font-weight;
       }
 
       input[type="email"],
