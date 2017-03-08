@@ -31,7 +31,7 @@ class Minion < ApplicationRecord
     end
     master = Minion.find(requested_master)
     # choose requested minions or all other than master
-    minions = Minion.where(id: requested_minions).where.not(id: requested_master)
+    minions = Minion.where(id: requested_minions)
 
     # assign master if requested
     {}.tap do |ret|

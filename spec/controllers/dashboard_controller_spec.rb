@@ -29,7 +29,7 @@ RSpec.describe DashboardController, type: :controller do
       expect(response.redirect_url).to eq "http://test.host/setup"
     end
 
-    it "shows a simple monitoring" do
+    it "shows a simple monitoring when roles have already been assigned" do
       sign_in user
       Minion.assign_roles!(roles: { master: Minion.first.id, minion: Minion.all[1..-1].map(&:id) })
       get :index

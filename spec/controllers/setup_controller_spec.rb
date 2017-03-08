@@ -24,7 +24,7 @@ RSpec.describe SetupController, type: :controller do
         sign_in user
 
         get :welcome
-        expect(response["Content-Type"].include?("application/json")).to be_falsey
+        expect(response["Content-Type"].include?("text/html")).to be true
       end
     end
   end

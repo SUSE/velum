@@ -39,9 +39,7 @@ class Pillar < ApplicationRecord
 
   class << self
     def value(pillar:)
-      pillar = Pillar.find_by pillar: all_pillars[pillar]
-      return pillar.value if pillar
-      nil
+      Pillar.find_by(pillar: all_pillars[pillar]).try(:value)
     end
 
     def all_pillars
