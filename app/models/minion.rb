@@ -24,8 +24,11 @@ class Minion < ApplicationRecord
   #     default_role: :dns
   #   )
   def self.assign_roles!(roles: {}, default_role: :minion)
-    requested_master = roles[:master]
-    requested_minions = roles[:minion] || (Minion.unassigned_role.pluck(:id) - [requested_master])
+    requested_master = roles[:master].to_i
+    requested_minions =
+      roles[:minion] || Minion.unassigned_role.pluck(:id) - [requested_master]
+    requested_minions = requested_minions.map(&:to_i)
+
     if !requested_master.blank? && !Minion.exists?(id: requested_master)
       raise NonExistingMinion, "Failed to process non existing minion id: #{requested_master}"
     end
