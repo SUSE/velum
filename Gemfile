@@ -33,8 +33,6 @@ unless ENV["VELUM_IGNORE_ASSETS"] == "yes"
   gem "sass-rails", "~> 5.0"
   gem "bootstrap-sass"
   gem "uglifier", ">= 1.3.0"
-  gem "jquery-turbolinks"
-  gem "turbolinks"
 end
 
 # In order to create the Gemfile.lock required for packaging

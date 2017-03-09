@@ -10,7 +10,7 @@ feature "Logout feature" do
 
   scenario "Redirects to login screen" do
     click_link("Logout")
-    expect(current_url).to eq root_url
+    expect(page).to have_content("Log in")
   end
 
   scenario "After login guest redirects to login page when he attempts to access dashboard again" do

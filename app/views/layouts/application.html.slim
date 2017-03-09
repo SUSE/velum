@@ -28,3 +28,4 @@ html(lang='en')
               'SUSE CaaSP&reg; #{Rails.root.join("VERSION").read} | &copy; SUSE Linux #{Time.now.year}
 
     = javascript_include_tag 'application'
+    = yield :page_javascript

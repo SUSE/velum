@@ -13,6 +13,12 @@ VCR.configure do |c|
 
   # So code coverage reports can be submitted to codeclimate.com
   c.ignore_hosts "codeclimate.com"
+  # This is a test request used by Capybara to check if the server has finished
+  # booting.
+  # https://devmaheshwari.wordpress.com/2013/09/19/using-webmock-and-vcr-with-cucumber/
+  c.ignore_request do |request|
+    request.uri =~ /__identify__/
+  end
 
   # To debug when a VCR goes wrong.
   # c.debug_logger = $stdout
