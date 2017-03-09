@@ -10,25 +10,27 @@ h1 Nodes
   .col-xs-12.discovery-control
     span #{Minion.count} Nodes found
 = form_tag(setup_bootstrap_path, method: "post")
-.nodes-container
-  table.table
-    thead
-      tr
-        th
-          | Id
-        th
-          | Hostname
-        th.text-center
-          | Master
-    tbody
-      - Minion.all.each do |m|
+  .nodes-container data-url=setup_discovery_path
+    table.table
+      thead
         tr
           th
-            | #{m.id}
-          td
-            | #{m.hostname}
-          td.text-center
-            = radio_button_tag "roles[master]", m.id
-  .clearfix.text-right.steps-container
-    = link_to "Back", setup_worker_bootstrap_path, class: "btn btn-danger"
-    = submit_tag "Bootstrap cluster", class: "btn btn-primary"
+            | Id
+          th
+            | Hostname
+          th.text-center
+            | Master
+      tbody
+        - Minion.all.each do |m|
+          tr
+            th
+              | #{m.id}
+            td
+              | #{m.hostname}
+            td.text-center
+              = radio_button_tag "roles[master]", m.id
+    .clearfix.text-right.steps-container
+      = link_to "Back", setup_worker_bootstrap_path, class: "btn btn-danger"
+      = submit_tag "Bootstrap cluster", class: "btn btn-primary"
+
+= render "setup/polling"
