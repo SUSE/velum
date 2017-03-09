@@ -12,7 +12,6 @@
   .col-sm-4.col-sm-offset-1
     h2.Raleway-font
       | Sign Up
-    / form.margins-updown
     = form_for(resource, as: resource_name, url: user_registration_path, :html => {class: 'margins-updown', :autocomplete => "off"}) do |f|
 
       .form-group

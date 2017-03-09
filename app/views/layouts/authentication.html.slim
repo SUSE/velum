@@ -13,12 +13,10 @@ html
       .container
         .row
           .col-md-12
-            img.logo[src='/logo.svg']
+            = image_tag "logo.svg", class: "logo"
     section
       .container
         = yield
-
-    div
 
     footer
       .container
@@ -27,5 +25,5 @@ html
             .copyright
               | SUSE CaaSP&reg; #{Rails.root.join("VERSION").read} | &copy; SUSE Linux #{Time.now.year}
           .col-sm-3
-            .suse-logo-footer.pull-right
+            = image_tag "logo-footer.png", class: "suse-logo-footer pull-right"
       .bottom-line
