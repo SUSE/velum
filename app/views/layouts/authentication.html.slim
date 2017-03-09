@@ -25,7 +25,7 @@ html
         .row
           .col-sm-9
             .copyright
-              | SUSE CaaSP&reg; Version 0.1 | &copy; SUSE Linux 2017
+              | SUSE CaaSP&reg; #{Rails.root.join("VERSION").read} | &copy; SUSE Linux #{Time.now.year}
           .col-sm-3
             .suse-logo-footer.pull-right
       .bottom-line
