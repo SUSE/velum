@@ -37,11 +37,11 @@ describe "devise/registrations/new" do
   end
 
   context "login link" do
-    it "does not show the link if there's no user" do
+    it "shows the link if there's no user" do
       assign(:have_users, false)
       render
 
-      assert_select("#sign-in", count: 0)
+      assert_select("#sign-in", count: 1)
     end
 
     it "shows the link if there's a user already" do
@@ -49,7 +49,7 @@ describe "devise/registrations/new" do
       render
 
       section = assert_select("#sign-in")
-      l = link?(section[0], new_user_session_path, "I already have an account. Login.")
+      l = link?(section[0], new_user_session_path, "Log in")
       expect(l).to be_truthy
     end
   end

@@ -1,20 +1,26 @@
-section.sign-up
-  .center-panel
-    .col-md-4.col-sm-2.col-xs-1
-    .col-md-4.col-sm-8.col-xs-10.text-center
-      div
-        = resource.errors.full_messages.to_sentence
+.row
+  .col-sm-6
+    h1.Raleway-font
+      | SUSE
+      br
+      small Containers as a Service Platform
+    .margins-updown
+      p SUSE Container as a Service Platform allows you to provision, manage, and scale container-based applications.
+      p It automates your tedious management tasks allowing you to focus on development and writing apps to meet business goals.
+    p
+      | I already have an account.
+      = link_to 'Log in', new_user_session_path, id: "sign-in", class: 'btn btn-default'
+  .col-sm-4.col-sm-offset-1
+    h2.Raleway-font
+      | Sign Up
+    = form_for(resource, as: resource_name, url: user_registration_path, :html => {class: 'margins-updown', :autocomplete => "off"}) do |f|
 
-      = render 'shared/notifications'
+      .form-group
+        = f.email_field :email, autofocus: true, class: 'form-control', placeholder: 'Introduce your Email', required: true
+      .form-group
+        = f.password_field :password, class: 'form-control', placeholder: 'Select your password (8 characters min.)', required: true
+      .form-group
+        = f.password_field :password_confirmation, class: 'form-control', placeholder: 'Confirm your password', required: true
 
-      = form_for(resource, as: resource_name, url: user_registration_path, :html => {:autocomplete => "off"}) do |f|
-
-        = f.email_field :email, autofocus: true, class: 'form-control input-lg', placeholder: 'Email', required: true
-        = f.password_field :password, class: 'form-control input-lg', placeholder: 'Password (8 characters min.)', required: true
-        = f.password_field :password_confirmation, class: 'form-control input-lg last', placeholder: 'Password again', required: true
-
-        button.btn.btn-primary.btn-block.btn-lg type="submit"
-          i.fa.fa-check
-            |  Create admin
-        - if @have_users
-          .text-center = link_to 'I already have an account. Login.', new_user_session_path, id: "sign-in", class: 'btn btn-link'
+      button.btn.btn-success.btn-block
+        | Create Admin

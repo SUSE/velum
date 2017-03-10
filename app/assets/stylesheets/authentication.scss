@@ -1,0 +1,164 @@
+// Vendored fonts and styles.
+@import 'font-awesome';
+@import "raleway";
+
+// Core libraries.
+@import 'bootstrap-sprockets';
+@import 'authentication_variables.scss';
+@import 'bootstrap';
+
+
+html {
+  min-height: 100%;
+  position: relative;
+
+  // velum Login
+  body.dark-login {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: $velum-background-login;
+    color: $velum-login-text-color;
+    font-family: arial;
+    font-weight: normal;
+    margin-bottom: $velum-footer-height + $velum-footer-padding-top;
+
+    header {
+      background: $velum-header-login;
+      height: 60px;
+
+      .container,
+      .row {
+        height: 100%;
+      }
+
+      .row {
+        align-items: center;
+        display: flex;
+      }
+
+      .logo {
+        height: 60px;
+      }
+
+    }
+
+    section {
+      font-size: 16px;
+
+      > .container > .row {
+        margin-top: 7em;
+      }
+
+      // Title & Product Description section
+      h1 {
+        color: $velum-login-title-color;
+        font-family: $velum-login-title-font-family;
+        font-size: $velum-login-title-font-size;
+        font-weight: $velum-login-title-font-weight;
+
+        small {
+          color: $velum-login-title-color;
+        }
+      }
+
+      .margins-updown {
+        margin: 2em 0;
+      }
+
+      .btn.btn-default {
+        margin-left: 1em;
+      }
+
+      // Form Section
+      h2 {
+        font-family: $velum-login-subtitle-font-family;
+        font-size: $velum-login-subtitle-font-size;
+        font-weight: $velum-login-subtitle-font-weight;
+      }
+
+      input[type="email"],
+      input[type="text"],
+      input[type="password"] {
+        background: $velum-input-login-background;
+        border: 0;
+        box-shadow:         0px 1px 0px 0px $velum-input-login-shadow, 0px 1px 0px 0px $velum-input-login-shadow-inset inset;
+        -webkit-box-shadow: 0px 1px 0px 0px $velum-input-login-shadow, 0px 1px 0px 0px $velum-input-login-shadow-inset inset;
+           -moz-box-shadow: 0px 1px 0px 0px $velum-input-login-shadow, 0px 1px 0px 0px $velum-input-login-shadow-inset inset;
+        color: $velum-input-login-text;
+        margin-bottom: 1em;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      input:focus {
+        color: #fff;
+      }
+
+      input.form-control:-webkit-autofill,
+      input.form-control:-webkit-autofill:focus,
+      input.form-control:-webkit-autofill:hover,
+      input.form-control:-webkit-autofill:active {
+        background-color: $velum-input-login-background !important;
+        border: 1px solid $velum-input-login-shadow;
+        color: $velum-input-login-color;
+        -webkit-box-shadow: 0px 1px 0px 0px $velum-input-login-shadow-inset, 0px 0px 0px 1000px $velum-input-login-background inset !important;
+        -webkit-text-fill-color: $velum-input-login-color;
+      }
+
+      .login-options {
+        font-size: 0.8em;
+        margin-bottom: 16px;
+        margin-top: 16px;
+
+        a {
+          text-decoration: underline;
+        }
+        .checkbox {
+          margin: 0px;
+        }
+      }
+    }
+
+    footer {
+      bottom: 0;
+      height: $velum-footer-height;
+      position: absolute;
+      width: 100%;
+
+      .footer-links {
+        margin-top: 35px;
+      
+        & a {
+          color: #ccc;
+          font-size: 13px;
+          text-decoration: none;
+          text-shadow: 0px 0px 0px #000;
+
+          &:hover {
+            color: $suse-brand-green;
+          }
+          
+        }
+
+      }
+
+      .suse-logo-footer {
+        background: asset-url('/logo-footer.png');
+        height: 33px;
+        width: 70px;
+      }
+
+      .bottom-line {
+        background: $velum-login-footer-line;
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1fad7a ', endColorstr='#80c235 ',GradientType=1 ); /* IE6-9 */
+        height: 16px;
+        margin-top: 10px;
+        width: 100%;
+      }
+
+    }
+
+    a .icon-without-underline {
+      text-decoration: none;
+    }
+  }
+}

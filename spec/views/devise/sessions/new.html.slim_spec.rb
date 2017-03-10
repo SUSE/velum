@@ -12,7 +12,7 @@ describe "devise/sessions/new" do
     render
 
     section = assert_select("h2")
-    expect(section.text.strip).to eq "Log in"
+    expect(section.text.strip).to eq "Log In"
   end
 
   it "the email input is really an HTML email one" do
@@ -34,7 +34,7 @@ describe "devise/sessions/new" do
 
     # section[n]: 0 -> Log in; 1 -> Sign up
     section = assert_select("a")
-    expect(link?(section[1], new_user_registration_path, "Sign up")).to be_truthy
+    expect(link?(section[0], new_user_registration_path, "Create an account")).to be_truthy
   end
 
   it "will submit to the proper path" do

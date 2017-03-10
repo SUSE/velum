@@ -1,15 +1,29 @@
 doctype html
 html
   head
-    title Velum
-    = stylesheet_link_tag 'application', media: 'all'
+    title SUSE CaaSP: Velum
+    = stylesheet_link_tag 'authentication', media: 'all'
     = javascript_include_tag 'application'
     = csrf_meta_tags
     meta content="width=device-width, initial-scale=1" name="viewport"
     meta content="Velum" name="apple-mobile-web-app-title"
     meta content="Velum" name="application-name"
-    meta content="#da532c" name="msapplication-TileColor"
-    meta content="#205683" name="theme-color"
-  body.login
-    .container-fluid
-      = yield
+  body.dark-login
+    header
+      .container
+        .row
+          .col-md-12
+            = image_tag "logo.svg", class: "logo"
+    section
+      .container
+        = yield
+
+    footer
+      .container
+        .row
+          .col-sm-9
+            .copyright
+              | SUSE CaaSP&reg; #{Rails.root.join("VERSION").read} | &copy; SUSE Linux #{Time.now.year}
+          .col-sm-3
+            = image_tag "logo-footer.png", class: "suse-logo-footer pull-right"
+      .bottom-line
