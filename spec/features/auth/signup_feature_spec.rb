@@ -31,6 +31,7 @@ feature "Signup feature" do
     expect(page).to have_content("You have signed up successfully")
   end
 
+  # rubocop:disable RSpec/ExampleLength
   scenario "It reports a wrong email format" do
     pending("fix the validations")
     fill_in "user_email", with: "gibberish"
@@ -50,4 +51,5 @@ feature "Signup feature" do
 
     expect(page).to have_content("Password confirmation doesn't match Password")
   end
+  # rubocop:enable RSpec/ExampleLength
 end
