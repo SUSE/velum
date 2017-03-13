@@ -96,6 +96,10 @@ mkdir %{buildroot}/%{velumdir}/log
 rm -rf %{buildroot}/%{velumdir}/tmp
 mkdir %{buildroot}/%{velumdir}/tmp
 
+# remove any .orig files that might have been created by a successful patch with an offset
+# unfortunately there is no option to patch that prevents that
+rm -rf %{buildroot}/%{velumdir}/Gemfile.lock.orig
+
 %fdupes %{buildroot}/%{velumdir}
 
 %pre
