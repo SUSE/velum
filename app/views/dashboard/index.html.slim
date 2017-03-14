@@ -1,7 +1,11 @@
-h1 Simple Monitoring
+h1 Cluster Status
 .row
   .col-xs-12.discovery-control
-    span #{Minion.count} Nodes found
+    span#unassigned_count
+      - if (unassigned = @unassigned_minions.count) > 0
+        = unassigned
+        strong  new
+        | nodes are available but have not been added to the cluster yet
 .nodes-container data-url=authenticated_root_path
   table.table
     thead
