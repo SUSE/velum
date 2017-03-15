@@ -1,6 +1,6 @@
 div [id="#{float == true ? 'float' : 'fixed'}-alert" class="#{messages && messages.first ? '' : 'collapse'}"]
   .alert.alert-dismissible.fade.in.text-left[class="alert-#{alert == 'alert' ? 'danger' : 'info'} #{float == true ? 'float-alert' : ''}"]
-    button.close class="alert-hide" type="button"
+    button.close class="alert-hide" type="button" data-dismiss="alert"
       span aria-hidden="true" &times;
       span.sr-only Close
     .alert-message
