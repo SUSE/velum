@@ -1,0 +1,26 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "SSL Verification Bypass",
+      "warning_code": 71,
+      "fingerprint": "fcd6d876d77ab745b6d968b6e91bd07a4390469664220843227a10672aad89f4",
+      "check_name": "SSLVerify",
+      "message": "SSL certificate verification was bypassed",
+      "file": "lib/velum/suse_connect.rb",
+      "line": 113,
+      "link": "http://brakemanscanner.org/docs/warning_types/ssl_verification_bypass/",
+      "code": "Net::HTTP.start(URI.join(@smt_url, endpoint).hostname, URI.join(@smt_url, endpoint).port, :open_timeout => 2, :use_ssl => (URI.join(@smt_url, endpoint).scheme == \"https\"), :verify_mode => (OpenSSL::SSL::VERIFY_NONE))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Velum::SUSEConnect",
+        "method": "perform_request"
+      },
+      "user_input": null,
+      "confidence": "High",
+      "note": ""
+    }
+  ],
+  "updated": "2017-03-22 17:44:12 +0000",
+  "brakeman_version": "3.5.0"
+}
