@@ -8,6 +8,24 @@ body {
     height: 100%;
 }
 
+.btn-logout {
+    border: 1px solid #02AB74;
+    color: #00BF81;
+    margin-top: 12px;
+}
+
+.btn-logout:hover {
+    color: #ffffff;
+}
+
+.btn-table {
+    margin-bottom: 5px;
+}
+
+.alert {
+    margin-bottom: 0px;
+}
+
 .container {
     background-color: $velum-container-bg;
     min-height: 100%;
