@@ -12,8 +12,8 @@ module Velum
     # Returns two values:
     #   - The response object.
     #   - A hash containing the parsed JSON response.
-    def self.call(action:, targets: "*", arg: nil)
-      hsh = { tgt: targets, fun: action, client: "local" }
+    def self.call(action:, targets: "*", target_type: "glob", arg: nil)
+      hsh = { tgt: targets, fun: action, expr_form: target_type, client: "local" }
       hsh[:arg] = arg if arg
 
       res = perform_request(endpoint: "/", method: "post", data: hsh)
