@@ -4,4 +4,4 @@ header.row
         h2 SUSE&reg; Container as a Service Platform
     .col-xs-6
       - if user_signed_in?
-      = link_to('Logout', destroy_user_session_path, class: "btn btn-default pull-right", :method => :delete)
+      = link_to('Logout', destroy_user_session_path, class: "btn btn-logout pull-right", :method => :delete)
