@@ -18,7 +18,7 @@
       .form-group
         = f.email_field :email, autofocus: true, class: 'form-control', placeholder: 'Introduce your Email', required: true
       .form-group
-        = f.password_field :password, class: 'form-control', placeholder: 'Select your password (8 characters min.)', required: true
+        = f.password_field :password, class: 'form-control', pattern: "^.{#{Devise.password_length.begin},#{Devise.password_length.end}}$", placeholder: "Select your password (#{Devise.password_length.begin} characters min.)", required: true
       .form-group
         = f.password_field :password_confirmation, class: 'form-control', placeholder: 'Confirm your password', required: true
 
