@@ -12,6 +12,18 @@ html {
   min-height: 100%;
   position: relative;
 
+  .container {
+    .alert {
+        margin-top: $line-height-computed;
+        margin-bottom: 0px;
+
+        i {
+            bottom: 10px;
+            position: relative;
+        }
+    }
+  }
+
   // velum Login
   body.dark-login {
     -webkit-font-smoothing: antialiased;
