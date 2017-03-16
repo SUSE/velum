@@ -14,6 +14,9 @@ html
         .row
           .col-md-12
             = image_tag "logo.svg", class: "logo"
+        .row
+          .col-xs-12
+            = render :partial => "shared/notifications"
     section
       .container
         = yield

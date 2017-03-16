@@ -38,7 +38,6 @@ feature "Login feature" do
   end
 
   scenario "User is redirected to the login page when trying to access a protected page" do
-    pending("Fix the flash messages")
     visit setup_path
     expect(page).to have_content("You need to sign in or sign up before continuing.")
   end

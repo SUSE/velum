@@ -13,12 +13,19 @@
   .col-sm-4.col-sm-offset-1
     h2.Raleway-font
       | Sign Up
+    - if resource.errors.any?
+      .alert.alert-dismissible.fade.in.text-left[class="alert-danger"]
+        button.close class="alert-hide" type="button" data-dismiss="alert"
+          span aria-hidden="true" &times;
+          span.sr-only Close
+        .alert-message
+          span= resource.errors.full_messages.join(", ")
     = form_for(resource, as: resource_name, url: user_registration_path, :html => {class: 'margins-updown', :autocomplete => "off"}) do |f|
 
       .form-group
         = f.email_field :email, autofocus: true, class: 'form-control', placeholder: 'Introduce your Email', required: true
       .form-group
-        = f.password_field :password, class: 'form-control', placeholder: 'Select your password (8 characters min.)', required: true
+        = f.password_field :password, class: 'form-control', pattern: "^.{#{Devise.password_length.begin},#{Devise.password_length.end}}$", placeholder: "Select your password (#{Devise.password_length.begin} characters min.)", required: true
       .form-group
         = f.password_field :password_confirmation, class: 'form-control', placeholder: 'Confirm your password', required: true
 
