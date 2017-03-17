@@ -2,11 +2,15 @@
 require "rails_helper"
 
 RSpec.describe DashboardController, type: :controller do
-  let(:user)   { create(:user) }
-  let(:minion) { create(:minion) }
+  let(:user)                  { create(:user) }
+  let(:minion1)               { create(:minion) }
+  let(:minion2)               { create(:minion) }
+  let(:master_minion)         { create(:master_minion) }
+  let(:master_applied_minion) { create(:master_applied_minion) }
+  let(:worker_minion)         { create(:worker_minion) }
 
   before do
-    Minion.create! [{ hostname: "master" }, { hostname: "minion0" }]
+    minion1 && minion2 # Create two minions (no roles assigned)
     # rubocop:disable RSpec/AnyInstance
     [:minion, :master].each do |role|
       allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(role)
@@ -31,7 +35,8 @@ RSpec.describe DashboardController, type: :controller do
 
     it "shows a simple monitoring when roles have already been assigned" do
       sign_in user
-      Minion.assign_roles!(roles: { master: Minion.first.id, minion: Minion.all[1..-1].map(&:id) })
+      # Create a master minion and a worker minion
+      master_minion && worker_minion
       get :index
       expect(response.status).to eq 200
     end
@@ -40,7 +45,8 @@ RSpec.describe DashboardController, type: :controller do
   describe "GET / via JSON" do
     before do
       sign_in user
-      Minion.assign_roles!(roles: { master: Minion.first.id, minion: Minion.all[1..-1].map(&:id) })
+      # Create a master minion and a worker minion
+      master_minion && worker_minion
       request.accept = "application/json"
     end
 
@@ -49,6 +55,35 @@ RSpec.describe DashboardController, type: :controller do
       expect(response).to have_http_status(:ok)
       ["assigned_minions", "unassigned_minions"].each do |key|
         expect(JSON.parse(response.body).key?(key)).to be true
+      end
+    end
+  end
+
+  describe "GET /kubectl-config" do
+    it "gets redirected if not logged in" do
+      get :kubectl_config
+      expect(response.status).to eq 302
+    end
+
+    context "YAML delivery" do
+      before do
+        sign_in user
+        # Create a master with an applied highstate and a worker minion
+        master_applied_minion && worker_minion
+      end
+
+      it "returns a 302 if the orchestration didn't yet finish" do
+        VCR.use_cassette("kubeconfig/cluster_not_ready", record: :none) do
+          get :kubectl_config
+          expect(response.status).to eq 302
+        end
+      end
+
+      it "renders the kubeconfig file if the orchestration did finish" do
+        VCR.use_cassette("kubeconfig/cluster_ready", record: :none) do
+          get :kubectl_config
+          expect(response.status).to eq 200
+        end
       end
     end
   end

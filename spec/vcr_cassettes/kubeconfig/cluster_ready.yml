@@ -1,0 +1,320 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://127.0.0.1:8000/login
+    body:
+      encoding: UTF-8
+      string: '{"username":"saltapi","password":"saltapi","eauth":"pam"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '217'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Fri, 17 Mar 2017 17:11:43 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Auth-Token:
+      - 0c832271d2d2bf812deeb6ae4f3fdff1b9653494
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=0c832271d2d2bf812deeb6ae4f3fdff1b9653494; expires=Sat, 18 Mar 2017
+        03:11:43 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"perms": [".*", "@wheel", "@runner", "@jobs", "@events"],
+        "start": 1489770703.956928, "token": "0c832271d2d2bf812deeb6ae4f3fdff1b9653494",
+        "expire": 1489813903.956929, "user": "saltapi", "eauth": "pam"}]}'
+    http_version: 
+  recorded_at: Fri, 17 Mar 2017 17:11:43 GMT
+- request:
+    method: post
+    uri: http://127.0.0.1:8000/
+    body:
+      encoding: UTF-8
+      string: '{"tgt":"ca","fun":"mine.get","expr_form":"glob","client":"local","arg":["ca","x509.get_pem_entries"]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Auth-Token:
+      - 0c832271d2d2bf812deeb6ae4f3fdff1b9653494
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '2605'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Cache-Control:
+      - private
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Fri, 17 Mar 2017 17:11:43 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=0c832271d2d2bf812deeb6ae4f3fdff1b9653494; expires=Sat, 18 Mar 2017
+        03:11:43 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"ca": {"ca": {"/etc/pki/ca.crt": "-----BEGIN CERTIFICATE-----\n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\n-----END
+        CERTIFICATE-----\n"}}}]}'
+    http_version: 
+  recorded_at: Fri, 17 Mar 2017 17:11:44 GMT
+- request:
+    method: post
+    uri: http://127.0.0.1:8000/login
+    body:
+      encoding: UTF-8
+      string: '{"username":"saltapi","password":"saltapi","eauth":"pam"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '217'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Fri, 17 Mar 2017 17:11:44 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Auth-Token:
+      - 6d6c931dd88d589885ebaa15172dbe8d75d40254
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=6d6c931dd88d589885ebaa15172dbe8d75d40254; expires=Sat, 18 Mar 2017
+        03:11:44 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"perms": [".*", "@wheel", "@runner", "@jobs", "@events"],
+        "start": 1489770704.158746, "token": "6d6c931dd88d589885ebaa15172dbe8d75d40254",
+        "expire": 1489813904.158747, "user": "saltapi", "eauth": "pam"}]}'
+    http_version: 
+  recorded_at: Fri, 17 Mar 2017 17:11:44 GMT
+- request:
+    method: post
+    uri: http://127.0.0.1:8000/
+    body:
+      encoding: UTF-8
+      string: '{"tgt":"roles:kube-master","fun":"cmd.run","expr_form":"grain","client":"local","arg":"cat
+        /etc/pki/minion.crt"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Auth-Token:
+      - 6d6c931dd88d589885ebaa15172dbe8d75d40254
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '2713'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Cache-Control:
+      - private
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Fri, 17 Mar 2017 17:11:44 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=6d6c931dd88d589885ebaa15172dbe8d75d40254; expires=Sat, 18 Mar 2017
+        03:11:44 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"minion0.k8s.local": "-----BEGIN CERTIFICATE-----\nMIIHbTCCBVWgAwIBAgIJAOK4kAUkzEZ+MA0GCSqGSIb3DQEBCwUAMIGwMQswCQYD\nVQQGEwJFUzESMBAGA1UEAwwJazhzLmxvY2FsMQ8wDQYDVQQHDAZNYWRyaWQxDzAN\nBgNVBAgMBk1hZHJpZDETMBEGA1UECgwKTXkgQ29tcGFueTENMAsGA1UEKgwETm9u\nZTERMA8GA1UECwwIU2VjdXJpdHkxJTAjBgkqhkiG9w0BCQEWFnNlY3VyaXR5QG15\nY29tcGFueS5jb20xDTALBgNVBAQMBE5vbmUwHhcNMTcwMzE3MTcwOTU0WhcNMTcw\nNjI1MTcwOTU0WjCBuDELMAkGA1UEBhMCRVMxGjAYBgNVBAMMEW1pbmlvbjAuazhz\nLmxvY2FsMQ8wDQYDVQQHDAZNYWRyaWQxDzANBgNVBAgMBk1hZHJpZDETMBEGA1UE\nCgwKTXkgQ29tcGFueTENMAsGA1UEKgwETm9uZTERMA8GA1UECwwIU2VjdXJpdHkx\nJTAjBgkqhkiG9w0BCQEWFnNlY3VyaXR5QG15Y29tcGFueS5jb20xDTALBgNVBAQM\nBE5vbmUwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQCylGghdb0Fptwb\nCf/+t7o1P3gkUOBlL/DEd4CZgFXUpejIc1/PCeQI0QQFSoUPgS4E0VsychW5DqYv\nK9gs2MGBVDLp1dnD66g7FqhT6w8qJ5D0Ggq5hKZ1y8DPNuqla0EPqzRv+P8+acE7\nW41vjb3e+aQ9QSU2Gk/BTbtP2R/6MgAUKTSGSmNj4tK/aEpfMeF29moeJukA4psk\noRydiMCwcLZClli5WMgpmFUB1hyokEw+junJKkctt0Z+Ar6izPARsab5b9/PXIP+\n2YdIy6upinIn1B/jnXXkX/2BDaxY/A0VixyZtf//Oc+UgwPa8KFUrMrR8XcN8ewx\n1dhyjge+rlGsi04sBALZF23BgsDg/kGvcW0hkm2H1opXOyU8aMbUkuONshLbbWrF\n/jW0h/US/i1IeTC5p4T0rCJLewN6pULhFMJvRztNDztszP0w7FVBs41GnXftZKLZ\nGRhslRNOSksCgcxdIb0FeYG8I0K7WqaTIuf4qA4Ii1i367Cc3fmE7E5WHwZij41z\nju6DJq83LR942iYy46kZoz/7V/3YmYGHDf1DD5TRQB6qDVXhM+u3jn/9LffBFLUx\n8OD5gV6u+loTDDl+OYDFoD1b0ZDZ6Up72x2HBZo9Bhomba289d/yzqtedk53aatu\nWPOHF7CJKqk2jdmcVTVc+r5OlOGTJwIDAQABo4IBfjCCAXowDAYDVR0TAQH/BAIw\nADAOBgNVHQ8BAf8EBAMCBSAwHQYDVR0OBBYEFA85YVXcSWNFVm3RhR5XLVO51fVq\nMIHkBgNVHSMEgdwwgdmAFPheYICcYVIwPWKBMVukFl6iXnZgoYG2pIGzMIGwMQsw\nCQYDVQQGEwJFUzESMBAGA1UEAwwJazhzLmxvY2FsMQ8wDQYDVQQHDAZNYWRyaWQx\nDzANBgNVBAgMBk1hZHJpZDETMBEGA1UECgwKTXkgQ29tcGFueTENMAsGA1UEKgwE\nTm9uZTERMA8GA1UECwwIU2VjdXJpdHkxJTAjBgkqhkiG9w0BCQEWFnNlY3VyaXR5\nQG15Y29tcGFueS5jb20xDTALBgNVBAQMBE5vbmWCCGZAanehokbxMFQGA1UdEQRN\nMEuCEW1pbmlvbjAuazhzLmxvY2FsgiRrdWJlcm5ldGVzLmRlZmF1bHQuc3ZjLmNs\ndXN0ZXIubG9jYWyHBKwVAAGHBH8AAAGHBAoRA+kwDQYJKoZIhvcNAQELBQADggIB\nAHFP4pweXlGIlVIO9i9hrKBUn0kWzogRXcte4R6WZz5yKdItEYGyuGpbE1jD3xAm\nKCRRuhKfjD0pEe5a0vV/YAn302vwZmIUkRq9yo+h2dKmXfGrL5c93b0x5fXtaMK2\nVST0svBfB3NqKHY3pzn9nYqSJ/wpsRVHmTvoZHiXiETD2JrCw9ULY/q6CChkjZam\n6k7oJXdkottVN4GFeXtUYOvbvJiehIOlsaYb1hIUmj93mQF8MAeQxMGDJEjX4sE0\nzFCtdkU7oVCd+LljIxEeZDgUSG5eupXZwfunyOWizGT/t72Aff62i65aXZg8cegH\nsol/XlVUA2OMKZhznaNIxmzLtDYPYDr13j83WSlrwLG6yNci50VYZZpgYc5Iv1WS\nriaSzY0vGq7IGRiGu7j7cH7mK35ZycgTzWa1+Dg/T4vGNrkOUDYQ+m8N6Img7uRm\nMx1SexhsiwV0ILqceELT/F8C5CbMeXR71YKGHOkFwlqKM5RyUJIxys+6zFiVCKwt\nCxTde+Rtvf4azwVydGRSCMQVahF+v+TQHUvOgIiauVoMA7nYVrMtERF9jac0ed2A\npqNbuIKybK3yM9Ef/wQUIXGnyCHGHtMDaAA+mMv4YqzxnHb/oUe92j9XbQDlAxXK\nt3jQwTuhhcY4tVA1/LKKA0dEyo0pS84ZJ90NmGi1gTuE\n-----END
+        CERTIFICATE-----"}]}'
+    http_version: 
+  recorded_at: Fri, 17 Mar 2017 17:11:44 GMT
+- request:
+    method: post
+    uri: http://127.0.0.1:8000/login
+    body:
+      encoding: UTF-8
+      string: '{"username":"saltapi","password":"saltapi","eauth":"pam"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '217'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Fri, 17 Mar 2017 17:11:44 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Auth-Token:
+      - 30a3216f5298c1475a987a10b64c1ae924c0482b
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=30a3216f5298c1475a987a10b64c1ae924c0482b; expires=Sat, 18 Mar 2017
+        03:11:44 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"perms": [".*", "@wheel", "@runner", "@jobs", "@events"],
+        "start": 1489770704.383051, "token": "30a3216f5298c1475a987a10b64c1ae924c0482b",
+        "expire": 1489813904.383051, "user": "saltapi", "eauth": "pam"}]}'
+    http_version: 
+  recorded_at: Fri, 17 Mar 2017 17:11:44 GMT
+- request:
+    method: post
+    uri: http://127.0.0.1:8000/
+    body:
+      encoding: UTF-8
+      string: '{"tgt":"roles:kube-master","fun":"cmd.run","expr_form":"grain","client":"local","arg":"cat
+        /etc/pki/minion.key"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Auth-Token:
+      - 30a3216f5298c1475a987a10b64c1ae924c0482b
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '3331'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Cache-Control:
+      - private
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Fri, 17 Mar 2017 17:11:44 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=30a3216f5298c1475a987a10b64c1ae924c0482b; expires=Sat, 18 Mar 2017
+        03:11:44 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"minion0.k8s.local": "-----BEGIN RSA PRIVATE KEY-----\n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\n-----END
+        RSA PRIVATE KEY-----"}]}'
+    http_version: 
+  recorded_at: Fri, 17 Mar 2017 17:11:44 GMT
+recorded_with: VCR 3.0.3

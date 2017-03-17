@@ -13,6 +13,8 @@ Rails.application.routes.draw do
     root to: "auth/sessions#new"
   end
 
+  get "/kubectl-config", to: "dashboard#kubectl_config"
+
   namespace :setup do
     get "/", action: :welcome
     match "/", action: :configure, via: [:put, :patch]

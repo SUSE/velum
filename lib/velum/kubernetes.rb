@@ -1,8 +1,35 @@
 # frozen_string_literal: true
+
+require "velum/salt"
+
 module Velum
   # Kubernetes deals with the Kubernetes integration of this application.
   class Kubernetes
     attr_reader :client
+
+    KubeConfig = Struct.new :host, :ca_crt, :client_crt, :client_key
+
+    # Returns the Kubernetes apiserver configuration. It returns a KubeConfig struct.
+    def self.kubeconfig
+      _, ca = Velum::Salt.call action:  "mine.get",
+                               targets: "ca",
+                               arg:     ["ca", "x509.get_pem_entries"]
+      _, apiserver_crt = Velum::Salt.call action:      "cmd.run",
+                                          targets:     "roles:kube-master",
+                                          target_type: "grain",
+                                          arg:         "cat /etc/pki/minion.crt"
+      _, apiserver_key = Velum::Salt.call action:      "cmd.run",
+                                          targets:     "roles:kube-master",
+                                          target_type: "grain",
+                                          arg:         "cat /etc/pki/minion.key"
+      host = Minion.master.applied.pluck(:hostname).first
+      # rubocop:disable Style/RescueModifier
+      ca_crt = ca["return"].first["ca"]["ca"]["/etc/pki/ca.crt"] rescue nil
+      client_crt = apiserver_crt["return"].first.values.first rescue nil
+      client_key = apiserver_key["return"].first.values.first rescue nil
+      # rubocop:enable Style/RescueModifier
+      KubeConfig.new host, ca_crt, client_crt, client_key
+    end
 
     def initialize
       host = ENV["VELUM_KUBERNETES_HOST"]
