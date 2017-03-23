@@ -163,6 +163,17 @@ RSpec.describe SetupController, type: :controller do
   end
 
   describe "PUT /setup via HTML" do
+    let(:settings_params) do
+      {
+        company_name: "SUSE Linux GmbH",
+        company_unit: "Research and development",
+        email:        "containers@suse.de",
+        country:      "DE",
+        state:        "Bavaria",
+        city:         "Nuremberg"
+      }
+    end
+
     context "when the user configures the cluster successfully" do
       before do
         sign_in user
@@ -170,7 +181,7 @@ RSpec.describe SetupController, type: :controller do
       end
 
       it "gets redirected to the setup_worker_bootstrap_path" do
-        put :configure, settings: { some: "setting" }
+        put :configure, settings: settings_params
         expect(response.redirect_url).to eq "http://test.host/setup/worker-bootstrap"
         expect(response.status).to eq 302
       end
@@ -183,14 +194,37 @@ RSpec.describe SetupController, type: :controller do
       end
 
       it "gets redirected to the setup_worker_bootstrap_path with an error" do
-        put :configure, settings: { some: "setting" }
-        expect(flash[:error]).to be_present
+        put :configure, settings: settings_params
+        expect(flash[:alert]).to be_present
         expect(response.redirect_url).to eq "http://test.host/setup/worker-bootstrap"
+      end
+    end
+
+    context "when the user doesn't specify any values" do
+      before do
+        sign_in user
+      end
+
+      it "warns and redirects to the setup_path" do
+        put :configure, settings: settings_params.each { |k, _v| settings_params[k] = "" }
+        expect(flash[:alert]).to be_present
+        expect(response.redirect_url).to eq "http://test.host/setup"
       end
     end
   end
 
   describe "PUT /setup via JSON" do
+    let(:settings_params) do
+      {
+        company_name: "SUSE Linux GmbH",
+        company_unit: "Research and development",
+        email:        "containers@suse.de",
+        country:      "DE",
+        state:        "Bavaria",
+        city:         "Nuremberg"
+      }
+    end
+
     context "when the user configures the cluster successfully" do
       before do
         sign_in user
@@ -199,7 +233,7 @@ RSpec.describe SetupController, type: :controller do
       end
 
       it "returns with 200" do
-        put :configure, settings: { some: "setting" }
+        put :configure, settings: settings_params
         expect(response).to have_http_status(:ok)
       end
     end
@@ -212,7 +246,19 @@ RSpec.describe SetupController, type: :controller do
       end
 
       it "returns unprocessable entity" do
-        put :configure, settings: { some: "setting" }
+        put :configure, settings: settings_params
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+
+    context "when the user doesn't specify any values" do
+      before do
+        sign_in user
+        request.accept = "application/json"
+      end
+
+      it "returns unprocessable entity" do
+        put :configure, settings: settings_params.each { |k, _v| settings_params[k] = "" }
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end

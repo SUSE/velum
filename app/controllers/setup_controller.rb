@@ -11,6 +11,7 @@ class SetupController < ApplicationController
 
   skip_before_action :redirect_to_setup
   before_action :redirect_to_dashboard
+  before_action :check_empty_settings, only: :configure
 
   def configure
     status = {}
@@ -27,7 +28,7 @@ class SetupController < ApplicationController
       if status[:failed_pillar]
         msg = "Failed to apply configuration to #{status[:failed_pillar].join(", ")}"
         format.html do
-          flash[:error] = msg
+          flash[:alert] = msg
           redirect_to setup_worker_bootstrap_path
         end
         format.json { render json: msg, status: :unprocessable_entity }
@@ -91,6 +92,17 @@ class SetupController < ApplicationController
         redirect_to setup_path
       end
       format.json { render json: exception.message, status: :not_found }
+    end
+  end
+
+  def check_empty_settings
+    return unless settings_params.values.any?(&:empty?)
+    respond_to do |format|
+      msg = "Please fill out all necessary form fields"
+      format.html do
+        redirect_to setup_path, alert: msg
+      end
+      format.json { render json: msg, status: :unprocessable_entity }
     end
   end
 end
