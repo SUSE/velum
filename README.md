@@ -1,7 +1,7 @@
 # Velum
 
 | master | Code Climate |
-|--------|------|--------------|
+|--------|--------------|
 | [![Build Status](https://travis-ci.org/kubic-project/velum.svg?branch=master)](https://travis-ci.org/kubic-project/velum) | [![Code Climate](https://codeclimate.com/github/kubic-project/velum/badges/gpa.svg)](https://codeclimate.com/github/kubic-project/velum) [![Test Coverage](https://codeclimate.com/github/kubic-project/velum/badges/coverage.svg)](https://codeclimate.com/github/kubic-project/velum/coverage) |
 
 Velum is a dashboard that manages your SUSE CaaSP cluster. With Velum, you will
