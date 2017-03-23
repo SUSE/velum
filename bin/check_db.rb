@@ -8,7 +8,7 @@
 
 def database_exists?
   ActiveRecord::Base.connection
-  if ActiveRecord::Base.connection.table_exists? 'schema_migrations'
+  if ActiveRecord::Base.connection.table_exists? "schema_migrations"
     puts "DB_READY"
   else
     puts "DB_EMPTY"
