@@ -8,6 +8,10 @@ gem "jbuilder", "~> 2.5"
 gem "jquery-rails"
 gem "slim"
 gem "font-awesome-rails"
+
+# NOTE: this is no longer needed in Rails 5. See
+# https://github.com/heroku/rails_stdout_logging#rails-5 for instructions on how
+# to transition.
 gem "rails_stdout_logging", group: [:development, :staging, :production]
 
 gem "bcrypt", "~> 3.1.7"
