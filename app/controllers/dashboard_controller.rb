@@ -36,7 +36,7 @@ class DashboardController < ApplicationController
   # fields that customer uses) and also skips the redirection to the setup process (when a worker
   # asks for the autoyast profile we will either serve it, or return an error).
   def autoyast
-    @controller_node = Socket.gethostname
+    @controller_node = request.host
     begin
       suse_connect_config = Rails.cache.fetch("SUSEConnect_config") do
         Velum::SUSEConnect.config
