@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 require "rails_helper"
 
+require "velum/suse_connect"
+
 RSpec.describe DashboardController, type: :controller do
   let(:user)                  { create(:user) }
   let(:minion1)               { create(:minion) }
@@ -55,6 +57,80 @@ RSpec.describe DashboardController, type: :controller do
       expect(response).to have_http_status(:ok)
       ["assigned_minions", "unassigned_minions"].each do |key|
         expect(JSON.parse(response.body).key?(key)).to be true
+      end
+    end
+  end
+
+  describe "GET /autoyast" do
+    before do
+      allow(Velum::SUSEConnect).to receive(:config).and_return(
+        Velum::SUSEConnect::SUSEConnectConfig.new("https://scc.suse.com", "validregcode")
+      )
+    end
+
+    it "if not logged in serves the autoyast content" do
+      VCR.use_cassette("suse_connect/caasp_registration_active", record: :none) do
+        get :autoyast
+        expect(response.status).to eq 200
+      end
+    end
+
+    context "when logged in" do
+      before do
+        sign_in user
+      end
+
+      it "serves the autoyast content" do
+        VCR.use_cassette("suse_connect/caasp_registration_active", record: :none) do
+          get :autoyast
+          expect(response.status).to eq 200
+        end
+      end
+    end
+
+    context "if the credentials are missing for SMT or SCC" do
+      before do
+        allow(Velum::SUSEConnect).to receive(:config).and_raise(
+          Velum::SUSEConnect::MissingCredentialsException
+        )
+      end
+
+      it "serves the autoyast content" do
+        VCR.use_cassette("suse_connect/caasp_registration_active", record: :none) do
+          get :autoyast
+          expect(response.status).to eq 200
+        end
+      end
+    end
+
+    context "if the registration code is missing" do
+      before do
+        allow(Velum::SUSEConnect).to receive(:config).and_raise(
+          Velum::SUSEConnect::MissingRegCodeException
+        )
+      end
+
+      it "serves the autoyast content" do
+        VCR.use_cassette("suse_connect/caasp_registration_active", record: :none) do
+          get :autoyast
+          expect(response.status).to eq 200
+        end
+      end
+    end
+
+    context "if there is a connectivity problem with SMT or SCC" do
+      before do
+        allow(Velum::SUSEConnect).to receive(:config).and_raise(
+          Velum::SUSEConnect::SCCConnectionException
+        )
+      end
+
+      it "renders a 503 status and a blank page" do
+        VCR.use_cassette("suse_connect/caasp_registration_active", record: :none) do
+          get :autoyast
+          expect(response.body).to be_blank
+          expect(response.status).to eq 503
+        end
       end
     end
   end

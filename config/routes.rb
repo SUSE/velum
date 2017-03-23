@@ -13,6 +13,7 @@ Rails.application.routes.draw do
     root to: "auth/sessions#new"
   end
 
+  get "/autoyast", to: "dashboard#autoyast"
   get "/kubectl-config", to: "dashboard#kubectl_config"
 
   namespace :setup do

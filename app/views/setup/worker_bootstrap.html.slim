@@ -12,20 +12,20 @@ h1 Bootstrap your Container as a Service Platform
 p
   | In order to complete the installation, it is necessary to bootstrap a few additional nodes, those will be the Kubernetes Master and Workers.
   |  This process leverages AutoYaST and is (almost) fully automated.
-  |  In case you are not familiar with it, you can find more information about AutoYaST in the 
+  |  In case you are not familiar with it, you can find more information about AutoYaST in the&nbsp;
   a href="https://www.suse.com/documentation/sles-12/singlehtml/book_autoyast/book_autoyast.html" official documentation.
-  |  The automatic installation gets invoked by adding autoyast=&lt;URL_TO_PROFILE&gt; to the kernel parameter list.
+  |  The automatic installation gets invoked by adding autoyast=#{autoyast_url} to the kernel parameter list.
   |  As installation media, you can use the very same image you bootstrapped the admin node with.
 
   |  A ready to use AutoYaST profile has been already generated for you during the bootstrap of the admin node.
   |  Bootstrap all the nodes you want to make part of this platform by adding the following boot parameter
-  |  autoyast=http://myserver/myconfig.xml
+  |  autoyast=#{autoyast_url}
 
 h2 Tips
 p
-  | You don't need to boot each node by hand. More information on how to embed an AutoYaST profile in your PXE environment is available 
+  | You don't need to boot each node by hand. More information on how to embed an AutoYaST profile in your PXE environment is available&nbsp;
   a href="https://www.suse.com/documentation/sles-12/singlehtml/book_autoyast/book_autoyast.html#bootmedium.pxe" here
-  | . Where http://myserver/myconfig.xml is the real, generated path to the AutoYaST profile served by the dashboard.
+  | . Where #{autoyast_url} is the real, generated path to the AutoYaST profile served by the dashboard.
 
 .clearfix.text-right.steps-container
   = link_to "Back", setup_path, class: "btn btn-danger"

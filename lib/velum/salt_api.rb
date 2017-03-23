@@ -1,26 +1,11 @@
 # frozen_string_literal: true
 require "net/http"
+require "velum/http_exceptions"
 
 module Velum
   # This class offers the integration between ruby and the Saltstack API.
   module SaltApi
     class SaltConnectionException < StandardError; end
-
-    HTTP_EXCEPTIONS = [
-      SocketError,
-      Errno::ETIMEDOUT,
-      Net::ReadTimeout,
-      Net::OpenTimeout,
-      Net::ProtocolError,
-      Errno::ECONNREFUSED,
-      Errno::EHOSTDOWN,
-      Errno::ECONNRESET,
-      Errno::ENETUNREACH,
-      Errno::EHOSTUNREACH,
-      Errno::ECONNABORTED,
-      OpenSSL::SSL::SSLError,
-      EOFError
-    ].freeze
 
     def self.included(base)
       base.extend(ClassMethods)
@@ -95,7 +80,7 @@ module Velum
 
         opts = { use_ssl: false, open_timeout: 2 }
         Net::HTTP.start(uri.hostname, uri.port, opts) { |http| http.request(req) }
-      rescue *HTTP_EXCEPTIONS => e
+      rescue *HTTPExceptions::EXCEPTIONS => e
         raise SaltConnectionException, e
       end
     end

@@ -28,7 +28,7 @@ script:
   - bundle exec rspec spec
   - bundle exec rubocop -V
   - bundle exec rubocop -F
-  - bundle exec brakeman -z -A
+  - bundle exec brakeman -c config/brakeman.ignore -z -A
 
 addons:
   code_climate:

@@ -29,7 +29,7 @@ describe Velum::SaltApi do
   end
 
   context "when a HTTP/socket error happens" do
-    before { allow(Net::HTTP).to receive(:start) { raise Errno::ECONNREFUSED } }
+    before { allow(Net::HTTP).to receive(:start).and_raise(Errno::ECONNREFUSED) }
 
     it "raises SaltConnectionException" do
       expect do
