@@ -62,10 +62,7 @@ do
         -e "s#\${salt_dir}#$salt_dir#" salt-templates/$template > salt/$template
 done
 
-if $(which kubelet >&/dev/null); then
-  log "Running setup-environment script"
-  bash setup-environment &
-else
+if ! $(which kubelet >&/dev/null); then
   log "To launch kubelet make sure to install kubernetes-node package first and run this script again..."
   exit 1
 fi
