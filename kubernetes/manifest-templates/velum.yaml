@@ -12,8 +12,6 @@ spec:
     env:
     - name: RAILS_ENV
       value: development
-    - name: SECRET_KEY_BASE
-      value: fc0ece3811c0b1e0118dd7d619b385955e3ed146b37315d67d1c2d201c42531da398941ef27aab42493fff23afcba540390a26db51b5889e96d850a14178aabdc1926c013936a3c41abdbeb696ce440685c5d7be3a6c548434699d526a9e37657a76a43ca975b824905fd949f7e8d50aa1196a58e7e79dcfb08e2e397ee4f7b7
     - name: RAILS_SERVE_STATIC_FILES
       value: "true"
     - name: VELUM_DB_HOST
@@ -50,8 +48,6 @@ spec:
       value: Worker_1
     - name: RAILS_ENV
       value: development
-    - name: SECRET_KEY_BASE
-      value: fc0ece3811c0b1e0118dd7d619b385955e3ed146b37315d67d1c2d201c42531da398941ef27aab42493fff23afcba540390a26db51b5889e96d850a14178aabdc1926c013936a3c41abdbeb696ce440685c5d7be3a6c548434699d526a9e37657a76a43ca975b824905fd949f7e8d50aa1196a58e7e79dcfb08e2e397ee4f7b7
     - name: VELUM_DB_HOST
       value: "127.0.0.1"
     - name: VELUM_DB_PORT
