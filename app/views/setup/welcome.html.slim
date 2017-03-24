@@ -9,21 +9,21 @@ h1 Initial CaaSP Configuration
 = form_for :settings, url: setup_path, method: :put do |f|
   .form-group
     = f.label :company_name, "Company Name"
-    = f.text_field :company_name, value: Pillar.value(pillar: :company_name), class: "form-control"
+    = f.text_field :company_name, value: Pillar.value(pillar: :company_name), class: "form-control", required: true
   .form-group
     = f.label :company_unit, "Company Unit"
-    = f.text_field :company_unit, value: Pillar.value(pillar: :company_unit), class: "form-control"
+    = f.text_field :company_unit, value: Pillar.value(pillar: :company_unit), class: "form-control", required: true
   .form-group
     = f.label :email, "E-Mail"
-    = f.text_field :email, value: Pillar.value(pillar: :email), class: "form-control"
+    = f.email_field :email, value: Pillar.value(pillar: :email), class: "form-control", required: true
   .form-group
     = f.label :country
-    = f.text_field :country, value: Pillar.value(pillar: :country), class: "form-control"
+    = f.text_field :country, value: Pillar.value(pillar: :country), class: "form-control", pattern: country_code_regex, required: true
   .form-group
     = f.label :state
-    = f.text_field :state, value: Pillar.value(pillar: :state), class: "form-control"
+    = f.text_field :state, value: Pillar.value(pillar: :state), class: "form-control", required: true
   .form-group
     = f.label :city
-    = f.text_field :city, value: Pillar.value(pillar: :city), class: "form-control"
+    = f.text_field :city, value: Pillar.value(pillar: :city), class: "form-control", required: true
   .clearfix.steps-container
     = submit_tag "Next", class: "btn btn-primary pull-right"
