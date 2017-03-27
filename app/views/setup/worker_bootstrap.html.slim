@@ -11,15 +11,15 @@ h1 Bootstrap your Container as a Service Platform
 
 p
   | In order to complete the installation, it is necessary to bootstrap a few additional nodes, those will be the Kubernetes Master and Workers.
-  | This process leverages AutoYaST and is (almost) fully automated.
-  | In case you are not familiar with it, you can find more information about AutoYaST in the&nbsp;
+  |  This process leverages AutoYaST and is (almost) fully automated.
+  |  In case you are not familiar with it, you can find more information about AutoYaST in the&nbsp;
   a href="https://www.suse.com/documentation/sles-12/singlehtml/book_autoyast/book_autoyast.html" official documentation.
-  | The automatic installation gets invoked by adding autoyast=#{autoyast_url} to the kernel parameter list.
-  | If you aren't under a PXE environment you can also use netsetup=dhcp kernel parameter for the network to be automatically configured using a reachable DHCP server.
-  | As installation media, you can use the very same image you bootstrapped the admin node with.
+  |  The automatic installation gets invoked by adding autoyast=#{autoyast_url} to the kernel parameter list.
+  |  If you aren't under a PXE environment you can also use netsetup=dhcp kernel parameter for the network to be automatically configured using a reachable DHCP server.
+  |  As installation media, you can use the very same image you bootstrapped the admin node with.
 
-  | A ready to use AutoYaST profile has already been generated for you during the bootstrap of the admin node.
-  | Bootstrap all the nodes you want to make part of this platform by adding the following boot parameter
+  |  A ready to use AutoYaST profile has already been generated for you during the bootstrap of the admin node.
+  |  Bootstrap all the nodes you want to make part of this platform by adding the following boot parameter
   | autoyast=#{autoyast_url}
 
 h2 Tips
