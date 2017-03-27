@@ -49,7 +49,8 @@ class Pillar < ApplicationRecord
         email:        "certificate_information.subject_properties.Email",
         country:      "certificate_information.subject_properties.C",
         state:        "certificate_information.subject_properties.ST",
-        city:         "certificate_information.subject_properties.L"
+        city:         "certificate_information.subject_properties.L",
+        dashboard:    "dashboard"
       }
     end
   end

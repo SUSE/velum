@@ -174,6 +174,12 @@ RSpec.describe SetupController, type: :controller do
       }
     end
 
+    it 'assigns the Pillar "dashboard" to the host of the request automatically' do
+      sign_in user
+      put :configure, settings: settings_params
+      expect(Pillar.find_by(pillar: "dashboard").value).to eq("test.host")
+    end
+
     context "when the user configures the cluster successfully" do
       before do
         sign_in user

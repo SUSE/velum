@@ -17,9 +17,11 @@ class SetupController < ApplicationController
     status = {}
 
     respond_to do |format|
+      auto_pillars = { dashboard: request.host }
+
       Pillar.all_pillars.each do |key, pillar_key|
         pillar = Pillar.find_or_initialize_by pillar: pillar_key
-        pillar.value = settings_params[key]
+        pillar.value = settings_params[key] || auto_pillars[key]
         next if pillar.save
         status[:failed_pillar] ||= []
         status[:failed_pillar].push(pillar.value)
