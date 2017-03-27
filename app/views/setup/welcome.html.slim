@@ -18,7 +18,10 @@ h1 Initial CaaSP Configuration
     = f.email_field :email, value: Pillar.value(pillar: :email), class: "form-control", required: true
   .form-group
     = f.label :country
-    = f.text_field :country, value: Pillar.value(pillar: :country), class: "form-control", pattern: country_code_regex, required: true
+    - if Pillar.value(pillar: :country)
+      = f.select :country, options_for_select(country_codes, Pillar.value(pillar: :country)), {}, class: "form-control"
+    - else
+      = f.select :country, country_codes, { include_blank: true }, class: "form-control"
   .form-group
     = f.label :state
     = f.text_field :state, value: Pillar.value(pillar: :state), class: "form-control", required: true
