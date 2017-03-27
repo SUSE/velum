@@ -31,6 +31,6 @@ h1 Nodes
               = radio_button_tag "roles[master]", m.id
     .clearfix.text-right.steps-container
       = link_to "Back", setup_worker_bootstrap_path, class: "btn btn-danger"
-      = submit_tag "Bootstrap cluster", class: "btn btn-primary"
+      = submit_tag "Bootstrap cluster", id: "bootstrap", class: "btn btn-primary"
 
 = render "setup/polling"

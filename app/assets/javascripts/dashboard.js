@@ -28,6 +28,13 @@ MinionPoller = {
         }
         $(".nodes-container tbody").html(rendered);
 
+        // disable bootstrap button if there are no minions
+        if (minions.length == 0) {
+          $("#bootstrap").prop('disabled', true);
+        } else {
+          $("#bootstrap").prop('disabled', false);
+        }
+
         var unassignedMinions = data.unassigned_minions;
 
         if (unassignedMinions.length > 0) {
