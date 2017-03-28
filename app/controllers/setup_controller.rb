@@ -12,6 +12,7 @@ class SetupController < ApplicationController
   skip_before_action :redirect_to_setup
   before_action :redirect_to_dashboard
   before_action :check_empty_settings, only: :configure
+  before_action :check_empty_bootstrap, only: :bootstrap
 
   def configure
     status = {}
@@ -103,6 +104,17 @@ class SetupController < ApplicationController
       msg = "Please fill out all necessary form fields"
       format.html do
         redirect_to setup_path, alert: msg
+      end
+      format.json { render json: msg, status: :unprocessable_entity }
+    end
+  end
+
+  def check_empty_bootstrap
+    return if params.try(:[], "roles").try(:[], "master")
+    respond_to do |format|
+      msg = "Please select a master node"
+      format.html do
+        redirect_to setup_discovery_path, alert: msg
       end
       format.json { render json: msg, status: :unprocessable_entity }
     end
