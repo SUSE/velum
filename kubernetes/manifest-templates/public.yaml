@@ -1,14 +1,17 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: salt
+  name: velum-public
   labels:
-    name: salt
+    name: velum-public
 spec:
   hostNetwork: true
   containers:
   - name: salt-master
     image: opensuse/salt-master:boron
+    env:
+    - name: MYSQL_UNIX_PORT
+      value: /var/run/mysqld/mysqld.sock
     volumeMounts:
     - mountPath: /etc/salt/master.d
       name: salt-master-config
@@ -20,6 +23,44 @@ spec:
       name: salt-pillar-vars
     - mountPath: /var/run/salt/master
       name: salt-sock-dir
+    - mountPath: /var/run/mysqld
+      name: mariadb-unix-socket
+  - name: velum-dashboard
+    image: opensuse/velum:development
+    env:
+    - name: RAILS_ENV
+      value: development
+    - name: RAILS_SERVE_STATIC_FILES
+      value: "true"
+    - name: VELUM_DB_HOST
+      value:
+    - name: VELUM_DB_USERNAME
+      value: "root"
+    - name: VELUM_DB_PASSWORD
+      value: "salt"
+    - name: VELUM_DB_SOCKET
+      value: /var/run/mysqld/mysqld.sock
+    - name: VELUM_SALT_HOST
+      value: "127.0.0.1"
+    - name: VELUM_SALT_PORT
+      value: "8000"
+    - name: VELUM_SALT_USER
+      value: saltapi
+    - name: VELUM_SALT_PASSWORD
+      value: saltapi
+    - name: VELUM_KUBERNETES_HOST
+      value:
+    - name: VELUM_KUBERNETES_PORT
+      value:
+    - name: VELUM_KUBERNETES_CERT_DIRECTORY
+      value:
+    volumeMounts:
+      - mountPath: /usr/src/app
+        name: velum-source-code
+      - mountPath: /var/run/mysqld
+        name: mariadb-unix-socket
+    command: ["/bin/sh","-c"]
+    args: ["bundle exec rails s -b 0.0.0.0 -p 3000 --pid /tmp/puma.pid Puma"]
   - name: salt-api
     image: opensuse/salt-api:boron
     volumeMounts:
@@ -37,6 +78,12 @@ spec:
     - mountPath: /etc/salt/grains
       name: salt-minion-ca-grains
   volumes:
+    - name: velum-source-code
+      hostPath:
+        path: ${project_dir}
+    - name: mariadb-unix-socket
+      hostPath:
+        path: ${project_dir}/kubernetes/tmp/mariadb-socket
     - name: salt-master-config
       hostPath:
         path: ${project_dir}/kubernetes/salt/config/master.d

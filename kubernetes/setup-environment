@@ -1,6 +1,9 @@
+#!/usr/bin/env bash
+set -e
+
 log()   { echo ">>> $1" ; }
 
-until netstat -antp | grep ":::3306" &> /dev/null;
+until docker exec -i $(docker ps | grep mariadb | awk '{print $1}') ls /var/run/mysqld/mysqld.sock &> /dev/null;
 do
     log "Waiting for mariadb database to be ready"
     sleep 5
@@ -8,8 +11,16 @@ done
 
 log "MariaDB container is ready"
 log "Setting up database"
-docker exec -i $(docker ps | grep velum-dashboard | awk '{print $1}') rake db:setup &> /dev/null
-docker exec -i $(docker ps | grep velum-dashboard | awk '{print $1}') bash -c "RAILS_ENV=test rake db:setup" &> /dev/null
+until docker exec -i $(docker ps | grep velum-dashboard | awk '{print $1}') rake db:setup;
+do
+    log "Waiting for mariadb to accept connections"
+    sleep 5
+done
+until docker exec -e RAILS_ENV=test -i $(docker ps | grep velum-dashboard | awk '{print $1}') rake db:setup;
+do
+    log "Waiting for mariadb to accept connections"
+    sleep 5
+done
 log "Cleaning up exited containers"
 docker ps -a | grep k8s | grep Exited | awk '{print $1}' | xargs docker rm  &> /dev/null
 
