@@ -97,6 +97,18 @@ RSpec.describe SetupController, type: :controller do
         expect(Velum::Salt).to have_received(:orchestrate).exactly(0).times
       end
     end
+
+    context "when the user bootstraps without selecting a master" do
+      before do
+        sign_in user
+      end
+
+      it "warns and redirects to the setup_discovery_path" do
+        put :bootstrap, settings: {}
+        expect(flash[:alert]).to be_present
+        expect(response.redirect_url).to eq "http://test.host/setup/discovery"
+      end
+    end
   end
 
   describe "POST /setup/bootstrap via JSON" do
@@ -158,6 +170,17 @@ RSpec.describe SetupController, type: :controller do
       it "doesn't call the orchestration" do
         post :bootstrap, roles: { master: Minion.first.id, minion: Minion.all[1..-1].map(&:id) }
         expect(Velum::Salt).to have_received(:orchestrate).exactly(0).times
+      end
+    end
+
+    context "when the user bootstraps without selecting a master" do
+      before do
+        sign_in user
+      end
+
+      it "warns and redirects to the setup_discovery_path" do
+        put :bootstrap, settings: {}
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
