@@ -77,6 +77,40 @@ spec:
       name: salt-minion-ca-signing-policies
     - mountPath: /etc/salt/grains
       name: salt-minion-ca-grains
+  - name: velum-event-processor
+    image: opensuse/velum:development
+    env:
+    - name: WORKER_ID
+      value: Worker_1
+    - name: RAILS_ENV
+      value: development
+    - name: VELUM_DB_HOST
+      value:
+    - name: VELUM_DB_USERNAME
+      value: "root"
+    - name: VELUM_DB_PASSWORD
+      value: "salt"
+    - name: VELUM_DB_SOCKET
+      value: /var/run/mysqld/mysqld.sock
+    - name: VELUM_SALT_HOST
+      value:
+    - name: VELUM_SALT_PORT
+      value:
+    - name: VELUM_SALT_USER
+      value:
+    - name: VELUM_KUBERNETES_HOST
+      value:
+    - name: VELUM_KUBERNETES_PORT
+      value:
+    - name: VELUM_KUBERNETES_CERT_DIRECTORY
+      value:
+    volumeMounts:
+      - mountPath: /usr/src/app
+        name: velum-source-code
+      - mountPath: /var/run/mysqld
+        name: mariadb-unix-socket
+    command: ["/bin/sh","-c"]
+    args: ["bundle exec bin/rake salt:process"]
   volumes:
     - name: velum-source-code
       hostPath:
