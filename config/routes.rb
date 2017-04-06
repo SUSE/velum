@@ -20,6 +20,8 @@ Rails.application.routes.draw do
     get "/", action: :welcome
     match "/", action: :configure, via: [:put, :patch]
     get :"worker-bootstrap"
+    get :ec2_configuration
+    put :update_ec2_configuration
     get :discovery
     post :bootstrap
   end

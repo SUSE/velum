@@ -5,4 +5,8 @@ class User < ApplicationRecord
                             :rememberable, :trackable, :validatable].freeze
 
   devise(*enabled_devise_modules)
+
+  def ec2_configuration_parsed
+    ec2_configuration ? JSON.parse(ec2_configuration) : {}
+  end
 end

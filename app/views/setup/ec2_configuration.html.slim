@@ -1,0 +1,38 @@
+= content_for :body_class, "ec2_configuration"
+.alert.alert-info.alert-dismissible role="alert"
+  button.close[type="button" data-dismiss="alert" aria-label="Close"]
+    span[aria-hidden="true"]
+      | &times;
+  i.fa.fa-4x.pull-left aria-hidden="true"
+  span Please provide the following information to provide access to your EC2 account.
+
+h1 EC2 configuration
+= form_for :ec2_configuration, url: setup_update_ec2_configuration_path, method: :put, multipart: true do |f|
+  .form-group
+    = f.label :keypair_id, "Keypair ID"
+    = f.text_field :keypair_id, value: @conf["id"], class: "form-control", required: true
+  .form-group
+    = f.label :keypair_key, "Keypair KEY"
+    = f.text_field :keypair_key, value: @conf["key"], class: "form-control", required: true
+  .form-group
+    = f.label :keypair_keyname, "Keypair keyname"
+    = f.text_field :keypair_keyname, value: @conf["keyname"], class: "form-control", required: true
+  .form-group
+    = f.label :master_hostname, "Master hostname"
+    = f.text_field :master_hostname, value: @conf["master"], class: "form-control", required: true
+  .form-group
+    = f.label :subnet_id, "Subnet ID"
+    = f.text_field :subnet_id, value: @conf["subnetid"], class: "form-control", required: true
+    p.help-block This field is optional. Use it if you want your minions to live inside a subnet
+  .form-group
+    = f.label :ssh_interface, "SSH interface"
+    = f.text_field :ssh_interface, value: @conf["ssh_interface"] || "public_ips", class: "form-control"
+  .form-group
+    = f.label :pem_key, "PEM key"
+    = f.file_field :pem_key, required: true
+  .form-group
+    = f.label :number_of_minions, "Number of minions"
+    = f.number_field :number_of_minions, class: "form-control", required: true
+
+  .clearfix.steps-container
+    = submit_tag "Next", class: "btn btn-primary pull-right"

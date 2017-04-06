@@ -42,6 +42,50 @@ class SetupController < ApplicationController
     end
   end
 
+  def ec2_configuration
+    @conf = current_user.ec2_configuration_parsed
+  end
+
+  def update_ec2_configuration
+    # Store pem key
+    uploaded_pem = ec2_configuration_params[:pem_key]
+    pem_key_path = Rails.root.join('tmp', 'pem_keys', uploaded_pem.original_filename).to_s
+    pem_key_path_in_master = "/pem_keys/#{uploaded_pem.original_filename}"
+    File.open(pem_key_path, 'wb'){ |file| file.write(uploaded_pem.read) }
+    FileUtils.chmod 0600, pem_key_path
+    #FileUtils.chown 'salt', nil, pem_key_path
+
+    # Store the cloud provider otherwise the "create" action won't work
+    create_ec2_provider('ec2-provider' => {
+      'id' => ec2_configuration_params.delete(:keypair_id),
+      'key' => ec2_configuration_params.delete(:keypair_key),
+      'keyname' => ec2_configuration_params.delete(:keypair_keyname),
+      'private_key' => pem_key_path_in_master,
+      'driver' => 'ec2'
+    })
+
+    # Store the rest of the configuration in the database
+    # TODO: Don't hardcode the path /pem_keys. This directory is tmp/pem_keys
+    # on host, tmp/pem_keys on dashboard container and /pem_keys on master
+    # container.
+    current_user.update!(
+      ec2_configuration: ec2_configuration_params.
+      except(:number_of_minions, :pem_key).
+      merge(pem_key_path: pem_key_path_in_master).to_json
+    )
+
+    ec2_configuration_params[:number_of_minions].to_i.times do |i|
+      Velum::Salt.spawn_minion_ec2({
+        instances: ["dkarakasilis_caasp_minion_#{i}"],
+        master: ec2_configuration_params[:master_hostname],
+        subnetid: ec2_configuration_params[:subnet_id],
+        ssh_interface: ec2_configuration_params[:ssh_interface]
+      })
+    end
+
+    redirect_to setup_discovery_path
+  end
+
   def discovery
     @minions = Minion.all
 
@@ -118,5 +162,24 @@ class SetupController < ApplicationController
       end
       format.json { render json: msg, status: :unprocessable_entity }
     end
+  end
+
+  private
+
+  # We need to store the provider information in a file where salt-cloud
+  # expects to find it (/etc/salt/cloud.providers.d/). We can't pass provider
+  # information to "cloud.create" action in salt-api.
+  # See /lib/velum/salt.rb file, spawn_minion_ec2 method.
+  def create_ec2_provider(conf)
+    provider_path = Rails.root.join(
+      'kubernetes', 'salt', 'cloud.providers.d', 'ec2.provider.conf').to_s
+
+    File.open(provider_path, 'w') { |file| file.write(YAML.dump(conf)) }
+  end
+
+  def ec2_configuration_params
+    params.require(:ec2_configuration).permit(
+      :keypair_id, :keypair_key, :keypair_keyname, :master_hostname,
+      :subnet_id, :ssh_interface, :pem_key, :number_of_minions)
   end
 end

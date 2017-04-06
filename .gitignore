@@ -14,3 +14,4 @@
 /kubernetes/salt/pillar
 /kubernetes/salt/config/minion.d/_schedule.conf
 /.vagrant
+vendor/bundle

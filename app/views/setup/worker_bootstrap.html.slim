@@ -31,3 +31,11 @@ p
 .clearfix.text-right.steps-container
   = link_to "Back", setup_path, class: "btn btn-danger"
   = link_to "Next", setup_discovery_path, class: "btn btn-primary"
+
+h2 EC2
+p
+  | If you prefer, you can provide us some information and we can spawn some node on Amazon EC2.
+  | Try it here:
+  br
+
+  = link_to "Configure EC2", setup_ec2_configuration_path, class: "btn btn-default"

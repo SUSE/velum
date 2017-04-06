@@ -20,6 +20,12 @@ spec:
       name: salt-pillar-vars
     - mountPath: /var/run/salt/master
       name: salt-sock-dir
+    - mountPath: /etc/salt/cloud.providers.d/
+      name: salt-cloud-providers
+    - mountPath: /pem_keys
+      name: salt-cloud-pem-keys
+    - mountPath: /usr/lib/python2.7/site-packages/salt/cloud/deploy/
+      name: salt-cloud-deploy-scripts
   - name: salt-api
     image: opensuse/salt-api:boron
     volumeMounts:
@@ -61,3 +67,12 @@ spec:
     - name: salt-minion-ca-signing-policies
       hostPath:
         path: ${project_dir}/kubernetes/salt/config/minion.d-ca/signing_policies.conf
+    - name: salt-cloud-providers
+      hostPath:
+        path: ${project_dir}/kubernetes/salt/cloud.providers.d/
+    - name: salt-cloud-pem-keys
+      hostPath:
+        path: ${project_dir}/tmp/pem_keys/
+    - name: salt-cloud-deploy-scripts
+      hostPath:
+        path: ${project_dir}/kubernetes/salt/cloud/deploy/

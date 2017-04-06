@@ -39,6 +39,8 @@ spec:
     volumeMounts:
       - mountPath: /usr/src/app
         name: velum-source-code
+      - mountPath: /usr/src/app/tmp/pem_keys
+        name: pem-keys
     command: ["/bin/sh","-c"]
     args: ["bundle exec rails s -b 0.0.0.0 -p 3000 --pid /tmp/puma.pid Puma"]
   - name: velum-event-processor
@@ -82,3 +84,6 @@ spec:
     - name: velum-source-code
       hostPath:
         path: ${project_dir}
+    - name: pem-keys
+      hostPath:
+        path: ${project_dir}/tmp/pem_keys
