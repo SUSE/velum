@@ -70,4 +70,4 @@ else
 fi
 
 log "Launching kubelet"
-sudo kubelet --config=$PWD/manifests --root-dir=$PWD/tmp --v=0 --address=127.0.0.1 --hostname-override=127.0.0.1 --allow-privileged=false
+sudo kubelet --pod-manifest-path=$PWD/manifests --root-dir=$PWD/tmp --v=0 --address=127.0.0.1 --hostname-override=127.0.0.1 --allow-privileged=false
