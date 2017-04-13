@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 log()   { echo ">>> $1" ; }
 
@@ -29,7 +30,7 @@ while (( $interactive_mode == 1)) ; do
   esac
 done
 
-./cleanup
+./cleanup || true
 
 default_interface=$(awk '$2 == 00000000 { print $1 }' /proc/net/route)
 ip_address=$(ip addr show $default_interface | awk '$1 == "inet" {print $2}' | cut -f1 -d/)
@@ -68,6 +69,11 @@ else
   log "To launch kubelet make sure to install kubernetes-node package first and run this script again..."
   exit 1
 fi
+
+# mariadb does not run as root, and therefore it cannot create its socket here by default, if the kubelet
+# creates this file.
+sudo mkdir -p $PWD/tmp/mariadb-socket
+sudo chmod 777 $PWD/tmp/mariadb-socket
 
 log "Launching kubelet"
 sudo kubelet --pod-manifest-path=$PWD/manifests --root-dir=$PWD/tmp --v=0 --address=127.0.0.1 --hostname-override=127.0.0.1 --allow-privileged=false
