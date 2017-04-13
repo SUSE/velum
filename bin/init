@@ -50,6 +50,7 @@ setup_database() {
   set -e
 }
 
+: ${VELUM_PORT:=80}
 setup_database
 bundle exec rake db:migrate
-bundle exec "rails s -b 0.0.0.0 -p 80 Puma"
+bundle exec "rails s -b 0.0.0.0 -p $VELUM_PORT Puma"

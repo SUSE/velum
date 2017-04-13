@@ -32,6 +32,8 @@ spec:
       value: development
     - name: RAILS_SERVE_STATIC_FILES
       value: "true"
+    - name: VELUM_PORT
+      value: "3000"
     - name: VELUM_DB_HOST
       value:
     - name: VELUM_DB_USERNAME
@@ -60,7 +62,7 @@ spec:
       - mountPath: /var/run/mysqld
         name: mariadb-unix-socket
     command: ["/bin/sh","-c"]
-    args: ["bundle exec rails s -b 0.0.0.0 -p 3000 --pid /tmp/puma.pid Puma"]
+    args: ["bin/init"]
   - name: salt-api
     image: opensuse/salt-api:boron
     volumeMounts:
