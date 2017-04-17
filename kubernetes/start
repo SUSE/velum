@@ -39,9 +39,8 @@ ip_address=$(ip addr show $default_interface | awk '$1 == "inet" {print $2}' | c
 # This can be used to point to different state files for orchestration.
 if [ -z ${SALT_DIR+x} ]
 then
-    log "You did not provide a SALT_DIR. $(dirname $PWD)/kubernetes/salt will be used..."
-    salt_dir="$(dirname $PWD)/kubernetes/salt"
-    sleep 5
+    log "You must provide a SALT_DIR, aborting"
+    exit 1
 else
     salt_dir=$SALT_DIR
 fi
