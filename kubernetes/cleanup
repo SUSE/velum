@@ -2,5 +2,11 @@
 
 log()   { echo ">>> $1" ; }
 
+[[ -d manifest-templates ]] || { echo >&2 "Please run this script from within the kubernetes folder"; exit 1; }
+
 log "Cleaning up old containers"
-docker ps -a | grep k8s | awk '{print $1}' | xargs docker rm -vf
+for i in `docker ps -a | grep k8s | awk '{print $1}'`; do docker rm -vf $i; done
+
+log "Cleaning the tmp and manifests folders"
+sudo rm -rf tmp/* manifests/* 
+git checkout tmp/ manifests/*
