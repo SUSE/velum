@@ -54,4 +54,4 @@ setup_database() {
 
 setup_database
 bundle exec rake db:migrate
-bundle exec "rails s -b 0.0.0.0 -p $VELUM_PORT Puma"
+bundle exec "rails s -b 0.0.0.0 -p $VELUM_PORT --pid /tmp/puma.pid Puma"
