@@ -9,6 +9,7 @@ spec:
   containers:
   - name: etcd
     image: opensuse/etcd:development
+    imagePullPolicy: Always
     env:
     - name: ETCD_NAME
       value: default

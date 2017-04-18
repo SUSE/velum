@@ -8,6 +8,7 @@ spec:
   hostNetwork: false
   containers:
   - name: velum-mariadb
+    imagePullPolicy: Always
     image: library/mariadb:10.0.29
     env:
     - name: MYSQL_ROOT_PASSWORD
