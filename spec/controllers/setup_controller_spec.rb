@@ -33,7 +33,8 @@ RSpec.describe SetupController, type: :controller do
     let(:salt) { Velum::Salt }
     before do
       sign_in user
-      Minion.create! [{ hostname: "master" }, { hostname: "minion0" }]
+      Minion.create! [{ minion_id: SecureRandom.hex, fqdn: "master" },
+                      { minion_id: SecureRandom.hex, fqdn: "minion0" }]
     end
 
     context "when the minion doesn't exist" do
@@ -62,7 +63,7 @@ RSpec.describe SetupController, type: :controller do
       it "sets the other roles to minions" do
         post :bootstrap, roles: { master: Minion.first.id, minion: Minion.all[1..-1].map(&:id) }
         # check that all minions are set to minion role
-        expect(Minion.where("hostname REGEXP ?", "minion*").map(&:role).uniq).to eq ["minion"]
+        expect(Minion.where("fqdn REGEXP ?", "minion*").map(&:role).uniq).to eq ["minion"]
       end
 
       it "calls the orchestration" do
@@ -115,7 +116,8 @@ RSpec.describe SetupController, type: :controller do
     let(:salt) { Velum::Salt }
     before do
       sign_in user
-      Minion.create! [{ hostname: "master" }, { hostname: "minion0" }]
+      Minion.create! [{ minion_id: SecureRandom.hex, fqdn: "master" },
+                      { minion_id: SecureRandom.hex, fqdn: "minion0" }]
       request.accept = "application/json"
     end
 
@@ -144,7 +146,7 @@ RSpec.describe SetupController, type: :controller do
       it "sets the other roles to minions" do
         post :bootstrap, roles: { master: Minion.first.id, minion: Minion.all[1..-1].map(&:id) }
         # check that all minions are set to minion role
-        expect(Minion.where("hostname REGEXP ?", "minion*").map(&:role).uniq).to eq ["minion"]
+        expect(Minion.where("fqdn REGEXP ?", "minion*").map(&:role).uniq).to eq ["minion"]
       end
 
       it "calls the orchestration" do

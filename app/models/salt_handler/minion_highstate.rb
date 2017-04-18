@@ -27,7 +27,7 @@ class SaltHandler::MinionHighstate
     # Salt probably tries to make sure it stays applied. We don't need to process
     # those events. We only need to process a highstate if one is pending.
     minion = Minion.find_by(
-      hostname:  minion_id,
+      minion_id: minion_id,
       highstate: Minion.highstates[:pending]
     )
     return false unless minion

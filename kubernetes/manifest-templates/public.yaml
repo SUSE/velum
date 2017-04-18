@@ -95,11 +95,13 @@ spec:
     - name: VELUM_DB_SOCKET
       value: /var/run/mysqld/mysqld.sock
     - name: VELUM_SALT_HOST
-      value:
+      value: "127.0.0.1"
     - name: VELUM_SALT_PORT
-      value:
+      value: "8000"
     - name: VELUM_SALT_USER
-      value:
+      value: saltapi
+    - name: VELUM_SALT_PASSWORD
+      value: saltapi
     - name: VELUM_KUBERNETES_HOST
       value:
     - name: VELUM_KUBERNETES_PORT

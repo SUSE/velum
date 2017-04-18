@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "velum/salt"
 
 # This class is responsible to handle the salt events with tag "minion_start".
 # When such an event occurs, we want the minion to be saved in our database
@@ -22,7 +23,9 @@ class SaltHandler::MinionStart
     # Ignore the ca minion. It shouldn't be used as part of the k8s cluster.
     return false if parsed_data["id"] == "ca"
 
-    # false if a minion with this hostname already exists (uniqueness validation)
-    Minion.new(hostname: parsed_data["id"]).save
+    minion_info = Velum::Salt.minions[parsed_data["id"]]
+
+    # false if a minion with this minion_id or fqdn already exists (uniqueness validation)
+    Minion.new(minion_id: parsed_data["id"], fqdn: minion_info["fqdn"]).save
   end
 end

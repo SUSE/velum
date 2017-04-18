@@ -22,7 +22,7 @@ module Velum
                                           targets:     "roles:kube-master",
                                           target_type: "grain",
                                           arg:         "cat /etc/pki/minion.key"
-      host = Minion.master.applied.pluck(:hostname).first
+      host = Minion.master.applied.pluck(:fqdn).first
       # rubocop:disable Style/RescueModifier
       ca_crt = ca_crt["return"].first.values.first rescue nil
       client_crt = apiserver_crt["return"].first.values.first rescue nil

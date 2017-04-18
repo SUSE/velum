@@ -22,20 +22,24 @@ describe SaltEvent do
       event_data = {
         "_stamp" => "2017-01-24T13:30:20.794326",
         "pretag" => nil, "cmd" => "_minion_event", "tag" => "minion_start",
-        "data" => "Minion MyMinion started at Tue Jan 24 13:30:20 2017",
-        "id" => "MyMinion"
+        "data" => "Minion 3bcb66a2e50646dcabf779e50c6f3232 started at Tue Jan 24 13:30:20 2017",
+        "id" => "3bcb66a2e50646dcabf779e50c6f3232"
       }.to_json
 
       FactoryGirl.create(:salt_event, tag: "minion_start", data: event_data)
     end
 
+    # rubocop:disable RSpec/ExampleLength
     it "processes new-minion events" do
       new_minion_event
 
-      expect do
-        described_class.process_next_event(worker_id: "MyWorker")
-      end.to change { Minion.where(hostname: "MyMinion").count }.by(1)
+      VCR.use_cassette("salt/process_event", record: :none) do
+        expect do
+          described_class.process_next_event(worker_id: "MyWorker")
+        end.to change { Minion.where(minion_id: "3bcb66a2e50646dcabf779e50c6f3232").count }.by(1)
+      end
     end
+    # rubocop:enable RSpec/ExampleLength
 
     it "processes irrelevant events" do
       FactoryGirl.create(:salt_event, tag: "nobody_cares_about_this_event")

@@ -84,7 +84,7 @@ MinionPoller = {
       <tr> \
         <th>" + minion.id +  "</th>\
         <td class='text-center'>" + statusHtml +  "</td>\
-        <td>" + minion.hostname +  "</td>\
+        <td>" + minion.fqdn +  "</td>\
         <td>" + (minion.role || '') +  "</td>\
         <td class='text-center'>" + masterHtml + "</td>\
       </tr>";
@@ -105,7 +105,7 @@ MinionPoller = {
     return "\
       <tr> \
         <th>" + minion.id +  "</th>\
-        <td>" + minion.hostname +  "</td>\
+        <td>" + minion.fqdn +  "</td>\
         <td class='text-center'>" + masterHtml + "</td>\
       </tr>";
   }

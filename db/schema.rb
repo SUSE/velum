@@ -21,14 +21,16 @@ ActiveRecord::Schema.define(version: 20170227152008) do
   add_index "jids", ["jid"], name: "jid", unique: true, using: :btree
 
   create_table "minions", force: :cascade do |t|
-    t.string   "hostname",   limit: 255
+    t.string   "minion_id",  limit: 255
+    t.string   "fqdn",       limit: 255
     t.integer  "role",       limit: 4
     t.integer  "highstate",  limit: 4,   default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "minions", ["hostname"], name: "index_minions_on_hostname", unique: true, using: :btree
+  add_index "minions", ["fqdn"], name: "index_minions_on_fqdn", unique: true, using: :btree
+  add_index "minions", ["minion_id"], name: "index_minions_on_minion_id", unique: true, using: :btree
 
   create_table "pillars", force: :cascade do |t|
     t.string   "minion_id",  limit: 255

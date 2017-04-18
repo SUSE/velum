@@ -6,7 +6,7 @@ feature "Monitoring feature" do
 
   before do
     login_as user, scope: :user
-    Minion.create!(hostname: "minion0.k8s.local", role: "master")
+    Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion0.k8s.local", role: "master")
     visit authenticated_root_path
   end
 
@@ -27,7 +27,7 @@ feature "Monitoring feature" do
       expect(page).not_to have_content(
         "nodes are available but have not been added to the cluster yet"
       )
-      Minion.create!(hostname: "minion1.k8s.local", role: nil)
+      Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion1.k8s.local", role: nil)
       expect(page).to have_content(
         "1 new nodes are available but have not been added to the cluster yet"
       )
