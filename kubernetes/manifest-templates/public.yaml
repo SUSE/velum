@@ -9,6 +9,7 @@ spec:
   containers:
   - name: salt-master
     image: opensuse/salt-master:boron
+    imagePullPolicy: Always
     env:
     - name: MYSQL_UNIX_PORT
       value: /var/run/mysqld/mysqld.sock
@@ -27,6 +28,7 @@ spec:
       name: mariadb-unix-socket
   - name: velum-dashboard
     image: opensuse/velum:development
+    imagePullPolicy: Always
     env:
     - name: RAILS_ENV
       value: development
@@ -65,6 +67,7 @@ spec:
     args: ["bin/init"]
   - name: salt-api
     image: opensuse/salt-api:boron
+    imagePullPolicy: Always
     volumeMounts:
     - mountPath: /etc/salt/master.d
       name: salt-master-config
@@ -72,6 +75,7 @@ spec:
       name: salt-sock-dir
   - name: salt-minion-ca
     image: opensuse/salt-minion:boron
+    imagePullPolicy: Always
     volumeMounts:
     - mountPath: /etc/salt/minion.d/minion.conf
       name: salt-minion-ca-config
@@ -81,6 +85,7 @@ spec:
       name: salt-minion-ca-grains
   - name: velum-event-processor
     image: opensuse/velum:development
+    imagePullPolicy: Always
     env:
     - name: WORKER_ID
       value: Worker_1
