@@ -6,8 +6,8 @@ describe SaltHandler::MinionStart do
     event_data = {
       "_stamp" => "2017-01-24T13:30:20.794326",
       "pretag" => nil, "cmd" => "_minion_event", "tag" => "minion_start",
-      "data" => "Minion MyMinion started at Tue Jan 24 13:30:20 2017",
-      "id" => "MyMinion"
+      "data" => "Minion 3bcb66a2e50646dcabf779e50c6f3232 started at Tue Jan 24 13:30:20 2017",
+      "id" => "3bcb66a2e50646dcabf779e50c6f3232"
     }.to_json
 
     FactoryGirl.create(:salt_event, tag: "minion_start", data: event_data)
@@ -17,7 +17,7 @@ describe SaltHandler::MinionStart do
     event_data = {
       "_stamp" => "2017-01-24T13:30:20.794326",
       "pretag" => nil, "cmd" => "_minion_event", "tag" => "minion_start",
-      "data" => "Minion MyMinion started at Tue Jan 24 13:30:20 2017",
+      "data" => "Minion ca started at Tue Jan 24 13:30:20 2017",
       "id" => "ca"
     }.to_json
 
@@ -27,23 +27,31 @@ describe SaltHandler::MinionStart do
   describe "process_event" do
     it "creates a new Minion when one with the specified id does not exist" do
       handler = described_class.new(salt_event)
-      expect { handler.process_event }
-        .to change { Minion.where(hostname: "MyMinion").count }.from(0).to(1)
+      VCR.use_cassette("salt/process_event", record: :none) do
+        expect { handler.process_event }
+          .to change { Minion.where(fqdn: "minion0.k8s.local").count }.from(0).to(1)
+      end
     end
 
+    # rubocop:disable RSpec/ExampleLength
     it "does not create a new Minion if one with the specified id already exists" do
       handler = described_class.new(salt_event)
-      FactoryGirl.create(:minion, hostname: "MyMinion")
+      FactoryGirl.create(:minion, fqdn: "minion0.k8s.local")
 
-      expect { handler.process_event }
-        .not_to change { Minion.where(hostname: "MyMinion").count }
+      VCR.use_cassette("salt/process_event", record: :none) do
+        expect { handler.process_event }
+          .not_to change { Minion.where(fqdn: "minion0.k8s.local").count }
+      end
     end
+    # rubocop:enable RSpec/ExampleLength
 
     it "does not create a new Minion if the event has id: 'ca'" do
       handler = described_class.new(ca_salt_event)
 
-      expect { handler.process_event }
-        .not_to change { Minion.where(hostname: "ca").count }
+      VCR.use_cassette("salt/process_event", record: :none) do
+        expect { handler.process_event }
+          .not_to change { Minion.where(fqdn: "ca").count }
+      end
     end
   end
 end

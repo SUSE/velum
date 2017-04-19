@@ -1,0 +1,231 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://127.0.0.1:8000/login
+    body:
+      encoding: UTF-8
+      string: '{"username":"saltapi","password":"saltapi","eauth":"pam"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '217'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Tue, 18 Apr 2017 18:01:02 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Auth-Token:
+      - 049022ab20df203870eb7dc01a9abd3d41ea18fc
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=049022ab20df203870eb7dc01a9abd3d41ea18fc; expires=Wed, 19 Apr 2017
+        04:01:02 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"perms": [".*", "@wheel", "@runner", "@jobs", "@events"],
+        "start": 1492538462.490156, "token": "049022ab20df203870eb7dc01a9abd3d41ea18fc",
+        "expire": 1492581662.490157, "user": "saltapi", "eauth": "pam"}]}'
+    http_version: 
+  recorded_at: Tue, 18 Apr 2017 18:01:02 GMT
+- request:
+    method: get
+    uri: http://127.0.0.1:8000/minions
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Auth-Token:
+      - 049022ab20df203870eb7dc01a9abd3d41ea18fc
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '10245'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Cache-Control:
+      - private
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Tue, 18 Apr 2017 18:01:02 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=049022ab20df203870eb7dc01a9abd3d41ea18fc; expires=Wed, 19 Apr 2017
+        04:01:02 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"ca": {"kernel": "Linux", "domain": "k8s.local", "uid":
+        0, "zmqversion": "4.1.2", "kernelrelease": "4.10.8-1-default", "pythonpath":
+        ["/usr/bin", "/usr/lib/python27.zip", "/usr/lib64/python2.7", "/usr/lib64/python2.7/plat-linux2",
+        "/usr/lib64/python2.7/lib-tk", "/usr/lib64/python2.7/lib-old", "/usr/lib64/python2.7/lib-dynload",
+        "/usr/lib64/python2.7/site-packages", "/usr/local/lib64/python2.7/site-packages",
+        "/usr/local/lib/python2.7/site-packages", "/usr/lib/python2.7/site-packages"],
+        "pid": 12, "ip_interfaces": {"docker0": ["172.17.0.1"], "lo": ["127.0.0.1"],
+        "tun0": ["10.163.1.166"], "virbr0-ni": [], "veth9c957": [], "virbr0": ["192.168.122.1"],
+        "enp0s31f6": ["192.168.1.106"], "wlp1s0": ["192.168.1.108", "fe80::4cab:8580:fb16:905e"]},
+        "groupname": "root", "shell": "/bin/sh", "mem_total": 7866, "saltversioninfo":
+        [2016, 3, 4, 0], "host": "freedom", "SSDs": ["sda"], "id": "ca", "osrelease":
+        "42.2", "ps": "ps -efH", "server_id": 610049290, "ip6_interfaces": {"docker0":
+        [], "lo": [], "tun0": [], "virbr0-ni": [], "veth9c957": [], "virbr0": [],
+        "enp0s31f6": [], "wlp1s0": ["fe80::4cab:8580:fb16:905e"]}, "num_cpus": 4,
+        "hwaddr_interfaces": {"docker0": "02:42:2A:B5:6B:7E", "veth9c957": "D6:16:09:A5:97:52",
+        "tun0": "00", "virbr0-ni": "52:54:00:F7:A3:90", "virbr0": "52:54:00:F7:A3:90",
+        "enp0s31f6": "28:F1:0E:45:3A:45", "wlp1s0": "E4:A7:A0:01:44:B0"}, "init":
+        "unknown", "ip4_interfaces": {"docker0": ["172.17.0.1"], "lo": ["127.0.0.1"],
+        "tun0": ["10.163.1.166"], "virbr0-ni": [], "veth9c957": [], "virbr0": ["192.168.122.1"],
+        "enp0s31f6": ["192.168.1.106"], "wlp1s0": ["192.168.1.108"]}, "osfullname":
+        "Leap", "gid": 0, "master": "localhost", "ipv4": ["10.163.1.166", "127.0.0.1",
+        "172.17.0.1", "192.168.1.106", "192.168.1.108", "192.168.122.1"], "dns": {"nameservers":
+        ["10.160.2.88", "10.160.0.1"], "domain": "", "ip4_nameservers": ["10.160.2.88",
+        "10.160.0.1"], "search": [], "ip6_nameservers": []}, "ipv6": ["fe80::4cab:8580:fb16:905e"],
+        "cpu_flags": ["fpu", "vme", "de", "pse", "tsc", "msr", "pae", "mce", "cx8",
+        "apic", "sep", "mtrr", "pge", "mca", "cmov", "pat", "pse36", "clflush", "dts",
+        "acpi", "mmx", "fxsr", "sse", "sse2", "ss", "ht", "tm", "pbe", "syscall",
+        "nx", "pdpe1gb", "rdtscp", "lm", "constant_tsc", "art", "arch_perfmon", "pebs",
+        "bts", "rep_good", "nopl", "xtopology", "nonstop_tsc", "aperfmperf", "tsc_known_freq",
+        "pni", "pclmulqdq", "dtes64", "monitor", "ds_cpl", "vmx", "smx", "est", "tm2",
+        "ssse3", "sdbg", "fma", "cx16", "xtpr", "pdcm", "pcid", "sse4_1", "sse4_2",
+        "x2apic", "movbe", "popcnt", "tsc_deadline_timer", "aes", "xsave", "avx",
+        "f16c", "rdrand", "lahf_lm", "abm", "3dnowprefetch", "epb", "intel_pt", "tpr_shadow",
+        "vnmi", "flexpriority", "ept", "vpid", "fsgsbase", "tsc_adjust", "bmi1", "hle",
+        "avx2", "smep", "bmi2", "erms", "invpcid", "rtm", "mpx", "rdseed", "adx",
+        "smap", "clflushopt", "xsaveopt", "xsavec", "xgetbv1", "xsaves", "dtherm",
+        "ida", "arat", "pln", "pts", "hwp", "hwp_notify", "hwp_act_window", "hwp_epp"],
+        "localhost": "freedom", "lsb_distrib_id": "openSUSE Leap", "username": "root",
+        "fqdn_ip4": [], "fqdn_ip6": [], "nodename": "freedom", "saltversion": "2016.3.4",
+        "lsb_distrib_release": "42.2", "systemd": {"version": "228", "features": "+PAM
+        -AUDIT +SELINUX -IMA +APPARMOR -SMACK +SYSVINIT +UTMP +LIBCRYPTSETUP +GCRYPT
+        -GNUTLS +ACL +XZ -LZ4 +SECCOMP +BLKID -ELFUTILS +KMOD -IDN"}, "saltpath":
+        "/usr/lib/python2.7/site-packages/salt", "osmajorrelease": "42", "os_family":
+        "Suse", "oscodename": "openSUSE Leap 42.2", "osfinger": "Leap-42", "pythonversion":
+        [2, 7, 12, "final", 0], "roles": ["ca"], "num_gpus": 0, "virtual": "physical",
+        "disks": [], "cpu_model": "Intel(R) Core(TM) i7-6600U CPU @ 2.60GHz", "fqdn":
+        "freedom", "pythonexecutable": "/usr/bin/python", "osarch": "x86_64", "cpuarch":
+        "x86_64", "lsb_distrib_codename": "openSUSE Leap 42.2", "osrelease_info":
+        [42, 2], "locale_info": {"detectedencoding": "ascii", "defaultlanguage": null,
+        "defaultencoding": null}, "gpus": [], "path": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "machine_id": "f17d6d03329ac77ed5a2364858da1d46", "os": "SUSE"}, "18e57e95171048bfbd6346a22d4bbb2a":
+        {"biosversion": "1.0.0-prebuilt.qemu-project.org", "kernel": "Linux", "domain":
+        "k8s.local", "uid": 0, "zmqversion": "4.0.4", "kernelrelease": "4.4.52-1-default",
+        "pythonpath": ["/usr/bin", "/usr/lib/python27.zip", "/usr/lib64/python2.7",
+        "/usr/lib64/python2.7/plat-linux2", "/usr/lib64/python2.7/lib-tk", "/usr/lib64/python2.7/lib-old",
+        "/usr/lib64/python2.7/lib-dynload", "/usr/lib64/python2.7/site-packages",
+        "/usr/local/lib64/python2.7/site-packages", "/usr/local/lib/python2.7/site-packages",
+        "/usr/lib/python2.7/site-packages"], "pid": 2061, "ip_interfaces": {"lo":
+        ["127.0.0.1", "::1"], "eth0": ["10.17.3.252", "fe80::b8a3:d1ff:fe51:522b"]},
+        "groupname": "root", "shell": "/bin/sh", "mem_total": 1999, "saltversioninfo":
+        [2016, 11, 3, 0], "osmajorrelease": "1", "SSDs": [], "id": "18e57e95171048bfbd6346a22d4bbb2a",
+        "osrelease": "1.0", "ps": "ps -efH", "server_id": 1191278123, "uuid": "18e57e95-1710-48bf-bd63-46a22d4bbb2a",
+        "ip6_interfaces": {"lo": ["::1"], "eth0": ["fe80::b8a3:d1ff:fe51:522b"]},
+        "num_cpus": 1, "hwaddr_interfaces": {"lo": "00:00:00:00:00:00", "eth0": "ba:a3:d1:51:52:2b"},
+        "init": "systemd", "ip4_interfaces": {"lo": ["127.0.0.1"], "eth0": ["10.17.3.252"]},
+        "osfullname": "CAASP", "gid": 0, "master": "192.168.1.106", "ipv4": ["10.17.3.252",
+        "127.0.0.1"], "dns": {"domain": "", "sortlist": [], "nameservers": ["10.17.3.1"],
+        "ip4_nameservers": ["10.17.3.1"], "search": ["k8s.local"], "ip6_nameservers":
+        [], "options": []}, "ipv6": ["::1", "fe80::b8a3:d1ff:fe51:522b"], "cpu_flags":
+        ["fpu", "de", "pse", "tsc", "msr", "pae", "mce", "cx8", "apic", "sep", "mtrr",
+        "pge", "mca", "cmov", "pse36", "clflush", "mmx", "fxsr", "sse", "sse2", "syscall",
+        "nx", "lm", "rep_good", "nopl", "xtopology", "pni", "cx16", "x2apic", "hypervisor",
+        "lahf_lm"], "localhost": "minion1", "lsb_distrib_id": "CAASP", "username":
+        "root", "fqdn_ip4": ["10.17.3.252"], "saltpath": "/usr/lib/python2.7/site-packages/salt",
+        "fqdn_ip6": [], "nodename": "minion1", "saltversion": "2016.11.3", "lsb_distrib_release":
+        "1.0", "systemd": {"version": "228", "features": "+PAM -AUDIT +SELINUX -IMA
+        +APPARMOR -SMACK +SYSVINIT +UTMP +LIBCRYPTSETUP +GCRYPT -GNUTLS +ACL +XZ -LZ4
+        +SECCOMP +BLKID -ELFUTILS +KMOD -IDN"}, "biosreleasedate": "04/01/2014", "host":
+        "minion1", "os_family": "Suse", "oscodename": "SUSE Container as a Service
+        Platform 1.0", "osfinger": "CAASP-1", "pythonversion": [2, 7, 13, "final",
+        0], "manufacturer": "QEMU", "num_gpus": 0, "virtual": "kvm", "disks": ["sr0",
+        "vda"], "cpu_model": "QEMU Virtual CPU version 2.5+", "fqdn": "minion1.k8s.local",
+        "pythonexecutable": "/usr/bin/python", "productname": "Standard PC (i440FX
+        + PIIX, 1996)", "osarch": "x86_64", "cpuarch": "x86_64", "lsb_distrib_codename":
+        "SUSE Container as a Service Platform 1.0", "osrelease_info": [1, 0], "locale_info":
+        {"detectedencoding": "UTF-8", "defaultlanguage": "en_US", "defaultencoding":
+        "UTF-8"}, "gpus": [], "path": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "machine_id": "18e57e95171048bfbd6346a22d4bbb2a", "os": "SUSE"}, "3bcb66a2e50646dcabf779e50c6f3232":
+        {"biosversion": "1.0.0-prebuilt.qemu-project.org", "kernel": "Linux", "domain":
+        "k8s.local", "uid": 0, "zmqversion": "4.0.4", "kernelrelease": "4.4.52-1-default",
+        "pythonpath": ["/usr/bin", "/usr/lib/python27.zip", "/usr/lib64/python2.7",
+        "/usr/lib64/python2.7/plat-linux2", "/usr/lib64/python2.7/lib-tk", "/usr/lib64/python2.7/lib-old",
+        "/usr/lib64/python2.7/lib-dynload", "/usr/lib64/python2.7/site-packages",
+        "/usr/local/lib64/python2.7/site-packages", "/usr/local/lib/python2.7/site-packages",
+        "/usr/lib/python2.7/site-packages"], "pid": 2082, "ip_interfaces": {"lo":
+        ["127.0.0.1", "::1"], "eth0": ["10.17.3.221", "fe80::1835:caff:fe0c:aca8"]},
+        "groupname": "root", "shell": "/bin/sh", "mem_total": 1999, "saltversioninfo":
+        [2016, 11, 3, 0], "osmajorrelease": "1", "SSDs": [], "id": "3bcb66a2e50646dcabf779e50c6f3232",
+        "osrelease": "1.0", "ps": "ps -efH", "server_id": 29583293, "uuid": "3bcb66a2-e506-46dc-abf7-79e50c6f3232",
+        "ip6_interfaces": {"lo": ["::1"], "eth0": ["fe80::1835:caff:fe0c:aca8"]},
+        "num_cpus": 1, "hwaddr_interfaces": {"lo": "00:00:00:00:00:00", "eth0": "1a:35:ca:0c:ac:a8"},
+        "init": "systemd", "ip4_interfaces": {"lo": ["127.0.0.1"], "eth0": ["10.17.3.221"]},
+        "osfullname": "CAASP", "gid": 0, "master": "192.168.1.106", "ipv4": ["10.17.3.221",
+        "127.0.0.1"], "dns": {"domain": "", "sortlist": [], "nameservers": ["10.17.3.1"],
+        "ip4_nameservers": ["10.17.3.1"], "search": ["k8s.local"], "ip6_nameservers":
+        [], "options": []}, "ipv6": ["::1", "fe80::1835:caff:fe0c:aca8"], "cpu_flags":
+        ["fpu", "de", "pse", "tsc", "msr", "pae", "mce", "cx8", "apic", "sep", "mtrr",
+        "pge", "mca", "cmov", "pse36", "clflush", "mmx", "fxsr", "sse", "sse2", "syscall",
+        "nx", "lm", "rep_good", "nopl", "xtopology", "pni", "cx16", "x2apic", "hypervisor",
+        "lahf_lm"], "localhost": "minion0", "lsb_distrib_id": "CAASP", "username":
+        "root", "fqdn_ip4": ["10.17.3.221"], "saltpath": "/usr/lib/python2.7/site-packages/salt",
+        "fqdn_ip6": [], "nodename": "minion0", "saltversion": "2016.11.3", "lsb_distrib_release":
+        "1.0", "systemd": {"version": "228", "features": "+PAM -AUDIT +SELINUX -IMA
+        +APPARMOR -SMACK +SYSVINIT +UTMP +LIBCRYPTSETUP +GCRYPT -GNUTLS +ACL +XZ -LZ4
+        +SECCOMP +BLKID -ELFUTILS +KMOD -IDN"}, "biosreleasedate": "04/01/2014", "host":
+        "minion0", "os_family": "Suse", "oscodename": "SUSE Container as a Service
+        Platform 1.0", "osfinger": "CAASP-1", "pythonversion": [2, 7, 13, "final",
+        0], "manufacturer": "QEMU", "num_gpus": 0, "virtual": "kvm", "disks": ["sr0",
+        "vda"], "cpu_model": "QEMU Virtual CPU version 2.5+", "fqdn": "minion0.k8s.local",
+        "pythonexecutable": "/usr/bin/python", "productname": "Standard PC (i440FX
+        + PIIX, 1996)", "osarch": "x86_64", "cpuarch": "x86_64", "lsb_distrib_codename":
+        "SUSE Container as a Service Platform 1.0", "osrelease_info": [1, 0], "locale_info":
+        {"detectedencoding": "UTF-8", "defaultlanguage": "en_US", "defaultencoding":
+        "UTF-8"}, "gpus": [], "path": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "machine_id": "3bcb66a2e50646dcabf779e50c6f3232", "os": "SUSE"}}]}'
+    http_version: 
+  recorded_at: Tue, 18 Apr 2017 18:01:02 GMT
+recorded_with: VCR 3.0.3

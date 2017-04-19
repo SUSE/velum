@@ -13,7 +13,8 @@ class Minion < ApplicationRecord
   enum highstate: [:not_applied, :pending, :failed, :applied]
   enum role: [:master, :minion]
 
-  validates :hostname, presence: true, uniqueness: true
+  validates :minion_id, presence: true, uniqueness: true
+  validates :fqdn, presence: true, uniqueness: true
 
   # Example:
   #   Minion.assign_roles(
@@ -38,16 +39,16 @@ class Minion < ApplicationRecord
 
     # assign master if requested
     {}.tap do |ret|
-      ret[master.hostname] = master.assign_role(:master) if master
+      ret[master.minion_id] = master.assign_role(:master) if master
 
       minions.find_each do |minion|
-        ret[minion.hostname] = minion.assign_role(:minion)
+        ret[minion.minion_id] = minion.assign_role(:minion)
       end
 
       # assign default role if there is any minion left with no role
       if default_role
         Minion.where(role: nil).find_each do |minion|
-          ret[minion.hostname] = minion.assign_role(default_role)
+          ret[minion.minion_id] = minion.assign_role(default_role)
         end
       end
     end
@@ -69,13 +70,13 @@ class Minion < ApplicationRecord
     end
     success
   rescue Velum::SaltApi::SaltConnectionException
-    errors.add(:base, "Failed to apply role #{new_role} to #{hostname}")
+    errors.add(:base, "Failed to apply role #{new_role} to #{minion_id}")
     false
   end
   # rubocop:enable SkipsModelValidations
 
   # Returns the proxy for the salt minion
   def salt
-    @salt ||= Velum::SaltMinion.new minion_id: hostname
+    @salt ||= Velum::SaltMinion.new minion_id: minion_id
   end
 end

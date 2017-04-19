@@ -26,7 +26,7 @@ h1 Nodes
             th
               | #{m.id}
             td
-              | #{m.hostname}
+              | #{m.fqdn}
             td.text-center
               = radio_button_tag "roles[master]", m.id
     .clearfix.text-right.steps-container

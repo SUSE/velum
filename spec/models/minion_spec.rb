@@ -2,15 +2,15 @@
 require "rails_helper"
 
 describe Minion do
-  it { is_expected.to validate_uniqueness_of(:hostname) }
+  it { is_expected.to validate_uniqueness_of(:fqdn) }
 
   # rubocop:disable RSpec/ExampleLength
   describe ".assign_roles!" do
     let(:minions) do
       described_class.create! [
-        { hostname: "master.example.com" },
-        { hostname: "minion0.example.com" },
-        { hostname: "minion1.example.com" }
+        { minion_id: SecureRandom.hex, fqdn: "master.example.com" },
+        { minion_id: SecureRandom.hex, fqdn: "minion0.example.com" },
+        { minion_id: SecureRandom.hex, fqdn: "minion1.example.com" }
       ]
     end
 
@@ -19,7 +19,7 @@ describe Minion do
         minions
       end
 
-      it "returns a hash with the master hostname false" do
+      it "returns a hash with the master fqdn false" do
         # rubocop:disable RSpec/AnyInstance
         allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role)
           .with(:master).and_return(false)
@@ -34,9 +34,9 @@ describe Minion do
             }
           )
         ).to eq(
-          minions[0].hostname => false,
-          minions[1].hostname => true,
-          minions[2].hostname => true
+          minions[0].minion_id => false,
+          minions[1].minion_id => true,
+          minions[2].minion_id => true
         )
       end
     end
@@ -46,7 +46,7 @@ describe Minion do
         minions
       end
 
-      it "returns a hash with the minion hostnames false" do
+      it "returns a hash with the minion fqdns false" do
         # rubocop:disable RSpec/AnyInstance
         allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role)
           .with(:master).and_return(true)
@@ -61,9 +61,9 @@ describe Minion do
             }
           )
         ).to eq(
-          minions[0].hostname => true,
-          minions[1].hostname => false,
-          minions[2].hostname => false
+          minions[0].minion_id => true,
+          minions[1].minion_id => false,
+          minions[2].minion_id => false
         )
       end
     end
@@ -73,7 +73,7 @@ describe Minion do
         minions
       end
 
-      it "returns a hash with the default_role hostname false" do
+      it "returns a hash with the default_role fqdn false" do
         # rubocop:disable RSpec/AnyInstance
         allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(:master)
           .and_return(true)
@@ -90,9 +90,9 @@ describe Minion do
             }, default_role: :another_role
           )
         ).to eq(
-          minions[0].hostname => true,
-          minions[1].hostname => true,
-          minions[2].hostname => false
+          minions[0].minion_id => true,
+          minions[1].minion_id => true,
+          minions[2].minion_id => false
         )
       end
     end
@@ -162,9 +162,9 @@ describe Minion do
       )
 
       expect(roles).to eq(
-        minions[0].hostname => true,
-        minions[1].hostname => true,
-        minions[2].hostname => true
+        minions[0].minion_id => true,
+        minions[1].minion_id => true,
+        minions[2].minion_id => true
       )
     end
   end
