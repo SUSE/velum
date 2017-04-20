@@ -33,7 +33,7 @@ spec:
     - name: RAILS_ENV
       value: development
     - name: VELUM_SECRETS_DIR
-      value: /tmp/velum-secrets
+      value: /var/lib/misc/velum-secrets
     - name: RAILS_SERVE_STATIC_FILES
       value: "true"
     - name: VELUM_PORT
@@ -63,7 +63,7 @@ spec:
     volumeMounts:
       - mountPath: /usr/src/app
         name: velum-source-code
-      - mountPath: /tmp/velum-secrets
+      - mountPath: /var/lib/misc/velum-secrets
         name: velum-secrets
       - mountPath: /var/run/mysqld
         name: mariadb-unix-socket
@@ -96,7 +96,7 @@ spec:
     - name: RAILS_ENV
       value: development
     - name: VELUM_SECRETS_DIR
-      value: /tmp/velum-secrets
+      value: /var/lib/misc/velum-secrets
     - name: VELUM_DB_HOST
       value:
     - name: VELUM_DB_USERNAME
@@ -122,7 +122,7 @@ spec:
     volumeMounts:
       - mountPath: /usr/src/app
         name: velum-source-code
-      - mountPath: /tmp/velum-secrets
+      - mountPath: /var/lib/misc/velum-secrets
         name: velum-secrets
       - mountPath: /var/run/mysqld
         name: mariadb-unix-socket
@@ -134,7 +134,7 @@ spec:
         path: ${project_dir}
     - name: velum-secrets
       hostPath:
-        path: /tmp/velum-secrets # TODO: change me (avoid /tmp for this, best location?)
+        path: /var/lib/misc/velum-secrets
     - name: mariadb-unix-socket
       hostPath:
         path: ${project_dir}/kubernetes/tmp/mariadb-socket

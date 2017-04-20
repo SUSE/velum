@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 # Be sure to restart your server after modifying this file.
 
-require "pathname"
 require "velum/secrets"
 
-env_path = Pathname.new File.join(ENV["VELUM_SECRETS_DIR"], "key_base.json")
-Rails.application.secrets.secret_key_base = Velum::Secrets.read_or_create_secret_key_base(env_path)
+Rails.application.secrets.secret_key_base = Velum::Secrets.read_or_create_secret_key_base(
+  File.join(ENV["VELUM_SECRETS_DIR"], "key_base.json")
+)

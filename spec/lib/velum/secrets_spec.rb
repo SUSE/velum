@@ -2,18 +2,28 @@ require "spec_helper"
 require "velum/secrets"
 
 describe "create_secret_key_base" do
-  key_base_dir = Pathname.new("/tmp/velum_secrets_spec")
-  key_base_path = key_base_dir.join("key_base")
+  let(:key_base_path) { Pathname.new(File.join(Dir.tmpdir, "key_base.json")) }
 
   after do
-    FileUtils.rm_r key_base_dir
+    key_base_path.delete
   end
 
-  it "makes new key_base" do
-    Velum::Secrets.read_or_create_secret_key_base key_base_path
-    content1 = key_base_path.read
-    expect(content1.length).not_to eq 0
-    Velum::Secrets.read_or_create_secret_key_base key_base_path
-    expect(key_base_path.read).to eq content1
+  context "when there is no key_base" do
+    # rubocop:disable RSpec/MultipleExpectations
+    it "creates a new key_base" do
+      expect(key_base_path.exist?).to be false
+      ret = Velum::Secrets.read_or_create_secret_key_base(key_base_path)
+      expect(key_base_path.exist?).to be true
+      expect(key_base_path.read).to eq ret
+    end
+    # rubocop:enable RSpec/MultipleExpectations
+  end
+
+  context "when there is a key_base" do
+    it "returns the key_base" do
+      Velum::Secrets.read_or_create_secret_key_base(key_base_path)
+      ret = Velum::Secrets.read_or_create_secret_key_base(key_base_path)
+      expect(ret).to eq key_base_path.read
+    end
   end
 end
