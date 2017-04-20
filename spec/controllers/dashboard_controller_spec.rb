@@ -63,9 +63,22 @@ RSpec.describe DashboardController, type: :controller do
 
   describe "GET /autoyast" do
     before do
+      Pillar.create pillar: "dashboard", value: "localhost"
       allow(Velum::SUSEConnect).to receive(:config).and_return(
         Velum::SUSEConnect::SUSEConnectConfig.new("https://scc.suse.com", "validregcode")
       )
+    end
+
+    context "no dashboard pillar is set" do
+      before do
+        Pillar.where(pillar: "dashboard").destroy_all
+      end
+
+      it "renders a 503 status and a blank page" do
+        get :autoyast
+        expect(response.body).to be_blank
+        expect(response.status).to eq 503
+      end
     end
 
     it "if not logged in serves the autoyast content" do

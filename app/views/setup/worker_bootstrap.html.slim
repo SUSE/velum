@@ -14,19 +14,19 @@ p
   |  This process leverages AutoYaST and is (almost) fully automated.
   |  In case you are not familiar with it, you can find more information about AutoYaST in the&nbsp;
   a href="https://www.suse.com/documentation/sles-12/singlehtml/book_autoyast/book_autoyast.html" official documentation.
-  |  The automatic installation gets invoked by adding <strong>autoyast=#{autoyast_url}</strong> to the kernel parameter list.
+  |  The automatic installation gets invoked by adding <strong>autoyast=#{autoyast_url host: @controller_node}</strong> to the kernel parameter list.
   |  If you aren't under a PXE environment you can also use <strong>netsetup=dhcp</strong> kernel parameter for the network to be automatically configured using a reachable DHCP server.
   |  As installation media, you can use the very same image you bootstrapped the admin node with.
 
   |  A ready to use AutoYaST profile has already been generated for you during the bootstrap of the admin node.
   |  Bootstrap all the nodes you want to make part of this platform by adding the following boot parameter
-  |  <strong>autoyast=#{autoyast_url}</strong>
+  |  <strong>autoyast=#{autoyast_url host: @controller_node}</strong>
 
 h2 Tips
 p
   | You don't need to boot each node by hand. More information on how to embed an AutoYaST profile in your PXE environment is available&nbsp;
   a href="https://www.suse.com/documentation/sles-12/singlehtml/book_autoyast/book_autoyast.html#bootmedium.pxe" here
-  | . Where <strong>#{autoyast_url}</strong> is the real, generated path to the AutoYaST profile served by the dashboard.
+  | . Where <strong>#{autoyast_url host: @controller_node}</strong> is the real, generated path to the AutoYaST profile served by the dashboard.
 
 .clearfix.text-right.steps-container
   = link_to "Back", setup_path, class: "btn btn-danger"
