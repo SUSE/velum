@@ -30,7 +30,7 @@ while (( $interactive_mode == 1)) ; do
   esac
 done
 
-./cleanup || true
+./cleanup
 
 default_interface=$(awk '$2 == 00000000 { print $1 }' /proc/net/route)
 ip_address=$(ip addr show $default_interface | awk '$1 == "inet" {print $2}' | cut -f1 -d/)
