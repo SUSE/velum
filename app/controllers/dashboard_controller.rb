@@ -36,19 +36,23 @@ class DashboardController < ApplicationController
   # fields that customer uses) and also skips the redirection to the setup process (when a worker
   # asks for the autoyast profile we will either serve it, or return an error).
   def autoyast
-    @controller_node = request.host
-    begin
-      suse_connect_config = Rails.cache.fetch("SUSEConnect_config") do
-        Velum::SUSEConnect.config
+    @controller_node = Pillar.value pillar: :dashboard
+    if @controller_node.blank?
+      head :service_unavailable
+    else
+      begin
+        suse_connect_config = Rails.cache.fetch("SUSEConnect_config") do
+          Velum::SUSEConnect.config
+        end
+        @suse_smt_url = suse_connect_config.smt_url
+        @suse_regcode = suse_connect_config.regcode
+        @do_registration = true
+      rescue Velum::SUSEConnect::MissingRegCodeException,
+             Velum::SUSEConnect::MissingCredentialsException
+        @do_registration = false
       end
-      @suse_smt_url = suse_connect_config.smt_url
-      @suse_regcode = suse_connect_config.regcode
-      @do_registration = true
-    rescue Velum::SUSEConnect::MissingRegCodeException,
-           Velum::SUSEConnect::MissingCredentialsException
-      @do_registration = false
+      render "autoyast.xml.erb", layout: false, content_type: "text/xml"
     end
-    render "autoyast.xml.erb", layout: false, content_type: "text/xml"
   rescue Velum::SUSEConnect::SCCConnectionException
     head :service_unavailable
   end

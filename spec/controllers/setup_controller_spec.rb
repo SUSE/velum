@@ -29,6 +29,18 @@ RSpec.describe SetupController, type: :controller do
     end
   end
 
+  describe "GET /setup/worker-bootstrap via HTML" do
+    before do
+      sign_in user
+      Pillar.create pillar: "dashboard", value: "localhost"
+    end
+
+    it "sets @controller_node to dashboard pillar value" do
+      get :worker_bootstrap
+      expect(assigns(:controller_node)).to eq("localhost")
+    end
+  end
+
   describe "POST /setup/bootstrap via HTML" do
     let(:salt) { Velum::Salt }
     before do
@@ -197,12 +209,6 @@ RSpec.describe SetupController, type: :controller do
         state:        "Bavaria",
         city:         "Nuremberg"
       }
-    end
-
-    it 'assigns the Pillar "dashboard" to the host of the request automatically' do
-      sign_in user
-      put :configure, settings: settings_params
-      expect(Pillar.find_by(pillar: "dashboard").value).to eq("test.host")
     end
 
     context "when the user configures the cluster successfully" do
