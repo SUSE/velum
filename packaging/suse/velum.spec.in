@@ -72,7 +72,7 @@ install -d vendor/cache
 cp %{_libdir}/ruby/gems/%{rb_ver}/cache/*.gem vendor/cache
 export NOKOGIRI_USE_SYSTEM_LIBRARIES=1
 export PACKAGING=yes
-SECRET_KEY_BASE="assets_precompilation" RAILS_ENV=production bundle exec rake assets:precompile
+VELUM_SECRETS_DIR=%{buildroot}/%{velumdir}/tmp RAILS_ENV=production bundle exec rake assets:precompile
 export IGNORE_ASSETS=yes
 
 # run bundle list to redo the Gemfile.lock
