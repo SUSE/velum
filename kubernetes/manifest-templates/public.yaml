@@ -32,6 +32,8 @@ spec:
     env:
     - name: RAILS_ENV
       value: development
+    - name: VELUM_SECRETS_DIR
+      value: /var/lib/misc/velum-secrets
     - name: RAILS_SERVE_STATIC_FILES
       value: "true"
     - name: VELUM_PORT
@@ -61,6 +63,8 @@ spec:
     volumeMounts:
       - mountPath: /usr/src/app
         name: velum-source-code
+      - mountPath: /var/lib/misc/velum-secrets
+        name: velum-secrets
       - mountPath: /var/run/mysqld
         name: mariadb-unix-socket
     command: ["/bin/sh","-c"]
@@ -91,6 +95,8 @@ spec:
       value: Worker_1
     - name: RAILS_ENV
       value: development
+    - name: VELUM_SECRETS_DIR
+      value: /var/lib/misc/velum-secrets
     - name: VELUM_DB_HOST
       value:
     - name: VELUM_DB_USERNAME
@@ -116,6 +122,8 @@ spec:
     volumeMounts:
       - mountPath: /usr/src/app
         name: velum-source-code
+      - mountPath: /var/lib/misc/velum-secrets
+        name: velum-secrets
       - mountPath: /var/run/mysqld
         name: mariadb-unix-socket
     command: ["/bin/sh","-c"]
@@ -124,6 +132,9 @@ spec:
     - name: velum-source-code
       hostPath:
         path: ${project_dir}
+    - name: velum-secrets
+      hostPath:
+        path: /var/lib/misc/velum-secrets
     - name: mariadb-unix-socket
       hostPath:
         path: ${project_dir}/kubernetes/tmp/mariadb-socket
