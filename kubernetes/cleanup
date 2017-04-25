@@ -8,5 +8,6 @@ log "Cleaning up old containers"
 for i in `docker ps -a | grep k8s | awk '{print $1}'`; do docker rm -vf $i; done
 
 log "Cleaning the tmp and manifests folders"
-sudo rm -rf tmp/* manifests/* 
+sudo rm -rf tmp/* manifests/*
+sudo rm -rf /var/log/pods/*
 git checkout tmp/ manifests/*
