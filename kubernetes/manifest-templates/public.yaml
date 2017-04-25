@@ -134,7 +134,7 @@ spec:
         path: ${project_dir}
     - name: velum-secrets
       hostPath:
-        path: /var/lib/misc/velum-secrets
+        path: ${project_dir}/kubernetes/tmp/velum-secrets
     - name: mariadb-unix-socket
       hostPath:
         path: ${project_dir}/kubernetes/tmp/mariadb-socket
