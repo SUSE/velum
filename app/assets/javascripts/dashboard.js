@@ -35,7 +35,7 @@ MinionPoller = {
           $("#bootstrap").prop('disabled', false);
         }
 
-        var unassignedMinions = data.unassigned_minions;
+        var unassignedMinions = data.unassigned_minions || [];
 
         if (unassignedMinions.length > 0) {
           $('#unassigned_count').html(unassignedMinions.length + " \
