@@ -7,7 +7,7 @@ require "velum/salt"
 # welcoming, setting certain general settings, master selection, discovery and
 # bootstrapping
 class SetupController < ApplicationController
-  rescue_from Minion::NonExistingMinion, with: :minion_not_found
+  rescue_from Minion::NonExistingNode, with: :node_not_found
 
   skip_before_action :redirect_to_setup
   before_action :redirect_to_dashboard
@@ -90,7 +90,7 @@ class SetupController < ApplicationController
     assigned.select { |_name, success| !success }.keys.join(", ")
   end
 
-  def minion_not_found(exception)
+  def node_not_found(exception)
     respond_to do |format|
       format.html do
         flash[:error] = exception.message
