@@ -29,7 +29,7 @@ describe Minion do
         expect(
           described_class.assign_roles!(
             roles: {
-              master: described_class.first.id,
+              master: [described_class.first.id],
               minion: described_class.all[1..-1].map(&:id)
             }
           )
@@ -56,7 +56,7 @@ describe Minion do
         expect(
           described_class.assign_roles!(
             roles: {
-              master: described_class.first.id,
+              master: [described_class.first.id],
               minion: described_class.all[1..-1].map(&:id)
             }
           )
@@ -85,7 +85,7 @@ describe Minion do
         expect(
           described_class.assign_roles!(
             roles: {
-              master: described_class.first.id,
+              master: [described_class.first.id],
               minion: described_class.all[1..-2].map(&:id)
             }, default_role: :another_role
           )
@@ -108,7 +108,10 @@ describe Minion do
 
       it "assigns the default role to the rest of the available minions" do
         described_class.assign_roles!(
-          roles: { master: described_class.first.id, minion: described_class.all[1..-1].map(&:id) }
+          roles: {
+            master: [described_class.first.id],
+            minion: described_class.all[1..-1].map(&:id)
+          }
         )
 
         expect(described_class.all.map(&:role).sort).to eq(["master", "minion", "minion"])
@@ -126,7 +129,10 @@ describe Minion do
 
       it "assigns the minion role to the rest of the available minions" do
         described_class.assign_roles!(
-          roles: { master: described_class.first.id, minion: described_class.all[1..-1].map(&:id) }
+          roles: {
+            master: [described_class.first.id],
+            minion: described_class.all[1..-1].map(&:id)
+          }
         )
 
         expect(described_class.all.map(&:role)).to eq(["master", "minion", "minion"])
@@ -144,7 +150,10 @@ describe Minion do
 
       it "assigns the minion role to specific minions" do
         described_class.assign_roles!(
-          roles: { master: described_class.first.id, minion: described_class.all[1..-1].map(&:id) }
+          roles: {
+            master: [described_class.first.id],
+            minion: described_class.all[1..-1].map(&:id)
+          }
         )
 
         expect(described_class.all.last.role).to eq("minion")
@@ -158,7 +167,7 @@ describe Minion do
         .and_return(true)
       # rubocop:enable RSpec/AnyInstance
       roles = described_class.assign_roles!(
-        roles: { master: described_class.first.id, minion: described_class.all[1..-1].map(&:id) }
+        roles: { master: [described_class.first.id], minion: described_class.all[1..-1].map(&:id) }
       )
 
       expect(roles).to eq(

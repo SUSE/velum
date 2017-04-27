@@ -5,7 +5,7 @@ require "velum/salt_minion"
 # Minion represents the minions that have been registered in this application.
 class Minion < ApplicationRecord
   # Raised when Minion doesn't exist
-  class NonExistingMinion < StandardError; end
+  class NonExistingNode < StandardError; end
 
   scope :assigned_role, -> { where.not role: nil }
   scope :unassigned_role, -> { where role: nil }
@@ -19,27 +19,21 @@ class Minion < ApplicationRecord
   # Example:
   #   Minion.assign_roles(
   #     roles: {
-  #       master: 1,
+  #       master: [1],
   #       minion: [2, 3]
   #     },
   #     default_role: :dns
   #   )
   def self.assign_roles!(roles: {}, default_role: :minion)
-    requested_master = roles[:master].to_i
-    requested_minions =
-      roles[:minion] || Minion.unassigned_role.pluck(:id) - [requested_master]
-    requested_minions = requested_minions.map(&:to_i)
+    # Lookup selected masters and minions
+    masters = Minion.select_role_members(roles: roles, role: :master)
+    minions = Minion.select_role_members(roles: roles, role: :minion)
 
-    if !requested_master.blank? && !Minion.exists?(id: requested_master)
-      raise NonExistingMinion, "Failed to process non existing minion id: #{requested_master}"
-    end
-    master = Minion.find(requested_master)
-    # choose requested minions or all other than master
-    minions = Minion.where(id: requested_minions)
-
-    # assign master if requested
+    # assign roles to each master and minion
     {}.tap do |ret|
-      ret[master.minion_id] = master.assign_role(:master) if master
+      masters.find_each do |master|
+        ret[master.minion_id] = master.assign_role(:master)
+      end
 
       minions.find_each do |minion|
         ret[minion.minion_id] = minion.assign_role(:minion)
@@ -52,6 +46,21 @@ class Minion < ApplicationRecord
         end
       end
     end
+  end
+
+  # Prepares an ActiveRecord relation which will return all the members
+  # assigned to given role. Additionally, ensures all supplied node IDs
+  # exist within the database at the time of calling.
+  def self.select_role_members(roles: {}, role: nil)
+    node_ids = roles.key?(role) ? roles[role].map(&:to_i) : []
+
+    node_ids.each do |node|
+      unless Minion.exists?(id: node)
+        raise NonExistingNode, "Failed to process non existing node id: #{node}"
+      end
+    end
+
+    Minion.where(id: node_ids)
   end
 
   # rubocop:disable SkipsModelValidations

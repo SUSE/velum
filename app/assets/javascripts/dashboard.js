@@ -10,7 +10,9 @@ MinionPoller = {
       dataType: "json",
       success: function(data) {
         var rendered = "";
-        MinionPoller.selectedMaster = $("input[name='roles[master]']:checked").val();
+        MinionPoller.selectedMasters = $("input[name='roles[master][]']:checked").map(function() {
+          return parseInt($( this ).val());
+        }).get();
 
         // depending on the url we might have these data:
         // when monitoring:
@@ -72,12 +74,12 @@ MinionPoller = {
         break;
     }
 
-    if ((MinionPoller.selectedMaster && MinionPoller.selectedMaster == minion.id) || minion.role == "master") {
+    if ((MinionPoller.selectedMasters && MinionPoller.selectedMasters.indexOf(minion.id) != -1) || minion.role == "master") {
       checked =  "checked";
     } else {
       checked = '';
     }
-    masterHtml = '<input name="roles[master]" id="roles_master_' + minion.id +
+    masterHtml = '<input name="roles[master][]" id="roles_master_' + minion.id +
       '" value="' + minion.id + '" type="radio" disabled="" ' + checked + '>';
 
     return "\
@@ -94,12 +96,12 @@ MinionPoller = {
     var masterHtml;
     var checked;
 
-    if (MinionPoller.selectedMaster && MinionPoller.selectedMaster == minion.id) {
+    if (MinionPoller.selectedMasters && MinionPoller.selectedMasters.indexOf(minion.id) != -1) {
       checked = "checked";
     } else {
       checked = '';
     }
-    masterHtml = '<input name="roles[master]" id="roles_master_' + minion.id +
+    masterHtml = '<input name="roles[master][]" id="roles_master_' + minion.id +
       '" value="' + minion.id + '" type="radio" ' + checked + '>';
 
     return "\
