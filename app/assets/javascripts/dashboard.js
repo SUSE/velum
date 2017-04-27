@@ -14,12 +14,14 @@ MinionPoller = {
           return parseInt($( this ).val());
         }).get();
 
-        // depending on the url we might have these data:
-        // when monitoring:
-        //  [assigned_minions: [<minion1>,<minion2>,<minion3>], unassigned_minions: []]
-        // when discovering:
-        //   [<minion1>,<minion2>,<minion3>]
-        var minions = data.assigned_minions || data;
+        // In discovery, the minions to be rendered are unassigned, while on the
+        // dashboard we don't want to render unassigned minions but we still
+        // want to account for them.
+        var minions = data.assigned_minions || [];
+        var unassignedMinions = data.unassigned_minions || [];
+        if (MinionPoller.renderMode == "discovery") {
+          minions = minions.concat(unassignedMinions);
+        }
 
         for (i = 0; i < minions.length; i++) {
           if (MinionPoller.renderMode == "discovery") {
@@ -37,12 +39,13 @@ MinionPoller = {
           $("#bootstrap").prop('disabled', false);
         }
 
-        var unassignedMinions = data.unassigned_minions || [];
-
         if (unassignedMinions.length > 0) {
-          $('#unassigned_count').html(unassignedMinions.length + " \
-            <strong>new</strong> nodes are available but have not been added to the cluster yet"
-          );
+          if ($("#node-count").length > 0) {
+            $("#node-count").text(unassignedMinions.length + " nodes found");
+          } else {
+            $('#unassigned_count').html(unassignedMinions.length + " \
+            <strong>new</strong> nodes are available but have not been added to the cluster yet");
+          }
         } else {
           $('#unassigned_count').html('');
         }

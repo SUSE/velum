@@ -5,6 +5,8 @@ require "velum/suse_connect"
 
 # DashboardController shows the main page.
 class DashboardController < ApplicationController
+  include Discovery
+
   # TODO: move autoyast to its own controller (following a different logic flow). It would never get
   # authenticated (as login/password -- since it's machines requesting this endpoint). It would
   # never get redirected to setup the cluster, and it should actually read some security setting for
@@ -12,18 +14,8 @@ class DashboardController < ApplicationController
   skip_before_action :authenticate_user!, only: :autoyast
   skip_before_action :redirect_to_setup, only: :autoyast
 
-  def index
-    @assigned_minions = Minion.assigned_role
-    @unassigned_minions = Minion.unassigned_role
-
-    respond_to do |format|
-      format.html
-      format.json do
-        render json: { assigned_minions:   @assigned_minions,
-                       unassigned_minions: @unassigned_minions }
-      end
-    end
-  end
+  # The index method is provided through the Discovery concern.
+  alias index discovery
 
   # Return the autoyast XML profile to bootstrap other worker nodes. They will read this response in
   # order to start an unattended installation of CaaSP.

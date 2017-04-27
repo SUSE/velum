@@ -8,7 +8,7 @@
 h1 Nodes
 .row
   .col-xs-12.discovery-control
-    span #{Minion.count} Nodes found
+    span#node-count #{Minion.count} Nodes found
 = form_tag(setup_bootstrap_path, method: "post")
   .nodes-container data-url=setup_discovery_path
     table.table
