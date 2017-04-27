@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -e
-
 log()   { echo ">>> $1" ; }
 
 [[ -d manifest-templates ]] || { echo >&2 "Please run this script from within the kubernetes folder"; exit 1; }
 
+if [[ -z $KUBE_LOG_LEVEL ]]; then KUBE_LOG_LEVEL=0; fi
 # interactive by default
 interactive_mode=1
 
@@ -72,4 +72,4 @@ sudo mkdir -p $PWD/tmp/mariadb-socket
 sudo chmod 777 $PWD/tmp/mariadb-socket
 
 log "Launching kubelet"
-sudo kubelet --pod-manifest-path=$PWD/manifests --root-dir=$PWD/tmp --v=0 --address=127.0.0.1 --hostname-override=127.0.0.1 --allow-privileged=false
+sudo kubelet --pod-manifest-path=$PWD/manifests --root-dir=$PWD/tmp --v=$KUBE_LOG_LEVEL --address=127.0.0.1 --hostname-override=127.0.0.1
