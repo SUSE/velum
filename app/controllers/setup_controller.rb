@@ -7,6 +7,8 @@ require "velum/salt"
 # welcoming, setting certain general settings, master selection, discovery and
 # bootstrapping
 class SetupController < ApplicationController
+  include Discovery
+
   rescue_from Minion::NonExistingNode, with: :node_not_found
 
   skip_before_action :redirect_to_setup
@@ -42,15 +44,6 @@ class SetupController < ApplicationController
 
   def worker_bootstrap
     @controller_node = Pillar.value pillar: :dashboard
-  end
-
-  def discovery
-    @minions = Minion.all
-
-    respond_to do |format|
-      format.html
-      format.json { render json: @minions }
-    end
   end
 
   def bootstrap
