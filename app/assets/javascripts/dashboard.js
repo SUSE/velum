@@ -8,6 +8,7 @@ MinionPoller = {
     $.ajax({
       url: $('.nodes-container').data('url'),
       dataType: "json",
+      cache: false,
       success: function(data) {
         var rendered = "";
         MinionPoller.selectedMasters = $("input[name='roles[master][]']:checked").map(function() {
