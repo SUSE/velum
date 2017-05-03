@@ -68,7 +68,7 @@ __PATCHEXECS__
 
 %build
 
-install -d vendor/cache
+install -d vendor/cache %{buildroot}/usr/local/velum
 cp %{_libdir}/ruby/gems/%{rb_ver}/cache/*.gem vendor/cache
 export NOKOGIRI_USE_SYSTEM_LIBRARIES=1
 export PACKAGING=yes
@@ -79,10 +79,10 @@ export IGNORE_ASSETS=yes
 bundle list
 
 # deploy gems
-bundle install --retry=3 --local --deployment
+bundle install --retry=3 --local --deployment --path=%{buildroot}/usr/local/velum
 
 # install bundler
-gem install --no-rdoc --no-ri --install-dir vendor/bundle/ruby/%{rb_ver}/ vendor/cache/bundler-*.gem
+gem install --no-rdoc --no-ri --install-dir %{buildroot}/usr/local/velum/bundle/ruby/%{rb_ver}/ vendor/cache/bundler-*.gem
 
 rm -rf vendor/cache
 
@@ -101,6 +101,7 @@ mkdir %{buildroot}/%{velumdir}/tmp
 rm -rf %{buildroot}/%{velumdir}/Gemfile.lock.orig
 
 %fdupes %{buildroot}/%{velumdir}
+%fdupes %{buildroot}/usr/local/velum
 
 %pre
 
@@ -113,6 +114,7 @@ rm -rf %{buildroot}/%{velumdir}/Gemfile.lock.orig
 %files
 %defattr(-,root,root)
 %{velumdir}
+/usr/local/velum
 %exclude %{velumdir}/spec
 %doc %{velumdir}/README.md
 %doc %{velumdir}/LICENSE
