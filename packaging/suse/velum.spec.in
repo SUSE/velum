@@ -68,7 +68,7 @@ __PATCHEXECS__
 
 %build
 
-install -d vendor/cache %{buildroot}/usr/local/velum
+install -d vendor/cache %{buildroot}/usr/local/velum/bundle
 cp %{_libdir}/ruby/gems/%{rb_ver}/cache/*.gem vendor/cache
 export NOKOGIRI_USE_SYSTEM_LIBRARIES=1
 export PACKAGING=yes
@@ -79,7 +79,7 @@ export IGNORE_ASSETS=yes
 bundle list
 
 # deploy gems
-bundle install --retry=3 --local --deployment --path=%{buildroot}/usr/local/velum
+bundle install --retry=3 --local --deployment --path=%{buildroot}/usr/local/velum/bundle
 
 # install bundler
 gem install --no-rdoc --no-ri --install-dir %{buildroot}/usr/local/velum/bundle/ruby/%{rb_ver}/ vendor/cache/bundler-*.gem
