@@ -81,9 +81,6 @@ bundle list
 # deploy gems
 bundle install --retry=3 --local --deployment --path=%{buildroot}/usr/share/velum/bundle
 
-# remove buildroot from bundler path
-bundle config --local path /usr/share/velum/bundle
-
 # install bundler
 gem install --no-rdoc --no-ri --install-dir %{buildroot}/usr/share/velum/bundle/ruby/%{rb_ver}/ vendor/cache/bundler-*.gem
 
