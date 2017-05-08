@@ -33,7 +33,7 @@ gem "kubeclient", "~> 2.3.0"
 #
 # IGNORE_ASSETS=yes bundle list
 
-unless ENV["VELUM_IGNORE_ASSETS"] == "yes"
+unless ENV["IGNORE_ASSETS"] == "yes"
   gem "sass-rails", "~> 5.0"
   gem "bootstrap-sass"
   gem "uglifier", ">= 1.3.0"
