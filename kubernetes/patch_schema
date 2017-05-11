@@ -1,0 +1,52 @@
+# The only reason for the existence of this script is a very nasty hack that needs to be removed
+# as soon as possible.
+#
+# It is very closely tied to this patch existence:
+# https://github.com/kubic-project/velum/blob/master/packaging/suse/patches/1_set_default_salt_events_alter_time_column_value.rpm.patch
+#
+# The problem
+#
+# We are patching the production schema. But we are mounting the development source code from the
+# host. So, when we run `bin/init`, the schema that gets loaded is the one on the developers machine,
+# that of course doesn't contain this patch. Without this patch, the salt-master fails to register
+# events on the database, due to a missing default value on `alter_time` column.
+#
+# The schema salt requires is: https://docs.saltstack.com/en/latest/ref/returners/all/salt.returners.mysql.html
+#
+# CREATE TABLE `salt_events` (
+# `id` BIGINT NOT NULL AUTO_INCREMENT,
+# `tag` varchar(255) NOT NULL,
+# `data` mediumtext NOT NULL,
+# `alter_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+# `master_id` varchar(255) NOT NULL,
+# PRIMARY KEY (`id`),
+# KEY `tag` (`tag`)
+# ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+#
+# We are handling this table as if it was another Rails managed table, so it's in the Rails schema.
+#
+# So far, so good. The main problem is that Rails 4 does not support functions as default values.
+# This means that if we patch the development environment, after running a migration, or running
+# `db:schema:dump`, Rails won't recover this default value, and the schema it writes will be wrong.
+# The good news is that this is fixed in Rails 5.
+#
+# Without this patch, salt-master refuses to create new salt events, with the error:
+#
+# [ERROR ] Could not store events - returner 'mysql.event_return' raised exception:
+#          (1364, "Field 'alter_time' doesn't have a default value")
+#
+# The solution
+#
+# Use the production container that has the production schema (patched). Copy it on `/var/lib/velum`,
+# since we will mount our source code in `/srv/velum` and the original `/srv/velum/db/schema.rb`
+# won't be available, and then infect `bin/init` script to run `db:schema:load` with the
+# `/var/lib/velum/schema/rb` schema if it exists; otherwise run a `db:load` without specifying the
+# schema (that will take `/srv/velum/db/schema/rb` by default), so we don't break the default
+# behavior.
+#
+# Commit the sles12/velum:development image again, as if nothing ever happened.
+
+CONTAINER_BUILD=`docker run -d sles12/velum:development cp /srv/velum/db/schema.rb /var/lib/velum`
+docker logs -f $CONTAINER_BUILD
+docker commit $CONTAINER_BUILD sles12/velum:development
+docker rm $CONTAINER_BUILD

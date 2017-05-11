@@ -34,6 +34,13 @@ setup_database() {
         # create db, apply schema and seed
         echo "Initializing database"
         bundle exec rake db:create
+        # Start: patch_schema file hack (Please, read patch_schema for more information)
+        # SCHEMA envvar is used by `db:schema:load` to allow providing an alternative schema
+        # location
+        if [ -f /var/lib/velum/schema.rb ]; then
+          export SCHEMA=/var/lib/velum/schema.rb
+        fi
+        # End: patch_schema file hack
         bundle exec rake db:schema:load
         if [ $? -ne 0 ]; then
             echo "Error at setup time"

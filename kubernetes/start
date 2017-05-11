@@ -99,6 +99,9 @@ else
   docker logs -f $CONTAINER_BUILD
   docker commit $CONTAINER_BUILD sles12/velum:development
   docker rm $CONTAINER_BUILD
+
+  # FIXME: remove this (read patch_schema for more information)
+  bash ./patch_schema
 fi
 
 log "Launching kubelet"
