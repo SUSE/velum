@@ -2,6 +2,7 @@
 
 # This script will setup the database and then start the rails application
 
+set -x
 set -e
 
 : ${VELUM_PORT:=80}

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -e
+set -x
 log()   { echo ">>> $1" ; }
 
 [[ -d manifest-templates ]] || { echo >&2 "Please run this script from within the kubernetes folder"; exit 1; }
