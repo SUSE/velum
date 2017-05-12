@@ -15,6 +15,7 @@ Rails.application.routes.draw do
 
   get "/autoyast", to: "dashboard#autoyast"
   get "/kubectl-config", to: "dashboard#kubectl_config"
+  get "/_health", to: "health#index"
 
   namespace :setup do
     get "/", action: :welcome
