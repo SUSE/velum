@@ -1,0 +1,4 @@
+---
+BUNDLE_FROZEN: "1"
+BUNDLE_PATH: "/var/lib/velum"
+BUNDLE_DISABLE_SHARED_GEMS: "1"

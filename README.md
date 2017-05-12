@@ -52,10 +52,34 @@ machine.
 
 ```sh
 $ cd kubernetes
-$ ./start
+$ SALT_DIR=~/projects/kubic-project/salt CONTAINER_MANIFESTS_DIR=~/projects/kubic-project/caasp-container-manifests ./start
 ```
 
-This will start the Velum container as well as other required containers.
+Where `SALT_DIR` is the path pointing to the root path of your local clone of the [kubic salt project](https://github.com/kubic-project/salt)
+and `CONTAINER_MANIFESTS_DIR` is the path pointing to the root path of your local clone of the [CaaSP container manifests](https://github.com/kubic-project/caasp-container-manifests).
+
+The development environment will take the salt project with its configuration, as well as the
+CaaSP container manifests, and will perform some modifications on both to make them ready for
+development.
+
+The development environment will make it straightforward to work on:
+
+* Velum
+* Salt
+
+Every modification performed on any of the previous projects will be reflected instantly on the
+running containers (since both of them are mounted from your machine on the respective containers).
+
+This start process will do several things, namely:
+
+* Copy [salt configuration](https://github.com/kubic-project/salt/tree/master/config/master.d) locally to `tmp/salt`
+* Modify some key values inside the copied salt configuration
+* Process [container manifests](https://github.com/kubic-project/caasp-container-manifests) and copy them processed to `manifests`
+* Process and copy manifests from `manifest-templates` to `manifests`
+* Build development Velum image based on the production one
+  * Some extra gems are needed in development
+  * Other dependencies have been included
+* Launch the local kubelet pointing to `manifests` as the `--pod-manifest-path`
 
 You can use the `--non-interactive` flag if you prefer to run in non interactive mode.
 In that case you will be asked before old containers are removed.
@@ -63,13 +87,8 @@ In that case you will be asked before old containers are removed.
 E.g.
 
 ```sh
-$ ./start --non-interactive
+$ SALT_DIR=~/projects/kubic-project/salt CONTAINER_MANIFESTS_DIR=~/projects/kubic-project/caasp-container-manifests ./start --non-interactive
 ```
-
-If you want to use your own set of Salt states you can provide the `SALT_DIR`
-environment variable to the start script, so that directory will be used as Salt
-root. For example, you could set this variable to a local clone of
-[kubic-project/salt](https://github.com/kubic-project/salt).
 
 Your Velum folder will be mounted on the Velum container, so any change you do
 locally to Velum will be seen inside the container. Once that the service is up,
@@ -83,6 +102,11 @@ it was local, with the Docker prefix, like:
 $ docker exec -it $(docker ps | grep velum-dashboard | awk '{print $1}') bash -c "RAILS_ENV=test rspec"
 $ docker exec -it $(docker ps | grep velum-dashboard | awk '{print $1}') bash -c "RAILS_ENV=test rubocop".
 ```
+
+The same applies to the Salt code. Your Salt referenced folder with `SALT_DIR` will
+be used and mounted on the `salt-master` container, so any change you perform
+to the salt states, or pillar will be automatically applicable if you run a
+highstate, orchestration, or any other task.
 
 ### Spawning test workers
 
