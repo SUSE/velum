@@ -40,8 +40,8 @@
 # Use the production container that has the production schema (patched). Copy it on `/var/lib/velum`,
 # since we will mount our source code in `/srv/velum` and the original `/srv/velum/db/schema.rb`
 # won't be available, and then infect `bin/init` script to run `db:schema:load` with the
-# `/var/lib/velum/schema/rb` schema if it exists; otherwise run a `db:load` without specifying the
-# schema (that will take `/srv/velum/db/schema/rb` by default), so we don't break the default
+# `/var/lib/velum/schema.rb` schema if it exists; otherwise run a `db:load` without specifying the
+# schema (that will take `/srv/velum/db/schema.rb` by default), so we don't break the default
 # behavior.
 #
 # Commit the sles12/velum:development image again, as if nothing ever happened.
