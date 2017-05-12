@@ -64,9 +64,24 @@
       <start_multipath config:type="boolean">false</start_multipath>
     </storage>
   </general>
-   <partitioning config:type="list">
+  <partitioning config:type="list">
     <drive>
       <use>all</use>
+      <partitions config:type="list">
+        <partition>
+          <mount>/</mount>
+          <size>30gb</size>
+        </partition>
+        <partition>
+          <mount>swap</mount>
+          <size>auto</size>
+        </partition>
+        <partition>
+          <filesystem config:type="symbol">btrfs</filesystem>
+          <mount>/var/lib/docker</mount>
+          <size>max</size>
+        </partition>
+      </partitions>
     </drive>
   </partitioning>
   <ssh_import>
