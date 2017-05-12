@@ -43,6 +43,8 @@ class DashboardController < ApplicationController
              Velum::SUSEConnect::MissingCredentialsException
         @do_registration = false
       end
+      ssh_key_file = "/var/lib/misc/ssh-public-key/id_rsa.pub"
+      @ssh_public_key = File.read(ssh_key_file) rescue nil
       render "autoyast.xml.erb", layout: false, content_type: "text/xml"
     end
   rescue Velum::SUSEConnect::SCCConnectionException
