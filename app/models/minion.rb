@@ -14,7 +14,7 @@ class Minion < ApplicationRecord
   enum role: [:master, :minion]
 
   validates :minion_id, presence: true, uniqueness: true
-  validates :fqdn, presence: true, uniqueness: true
+  validates :fqdn, presence: true
 
   # Example:
   #   Minion.assign_roles(

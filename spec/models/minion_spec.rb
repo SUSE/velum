@@ -2,7 +2,7 @@
 require "rails_helper"
 
 describe Minion do
-  it { is_expected.to validate_uniqueness_of(:fqdn) }
+  it { is_expected.to validate_uniqueness_of(:minion_id) }
 
   # rubocop:disable RSpec/ExampleLength
   describe ".assign_roles!" do
