@@ -46,8 +46,6 @@
 #
 # Commit the sles12/velum:development image again, as if nothing ever happened.
 
-set -x
-
 CONTAINER_BUILD=`docker run -d sles12/velum:development cp /srv/velum/db/schema.rb /var/lib/velum`
 docker logs -f $CONTAINER_BUILD
 docker commit $CONTAINER_BUILD sles12/velum:development
