@@ -24,11 +24,23 @@ SCRIPT
 end
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "boxcutter/ubuntu1610"
   config.vm.network "forwarded_port", guest: 3000, host: 3000
+  # Forward Salt Master ports so that Terraform
+  # deployed Salt Minions can talk to this VM
+  config.vm.network "forwarded_port", guest: 4505, host: 4505
+  config.vm.network "forwarded_port", guest: 4506, host: 4506
+
   config.vm.provision "shell", inline: provision_script
   config.vm.synced_folder ".", "/vagrant"
+  config.vm.box = "boxcutter/ubuntu1610"
+
   config.vm.provider "virtualbox" do |v|
+    v.memory = 4096
+    v.cpus = 2
+  end
+
+  config.vm.provider "libvirt" do |v, override|
+    override.vm.box = "yk0/ubuntu-xenial"
     v.memory = 4096
     v.cpus = 2
   end
