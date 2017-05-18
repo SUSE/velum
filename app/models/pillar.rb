@@ -50,7 +50,8 @@ class Pillar < ApplicationRecord
         country:      "certificate_information:subject_properties:C",
         state:        "certificate_information:subject_properties:ST",
         city:         "certificate_information:subject_properties:L",
-        dashboard:    "dashboard"
+        dashboard:    "dashboard",
+        apiserver:    "api:server:external_fqdn"
       }
     end
   end
