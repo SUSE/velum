@@ -9,7 +9,10 @@ h1 Initial CaaSP Configuration
 = form_for :settings, url: setup_path, method: :put do |f|
   .form-group
     = f.label :dashboard, "Dashboard location"
-    = f.text_field :dashboard, value: (Pillar.value(pillar: :dashboard) || request.host), class: "form-control"
+    = f.text_field :dashboard, value: (Pillar.value(pillar: :dashboard) || request.host), class: "form-control", required: true
+  .form-group
+    = f.label :apiserver, "External Kubernetes API server FQDN"
+    = f.text_field :apiserver, value: Pillar.value(pillar: :apiserver), class: "form-control", required: true
   .form-group
     = f.label :company_name, "Company Name"
     = f.text_field :company_name, value: Pillar.value(pillar: :company_name), class: "form-control", required: true
