@@ -4,12 +4,12 @@ require "rails_helper"
 require "velum/suse_connect"
 
 RSpec.describe DashboardController, type: :controller do
-  let(:user)                  { create(:user) }
-  let(:minion1)               { create(:minion) }
-  let(:minion2)               { create(:minion) }
-  let(:master_minion)         { create(:master_minion) }
-  let(:master_applied_minion) { create(:master_applied_minion) }
-  let(:worker_minion)         { create(:worker_minion) }
+  let(:user)                 { create(:user) }
+  let(:minion1)              { create(:minion) }
+  let(:minion2)              { create(:minion) }
+  let(:master_minion)        { create(:master_minion) }
+  let(:worker_minion)        { create(:worker_minion) }
+  let(:external_fqdn_pillar) { create(:external_fqdn_pillar) }
 
   before do
     minion1 && minion2 # Create two minions (no roles assigned)
@@ -157,8 +157,8 @@ RSpec.describe DashboardController, type: :controller do
     context "YAML delivery" do
       before do
         sign_in user
-        # Create a master with an applied highstate and a worker minion
-        master_applied_minion && worker_minion
+        external_fqdn_pillar
+        worker_minion
       end
 
       it "returns a 302 if the orchestration didn't yet finish" do
