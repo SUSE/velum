@@ -16,48 +16,53 @@ http_interactions:
       Host:
       - scc.suse.com
       Authorization:
-      - Basic aW52YWxpZF91c2VybmFtZTppbnZhbGlkX3Bhc3N3b3Jk
+      - Basic dXNlcm5hbWU6cGFzc3dvcmQ=
       Content-Type:
       - application/json; charset=utf-8
   response:
     status:
-      code: 401
-      message: Unauthorized
+      code: 200
+      message: OK
     headers:
       Server:
       - nginx
       Date:
-      - Wed, 22 Mar 2017 15:46:43 GMT
+      - Fri, 19 May 2017 10:08:00 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
       - chunked
       Connection:
       - keep-alive
+      Vary:
+      - Accept-Encoding
       X-Frame-Options:
       - SAMEORIGIN
       X-Xss-Protection:
       - 1; mode=block
       X-Content-Type-Options:
       - nosniff
+      Scc-Api-Version:
+      - v4
+      Etag:
+      - W/"270f877c82f24034e98590ad0bf759c5"
       Cache-Control:
-      - no-cache
-      X-Request-Id:
-      - 0d0a6973-af77-4512-893d-06d0f97ccef9
-      X-Runtime:
-      - '0.013165'
-      Strict-Transport-Security:
-      - max-age=300
-      - max-age=31536000
-      Vary:
-      - Accept-encoding
+      - max-age=0, private, must-revalidate
       Set-Cookie:
-      - lb_scc=ICPJEBIJ; Expires=Sat, 20-Mar-2027 15:46:52 GMT; Path=/
-      - lb_scc=ICPJEBIJ; Expires=Sat, 20-Mar-2027 15:46:52 GMT; Path=/
+      - XSRF-TOKEN=gOrhNKZRzzVPf9k1yKgnZUN%2FeJjUZ%2FkNQ733pZQzA%2FhI0JrEoq5XIk3wu5rdSHVU9885hcOdyl8sZ0RVwvaxuA%3D%3D;
+        path=/; secure
+      - lb_scc=HPPJEBIJ; Expires=Mon, 17-May-2027 10:07:54 GMT; Path=/
+      - lb_scc=HPPJEBIJ; Expires=Mon, 17-May-2027 10:07:54 GMT; Path=/
+      X-Request-Id:
+      - 4b3e489c-c091-43bb-a45a-b6ecbce98277
+      X-Runtime:
+      - '0.108997'
+      Strict-Transport-Security:
+      - max-age=15552000
+      - max-age=300
     body:
       encoding: UTF-8
-      string: '{"type":"error","error":"Invalid system credentials","localized_error":"Invalid
-        system credentials"}'
+      string: '[{"regcode":"valid_regcode","status":"ACTIVE","service":{"product":{"identifier":"OTHER"}}}]'
     http_version:
-  recorded_at: Wed, 22 Mar 2017 15:46:53 GMT
+  recorded_at: Fri, 19 May 2017 10:07:55 GMT
 recorded_with: VCR 3.0.3

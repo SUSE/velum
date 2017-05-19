@@ -70,13 +70,13 @@ describe Velum::SUSEConnect do
       end
 
       it "returns a SUSEConnectConfig with https://scc.suse.com as smt_url" do
-        VCR.use_cassette("suse_connect/caasp_registration_active", record: :none) do
+        VCR.use_cassette("suse_connect/caasp_activation_active", record: :none) do
           expect(described_class.config.smt_url).to eq("https://scc.suse.com")
         end
       end
 
       it "returns a SUSEConnectConfig with regcode" do
-        VCR.use_cassette("suse_connect/caasp_registration_active", record: :none) do
+        VCR.use_cassette("suse_connect/caasp_activation_active", record: :none) do
           expect(described_class.config.regcode).not_to be_nil
         end
       end
@@ -133,17 +133,17 @@ describe Velum::SUSEConnect do
       end
     end
 
-    context "with valid login information if there a CaaSP registration active" do
+    context "with valid login information if there a CaaSP activation active" do
       it "returns the regcode for the product" do
-        VCR.use_cassette("suse_connect/caasp_registration_active", record: :none) do
-          suse_connect_client.regcode
+        VCR.use_cassette("suse_connect/caasp_activation_active", record: :none) do
+          expect(suse_connect_client.regcode).to eq "valid_regcode"
         end
       end
     end
 
     context "with valid login information if there is no such product" do
       it "does raise an exception" do
-        VCR.use_cassette("suse_connect/no_caasp_registration_active", record: :none) do
+        VCR.use_cassette("suse_connect/no_caasp_activation_active", record: :none) do
           expect do
             suse_connect_client.regcode
           end.to raise_error(Velum::SUSEConnect::MissingRegCodeException)
