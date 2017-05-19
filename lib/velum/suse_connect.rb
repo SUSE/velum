@@ -101,13 +101,13 @@ module Velum
     # If there is any kind of connectivity problem with SMT/SCC, `SCCConnectionException` will be
     # raised.
     def regcode
-      result, all_regcodes = perform_request endpoint: "/connect/systems/subscriptions",
-                                             method:   "get"
+      result, all_activations = perform_request endpoint: "/connect/systems/activations",
+                                                method:   "get"
       case result
       when Net::HTTPSuccess
-        activated_caasp_regcodes = all_regcodes.select do |regcode|
-          regcode["name"] =~ /^SUSE Container as a Service Platform/ &&
-            regcode["status"] == "ACTIVE"
+        activated_caasp_regcodes = all_activations.select do |activation|
+          activation["status"] == "ACTIVE" &&
+            activation["service"]["product"]["identifier"] == "CAASP"
         end
         # rubocop:disable Style/RescueModifier
         regcode = activated_caasp_regcodes.first["regcode"] rescue nil
