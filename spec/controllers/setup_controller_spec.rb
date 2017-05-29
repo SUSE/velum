@@ -233,7 +233,7 @@ RSpec.describe SetupController, type: :controller do
       it "gets redirected to the setup_worker_bootstrap_path with an error" do
         put :configure, settings: settings_params
         expect(flash[:alert]).to be_present
-        expect(response.redirect_url).to eq "http://test.host/setup/worker-bootstrap"
+        expect(response.redirect_url).to eq "http://test.host/setup"
       end
     end
 

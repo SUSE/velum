@@ -17,27 +17,18 @@ class SetupController < ApplicationController
   before_action :check_empty_bootstrap, only: :bootstrap
 
   def configure
-    status = {}
+    res = Pillar.apply(settings_params)
 
     respond_to do |format|
-      Pillar.all_pillars.each do |key, pillar_key|
-        pillar = Pillar.find_or_initialize_by pillar: pillar_key
-        pillar.value = settings_params[key]
-        next if pillar.save
-        status[:failed_pillar] ||= []
-        status[:failed_pillar].push(pillar.value)
-      end
-
-      if status[:failed_pillar]
-        msg = "Failed to apply configuration to #{status[:failed_pillar].join(", ")}"
-        format.html do
-          flash[:alert] = msg
-          redirect_to setup_worker_bootstrap_path
-        end
-        format.json { render json: msg, status: :unprocessable_entity }
-      else
+      if res.empty?
         format.html { redirect_to setup_worker_bootstrap_path }
         format.json { head :ok }
+      else
+        format.html do
+          flash[:alert] = res
+          redirect_to setup_path
+        end
+        format.json { render json: res, status: :unprocessable_entity }
       end
     end
   end

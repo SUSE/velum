@@ -33,7 +33,7 @@
 #   - https://github.com/kubic-project/salt/blob/master/config/master.d/returner.conf
 class Pillar < ApplicationRecord
   validates :pillar, presence: true
-  validates :value, presence: true
+  validates :value, presence: true, alphabetic: true
 
   scope :global, -> { where minion_id: nil }
 
@@ -53,6 +53,23 @@ class Pillar < ApplicationRecord
         dashboard:    "dashboard",
         apiserver:    "api:server:external_fqdn"
       }
+    end
+
+    # Apply the given pillars into the database. It returns an array with the
+    # encountered errors.
+    def apply(pillars)
+      errors = []
+
+      Pillar.all_pillars.each do |key, pillar_key|
+        pillar = Pillar.find_or_initialize_by pillar: pillar_key
+        pillar.value = pillars[key]
+        next if pillar.save
+
+        exp = pillar.errors.empty? ? "" : ": #{pillar.errors.messages[:value].first}"
+        errors << "'#{key}' could not be saved#{exp}."
+      end
+
+      errors
     end
   end
 end
