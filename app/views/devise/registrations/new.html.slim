@@ -25,9 +25,9 @@
       .form-group
         = f.email_field :email, autofocus: true, class: 'form-control', placeholder: 'Introduce your Email', required: true
       .form-group
-        = f.password_field :password, class: 'form-control', pattern: "^.{#{Devise.password_length.begin},#{Devise.password_length.end}}$", placeholder: "Select your password (#{Devise.password_length.begin} characters min.)", required: true
+        = f.password_field :password, class: 'form-control', pattern: "^.{#{Devise.password_length.begin},#{Devise.password_length.end}}$", placeholder: "Select your password (#{Devise.password_length.begin} characters min.)", required: true, oninvalid: "setCustomValidity('Password has to be between #{Devise.password_length.begin} and #{Devise.password_length.end} characters long')", oninput: "setCustomValidity('')"
       .form-group
-        = f.password_field :password_confirmation, class: 'form-control', placeholder: 'Confirm your password', required: true
+        = f.password_field :password_confirmation, class: 'form-control', placeholder: 'Confirm your password', required: true, pattern: "^.{#{Devise.password_length.begin},#{Devise.password_length.end}}$", oninvalid: "setCustomValidity('Password has to be between #{Devise.password_length.begin} and #{Devise.password_length.end} characters long')", oninput: "setCustomValidity('')"
 
       button.btn.btn-success.btn-block
         | Create Admin
