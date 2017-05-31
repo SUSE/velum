@@ -129,6 +129,7 @@ GEM
     orm_adapter (0.5.0)
     parser (2.4.0.0)
       ast (~> 2.2)
+    phantomjs (2.1.1.0)
     poltergeist (1.13.0)
       capybara (~> 2.1)
       cliver (~> 0.3.1)
@@ -281,6 +282,7 @@ DEPENDENCIES
   json-schema
   kubeclient (~> 2.3.0)
   mysql2
+  phantomjs (~> 2.1.1.0)
   poltergeist
   pry
   pry-nav
