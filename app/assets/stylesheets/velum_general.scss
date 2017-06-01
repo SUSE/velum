@@ -7,6 +7,19 @@ html,
 body {
     height: 100%;
 }
+
+dl.side-by-side {
+  dt {
+    float: left;
+    margin-right: 5px;
+  }
+
+  dd::after {
+    content: " ";
+    display: block;
+    clear: left;
+  }
+}
 .container {
     background-color: $velum-container-bg;
     min-height: 100%;
@@ -18,7 +31,6 @@ body {
 
         .page-header {
             border-bottom: 0px;
-            height: 60px;
             margin: 0px 0px;
             padding: 0px;
 
@@ -26,7 +38,7 @@ body {
                 color: #ffffff;
                 font-size: 18px;
                 margin: 0px;
-                padding-top: 24px;
+                padding: 20px 0;
             }
         }
     }
