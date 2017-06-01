@@ -1,33 +1,71 @@
 h1 Cluster Status
-.row
-  .col-xs-12.discovery-control
-    span#unassigned_count
-      - if (unassigned = @unassigned_minions.count) > 0
-        = unassigned
-        strong  new
-        | nodes are available but have not been added to the cluster yet
-= link_to "Download kubectl config", kubectl_config_path, id: "download-kubeconfig", class: "btn btn-default btn-table pull-right", disabled: true
 
-| &nbsp;
-
-a.btn.btn-default.update-admin-btn.pull-right.hidden data-toggle="modal" data-target=".update-admin-modal"
-  | Update admin node
+.nodes-summary
+  .panel.panel-default
+    .panel-heading
+      h3.panel-title Summary
+    .panel-body
+      .row.summary-loading
+        p.text-center
+          i class="fa fa-spinner fa-pulse fa-3x fa-fw"
+          span class="sr-only" Loading...
+      .row.summary-content.hidden
+        .col-md-6.left-column
+          dl.side-by-side
+            dt Total nodes
+            dd.assigned-count
+            dt Master nodes
+            dd.master-count
+            dt
+              | New nodes
+              i.fa.fw.fa-info-circle title="Available but have not been added to the cluster yet"
+            dd.unassigned-count
+        .col-md-6.right-column
+          dl.side-by-side
+            dt Node updates
+            dd ?
+            dt # of nodes w/ outdated software
+            dd.outdated-count ?
+    .panel-footer.admin-outdated-notification.hidden
+      .message
+        i.fa.fw.fa-exclamation-circle
+        strong Admin node is running outdated software
+      .failed-message
+        i.fa.fw.fa-exclamation-circle
+        strong Admin node is running outdated software (failed to update)
+      .actions
+        a.btn.btn-link.update-admin-btn data-toggle="modal" data-target=".update-admin-modal"
+          | Update admin node
 
 .nodes-container data-url=authenticated_root_path
-  table.table
-    thead
-      tr
-        th
-          | Id
-        th.text-center
-          | Status
-        th
-          | Hostname
-        th
-          | Role
-        th.text-center
-          | Master
-    tbody
+  .panel.panel-default
+    .panel-heading
+      h3.panel-title Nodes
+
+      = link_to kubectl_config_path, id: "download-kubeconfig", class: "btn btn-xs btn-default pull-right", disabled: true do
+        i.fa.fa-download.fa-fw
+        | kubectl config
+
+    .panel-body
+      .row.nodes-loading
+        p.text-center
+          i class="fa fa-spinner fa-pulse fa-3x fa-fw"
+          span class="sr-only" Loading...
+      .nodes-content.hidden
+        table.table
+          thead
+            tr
+              th
+                | Id
+              th.text-center
+                | Status
+              th
+                | Hostname
+              th
+                | Role
+              th.text-center
+                | Master
+          tbody
 
 = render "dashboard/update_admin_modal"
 = render "dashboard/polling"

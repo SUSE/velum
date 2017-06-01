@@ -1,7 +1,26 @@
 MinionPoller = {
   poll: function() {
     this.request();
-    return setInterval(this.request, 5000);
+  },
+
+  stateWeight: function(state) {
+    // I guess updates should be 2
+
+    switch (state) {
+      case 'failed':
+        return 3;
+      case 'pending':
+        return 1;
+      // applied, not_applied
+      default:
+        return 0;
+    }
+  },
+
+  sortMinions: function(minions) {
+    minions.sort(function(a, b) {
+      return MinionPoller.stateWeight(b.highstate)- MinionPoller.stateWeight(a.highstate);
+    });
   },
 
   request: function() {
@@ -13,17 +32,24 @@ MinionPoller = {
         var rendered = "";
         var allApplied = true;
 
-        MinionPoller.selectedMasters = $("input[name='roles[master][]']:checked").map(function() {
-          return parseInt($( this ).val());
-        }).get();
-
         // In discovery, the minions to be rendered are unassigned, while on the
         // dashboard we don't want to render unassigned minions but we still
         // want to account for them.
         var minions = data.assigned_minions || [];
         var unassignedMinions = data.unassigned_minions || [];
+
+        MinionPoller.selectedMasters = data.assigned_minions.reduce(function(memo, minion) {
+          if (minion.role === 'master') {
+            memo.push(minion.id);
+          }
+
+          return memo;
+        }, []);
+
         if (MinionPoller.renderMode == "discovery") {
           minions = minions.concat(unassignedMinions);
+        } else {
+          MinionPoller.sortMinions(minions);
         }
 
         for (i = 0; i < minions.length; i++) {
@@ -41,34 +67,55 @@ MinionPoller = {
         MinionPoller.handleAdminUpdate(data.admin || {});
 
         // disable bootstrap button if there are no minions
-        if (minions.length == 0) {
-          $("#bootstrap").prop('disabled', true);
-          MinionPoller.enable_kubeconfig(false);
-        } else {
-          $("#bootstrap").prop('disabled', false);
-          MinionPoller.enable_kubeconfig(allApplied);
-        }
+        $("#bootstrap").prop('disabled', minions.length === 0);
+
+        MinionPoller.enable_kubeconfig(minions.length > 0 && allApplied);
+
+        $('.assigned-count').text(minions.length);
+        $('.master-count').text(MinionPoller.selectedMasters.length);
 
         if (unassignedMinions.length > 0) {
           if ($("#node-count").length > 0) {
             $("#node-count").text(unassignedMinions.length + " nodes found");
           } else {
-            $('#unassigned_count').html(unassignedMinions.length + " \
-            <strong>new</strong> nodes are available but have not been added to the cluster yet");
+            $('.unassigned-count').text(unassignedMinions.length);
           }
         } else {
-          $('#unassigned_count').html('');
+          $('.unassigned-count').text(0);
         }
+
+        // remove loading and shows content
+        $('.summary-loading').hide();
+        $('.summary-content').removeClass('hidden');
+        $('.nodes-loading').hide();
+        $('.nodes-content').removeClass('hidden');
       }
+    }).always(function() {
+      // make another request only after the last one finished
+      setTimeout(MinionPoller.request, 5000);
     });
   },
 
   handleAdminUpdate: function(admin) {
+    var $notification = $('.admin-outdated-notification');
+
     if (admin.update_status === undefined) {
       return;
     }
 
-    $('.update-admin-btn').toggleClass('hidden', admin.update_status === 0);
+    switch (admin.update_status) {
+      case 1:
+        $notification.removeClass('hidden');
+        $notification.removeClass('admin-outdated-notification--failed');
+        break;
+      case 2:
+        $notification.removeClass('hidden');
+        $notification.addClass('admin-outdated-notification--failed');
+        break;
+      default:
+        $notification.addClass('hidden');
+        break;
+    }
   },
 
 
@@ -105,6 +152,7 @@ MinionPoller = {
     } else {
       checked = '';
     }
+
     masterHtml = '<input name="roles[master][]" id="roles_master_' + minion.id +
       '" value="' + minion.id + '" type="radio" disabled="" ' + checked + '>';
 

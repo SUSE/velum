@@ -25,7 +25,7 @@ feature "Manage nodes updates feature" do
     end
 
     scenario "Admin node has an update available", js: true do
-      expect(page).to have_content("Update admin node")
+      expect(page).to have_content("Admin node is running outdated software")
     end
 
     # rubocop:disable RSpec/MultipleExpectations
@@ -62,6 +62,6 @@ feature "Manage nodes updates feature" do
 
     visit authenticated_root_path
 
-    expect(page).to have_content("Update admin node")
+    expect(page).to have_content("Admin node is running outdated software (failed to update)")
   end
 end
