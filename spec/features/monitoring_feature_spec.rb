@@ -21,16 +21,15 @@ feature "Monitoring feature" do
 
   # rubocop:disable RSpec/ExampleLength
   # rubocop:disable RSpec/MultipleExpectations:
-  scenario "It shows a message about new minions", js: true do
+  scenario "It shows the number of new minions", js: true do
     using_wait_time 10 do
+      unassigned_count = find(".unassigned-count")
       expect(page).not_to have_content("minion1.k8s.local")
-      expect(page).not_to have_content(
-        "nodes are available but have not been added to the cluster yet"
-      )
+      expect(unassigned_count).to have_content("0")
+
       Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion1.k8s.local", role: nil)
-      expect(page).to have_content(
-        "1 new nodes are available but have not been added to the cluster yet"
-      )
+
+      expect(unassigned_count).to have_content("1")
       expect(page).not_to have_content("minion1.k8s.local")
     end
   end
