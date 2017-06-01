@@ -1,4 +1,6 @@
 MinionPoller = {
+  selectedNodes: [],
+
   poll: function() {
     this.request();
   },
@@ -214,19 +216,29 @@ MinionPoller = {
 
   renderDiscovery: function(minion) {
     var masterHtml;
-    var checked;
+    var masterChecked = '';
+    var minionHtml;
+    var minionChecked = '';
 
     if (MinionPoller.selectedMasters && MinionPoller.selectedMasters.indexOf(minion.id) != -1) {
-      checked = "checked";
-    } else {
-      checked = '';
+      masterChecked = 'checked';
+      minionChecked += 'disabled="disabled" checked ';
     }
+
     masterHtml = '<input name="roles[master][]" id="roles_master_' + minion.id +
-      '" value="' + minion.id + '" type="radio" ' + checked + '>';
+      '" value="' + minion.id + '" type="radio" ' + masterChecked + '>';
+
+    if (MinionPoller.selectedNodes && MinionPoller.selectedNodes.indexOf(minion.id) != -1) {
+      minionChecked += 'checked';
+    }
+
+    minionHtml = '<input name="roles[worker][]" id="roles_minion_' + minion.id +
+      '" value="' + minion.id + '" type="checkbox" ' + minionChecked + '>';
 
     return "\
       <tr> \
-        <th>" + minion.minion_id +  "</th>\
+        <td>" + minionHtml +  "</td>\
+        <td>" + minion.minion_id +  "</td>\
         <td>" + minion.fqdn +  "</td>\
         <td class='text-center'>" + masterHtml + "</td>\
       </tr>";
@@ -256,4 +268,41 @@ $('body').on('click', '.reboot-update-btn', function(e) {
   .always(function() {
     $btn.prop('disabled', false);
   });
+});
+
+// checkbox on the top the checks/unchecks all nodes
+$('.check-all').on('change', function() {
+  $('input[name="roles[worker][]"]').prop('checked', this.checked).change();
+});
+
+// when checking/unchecking a node
+// stores it on MinionPoller.selectedNodes for future rendering
+$('body').on('change', 'input[name="roles[worker][]"]', function() {
+  var value = parseInt(this.value, 10);
+
+  if (this.checked) {
+    MinionPoller.selectedNodes.push(value);
+  } else {
+    var index = MinionPoller.selectedNodes.indexOf(value);
+    MinionPoller.selectedNodes.splice(index, 1);
+  }
+});
+
+// when selecting a master
+// selects node and makes it impossible to uncheck
+// enable and keep the previous state of the previous master (selected or not)
+$('body').on('change', 'input[name="roles[master][]"]', function() {
+  var $previousMaster = $('input[name="roles[worker][]"]:disabled');
+  var previousMasterValue = parseInt($previousMaster.val(), 10);
+  var checked = MinionPoller.selectedNodes.indexOf(previousMasterValue) !== -1;
+
+  $previousMaster.prop('disabled', false);
+  $previousMaster.prop('checked', checked);
+
+  if (this.checked) {
+    var $checkbox = $(this).closest('tr').find('input[name="roles[worker][]"]');
+
+    $checkbox.prop('checked', true);
+    $checkbox.prop('disabled', true);
+  }
 });

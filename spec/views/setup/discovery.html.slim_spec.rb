@@ -13,9 +13,8 @@ describe "setup/discovery" do
     it "has a button to bootstrap the cluster" do
       render
 
-      section = assert_select("input") { assert_select("[value='Bootstrap cluster']") }
-
-      text = section[1].attributes["value"].value
+      section = assert_select("input[type='submit']")
+      text = section[0].attributes["value"].value
       expect(text).to eq "Bootstrap cluster"
     end
   end
