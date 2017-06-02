@@ -51,7 +51,10 @@ class Pillar < ApplicationRecord
         state:        "certificate_information:subject_properties:ST",
         city:         "certificate_information:subject_properties:L",
         dashboard:    "dashboard",
-        apiserver:    "api:server:external_fqdn"
+        apiserver:    "api:server:external_fqdn",
+        http_proxy:   "proxy:http",
+        https_proxy:  "proxy:https",
+        no_proxy:     "proxy:no_proxy"
       }
     end
 
@@ -61,6 +64,9 @@ class Pillar < ApplicationRecord
       errors = []
 
       Pillar.all_pillars.each do |key, pillar_key|
+        # The following pillar keys can be blank, so ignore them if they are.
+        next if [:http_proxy, :https_proxy, :no_proxy].include?(key) && pillars[key].blank?
+
         pillar = Pillar.find_or_initialize_by pillar: pillar_key
         pillar.value = pillars[key]
         next if pillar.save

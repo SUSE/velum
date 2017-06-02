@@ -14,6 +14,15 @@ h1 Initial CaaSP Configuration
     = f.label :apiserver, "External Kubernetes API server FQDN"
     = f.text_field :apiserver, value: Pillar.value(pillar: :apiserver), class: "form-control", required: true
   .form-group
+    = f.label :http_proxy, "HTTP proxy for Docker"
+    = f.url_field :http_proxy, value: Pillar.value(pillar: :http_proxy), class: "form-control"
+  .form-group
+    = f.label :https_proxy, "HTTPS proxy for Docker"
+    = f.url_field :https_proxy, value: Pillar.value(pillar: :https_proxy), class: "form-control"
+  .form-group
+    = f.label :no, "No-proxy settings for Docker"
+    = f.text_field :no_proxy, value: Pillar.value(pillar: :no_proxy), class: "form-control"
+  .form-group
     = f.label :company_name, "Company Name"
     = f.text_field :company_name, value: Pillar.value(pillar: :company_name), class: "form-control", required: true
   .form-group
