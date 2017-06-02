@@ -31,7 +31,7 @@ module Velum
       res = perform_request(endpoint: "/run", method: "post",
                             data: { client: "runner_async",
                                     fun:    "state.orchestrate",
-                                    kwargs: { mods: "orch.kubernetes" } })
+                                    mods:   "orch.kubernetes" })
       [res, JSON.parse(res.body)]
     end
   end
