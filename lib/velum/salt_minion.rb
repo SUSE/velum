@@ -10,7 +10,7 @@ module Velum
 
     ROLES_MAP = {
       master: ["kube-master"],
-      minion: ["kube-minion"]
+      worker: ["kube-minion"]
     }.freeze
 
     # Initializes a new salt minion identified by mid.

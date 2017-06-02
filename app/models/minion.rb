@@ -11,7 +11,7 @@ class Minion < ApplicationRecord
   scope :unassigned_role, -> { where role: nil }
 
   enum highstate: [:not_applied, :pending, :failed, :applied]
-  enum role: [:master, :minion]
+  enum role: [:master, :worker]
 
   validates :minion_id, presence: true, uniqueness: true
   validates :fqdn, presence: true
@@ -20,23 +20,23 @@ class Minion < ApplicationRecord
   #   Minion.assign_roles(
   #     roles: {
   #       master: [1],
-  #       minion: [2, 3]
+  #       worker: [2, 3]
   #     },
   #     default_role: :dns
   #   )
-  def self.assign_roles!(roles: {}, default_role: :minion)
-    # Lookup selected masters and minions
+  def self.assign_roles!(roles: {}, default_role: :worker)
+    # Lookup selected masters and workers
     masters = Minion.select_role_members(roles: roles, role: :master)
-    minions = Minion.select_role_members(roles: roles, role: :minion)
+    minions = Minion.select_role_members(roles: roles, role: :worker)
 
-    # assign roles to each master and minion
+    # assign roles to each master and worker
     {}.tap do |ret|
       masters.find_each do |master|
         ret[master.minion_id] = master.assign_role(:master)
       end
 
       minions.find_each do |minion|
-        ret[minion.minion_id] = minion.assign_role(:minion)
+        ret[minion.minion_id] = minion.assign_role(:worker)
       end
 
       # assign default role if there is any minion left with no role

@@ -9,8 +9,8 @@ describe Minion do
     let(:minions) do
       described_class.create! [
         { minion_id: SecureRandom.hex, fqdn: "master.example.com" },
-        { minion_id: SecureRandom.hex, fqdn: "minion0.example.com" },
-        { minion_id: SecureRandom.hex, fqdn: "minion1.example.com" }
+        { minion_id: SecureRandom.hex, fqdn: "worker0.example.com" },
+        { minion_id: SecureRandom.hex, fqdn: "worker1.example.com" }
       ]
     end
 
@@ -24,13 +24,13 @@ describe Minion do
         allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role)
           .with(:master).and_return(false)
         allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role)
-          .with(:minion).and_return(true)
+          .with(:worker).and_return(true)
         # rubocop:enable RSpec/AnyInstance
         expect(
           described_class.assign_roles!(
             roles: {
               master: [described_class.first.id],
-              minion: described_class.all[1..-1].map(&:id)
+              worker: described_class.all[1..-1].map(&:id)
             }
           )
         ).to eq(
@@ -51,13 +51,13 @@ describe Minion do
         allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role)
           .with(:master).and_return(true)
         allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role)
-          .with(:minion).and_return(false)
+          .with(:worker).and_return(false)
         # rubocop:enable RSpec/AnyInstance
         expect(
           described_class.assign_roles!(
             roles: {
               master: [described_class.first.id],
-              minion: described_class.all[1..-1].map(&:id)
+              worker: described_class.all[1..-1].map(&:id)
             }
           )
         ).to eq(
@@ -77,7 +77,7 @@ describe Minion do
         # rubocop:disable RSpec/AnyInstance
         allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(:master)
           .and_return(true)
-        allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(:minion)
+        allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(:worker)
           .and_return(true)
         allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(:another_role)
           .and_return(false)
@@ -86,7 +86,7 @@ describe Minion do
           described_class.assign_roles!(
             roles: {
               master: [described_class.first.id],
-              minion: described_class.all[1..-2].map(&:id)
+              worker: described_class.all[1..-2].map(&:id)
             }, default_role: :another_role
           )
         ).to eq(
@@ -110,11 +110,11 @@ describe Minion do
         described_class.assign_roles!(
           roles: {
             master: [described_class.first.id],
-            minion: described_class.all[1..-1].map(&:id)
+            worker: described_class.all[1..-1].map(&:id)
           }
         )
 
-        expect(described_class.all.map(&:role).sort).to eq(["master", "minion", "minion"])
+        expect(described_class.all.map(&:role).sort).to eq(["master", "worker", "worker"])
       end
     end
 
@@ -131,15 +131,15 @@ describe Minion do
         described_class.assign_roles!(
           roles: {
             master: [described_class.first.id],
-            minion: described_class.all[1..-1].map(&:id)
+            worker: described_class.all[1..-1].map(&:id)
           }
         )
 
-        expect(described_class.all.map(&:role)).to eq(["master", "minion", "minion"])
+        expect(described_class.all.map(&:role)).to eq(["master", "worker", "worker"])
       end
     end
 
-    context "when explicit minion role is set" do
+    context "when explicit worker role is set" do
       before do
         minions
         # rubocop:disable RSpec/AnyInstance
@@ -148,15 +148,15 @@ describe Minion do
         # rubocop:enable RSpec/AnyInstance
       end
 
-      it "assigns the minion role to specific minions" do
+      it "assigns the worker role to specific minions" do
         described_class.assign_roles!(
           roles: {
             master: [described_class.first.id],
-            minion: described_class.all[1..-1].map(&:id)
+            worker: described_class.all[1..-1].map(&:id)
           }
         )
 
-        expect(described_class.all.last.role).to eq("minion")
+        expect(described_class.all.last.role).to eq("worker")
       end
     end
 
@@ -167,7 +167,7 @@ describe Minion do
         .and_return(true)
       # rubocop:enable RSpec/AnyInstance
       roles = described_class.assign_roles!(
-        roles: { master: [described_class.first.id], minion: described_class.all[1..-1].map(&:id) }
+        roles: { master: [described_class.first.id], worker: described_class.all[1..-1].map(&:id) }
       )
 
       expect(roles).to eq(

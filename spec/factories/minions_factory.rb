@@ -8,6 +8,6 @@ FactoryGirl.define do
     role :master
   end
   factory :worker_minion, parent: :minion do
-    role :minion
+    role :worker
   end
 end
