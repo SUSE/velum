@@ -88,7 +88,7 @@ MinionPoller = {
 
     return "\
       <tr> \
-        <th>" + minion.id +  "</th>\
+        <th>" + minion.minion_id +  "</th>\
         <td class='text-center'>" + statusHtml +  "</td>\
         <td>" + minion.fqdn +  "</td>\
         <td>" + (minion.role || '') +  "</td>\
@@ -110,7 +110,7 @@ MinionPoller = {
 
     return "\
       <tr> \
-        <th>" + minion.id +  "</th>\
+        <th>" + minion.minion_id +  "</th>\
         <td>" + minion.fqdn +  "</td>\
         <td class='text-center'>" + masterHtml + "</td>\
       </tr>";
