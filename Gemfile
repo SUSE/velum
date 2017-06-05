@@ -53,6 +53,7 @@ unless ENV["PACKAGING"] && ENV["PACKAGING"] == "yes"
     gem "database_cleaner"
     gem "pry"
     gem "pry-nav"
+    gem "phantomjs", "~> 2.1.1.0"
   end
 
   group :test do
