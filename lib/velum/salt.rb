@@ -34,5 +34,20 @@ module Velum
                                     mods:   "orch.kubernetes" })
       [res, JSON.parse(res.body)]
     end
+
+    # Returns the contents of the given file.
+    def self.read_file(targets: "*", target_type: "glob", file: nil)
+      _, data = Velum::Salt.call action:      "cmd.run",
+                                 targets:     targets,
+                                 target_type: target_type,
+                                 arg:         "cat #{file}"
+
+      data["return"].map do |el|
+        val = el.values.first
+
+        # TODO: improve error handling...
+        val.include?("No such file or directory") ? nil : val
+      end
+    end
   end
 end
