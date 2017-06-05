@@ -14,3 +14,7 @@
 //= require jquery_ujs
 //= require bootstrap.min
 //= require_tree .
+
+$('body').on('click', '[disabled]', function(e) {
+  e.preventDefault();
+});

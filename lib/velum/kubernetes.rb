@@ -11,23 +11,15 @@ module Velum
 
     # Returns the Kubernetes apiserver configuration. It returns a KubeConfig struct.
     def self.kubeconfig
-      _, ca_crt = Velum::Salt.call action:  "cmd.run",
-                                   targets: "ca",
-                                   arg:     "cat /etc/pki/ca.crt"
-      _, apiserver_crt = Velum::Salt.call action:      "cmd.run",
-                                          targets:     "roles:kube-master",
-                                          target_type: "grain",
-                                          arg:         "cat /etc/pki/minion.crt"
-      _, apiserver_key = Velum::Salt.call action:      "cmd.run",
-                                          targets:     "roles:kube-master",
-                                          target_type: "grain",
-                                          arg:         "cat /etc/pki/minion.key"
+      ca_crt = Velum::Salt.read_file(targets: "ca", file: "/etc/pki/ca.crt").first
+      client_crt = Velum::Salt.read_file(targets:     "roles:kube-master",
+                                         target_type: "grain",
+                                         file:        "/etc/pki/minion.crt").first
+      client_key = Velum::Salt.read_file(targets:     "roles:kube-master",
+                                         target_type: "grain",
+                                         file:        "/etc/pki/minion.key").first
       host = Pillar.value pillar: :apiserver
-      # rubocop:disable Style/RescueModifier
-      ca_crt = ca_crt["return"].first.values.first rescue nil
-      client_crt = apiserver_crt["return"].first.values.first rescue nil
-      client_key = apiserver_key["return"].first.values.first rescue nil
-      # rubocop:enable Style/RescueModifier
+
       KubeConfig.new host, ca_crt, client_crt, client_key
     end
 

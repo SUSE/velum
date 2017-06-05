@@ -11,6 +11,8 @@ MinionPoller = {
       cache: false,
       success: function(data) {
         var rendered = "";
+        var allApplied = true;
+
         MinionPoller.selectedMasters = $("input[name='roles[master][]']:checked").map(function() {
           return parseInt($( this ).val());
         }).get();
@@ -30,14 +32,19 @@ MinionPoller = {
           } else {
             rendered += MinionPoller.render(minions[i]);
           }
+          if (minions[i].highstate != "applied") {
+            allApplied = false;
+          }
         }
         $(".nodes-container tbody").html(rendered);
 
         // disable bootstrap button if there are no minions
         if (minions.length == 0) {
           $("#bootstrap").prop('disabled', true);
+          MinionPoller.enable_kubeconfig(false);
         } else {
           $("#bootstrap").prop('disabled', false);
+          MinionPoller.enable_kubeconfig(allApplied);
         }
 
         if (unassignedMinions.length > 0) {
@@ -52,6 +59,10 @@ MinionPoller = {
         }
       }
     });
+  },
+
+  enable_kubeconfig: function(enabled) {
+    $("#download-kubeconfig").attr("disabled", !enabled);
   },
 
   render: function(minion) {
