@@ -46,7 +46,7 @@ RSpec.describe SetupController, type: :controller do
     before do
       sign_in user
       Minion.create! [{ minion_id: SecureRandom.hex, fqdn: "master" },
-                      { minion_id: SecureRandom.hex, fqdn: "minion0" }]
+                      { minion_id: SecureRandom.hex, fqdn: "worker0" }]
     end
 
     context "when the minion doesn't exist" do
@@ -59,7 +59,7 @@ RSpec.describe SetupController, type: :controller do
 
     context "when the user successfully chooses the master" do
       before do
-        [:minion, :master].each do |role|
+        [:worker, :master].each do |role|
           allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(role)
             .and_return(role)
         end
@@ -67,24 +67,22 @@ RSpec.describe SetupController, type: :controller do
       end
 
       it "sets the master" do
-        post :bootstrap, roles: { master: [Minion.first.id], minion: Minion.all[1..-1].map(&:id) }
-        # check that all minions are set to minion role
+        post :bootstrap, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
         expect(Minion.first.role).to eq "master"
       end
 
       it "sets the other roles to minions" do
-        post :bootstrap, roles: { master: [Minion.first.id], minion: Minion.all[1..-1].map(&:id) }
-        # check that all minions are set to minion role
-        expect(Minion.where("fqdn REGEXP ?", "minion*").map(&:role).uniq).to eq ["minion"]
+        post :bootstrap, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
+        expect(Minion.where("fqdn REGEXP ?", "worker*").map(&:role).uniq).to eq ["worker"]
       end
 
       it "calls the orchestration" do
-        post :bootstrap, roles: { master: [Minion.first.id], minion: Minion.all[1..-1].map(&:id) }
+        post :bootstrap, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
         expect(salt).to have_received(:orchestrate)
       end
 
       it "gets redirected to the list of nodes" do
-        post :bootstrap, roles: { master: [Minion.first.id], minion: Minion.all[1..-1].map(&:id) }
+        post :bootstrap, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
         expect(response.redirect_url).to eq "http://test.host/"
         expect(response.status).to eq 302
       end
@@ -92,7 +90,7 @@ RSpec.describe SetupController, type: :controller do
 
     context "when the user fails to choose the master" do
       before do
-        [:minion, :master].each do |role|
+        [:worker, :master].each do |role|
           allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(role)
             .and_return(false)
         end
@@ -100,13 +98,13 @@ RSpec.describe SetupController, type: :controller do
       end
 
       it "gets redirected to the discovery page" do
-        post :bootstrap, roles: { master: [Minion.first.id], minion: Minion.all[1..-1].map(&:id) }
+        post :bootstrap, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
         expect(flash[:error]).to be_present
         expect(response.redirect_url).to eq "http://test.host/setup/discovery"
       end
 
       it "doesn't call the orchestration" do
-        post :bootstrap, roles: { master: [Minion.first.id], minion: Minion.all[1..-1].map(&:id) }
+        post :bootstrap, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
         expect(Velum::Salt).to have_received(:orchestrate).exactly(0).times
       end
     end
@@ -129,7 +127,7 @@ RSpec.describe SetupController, type: :controller do
     before do
       sign_in user
       Minion.create! [{ minion_id: SecureRandom.hex, fqdn: "master" },
-                      { minion_id: SecureRandom.hex, fqdn: "minion0" }]
+                      { minion_id: SecureRandom.hex, fqdn: "worker0" }]
       request.accept = "application/json"
     end
 
@@ -142,7 +140,7 @@ RSpec.describe SetupController, type: :controller do
 
     context "when the user successfully chooses the master" do
       before do
-        [:minion, :master].each do |role|
+        [:worker, :master].each do |role|
           allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(role)
             .and_return(role)
         end
@@ -150,26 +148,24 @@ RSpec.describe SetupController, type: :controller do
       end
 
       it "sets the master" do
-        post :bootstrap, roles: { master: [Minion.first.id], minion: Minion.all[1..-1].map(&:id) }
-        # check that all minions are set to minion role
+        post :bootstrap, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
         expect(Minion.first.role).to eq "master"
       end
 
       it "sets the other roles to minions" do
-        post :bootstrap, roles: { master: [Minion.first.id], minion: Minion.all[1..-1].map(&:id) }
-        # check that all minions are set to minion role
-        expect(Minion.where("fqdn REGEXP ?", "minion*").map(&:role).uniq).to eq ["minion"]
+        post :bootstrap, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
+        expect(Minion.where("fqdn REGEXP ?", "worker*").map(&:role).uniq).to eq ["worker"]
       end
 
       it "calls the orchestration" do
-        post :bootstrap, roles: { master: [Minion.first.id], minion: Minion.all[1..-1].map(&:id) }
+        post :bootstrap, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
         expect(salt).to have_received(:orchestrate)
       end
     end
 
     context "when the user fails to choose the master" do
       before do
-        [:minion, :master].each do |role|
+        [:worker, :master].each do |role|
           allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(role)
             .and_return(false)
         end
@@ -177,12 +173,12 @@ RSpec.describe SetupController, type: :controller do
       end
 
       it "returns unprocessable entity" do
-        post :bootstrap, roles: { master: [Minion.first.id], minion: Minion.all[1..-1].map(&:id) }
+        post :bootstrap, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
         expect(response).to have_http_status(:unprocessable_entity)
       end
 
       it "doesn't call the orchestration" do
-        post :bootstrap, roles: { master: [Minion.first.id], minion: Minion.all[1..-1].map(&:id) }
+        post :bootstrap, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
         expect(Velum::Salt).to have_received(:orchestrate).exactly(0).times
       end
     end
