@@ -25,11 +25,13 @@ else
 fi
 if [ $TRAVIS_COMMIT ];then
   commit=$TRAVIS_COMMIT
+  revision="travis"
 else
+  revision=$(git rev-list HEAD | wc -l)
   commit=$(git rev-parse HEAD)
 fi
 version=$(sed s/-/~/g ../../VERSION)
-version="$version+git$commit"
+version="$version+git_r$revision\_$commit"
 date=$(date --rfc-2822)
 year=$(date +%Y)
 
