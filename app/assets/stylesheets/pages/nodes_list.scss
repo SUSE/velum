@@ -1,28 +1,85 @@
 .discovery-control {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 
-    i {
-        margin-left: 10px;
-    }
+  i {
+    margin-left: 10px;
+  }
 
-    span {
-        margin-right: 15px;
-    }
+  span {
+    margin-right: 15px;
+  }
 
-    .btn {
-        font-weight: normal;
-    }
+  .btn {
+    font-weight: normal;
+  }
 }
 
 .nodes-container {
-    form {
-        height: 450px;
-        margin-bottom: $line-height-computed;
-        overflow-x: hidden;
-        overflow-y: scroll;
+  .panel-title {
+    display: inline-block;
+  }
 
-        table {
-            margin-bottom: 0px;
-        }
+  form {
+    height: 450px;
+    margin-bottom: $line-height-computed;
+    overflow-x: hidden;
+    overflow-y: scroll;
+
+    table {
+      margin-bottom: 0px;
     }
+  }
+}
+
+.nodes-summary {
+  .fa-info-circle {
+    margin-left: 5px;
+  }
+
+  dl {
+    margin-bottom: 0;
+  }
+
+  dt {
+    margin-bottom: 7px;
+  }
+
+  .left-column dd {
+    margin-left: 107px;
+  }
+
+  .right-column dd {
+    margin-left: 235px;
+  }
+}
+
+.admin-outdated-notification {
+  background-color: #d9edf7;
+  color: #31708f;
+  text-align: right;
+
+  .message {
+    float: left;
+    line-height: 34px;
+  }
+
+  .actions {
+    text-transform: uppercase;
+
+    .btn-link {
+      font-weight: bold;
+    }
+  }
+
+  .fa {
+    font-size: 20px;
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+}
+
+.update-admin-modal {
+  .modal-dialog {
+    width: 450px;
+  }
 }
