@@ -20,6 +20,16 @@ module Velum
       [res, JSON.parse(res.body)]
     end
 
+    # Returns the update status of the different minions.
+    def self.update_status(targets: "*")
+      _, res = Salt.call(
+        action: "grains.get",
+        arg:     "tx_update_reboot_needed",
+        targets: targets
+      )
+      res["return"]
+    end
+
     # Returns the minions as discovered by salt.
     def self.minions
       res = perform_request(endpoint: "/minions", method: "get")
