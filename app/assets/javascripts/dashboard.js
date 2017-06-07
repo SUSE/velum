@@ -41,6 +41,15 @@ MinionPoller = {
         // want to account for them.
         var minions = data.assigned_minions || [];
         var unassignedMinions = data.unassigned_minions || [];
+        var tx_update_reboot_nodes = data.tx_update_reboot_needed || {}
+        var tx_update_failed_nodes = data.tx_update_failed || {}
+
+        var nodes_needing_updates = 0
+
+        for (var minion_id in tx_update_reboot_nodes) {
+          if (tx_update_reboot_nodes[minion_id]) nodes_needing_updates++
+        }
+
         if (MinionPoller.renderMode == "discovery") {
           minions = minions.concat(unassignedMinions);
         } else {
@@ -51,7 +60,7 @@ MinionPoller = {
           if (MinionPoller.renderMode == "discovery") {
             rendered += MinionPoller.renderDiscovery(minions[i]);
           } else {
-            rendered += MinionPoller.render(minions[i]);
+            rendered += MinionPoller.render(minions[i], tx_update_reboot_nodes[minions[i]["minion_id"]], tx_update_failed_nodes[minions[i]["minion_id"]]);
           }
           if (minions[i].highstate != "applied") {
             allApplied = false;
@@ -59,10 +68,16 @@ MinionPoller = {
         }
         $(".nodes-container tbody").html(rendered);
 
+        if (MinionPoller.tx_update_reboot_needed(tx_update_reboot_nodes) && allApplied) {
+          $("#update-all-nodes").attr('disabled', false);
+        }
+
         // disable bootstrap button if there are no minions
         $("#bootstrap").prop('disabled', minions.length === 0);
 
         MinionPoller.enable_kubeconfig(minions.length > 0 && allApplied);
+
+        $('#out_dated_nodes').text(nodes_needing_updates)
 
         $('.assigned-count').text(minions.length);
         $('.master-count').text(MinionPoller.selectedMasters.length);
@@ -89,11 +104,29 @@ MinionPoller = {
     });
   },
 
+  tx_update_reboot_needed: function(tx_update_reboot_nodes){
+    for (key in tx_update_reboot_nodes) {
+      if (tx_update_reboot_nodes[key]) {
+        return true
+      }
+    }
+    return false
+  },
+
+  tx_update_failed: function(tx_update_failed_nodes){
+    for (key in tx_update_failed_nodes) {
+      if (tx_update_failed_nodes[key]) {
+        return true
+      }
+    }
+    return false
+  },
+
   enable_kubeconfig: function(enabled) {
     $("#download-kubeconfig").attr("disabled", !enabled);
   },
 
-  render: function(minion) {
+  render: function(minion, tx_update_reboot_nodes, tx_update_failed_nodes) {
     var statusHtml;
     var checked;
     var masterHtml;
@@ -126,10 +159,32 @@ MinionPoller = {
     masterHtml = '<input name="roles[master][]" id="roles_master_' + minion.id +
       '" value="' + minion.id + '" type="radio" disabled="" ' + checked + '>';
 
+    statusText = ''
+
+    if (tx_update_reboot_nodes && minion.highstate == "applied") {
+      statusHtml = '<i class="fa fa-arrow-circle-up text-info fa-2x" aria-hidden="true"></i>';
+      statusText = 'Update Available'
+    }
+
+    if (tx_update_reboot_nodes && minion.highstate == "failed") {
+      statusHtml = '<i class="fa fa-arrow-circle-up text-info fa-2x" aria-hidden="true"></i>';
+      statusText = 'Update Available'
+    }
+
+    if (tx_update_reboot_nodes && minion.highstate == "pending") {
+      statusText = 'Update in progress'
+    }
+
+    if (tx_update_failed_nodes || (tx_update_reboot_nodes && minion.highstate == "failed")) {
+      statusHtml = '<i class="fa fa-arrow-circle-up text-danger fa-2x" aria-hidden="true"></i>';
+      statusText = 'Update Failed'
+    }
+
     return "\
       <tr> \
+        <td>" + statusHtml +  "</td>\
+        <td>" + statusText +  "</td>\
         <th>" + minion.minion_id +  "</th>\
-        <td class='text-center'>" + statusHtml +  "</td>\
         <td>" + minion.fqdn +  "</td>\
         <td>" + (minion.role || '') +  "</td>\
         <td class='text-center'>" + masterHtml + "</td>\
