@@ -305,8 +305,10 @@ RSpec.describe SetupController, type: :controller do
     end
 
     it "shows the minions" do
-      get :discovery
-      expect(response.status).to eq 200
+      VCR.use_cassette("suse_connect/caasp_registration_active", record: :none) do
+        get :discovery
+        expect(response.status).to eq 200
+      end
     end
   end
 end

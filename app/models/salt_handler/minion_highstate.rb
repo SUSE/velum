@@ -29,7 +29,7 @@ class SaltHandler::MinionHighstate
     # failed in the past.
     minion = Minion.find_by(
       minion_id: minion_id,
-      highstate: [:pending, :failed]
+      highstate: [Minion.highstates[:pending], Minion.highstates[:failed]]
     )
     return false unless minion
 

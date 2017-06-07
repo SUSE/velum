@@ -39,8 +39,10 @@ RSpec.describe DashboardController, type: :controller do
       sign_in user
       # Create a master minion and a worker minion
       master_minion && worker_minion
-      get :index
-      expect(response.status).to eq 200
+      VCR.use_cassette("suse_connect/caasp_registration_active", record: :none) do
+        get :index
+        expect(response.status).to eq 200
+      end
     end
   end
 
@@ -53,10 +55,12 @@ RSpec.describe DashboardController, type: :controller do
     end
 
     it "renders assigned and unassigned minions" do
-      get :index
-      expect(response).to have_http_status(:ok)
-      ["assigned_minions", "unassigned_minions"].each do |key|
-        expect(JSON.parse(response.body).key?(key)).to be true
+      VCR.use_cassette("salt/api_login", record: :none) do
+        get :index
+        expect(response).to have_http_status(:ok)
+        ["assigned_minions", "unassigned_minions"].each do |key|
+          expect(JSON.parse(response.body).key?(key)).to be true
+        end
       end
     end
   end

@@ -10,10 +10,12 @@ feature "Bootstrap cluster feature" do
   end
 
   scenario "It shows the minions as soon as they register", js: true do
-    expect(page).not_to have_content("minion0.k8s.local")
-    Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion0.k8s.local")
-    using_wait_time 10 do
-      expect(page).to have_content("minion0.k8s.local")
+    VCR.use_cassette("salt/api_login", record: :none) do
+      expect(page).not_to have_content("minion0.k8s.local")
+      Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion0.k8s.local")
+      using_wait_time 10 do
+        expect(page).to have_content("minion0.k8s.local")
+      end
     end
   end
 end

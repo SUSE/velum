@@ -14,18 +14,20 @@ feature "Dashboard" do
 
     # rubocop:disable RSpec/ExampleLength
     it "enables/disables the download button depending on the current state", js: true do
-      # Bootstrapping, the button is disabled.
-      el = find("#download-kubeconfig")
-      expect(el[:disabled]).to eq "disabled"
+      VCR.use_cassette("suse_connect/caasp_registration_active", record: :none) do
+        # Bootstrapping, the button is disabled.
+        el = find("#download-kubeconfig")
+        expect(el[:disabled]).to eq "disabled"
 
-      # Fake that bootstrapping ended successfully.
-      # rubocop:disable Rails/SkipsModelValidations
-      Minion.update_all(highstate: Minion.highstates[:applied])
-      # rubocop:enable Rails/SkipsModelValidations
-      visit authenticated_root_path
+        # Fake that bootstrapping ended successfully.
+        # rubocop:disable Rails/SkipsModelValidations
+        Minion.update_all(highstate: Minion.highstates[:applied])
+        # rubocop:enable Rails/SkipsModelValidations
+        visit authenticated_root_path
 
-      el = find("#download-kubeconfig")
-      expect(el[:disabled]).to be_falsey
+        el = find("#download-kubeconfig")
+        expect(el[:disabled]).to be_falsey
+      end
     end
     # rubocop:enable RSpec/ExampleLength
   end
