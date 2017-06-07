@@ -101,6 +101,18 @@ class Minion < ApplicationRecord
   end
   # rubocop:enable SkipsModelValidations
 
+  # Updates all nodes with a grain of `tx_update_reboot_needed: True` with a 
+  # highstate = pending, and persists it to the database
+  def self.mark_pending_update
+    needed, failed = ::Velum::Salt.update_status(targets: "*", cached: true)
+    minions = Minion.assigned_role
+    minions.each do |minion|
+      if Minion.computed_status(minion.minion_id, needed, failed) == Minion.statuses[:update_needed]
+        Minion.find_by(minion_id: minion.minion_id).update(highstate: Minion.highstates[:pending])
+      end
+    end
+  end
+
   # Returns the proxy for the salt minion
   def salt
     @salt ||= Velum::SaltMinion.new minion_id: minion_id

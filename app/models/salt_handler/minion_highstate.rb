@@ -25,10 +25,11 @@ class SaltHandler::MinionHighstate
 
     # After applying a highstate once, it is applied again and again.
     # Salt probably tries to make sure it stays applied. We don't need to process
-    # those events. We only need to process a highstate if one is pending.
+    # those events. We only need to process a highstate if one is pending, or has
+    # failed in the past.
     minion = Minion.find_by(
       minion_id: minion_id,
-      highstate: Minion.highstates[:pending]
+      highstate: [Minion.highstates[:pending], Minion.highstates[:failed]]
     )
     return false unless minion
 
