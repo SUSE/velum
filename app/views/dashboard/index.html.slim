@@ -21,10 +21,14 @@ h1 Cluster Status
             dd.unassigned-count
         .col-md-6.right-column
           dl.side-by-side
-            dt Node updates
-            dd ?
+            dt Updates
+            dd Manual
             dt # of nodes w/ outdated software
-            dd.outdated-count ?
+            dd.outdated-count
+              span#out_dated_nodes 0
+              = link_to update_path, id: "update-all-nodes", class: "btn btn-xs btn-default pull-right", disabled: true, method: :post do
+                  i.fa.fa-arrow-circle-up
+                  | Update All Nodes
 
 .nodes-container data-url=authenticated_root_path
   .panel.panel-default
@@ -34,6 +38,7 @@ h1 Cluster Status
       = link_to kubectl_config_path, id: "download-kubeconfig", class: "btn btn-xs btn-default pull-right" do
         i.fa.fa-download.fa-fw
         | kubectl config
+
     .panel-body
       .row.nodes-loading
         p.text-center
@@ -54,5 +59,4 @@ h1 Cluster Status
               th.text-center
                 | Master
           tbody
-
 = render "dashboard/polling"
