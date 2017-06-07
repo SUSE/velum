@@ -41,7 +41,7 @@ module Discovery
       elsif needed.first && !needed.first["admin"].blank?
         Minion.statuses[:update_needed]
       else
-        Minion.status[:unknown]
+        Minion.statuses[:unknown]
       end
     end
   end

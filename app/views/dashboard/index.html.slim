@@ -26,6 +26,17 @@ h1 Cluster Status
             dd ?
             dt # of nodes w/ outdated software
             dd.outdated-count ?
+    .panel-footer.admin-outdated-notification.hidden
+      .message
+        i.fa.fw.fa-exclamation-circle
+        strong Admin node is running outdated software
+      .failed-message
+        i.fa.fw.fa-exclamation-circle
+        strong Admin node is running outdated software (failed to update)
+      .actions
+        a.btn.btn-link.update-admin-btn data-toggle="modal" data-target=".update-admin-modal"
+          | Update admin node
+
 
 .nodes-container data-url=authenticated_root_path
   .panel.panel-default
@@ -56,4 +67,5 @@ h1 Cluster Status
                 | Master
           tbody
 
+= render "dashboard/update_admin_modal"
 = render "dashboard/polling"

@@ -58,9 +58,14 @@
   color: #31708f;
   text-align: right;
 
-  .message {
+  .message,
+  .failed-message {
     float: left;
     line-height: 34px;
+  }
+
+  .failed-message {
+    display: none;
   }
 
   .actions {
@@ -75,6 +80,19 @@
     font-size: 20px;
     margin-right: 10px;
     vertical-align: middle;
+  }
+
+  &--failed {
+    background-color: #f2dede;
+    color: #a94442;
+
+    .message {
+      display: none;
+    }
+
+    .failed-message {
+      display: inline-block;
+    }
   }
 }
 

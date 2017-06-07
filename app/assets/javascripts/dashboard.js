@@ -59,6 +59,8 @@ MinionPoller = {
         }
         $(".nodes-container tbody").html(rendered);
 
+        MinionPoller.handleAdminUpdate(data.admin || {});
+
         // disable bootstrap button if there are no minions
         $("#bootstrap").prop('disabled', minions.length === 0);
 
@@ -87,6 +89,28 @@ MinionPoller = {
       // make another request only after the last one finished
       setTimeout(MinionPoller.request, 5000);
     });
+  },
+
+  handleAdminUpdate: function(admin) {
+    var $notification = $('.admin-outdated-notification');
+
+    if (admin.update === undefined) {
+      return;
+    }
+
+    switch (admin.update) {
+      case 1:
+        $notification.removeClass('hidden');
+        $notification.removeClass('admin-outdated-notification--failed');
+        break;
+      case 2:
+        $notification.removeClass('hidden');
+        $notification.addClass('admin-outdated-notification--failed');
+        break;
+      default:
+        $notification.addClass('hidden');
+        break;
+    }
   },
 
   enable_kubeconfig: function(enabled) {
@@ -156,3 +180,28 @@ MinionPoller = {
       </tr>";
   }
 };
+
+// reboot to update admin node handler
+$('body').on('click', '.reboot-update-btn', function(e) {
+  var $btn = $(this);
+
+  e.preventDefault();
+
+  // $.ajax({
+  //   url: $btn.data('url'),
+  //   method: 'PUT'
+  // })
+  // .done(function() {
+  //   // close modal?
+  // })
+  // .fail(function() {
+  //   // ?
+  // })
+  // .always(function() {
+  //   $btn.text('Rebooting...');
+  //   $btn.prop('disabled', true);
+  // });
+
+  $btn.text('Rebooting...');
+  $btn.prop('disabled', true);
+});
