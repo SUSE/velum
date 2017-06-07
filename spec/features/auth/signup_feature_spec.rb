@@ -3,20 +3,20 @@ require "rails_helper"
 
 feature "Signup feature" do
   before do
-    visit new_user_registration_url
+    visit new_user_registration_path
   end
 
   let(:user) { build(:user) }
 
   scenario "I am able to signup from login page" do
-    visit new_user_session_url
+    visit new_user_session_path
     click_link("Create an account")
     expect(current_path).to eq new_user_registration_path
   end
 
   scenario "I am able to go back to the login page" do
     user.save
-    visit new_user_registration_url
+    visit new_user_registration_path
 
     find("#sign-in").click
     expect(current_path).to eq new_user_session_path
@@ -32,14 +32,11 @@ feature "Signup feature" do
   end
 
   # rubocop:disable RSpec/ExampleLength
-  scenario "It reports a wrong email format" do
-    pending("fix the validations")
-    fill_in "user_email", with: "gibberish"
-    fill_in "user_password", with: "12341234"
-    fill_in "user_password_confirmation", with: "12341234"
-    click_button("Create admin")
+  scenario "It reports a wrong email format", js: true do
+    fill_in "user_email", with: "gibberish@asdasd"
 
-    expect(page).to have_content("Email is invalid")
+    expect(page).to have_content("Warning: it's preferred to \
+      use an email address in the format \"user@example.com\"")
   end
 
   scenario "It reports password and password confirmation not matching" do
