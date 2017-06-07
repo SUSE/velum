@@ -22,12 +22,9 @@ module Velum
 
     # Returns the update status of the different minions.
     def self.update_status(targets: "*")
-      _, res = Salt.call(
-        action: "grains.get",
-        arg:     "tx_update_reboot_needed",
-        targets: targets
-      )
-      res["return"]
+      _, needed = Salt.call(action: "grains.get", arg: "tx_update_reboot_needed", targets: targets)
+      _, failed = Salt.call(action: "grains.get", arg: "tx_update_failed", targets: targets)
+      [needed["return"], failed["return"]]
     end
 
     # Returns the minions as discovered by salt.

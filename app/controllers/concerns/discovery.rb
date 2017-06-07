@@ -34,7 +34,15 @@ module Discovery
   #          automatic updates has not been enabled.
   def admin_status
     Rails.cache.fetch("update_status", expires_in: 30.seconds) do
-      ::Velum::Salt.update_status(targets: "*").first["admin"]
+      needed, failed = ::Velum::Salt.update_status(targets: "*")
+
+      if failed.first && !failed.first["admin"].blank?
+        Minion.statuses[:update_failed]
+      elsif needed.first && !needed.first["admin"].blank?
+        Minion.statuses[:update_needed]
+      else
+        Minion.status[:unknown]
+      end
     end
   end
 end
