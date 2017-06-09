@@ -29,6 +29,16 @@ h1 Cluster Status
               = link_to update_path, id: "update-all-nodes", class: "btn btn-xs btn-default pull-right", disabled: true, method: :post do
                   i.fa.fa-arrow-circle-up
                   | Update All Nodes
+    .panel-footer.admin-outdated-notification.hidden
+      .message
+        i.fa.fw.fa-exclamation-circle
+        strong Admin node is running outdated software
+      .failed-message
+        i.fa.fw.fa-exclamation-circle
+        strong Admin node is running outdated software (failed to update)
+      .actions
+        a.btn.btn-link.update-admin-btn data-toggle="modal" data-target=".update-admin-modal"
+          | Update admin node
 
 .nodes-container data-url=authenticated_root_path
   .panel.panel-default
@@ -59,4 +69,6 @@ h1 Cluster Status
               th.text-center
                 | Master
           tbody
+
+= render "dashboard/update_admin_modal"
 = render "dashboard/polling"
