@@ -7,6 +7,12 @@ h1 Cluster Status
         strong  new
         | nodes are available but have not been added to the cluster yet
 = link_to "Download kubectl config", kubectl_config_path, id: "download-kubeconfig", class: "btn btn-default btn-table pull-right", disabled: true
+
+| &nbsp;
+
+a.btn.btn-default.update-admin-btn.pull-right.hidden data-toggle="modal" data-target=".update-admin-modal"
+  | Update admin node
+
 .nodes-container data-url=authenticated_root_path
   table.table
     thead
@@ -23,4 +29,5 @@ h1 Cluster Status
           | Master
     tbody
 
+= render "dashboard/update_admin_modal"
 = render "dashboard/polling"

@@ -12,9 +12,13 @@ class Minion < ApplicationRecord
 
   enum highstate: [:not_applied, :pending, :failed, :applied]
   enum role: [:master, :worker]
+  enum status: [:unknown, :update_needed, :update_failed]
 
   validates :minion_id, presence: true, uniqueness: true
   validates :fqdn, presence: true
+
+  # NOTE: this should be moved into a proper DB column as we do for highstates.
+  attr_accessor :update_status
 
   # Example:
   #   Minion.assign_roles(
@@ -61,6 +65,19 @@ class Minion < ApplicationRecord
     end
 
     Minion.where(id: node_ids)
+  end
+
+  # Returns the update status for the given minion ID. The needed and the
+  # failed arguments are the results as given by salt, with the form of an array
+  # of hashes.
+  def self.computed_status(id, needed, failed)
+    if failed.first && !failed.first[id].blank?
+      Minion.statuses[:update_failed]
+    elsif needed.first && !needed.first[id].blank?
+      Minion.statuses[:update_needed]
+    else
+      Minion.statuses[:unknown]
+    end
   end
 
   # rubocop:disable SkipsModelValidations

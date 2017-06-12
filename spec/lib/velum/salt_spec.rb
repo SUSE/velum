@@ -35,4 +35,15 @@ describe Velum::Salt do
       end
     end
   end
+
+  describe "update_status" do
+    it "returns the update status of the given nodes" do
+      VCR.use_cassette("salt/update_status", record: :none) do
+        needed, failed = described_class.update_status
+        # In the VCR both values were set to true, so we can check this in a
+        # single 'expect' statement.
+        expect(needed.first["admin"] && failed.first["admin"]).to be_truthy
+      end
+    end
+  end
 end

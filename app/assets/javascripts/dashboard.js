@@ -38,6 +38,8 @@ MinionPoller = {
         }
         $(".nodes-container tbody").html(rendered);
 
+        MinionPoller.handleAdminUpdate(data.admin || {});
+
         // disable bootstrap button if there are no minions
         if (minions.length == 0) {
           $("#bootstrap").prop('disabled', true);
@@ -60,6 +62,15 @@ MinionPoller = {
       }
     });
   },
+
+  handleAdminUpdate: function(admin) {
+    if (admin.update_status === undefined) {
+      return;
+    }
+
+    $('.update-admin-btn').toggleClass('hidden', admin.update_status === 0);
+  },
+
 
   enable_kubeconfig: function(enabled) {
     $("#download-kubeconfig").attr("disabled", !enabled);
@@ -127,3 +138,28 @@ MinionPoller = {
       </tr>";
   }
 };
+
+// reboot to update admin node handler
+$('body').on('click', '.reboot-update-btn', function(e) {
+  var $btn = $(this);
+
+  e.preventDefault();
+
+  $btn.text('Rebooting...');
+  $btn.prop('disabled', true);
+
+  $.ajax({
+    url: $btn.data('url'),
+    method: 'POST'
+  })
+  .done(function() {
+    $('.update-admin-modal').modal('hide');
+    $btn.text('Reboot to update');
+  })
+  .fail(function() {
+    $btn.text('Update admin node (failed last time)');
+  })
+  .always(function() {
+    $btn.prop('disabled', false);
+  });
+});
