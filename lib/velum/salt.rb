@@ -46,7 +46,7 @@ module Velum
         val = el.values.first
 
         # TODO: improve error handling...
-        val.include?("No such file or directory") ? nil : val
+        val && val.include?("No such file or directory") ? nil : val
       end
     end
   end
