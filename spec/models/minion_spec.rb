@@ -226,5 +226,39 @@ describe Minion do
       end
     end
   end
+
+  describe "computed_status" do
+    it "computes unknown if all fields are empty" do
+      needed = [{ "admin" => "" }]
+      failed = [{ "admin" => "" }]
+      expect(described_class.computed_status("admin", needed, failed)).to(
+        eq described_class.statuses[:unknown]
+      )
+    end
+
+    it "computes needed if is set to true" do
+      needed = [{ "admin" => true }]
+      failed = [{ "admin" => "" }]
+      expect(described_class.computed_status("admin", needed, failed)).to(
+        eq described_class.statuses[:update_needed]
+      )
+    end
+
+    it "computes failed if is set to true" do
+      needed = [{ "admin" => "" }]
+      failed = [{ "admin" => true }]
+      expect(described_class.computed_status("admin", needed, failed)).to(
+        eq described_class.statuses[:update_failed]
+      )
+    end
+
+    it "computes failed if is set to true, even if needed is also true" do
+      needed = [{ "admin" => true }]
+      failed = [{ "admin" => true }]
+      expect(described_class.computed_status("admin", needed, failed)).to(
+        eq described_class.statuses[:update_failed]
+      )
+    end
+  end
   # rubocop:enable RSpec/ExampleLength
 end

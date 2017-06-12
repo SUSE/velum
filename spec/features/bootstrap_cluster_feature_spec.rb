@@ -6,6 +6,7 @@ feature "Bootstrap cluster feature" do
 
   before do
     login_as user, scope: :user
+    setup_stubbed_update_status!
     visit setup_discovery_path
   end
 

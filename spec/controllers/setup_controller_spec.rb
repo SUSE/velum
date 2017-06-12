@@ -302,6 +302,7 @@ RSpec.describe SetupController, type: :controller do
       sign_in user
       allow_any_instance_of(SetupController).to receive(:redirect_to_dashboard)
         .and_return(true)
+      setup_stubbed_update_status!
     end
 
     it "shows the minions" do

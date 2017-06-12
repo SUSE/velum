@@ -4,6 +4,7 @@ Rails.application.routes.draw do
                                     sessions:      "auth/sessions" }
 
   resource :dashboard, only: [:index]
+  resource :updates, only: [:create]
 
   authenticated :user do
     root "dashboard#index", as: :authenticated_root

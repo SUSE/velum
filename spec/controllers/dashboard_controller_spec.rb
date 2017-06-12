@@ -10,6 +10,12 @@ RSpec.describe DashboardController, type: :controller do
   let(:master_minion)        { create(:master_minion) }
   let(:worker_minion)        { create(:worker_minion) }
   let(:external_fqdn_pillar) { create(:external_fqdn_pillar) }
+  let(:stubbed) do
+    [
+      [{ "admin" => "",   master_minion.minion_id => true, worker_minion.minion_id => true }],
+      [{ "admin" => true, master_minion.minion_id => true, worker_minion.minion_id => ""   }]
+    ]
+  end
 
   before do
     minion1 && minion2 # Create two minions (no roles assigned)
@@ -36,6 +42,8 @@ RSpec.describe DashboardController, type: :controller do
     end
 
     it "shows a simple monitoring when roles have already been assigned" do
+      setup_stubbed_update_status!(stubbed: stubbed)
+
       sign_in user
       # Create a master minion and a worker minion
       master_minion && worker_minion
@@ -50,6 +58,8 @@ RSpec.describe DashboardController, type: :controller do
       # Create a master minion and a worker minion
       master_minion && worker_minion
       request.accept = "application/json"
+
+      setup_stubbed_update_status!(stubbed: stubbed)
     end
 
     it "renders assigned and unassigned minions" do
@@ -59,6 +69,27 @@ RSpec.describe DashboardController, type: :controller do
         expect(JSON.parse(response.body).key?(key)).to be true
       end
     end
+
+    # rubocop:disable RSpec/ExampleLength
+    # rubocop:disable RSpec/MultipleExpectations
+    it "sets the update_status properly" do
+      stubbed = [
+        [{ "admin" => "", master_minion.minion_id => true, worker_minion.minion_id => true }],
+        [{ "admin" => true, master_minion.minion_id => true, worker_minion.minion_id => "" }]
+      ]
+      allow(::Velum::Salt).to receive(:update_status).and_return(stubbed)
+
+      get :index
+      resp = JSON.parse(response.body)
+      master = resp["assigned_minions"].find { |m| m["id"] == master_minion.id }
+      worker = resp["assigned_minions"].find { |m| m["id"] == worker_minion.id }
+
+      expect(resp["admin"]["update_status"]).to eq(Minion.statuses[:update_failed])
+      expect(master["update_status"]).to eq(Minion.statuses[:update_failed])
+      expect(worker["update_status"]).to eq(Minion.statuses[:update_needed])
+    end
+    # rubocop:enable RSpec/ExampleLength
+    # rubocop:enable RSpec/MultipleExpectations
   end
 
   describe "GET /autoyast" do

@@ -9,6 +9,8 @@ feature "Dashboard" do
       login_as user, scope: :user
       Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion0.k8s.local", role: "master")
       Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion1.k8s.local", role: "worker")
+      setup_stubbed_update_status!
+
       visit authenticated_root_path
     end
 

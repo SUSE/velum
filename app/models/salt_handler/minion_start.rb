@@ -20,12 +20,14 @@ class SaltHandler::MinionStart
   def process_event
     parsed_data = salt_event.parsed_data
 
-    # Ignore the ca minion. It shouldn't be used as part of the k8s cluster.
-    return false if parsed_data["id"] == "ca"
+    # Ignore the ca and the dashboard minions. It shouldn't be used as part of
+    # the k8s cluster.
+    id = parsed_data["id"]
+    return false if id == "ca" || id == "admin"
 
-    minion_info = Velum::Salt.minions[parsed_data["id"]]
+    minion_info = Velum::Salt.minions[id]
 
     # false if a minion with this minion_id or fqdn already exists (uniqueness validation)
-    Minion.new(minion_id: parsed_data["id"], fqdn: minion_info["fqdn"]).save
+    Minion.new(minion_id: id, fqdn: minion_info["fqdn"]).save
   end
 end
