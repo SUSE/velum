@@ -6,6 +6,9 @@ Rails.application.routes.draw do
   resource :dashboard, only: [:index]
   resource :updates, only: [:create]
 
+  get "/assign_nodes", to: "dashboard#unassigned_nodes"
+  post "/assign_nodes", to: "dashboard#assign_nodes"
+
   authenticated :user do
     root "dashboard#index", as: :authenticated_root
   end

@@ -43,6 +43,7 @@ class SetupController < ApplicationController
     respond_to do |format|
       if assigned.values.include?(false)
         message = "Failed to assign #{failed_assigned_nodes(assigned)}"
+
         format.html do
           flash[:error] = message
           redirect_to setup_discovery_path
@@ -58,16 +59,16 @@ class SetupController < ApplicationController
 
   private
 
-  def redirect_to_dashboard
-    redirect_to root_path unless Minion.assigned_role.count.zero?
-  end
-
   def settings_params
     params.require(:settings).permit(*Pillar.all_pillars.keys)
   end
 
   def update_nodes_params
     params.require(:roles)
+  end
+
+  def redirect_to_dashboard
+    redirect_to root_path unless no_setup?
   end
 
   def failed_assigned_nodes(assigned)

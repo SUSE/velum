@@ -5,8 +5,6 @@ require "velum/suse_connect"
 
 RSpec.describe DashboardController, type: :controller do
   let(:user)                 { create(:user) }
-  let(:minion1)              { create(:minion) }
-  let(:minion2)              { create(:minion) }
   let(:master_minion)        { create(:master_minion) }
   let(:worker_minion)        { create(:worker_minion) }
   let(:external_fqdn_pillar) { create(:external_fqdn_pillar) }
@@ -18,7 +16,6 @@ RSpec.describe DashboardController, type: :controller do
   end
 
   before do
-    minion1 && minion2 # Create two minions (no roles assigned)
     # rubocop:disable RSpec/AnyInstance
     [:minion, :master].each do |role|
       allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(role)
@@ -207,4 +204,74 @@ RSpec.describe DashboardController, type: :controller do
       end
     end
   end
+
+  # rubocop:disable RSpec/AnyInstance
+  describe "POST /assign_nodes via HTML" do
+    let(:salt) { Velum::Salt }
+    before do
+      sign_in user
+      # creates 2 bootstraped minion
+      master_minion && worker_minion
+      Minion.create! [{ minion_id: SecureRandom.hex, fqdn: "worker1" },
+                      { minion_id: SecureRandom.hex, fqdn: "worker2" }]
+
+      allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(:worker)
+        .and_return(:worker)
+    end
+
+    context "when the minion doesn't exist" do
+      it "renders an error with not_found" do
+        post :assign_nodes, roles: { worker: [9999999] }
+        expect(flash[:error]).to be_present
+        expect(response.redirect_url).to eq "http://test.host/assign_nodes"
+      end
+    end
+
+    context "when the user successfully chooses the nodes" do
+      it "strips other roles different from worker" do
+        worker_ids = Minion.all[2..-1].map(&:id)
+        param = { roles: { "worker" => worker_ids.map(&:to_s) } }
+        allow(Minion).to receive(:assign_roles!).with(param)
+          .and_return({})
+
+        post :assign_nodes, roles: { master: [1], dns: [2], worker: worker_ids }
+      end
+
+      it "sets worker role to the minions" do
+        post :assign_nodes, roles: { worker: Minion.all[2..-1].map(&:id) }
+        expect(Minion.where("fqdn REGEXP ?", "worker*").map(&:role).uniq).to eq ["worker"]
+      end
+
+      it "calls the orchestration" do
+        post :assign_nodes, roles: { worker: Minion.all[2..-1].map(&:id) }
+        expect(salt).to have_received(:orchestrate)
+      end
+
+      it "gets redirected to the list of nodes" do
+        post :assign_nodes, roles: { worker: Minion.all[2..-1].map(&:id) }
+        expect(response.redirect_url).to eq "http://test.host/"
+        expect(response.status).to eq 302
+      end
+    end
+
+    context "when nodes were not able to be assigned to its role" do
+      before do
+        allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(:worker)
+          .and_return(false)
+        allow(salt).to receive(:orchestrate)
+      end
+
+      it "gets redirected to the discovery page" do
+        post :assign_nodes, roles: { worker: Minion.all[1..-1].map(&:id) }
+        expect(flash[:error]).to be_present
+        expect(response.redirect_url).to eq "http://test.host/assign_nodes"
+      end
+
+      it "doesn't call the orchestration" do
+        post :assign_nodes, roles: { worker: Minion.all[1..-1].map(&:id) }
+        expect(Velum::Salt).to have_received(:orchestrate).exactly(0).times
+      end
+    end
+  end
+  # rubocop:enable RSpec/AnyInstance
 end

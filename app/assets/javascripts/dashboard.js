@@ -59,18 +59,16 @@ MinionPoller = {
           }).get();
         }
 
-        if (MinionPoller.renderMode == "discovery") {
-          minions = minions.concat(unassignedMinions);
+        if (MinionPoller.renderMode !== "Dashboard") {
+          minions = unassignedMinions;
         } else {
           MinionPoller.sortMinions(minions);
         }
 
+        var renderMethod = 'render' + MinionPoller.renderMode;
         for (i = 0; i < minions.length; i++) {
-          if (MinionPoller.renderMode == "discovery") {
-            rendered += MinionPoller.renderDiscovery(minions[i]);
-          } else {
-            rendered += MinionPoller.render(minions[i]);
-          }
+          rendered += MinionPoller[renderMethod].call(MinionPoller, minions[i]);
+
           if (minions[i].highstate != "applied") {
             allApplied = false;
           }
@@ -97,11 +95,14 @@ MinionPoller = {
         $('.assigned-count').text(minions.length);
         $('.master-count').text(MinionPoller.selectedMasters.length);
 
+        var addNodesUrl = $('.unassigned-count').data('url');
         if (unassignedMinions.length > 0) {
+          // discovery page uses #node-count,
+          // overview page otherwise
           if ($("#node-count").length > 0) {
             $("#node-count").text(unassignedMinions.length + " nodes found");
           } else {
-            $('.unassigned-count').text(unassignedMinions.length);
+            $('.unassigned-count').html(unassignedMinions.length + ' <a href="' + addNodesUrl + '">(new)</a>');
           }
         } else {
           $('.unassigned-count').text(0);
@@ -141,12 +142,11 @@ MinionPoller = {
     }
   },
 
-
   enable_kubeconfig: function(enabled) {
     $("#download-kubeconfig").attr("disabled", !enabled);
   },
 
-  render: function(minion) {
+  renderDashboard: function(minion) {
     var statusHtml;
     var checked;
     var masterHtml;
@@ -186,7 +186,7 @@ MinionPoller = {
         switch (minion.highstate) {
           case "applied":
             statusHtml = '<i class="fa fa-arrow-circle-up text-info fa-2x" aria-hidden="true"></i>';
-            statusText = 'Update Available'  
+            statusText = 'Update Available'
             break;
           case "failed":
             statusHtml = '<i class="fa fa-arrow-circle-up text-warning fa-2x" aria-hidden="true"></i>';
@@ -214,7 +214,7 @@ MinionPoller = {
       </tr>";
   },
 
-  renderDiscovery: function(minion) {
+  renderDiscovery: function(minion, onlyWorkers) {
     var masterHtml;
     var masterChecked = '';
     var minionHtml;
@@ -225,8 +225,13 @@ MinionPoller = {
       minionChecked += 'disabled="disabled" checked ';
     }
 
-    masterHtml = '<input name="roles[master][]" id="roles_master_' + minion.id +
-      '" value="' + minion.id + '" type="radio" ' + masterChecked + '>';
+    if (onlyWorkers) {
+      masterHtml = '';
+    } else {
+      masterHtml = '<td class="text-center">\
+        <input name="roles[master][]" id="roles_master_' + minion.id +
+        '" value="' + minion.id + '" type="radio" ' + masterChecked + '></td>';
+    }
 
     if (MinionPoller.selectedNodes && MinionPoller.selectedNodes.indexOf(minion.id) != -1) {
       minionChecked += 'checked';
@@ -240,8 +245,12 @@ MinionPoller = {
         <td>" + minionHtml +  "</td>\
         <td>" + minion.minion_id +  "</td>\
         <td>" + minion.fqdn +  "</td>\
-        <td class='text-center'>" + masterHtml + "</td>\
+        " + masterHtml + "\
       </tr>";
+  },
+
+  renderUnassigned: function(minion) {
+    return MinionPoller.renderDiscovery(minion, true);
   }
 };
 
@@ -270,9 +279,19 @@ $('body').on('click', '.reboot-update-btn', function(e) {
   });
 });
 
+// enable/disable Add nodes button to assign nodes
+function toggleAddNodesButton() {
+  var selectedNodes = $("input[name='roles[worker][]']:checked").length;
+
+  $('.add-nodes-btn').prop('disabled', selectedNodes === 0);
+};
+
+$('body').on('change', '.new-nodes-container input[name="roles[worker][]"]', toggleAddNodesButton);
+
 // checkbox on the top the checks/unchecks all nodes
 $('.check-all').on('change', function() {
-  $('input[name="roles[worker][]"]').prop('checked', this.checked).change();
+  $('input[name="roles[worker][]"]:not(:disabled)').prop('checked', this.checked).change();
+  toggleAddNodesButton();
 });
 
 // when checking/unchecking a node
@@ -291,6 +310,7 @@ $('body').on('change', 'input[name="roles[worker][]"]', function() {
 // when selecting a master
 // selects node and makes it impossible to uncheck
 // enable and keep the previous state of the previous master (selected or not)
+// if user select node as master, it checks it as selected
 $('body').on('change', 'input[name="roles[master][]"]', function() {
   var $previousMaster = $('input[name="roles[worker][]"]:disabled');
   var previousMasterValue = parseInt($previousMaster.val(), 10);
