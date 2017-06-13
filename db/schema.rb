@@ -13,6 +13,23 @@
 
 ActiveRecord::Schema.define(version: 20180109145421) do
 
+  create_table "certificates", force: :cascade do |t|
+    t.text     "certificate", limit: 65535
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "docker_registries", force: :cascade do |t|
+    t.string   "url",              limit: 255
+    t.string   "mirror",           limit: 255
+    t.integer  "certifiable_id",   limit: 4
+    t.string   "certifiable_type", limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "docker_registries", ["certifiable_type", "certifiable_id"], name: "index_docker_registries_on_certifiable_type_and_certifiable_id", using: :btree
+
   create_table "jids", id: false, force: :cascade do |t|
     t.string "jid",  limit: 255,      null: false
     t.text   "load", limit: 16777215, null: false
