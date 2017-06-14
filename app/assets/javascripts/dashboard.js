@@ -31,6 +31,8 @@ MinionPoller = {
       success: function(data) {
         var rendered = "";
         var allApplied = true;
+        var updateAvailable = false;
+        var updateAvailableNodeCount = 0;
 
         // In discovery, the minions to be rendered are unassigned, while on the
         // dashboard we don't want to render unassigned minions but we still
@@ -61,15 +63,25 @@ MinionPoller = {
           if (minions[i].highstate != "applied") {
             allApplied = false;
           }
+          if (minions[i].update_status == 1) {
+            updateAvailable = true;
+            updateAvailableNodeCount++;
+          }
         }
         $(".nodes-container tbody").html(rendered);
 
         MinionPoller.handleAdminUpdate(data.admin || {});
 
+        if (updateAvailable && allApplied) {
+          $("#update-all-nodes").attr('disabled', false);
+        }
+
         // disable bootstrap button if there are no minions
         $("#bootstrap").prop('disabled', minions.length === 0);
 
         MinionPoller.enable_kubeconfig(minions.length > 0 && allApplied);
+
+        $('#out_dated_nodes').text(updateAvailableNodeCount)
 
         $('.assigned-count').text(minions.length);
         $('.master-count').text(MinionPoller.selectedMasters.length);
@@ -156,10 +168,35 @@ MinionPoller = {
     masterHtml = '<input name="roles[master][]" id="roles_master_' + minion.id +
       '" value="' + minion.id + '" type="radio" disabled="" ' + checked + '>';
 
+    statusText = ''
+
+    switch(minion.update_status) {
+      case 1:
+        switch (minion.highstate) {
+          case "applied":
+            statusHtml = '<i class="fa fa-arrow-circle-up text-info fa-2x" aria-hidden="true"></i>';
+            statusText = 'Update Available'  
+            break;
+          case "failed":
+            statusHtml = '<i class="fa fa-arrow-circle-up text-warning fa-2x" aria-hidden="true"></i>';
+            statusText = 'Update Failed - Retryable'
+            break;
+          case "pending":
+            statusText = 'Update in progress'
+            break;
+        }
+        break;
+      case 2:
+        statusHtml = '<i class="fa fa-arrow-circle-up text-danger fa-2x" aria-hidden="true"></i>';
+        statusText = 'Update Failed'
+        break;
+    }
+
     return "\
       <tr> \
+        <td>" + statusHtml +  "</td>\
+        <td>" + statusText +  "</td>\
         <th>" + minion.minion_id +  "</th>\
-        <td class='text-center'>" + statusHtml +  "</td>\
         <td>" + minion.fqdn +  "</td>\
         <td>" + (minion.role || '') +  "</td>\
         <td class='text-center'>" + masterHtml + "</td>\

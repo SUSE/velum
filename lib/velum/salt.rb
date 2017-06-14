@@ -50,6 +50,15 @@ module Velum
       [res, JSON.parse(res.body)]
     end
 
+    # Call the update orchestration
+    def self.update_orchestration
+      res = perform_request(endpoint: "/run", method: "post",
+                            data: { client: "runner_async",
+                                    fun:    "state.orchestrate",
+                                    mods:   "orch.update" })
+      [res, JSON.parse(res.body)]
+    end
+
     # Returns the contents of the given file.
     def self.read_file(targets: "*", target_type: "glob", file: nil)
       _, data = Velum::Salt.call action:      "cmd.run",

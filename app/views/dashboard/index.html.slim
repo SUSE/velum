@@ -22,10 +22,14 @@ h1 Cluster Status
             dd.unassigned-count
         .col-md-6.right-column
           dl.side-by-side
-            dt Node updates
-            dd ?
+            dt Updates
+            dd Manual
             dt # of nodes w/ outdated software
-            dd.outdated-count ?
+            dd.outdated-count
+              span#out_dated_nodes 0
+              = link_to update_path, id: "update-all-nodes", class: "btn btn-xs btn-default pull-right", disabled: true, method: :post do
+                  i.fa.fa-arrow-circle-up
+                  | Update All Nodes
     .panel-footer.admin-outdated-notification.hidden
       .message
         i.fa.fw.fa-exclamation-circle
@@ -56,15 +60,17 @@ h1 Cluster Status
           thead
             tr
               th
-                | Id
-              th.text-center
+                | &nbsp;
+              th
                 | Status
+              th
+                | ID
               th
                 | Hostname
               th
                 | Role
-              th.text-center
-                | Master
+              th
+                | &nbsp;
           tbody
 
 = render "dashboard/update_admin_modal"
