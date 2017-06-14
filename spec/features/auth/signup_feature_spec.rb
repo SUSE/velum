@@ -2,51 +2,51 @@
 require "rails_helper"
 
 feature "Signup feature" do
-  before do
-    visit new_user_registration_path
-  end
-
   let(:user) { build(:user) }
 
-  scenario "I am able to signup from login page" do
+  # rubocop:disable RSpec/ExampleLength
+  # rubocop:disable RSpec/MultipleExpectations
+
+  # XXX: the following tests depend on another and thus cannot be split into
+  # multiple scenarios. This must be fixed as soon as multiuser support is
+  # implemented.
+
+  scenario "Account creation tests", js: true do
+    # account creation reachable
     visit new_user_session_path
     click_link("Create an account")
     expect(current_path).to eq new_user_registration_path
-  end
 
-  scenario "I am able to go back to the login page" do
-    user.save
-    visit new_user_registration_path
+    # wrong email format
+    fill_in "user_email", with: "gibberish@asdasd"
+    expect(page).to have_content("Warning: it's preferred to \
+      use an email address in the format \"user@example.com\"")
 
-    find("#sign-in").click
-    expect(current_path).to eq new_user_session_path
-  end
+    # password confirmation doesn't match Password
+    fill_in "user_email", with: user.email
+    fill_in "user_password", with: "12341234"
+    fill_in "user_password_confirmation", with: "532"
+    click_button("Create Admin")
+    expect(page).to have_content("Password confirmation doesn't match Password")
 
-  scenario "I am able to signup" do
+    # successful account creation
     fill_in "user_email", with: user.email
     fill_in "user_password", with: user.password
     fill_in "user_password_confirmation", with: user.password
     click_button("Create Admin")
-
     expect(page).to have_content("You have signed up successfully")
-  end
+    click_link("Logout")
 
-  # rubocop:disable RSpec/ExampleLength
-  scenario "It reports a wrong email format", js: true do
-    fill_in "user_email", with: "gibberish@asdasd"
+    # `Create an account` button will not be displayed anymore as only one user
+    # is currently supported
+    visit new_user_session_path
+    expect(page).not_to have_content("Create an account")
 
-    expect(page).to have_content("Warning: it's preferred to \
-      use an email address in the format \"user@example.com\"")
-  end
-
-  scenario "It reports password and password confirmation not matching" do
-    pending("fix the validations")
-    fill_in "user_email", with: user.email
-    fill_in "user_password", with: "12341234"
-    fill_in "user_password_confirmation", with: "532"
-    click_button("Create admin")
-
-    expect(page).to have_content("Password confirmation doesn't match Password")
+    # forcefully visiting the registration path must redirect to the
+    # root_path and yield an alert.
+    visit new_user_registration_path
+    expect(page).to have_content("Admin user already exists.")
+    expect(current_path).to eq root_path
   end
   # rubocop:enable RSpec/ExampleLength
 end

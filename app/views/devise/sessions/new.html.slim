@@ -8,9 +8,10 @@
       p SUSE Container as a Service Platform allows you to provision, manage, and scale container-based applications.
       p It automates your tedious management tasks allowing you to focus on development and writing apps to meet business goals.
     p
-      | Don't have an account? 
-      a.btn.btn-default[href="/users/sign_up"]
-        | Create an account
+      - if User.count.zero?
+        | Don't have an account?
+        a.btn.btn-default[href="/users/sign_up"]
+          | Create an account
   .col-sm-4.col-sm-offset-1
     h2.Raleway-font
       | Log In
