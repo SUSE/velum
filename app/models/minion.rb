@@ -101,7 +101,7 @@ class Minion < ApplicationRecord
   end
   # rubocop:enable SkipsModelValidations
 
-  # Updates all nodes with a grain of `tx_update_reboot_needed: True` with a 
+  # Updates all nodes with a grain of `tx_update_reboot_needed: True` with a
   # highstate = pending, and persists it to the database
   def self.mark_pending_update
     needed, failed = ::Velum::Salt.update_status(targets: "*", cached: true)
