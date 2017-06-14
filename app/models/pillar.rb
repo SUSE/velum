@@ -33,7 +33,7 @@
 #   - https://github.com/kubic-project/salt/blob/master/config/master.d/returner.conf
 class Pillar < ApplicationRecord
   validates :pillar, presence: true
-  validates :value, presence: true, alphabetic: true
+  validates :value, presence: true, alphanumeric: true
 
   scope :global, -> { where minion_id: nil }
 

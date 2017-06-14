@@ -50,18 +50,26 @@ describe Pillar do
       [
         "'apiserver' could not be saved: can't be blank.",
         "'city' could not be saved: contains invalid characters.",
-        "'company_name' could not be saved: can't be blank.",
-        "'company_unit' could not be saved: can't be blank.",
+        "'company_name' could not be saved: contains invalid characters.",
         "'dashboard' could not be saved: can't be blank.",
         "'email' could not be saved: can't be blank.",
         "'state' could not be saved: contains invalid characters."
       ]
     end
 
+    # rubocop:disable RSpec/ExampleLength
     it "returns all the errors" do
-      res = described_class.apply(city: "Nürnberg", state: "Sòmething", country: "Deutschland").sort
+      res = described_class.apply(
+        city:         "Nürnberg",   # UTF-8 character
+        state:        "Sòmething1", # Number not allowed
+        country:      "DE",
+        company_unit: "It can have, spac3s and numb3rs!",
+        company_name: "Però no pot tenir UTF-8"
+      ).sort
+
       expect(res).to eq(expectations)
     end
+    # rubocop:enable RSpec/ExampleLength
 
     it "returns an empty array when everything is fine" do
       res = described_class.apply(settings_params)
