@@ -40,13 +40,22 @@ MinionPoller = {
         var minions = data.assigned_minions || [];
         var unassignedMinions = data.unassigned_minions || [];
 
-        MinionPoller.selectedMasters = data.assigned_minions.reduce(function(memo, minion) {
-          if (minion.role === 'master') {
-            memo.push(minion.id);
-          }
+        // for the dashboard, if we rely on radio, the first time this comes
+        // it won't detect that there's a master, so we need to rely on the data
+        // itself for counting masters
+        if (MinionPoller.renderMode === 'dashboard') {
+          MinionPoller.selectedMasters = data.assigned_minions.reduce(function(memo, minion) {
+            if (minion.role === 'master') {
+              memo.push(minion.id);
+            }
 
-          return memo;
-        }, []);
+            return memo;
+          }, []);
+        } else {
+          MinionPoller.selectedMasters = $("input[name='roles[master][]']:checked").map(function() {
+            return parseInt($( this ).val());
+          }).get();
+        }
 
         if (MinionPoller.renderMode == "discovery") {
           minions = minions.concat(unassignedMinions);
