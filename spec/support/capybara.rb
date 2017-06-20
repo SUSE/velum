@@ -7,7 +7,6 @@ require "capybara/poltergeist"
 Capybara.register_driver :poltergeist do |app|
   options = {
     timeout:           3.minutes,
-    phantomjs:         Phantomjs.path,
     js_errors:         false,
     phantomjs_options: [
       "--proxy-type=none",
