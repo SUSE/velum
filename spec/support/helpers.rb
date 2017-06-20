@@ -17,6 +17,13 @@ module Helpers
   def disabled?(selector)
     page.evaluate_script("$('#{selector}').attr('disabled')") == "disabled"
   end
+
+  # click on `selector element when enabled
+  def click_on_when_enabled(selector)
+    # will wait until it becomes enabled
+    have_css("#{selector}:not([disabled])")
+    find(selector).click
+  end
 end
 
 RSpec.configure { |config| config.include Helpers, type: :feature }
