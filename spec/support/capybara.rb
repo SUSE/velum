@@ -5,12 +5,18 @@ require "capybara/rspec"
 require "capybara/poltergeist"
 
 Capybara.register_driver :poltergeist do |app|
-  Capybara::Poltergeist::Driver.new(
-    app,
+  options = {
+    timeout:           3.minutes,
     phantomjs:         Phantomjs.path,
     js_errors:         false,
-    phantomjs_options: ["--load-images=no"]
-  )
+    phantomjs_options: [
+      "--proxy-type=none",
+      "--load-images=no"
+    ]
+  }
+  # NOTE: uncomment the line below to get more info on the current run.
+  # options[:debug] = true
+  Capybara::Poltergeist::Driver.new(app, options)
 end
 
 Capybara.javascript_driver = :poltergeist

@@ -13,8 +13,8 @@ RSpec.describe SaltController, type: :controller do
   end
   before do
     sign_in user
+
     setup_stubbed_update_status!(stubbed: stubbed)
-    allow(::Velum::Salt).to receive(:call).and_return(true)
   end
 
   describe "POST /update" do
