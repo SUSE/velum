@@ -23,14 +23,7 @@ class SaltHandler::MinionHighstate
     minion_id = salt_event.tag.match(TAG_MATCHER)[1]
     return false unless minion_id
 
-    # After applying a highstate once, it is applied again and again.
-    # Salt probably tries to make sure it stays applied. We don't need to process
-    # those events. We only need to process a highstate if one is pending, or has
-    # failed in the past.
-    minion = Minion.find_by(
-      minion_id: minion_id,
-      highstate: [Minion.highstates[:pending], Minion.highstates[:failed]]
-    )
+    minion = Minion.find_by minion_id: minion_id
     return false unless minion
 
     data = JSON.parse(salt_event.data)
