@@ -27,6 +27,7 @@ feature "Dashboard" do
       visit authenticated_root_path
 
       el = find("#download-kubeconfig")
+      wait_until { !find("#download-kubeconfig")[:disabled] }
       expect(el[:disabled]).to be_falsey
     end
     # rubocop:enable RSpec/ExampleLength

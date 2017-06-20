@@ -7,6 +7,8 @@ RSpec.describe UpdatesController, type: :controller do
     create(:master_minion)
     create(:worker_minion)
     sign_in user
+
+    allow(::Velum::Salt).to receive(:call).and_return(true)
   end
 
   describe "reboot admin node" do
@@ -19,21 +21,21 @@ RSpec.describe UpdatesController, type: :controller do
     end
 
     it "allows the node to reboot if an update is needed" do
-      allow(::Velum::Salt).to receive(:call).and_return(true)
       stubbed = [[{ "admin" => true }], [{ "admin" => "" }]]
       setup_stubbed_update_status!(stubbed: stubbed)
 
       post :create
       expect(flash[:info]).to eq "Rebooting..."
+      expect(::Velum::Salt).to have_received(:call).once
     end
 
     it "allows the node to reboot if a previous update failed" do
-      allow(::Velum::Salt).to receive(:call).and_return(true)
       stubbed = [[{ "admin" => "" }], [{ "admin" => true }]]
       setup_stubbed_update_status!(stubbed: stubbed)
 
       post :create
       expect(flash[:info]).to eq "Rebooting..."
+      expect(::Velum::Salt).to have_received(:call).once
     end
   end
 end
