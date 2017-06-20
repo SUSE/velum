@@ -4,16 +4,21 @@
       | &times;
   i.fa.fa-4x.pull-left aria-hidden="true"
   span
-    | After choosing the master and clicking "Bootstrap cluster" all other nodes will be set to the worker role
+    | After choosing the master and clicking "Bootstrap cluster" all the other selected nodes will be set to the worker role
+
 h1 Nodes
+
 .row
   .col-xs-12.discovery-control
     span#node-count #{Minion.count} Nodes found
+
 = form_tag(setup_bootstrap_path, method: "post")
   .nodes-container data-url=setup_discovery_path
     table.table
       thead
         tr
+          th width=10
+            = check_box_tag "all", "all", false, { class: "check-all" }
           th
             | Id
           th
@@ -23,12 +28,15 @@ h1 Nodes
       tbody
         - Minion.all.each do |m|
           tr
-            th
+            td
+              = check_box_tag "roles[worker][]", m.id
+            td
               | #{m.minion_id}
             td
               | #{m.fqdn}
             td.text-center
               = radio_button_tag "roles[master][]", m.id
+
     .clearfix.text-right.steps-container
       = link_to "Back", setup_worker_bootstrap_path, class: "btn btn-danger"
       = submit_tag "Bootstrap cluster", id: "bootstrap", class: "btn btn-primary"

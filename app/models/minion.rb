@@ -28,7 +28,7 @@ class Minion < ApplicationRecord
   #     },
   #     default_role: :dns
   #   )
-  def self.assign_roles!(roles: {}, default_role: :worker)
+  def self.assign_roles!(roles: {}, default_role: nil)
     # Lookup selected masters and workers
     masters = Minion.select_role_members(roles: roles, role: :master)
     minions = Minion.select_role_members(roles: roles, role: :worker)
