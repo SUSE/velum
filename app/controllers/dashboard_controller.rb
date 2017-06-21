@@ -7,6 +7,8 @@ require "velum/suse_connect"
 class DashboardController < ApplicationController
   include Discovery
 
+  rescue_from Minion::NonExistingNode, with: :node_not_found
+
   # TODO: move autoyast to its own controller (following a different logic flow). It would never get
   # authenticated (as login/password -- since it's machines requesting this endpoint). It would
   # never get redirected to setup the cluster, and it should actually read some security setting for
@@ -16,6 +18,8 @@ class DashboardController < ApplicationController
 
   # The index method is provided through the Discovery concern.
   alias index discovery
+
+  before_action :redirect_to_dashboard, only: :unassigned_nodes
 
   # Return the autoyast XML profile to bootstrap other worker nodes. They will read this response in
   # order to start an unattended installation of CaaSP.
@@ -70,6 +74,51 @@ class DashboardController < ApplicationController
     else
       redirect_to root_path,
                   alert: "Provisioning did not yet finish. Please wait until the cluster is ready."
+    end
+  end
+
+  # GET /assign_nodes
+  def unassigned_nodes
+    @unassigned_minions = Minion.unassigned_role
+  end
+
+  # POST /assign_nodes
+  def assign_nodes
+    assigned = Minion.assign_roles!(roles: update_nodes_params)
+
+    respond_to do |format|
+      if assigned.values.include?(false)
+        message = "Failed to assign #{failed_assigned_nodes(assigned)}"
+        flash[:error] = message
+        format.html { redirect_to assign_nodes_path }
+      else
+        Velum::Salt.orchestrate
+        format.html { redirect_to authenticated_root_path }
+      end
+    end
+  end
+
+  private
+
+  def update_nodes_params
+    params.require(:roles).permit(worker: [])
+  end
+
+  def redirect_to_dashboard
+    # no_setup? -> no minions to be added
+    redirect_to root_path if no_setup?
+  end
+
+  def failed_assigned_nodes(assigned)
+    assigned.select { |_name, success| !success }.keys.join(", ")
+  end
+
+  def node_not_found(exception)
+    respond_to do |format|
+      format.html do
+        flash[:error] = exception.message
+        redirect_to assign_nodes_path
+      end
     end
   end
 end

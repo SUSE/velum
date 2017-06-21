@@ -1,0 +1,45 @@
+.alert.alert-info.alert-dismissible role="alert"
+  button.close[type="button" data-dismiss="alert" aria-label="Close"]
+    span[aria-hidden="true"]
+      | &times;
+  i.fa.fa-4x.pull-left aria-hidden="true"
+  span
+    | After choosing the nodes and clicking "Add nodes" all the selected nodes will be set to the worker role
+
+h1 Unassigned Nodes
+
+.row
+  .col-xs-12.discovery-control
+    p#node-count #{@unassigned_minions.count} nodes found
+
+= form_tag(assign_nodes_url, method: "post")
+  .nodes-container.new-nodes-container data-url=authenticated_root_path
+    table.table
+      thead
+        tr
+          th width=10
+            = check_box_tag "all", "all", false, { class: "check-all" }
+          th
+            | Id
+          th
+            | Hostname
+      tbody
+        - @unassigned_minions.each do |m|
+          tr
+            td
+              = check_box_tag "roles[worker][]", m.id
+            td
+              | #{m.minion_id}
+            td
+              | #{m.fqdn}
+
+    .clearfix.text-right.steps-container
+      = link_to "Back", authenticated_root_path, class: "btn btn-default"
+      | &nbsp;
+      = submit_tag "Add nodes", class: "btn btn-primary add-nodes-btn", disabled: true
+
+= content_for :page_javascript do
+  javascript:
+    MinionPoller.renderMode = "Unassigned";
+    MinionPoller.poll();
+
