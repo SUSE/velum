@@ -9,7 +9,8 @@
         <interpreter>shell</interpreter>
         <source><![CDATA[
         #!/bin/sh
-        echo "master: <%= @controller_node %>" > /etc/salt/minion.d/master.conf
+        echo "master: <%= @controller_node %>" > /etc/salt/minion.d/minion.conf
+        echo "grains_refresh_every: 10" > /etc/salt/minion.d/grains_refresh.conf
         ]]>
         </source>
       </script>
