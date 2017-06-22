@@ -7,4 +7,8 @@ module ApplicationHelper
     email = owner.nil? ? nil : owner.email
     gravatar_image_tag(email)
   end
+
+  def any_minion?
+    Minion.any?
+  end
 end

@@ -1,45 +1,53 @@
-.alert.alert-info.alert-dismissible role="alert"
-  button.close[type="button" data-dismiss="alert" aria-label="Close"]
-    span[aria-hidden="true"]
-      | &times;
-  i.fa.fa-4x.pull-left aria-hidden="true"
-  span
-    | After choosing the master and clicking "Bootstrap cluster" all the other selected nodes will be set to the worker role
+h1 Bootstrap Cluster
 
-h1 Nodes
+.panel.panel-default.discovery-empty-panel class=('hide' if any_minion?)
+  .panel-heading
+    h3.panel-title No nodes found
+  .panel-body
+    p You must spawn your cluster before bootstrapping it. Your nodes will automatically appear once they are up and running.
 
-.row
-  .col-xs-12.discovery-control
-    span#node-count #{Minion.count} Nodes found
+    hr
 
-= form_tag(setup_bootstrap_path, method: "post")
-  .nodes-container data-url=setup_discovery_path
-    table.table
-      thead
-        tr
-          th width=10
-            = check_box_tag "all", "all", false, { class: "check-all" }
-          th
-            | Id
-          th
-            | Hostname
-          th.text-center
-            | Master
-      tbody
-        - Minion.all.each do |m|
-          tr
-            td
-              = check_box_tag "roles[worker][]", m.id
-            td
-              | #{m.minion_id}
-            td
-              | #{m.fqdn}
-            td.text-center
-              = radio_button_tag "roles[master][]", m.id
-
-    .clearfix.text-right.steps-container
+    .text-right.steps-container
       = link_to "Back", setup_worker_bootstrap_path, class: "btn btn-danger"
-      = submit_tag "Bootstrap cluster", id: "bootstrap", class: "btn btn-primary"
+      = submit_tag "Bootstrap cluster", id: "bootstrap", class: "btn btn-primary", disabled: true
+
+.panel.panel-default.discovery-nodes-panel class=('hide' unless any_minion?)
+  .panel-heading
+    h3.panel-title#node-count #{Minion.count} nodes found
+  .panel-body
+    p After choosing the master and clicking "Bootstrap cluster" all the other selected nodes will be set to the worker role.
+
+    = form_tag(setup_bootstrap_path, method: "post")
+      .nodes-container data-url=setup_discovery_path
+        table.table
+          thead
+            tr
+              th width=10
+                = check_box_tag "all", "all", false, { class: "check-all" }
+              th
+                | Id
+              th
+                | Hostname
+              th.text-center
+                | Master
+          tbody
+            - Minion.all.each do |m|
+              tr
+                td
+                  = check_box_tag "roles[worker][]", m.id
+                td
+                  | #{m.minion_id}
+                td
+                  | #{m.fqdn}
+                td.text-center
+                  = radio_button_tag "roles[master][]", m.id
+
+        hr
+
+        .clearfix.text-right.steps-container
+          = link_to "Back", setup_worker_bootstrap_path, class: "btn btn-danger"
+          = submit_tag "Bootstrap cluster", id: "bootstrap", class: "btn btn-primary"
 
 = render "dashboard/pending_nodes"
 = render "setup/polling"

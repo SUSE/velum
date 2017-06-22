@@ -89,7 +89,6 @@ MinionPoller = {
         $(".pending-nodes-container tbody").html(pendingRendered);
 
         // Show  / Hide the table depending the presence of pending nodes
-
         if (pendingMinions.length == 0) {
           $(".pending-nodes-container .panel-body").hide()
           $(".pending-nodes-container #accept-all").attr('disabled', true)
@@ -97,6 +96,10 @@ MinionPoller = {
           $(".pending-nodes-container .panel-body").show()
           $(".pending-nodes-container #accept-all").attr('disabled', false)
         }
+
+        // show/hide panels on discovery page
+        $('.discovery-nodes-panel').toggleClass('hide', unassignedMinions.length === 0);
+        $('.discovery-empty-panel').toggleClass('hide', unassignedMinions.length > 0);
 
         MinionPoller.handleAdminUpdate(data.admin || {});
 
