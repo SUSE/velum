@@ -10,10 +10,13 @@ class ApplicationController < ActionController::Base
 
   def redirect_to_setup
     return true unless signed_in?
-    redirect_to setup_path if no_setup?
+    redirect_to setup_path unless setup_done?
   end
 
-  def no_setup?
-    Minion.assigned_role.count.zero?
+  # setup means minions were assigned to roles
+  # returns true if at least one minion has role != nil
+  # return false otherwise
+  def setup_done?
+    !Minion.assigned_role.count.zero?
   end
 end

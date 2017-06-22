@@ -68,7 +68,7 @@ class SetupController < ApplicationController
   end
 
   def redirect_to_dashboard
-    redirect_to root_path unless no_setup?
+    redirect_to root_path if setup_done?
   end
 
   def failed_assigned_nodes(assigned)
