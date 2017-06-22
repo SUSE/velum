@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   get "/kubectl-config", to: "dashboard#kubectl_config"
   get "/_health", to: "health#index"
   post "/update", to: "salt#update"
+  post "/accept-minion", to: "salt#accept_minion"
 
   namespace :setup do
     get "/", action: :welcome

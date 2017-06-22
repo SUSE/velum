@@ -27,6 +27,14 @@ describe Velum::Salt do
     end
   end
 
+  describe "pending_minions" do
+    it "fetches a list of pending minions" do
+      VCR.use_cassette("salt/fetch_pending_minions", record: :none) do
+        expect(described_class.pending_minions.size).to eq 1
+      end
+    end
+  end
+
   describe "orchestration" do
     it "runs the orchestration in async mode" do
       VCR.use_cassette("salt/orchestrate_async", record: :none) do

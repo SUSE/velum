@@ -6,6 +6,10 @@ RSpec.describe SetupController, type: :controller do
   let(:user)   { create(:user)   }
   let(:minion) { create(:minion) }
 
+  before do
+    setup_stubbed_pending_minions!
+  end
+
   describe "GET /" do
     it "gets redirected if not logged in" do
       get :welcome

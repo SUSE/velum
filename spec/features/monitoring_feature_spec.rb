@@ -8,6 +8,7 @@ feature "Monitoring feature" do
     login_as user, scope: :user
     Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion0.k8s.local", role: "master")
     setup_stubbed_update_status!
+    setup_stubbed_pending_minions!
     visit authenticated_root_path
   end
 

@@ -9,6 +9,7 @@ module Discovery
   def discovery
     @assigned_minions   = assigned_with_status
     @unassigned_minions = Minion.unassigned_role
+    pending_minions     = ::Velum::Salt.pending_minions
 
     respond_to do |format|
       format.html
@@ -16,6 +17,7 @@ module Discovery
         hsh = {
           assigned_minions:   @assigned_minions,
           unassigned_minions: @unassigned_minions,
+          pending_minions:    pending_minions,
           admin:              admin_status
         }
         render json: hsh, methods: [:update_status]

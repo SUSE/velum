@@ -31,6 +31,23 @@
   }
 }
 
+.pending-nodes-container {
+  .panel-title {
+    display: inline-block;
+  }
+
+  form {
+    height: 450px;
+    margin-bottom: $line-height-computed;
+    overflow-x: hidden;
+    overflow-y: scroll;
+
+    table {
+      margin-bottom: 0px;
+    }
+  }
+}
+
 .nodes-summary {
   .fa-info-circle {
     margin-left: 5px;
@@ -100,4 +117,8 @@
   .modal-dialog {
     width: 450px;
   }
+}
+
+.pending-nodes-container {
+  margin-top: 15px
 }
