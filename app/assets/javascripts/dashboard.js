@@ -282,7 +282,6 @@ MinionPoller = {
   }
 };
 
-
 $('body').on('click', '.accept-minion', function(e) {
   var $link = $(this);
   var selector = ''
@@ -302,31 +301,75 @@ $('body').on('click', '.accept-minion', function(e) {
   })
 });
 
+$('.update-admin-modal').on('hide.bs.modal', function(e) {
+  var isRebooting = $('.update-admin-modal').data('rebooting');
+
+  if (isRebooting) {
+    e.preventDefault();
+  }
+});
+
+// unlock modal, now closable
+function unlockUpdateAdminModal() {
+  var $modal = $('.update-admin-modal');
+  var $btn = $modal.find('.btn');
+
+  $modal.data('rebooting', false);
+  $modal.find('.close').show();
+  $btn.prop('disabled', false);
+}
+
+// lock modal, won't close
+function lockUpdateAdminModal() {
+  var $modal = $('.update-admin-modal');
+  var $btn = $modal.find('.btn');
+
+  $btn.prop('disabled', true);
+  $modal.data('rebooting', true);
+  $modal.find('.close').hide();
+}
 
 // reboot to update admin node handler
 $('body').on('click', '.reboot-update-btn', function(e) {
+  var REBOOTING = 3;
   var $btn = $(this);
+  var $modal = $('.update-admin-modal');
 
   e.preventDefault();
 
-  $btn.text('Rebooting...');
-  $btn.prop('disabled', true);
+  $btn.html('<i class="fa fa-spinner fa-pulse fa-fw"></i> Rebooting...');
+  lockUpdateAdminModal();
 
-  $.ajax({
-    url: $btn.data('url'),
-    method: 'POST'
-  })
-  .done(function() {
-    $('.update-admin-modal').modal('hide');
-    $btn.text('Reboot to update');
+  $.post($btn.data('url'))
+  .done(function(data) {
+    if (data.status === REBOOTING) {
+      setTimeout(healthCheckToReload, 5000);
+    } else {
+      // update not needed
+      unlockUpdateAdminModal();
+      $btn.text('Reboot to update');
+    }
   })
   .fail(function() {
-    $btn.text('Update admin node (failed last time)');
-  })
-  .always(function() {
-    $btn.prop('disabled', false);
+    unlockUpdateAdminModal();
+    $btn.text('Reboot to update (failed last time)');
   });
 });
+
+// health check request
+// if successful, reload page
+// schedule another check otherwise
+function healthCheckToReload() {
+  var healthCheckUrl = $('.reboot-update-btn').data('healthCheck');
+
+  $.get(healthCheckUrl)
+  .success(function() {
+    window.location.reload();
+  })
+  .fail(function() {
+    setTimeout(healthCheckToReload, 3000);
+  });
+};
 
 // enable/disable Add nodes button to assign nodes
 function toggleAddNodesButton() {

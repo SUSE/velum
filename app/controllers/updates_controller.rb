@@ -14,7 +14,7 @@ class UpdatesController < ApplicationController
       arg:     "systemctl reboot"
     )
 
-    redirect_to root_path, flash: { info: "Rebooting..." }
+    render json: { status: Minion.statuses[:rebooting] }
   end
 
   protected
@@ -26,6 +26,6 @@ class UpdatesController < ApplicationController
     return if status == Minion.statuses[:update_needed] ||
         status == Minion.statuses[:update_failed]
 
-    redirect_to root_path, flash: { error: "There's no need to update" }
+    render json: { status: Minion.statuses[:unknown] }
   end
 end

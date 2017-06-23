@@ -12,10 +12,13 @@
       <div class="modal-body">
        <p>Rebooting the admin node will break ongoing operations like the creation of the cluster, the addition or removal of nodes and upgrades.</p>
        <p>Please ensure none of the following operations are ongoing before proceeding with the upgrade of the admin node.</p>
+       <p>Once the admin node is rebooted, the page will be refreshed.</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary reboot-update-btn" data-url="<%= updates_url %>">Reboot to update</button>
+        <button type="button" class="btn btn-primary reboot-update-btn" data-url="<%= updates_url %>" data-health-check="<%= _health_url %>">
+          Reboot to update
+        </button>
       </div>
     </div>
   </div>
