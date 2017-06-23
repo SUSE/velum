@@ -105,8 +105,7 @@ class DashboardController < ApplicationController
   end
 
   def redirect_to_dashboard
-    # no_setup? -> no minions to be added
-    redirect_to root_path if no_setup?
+    redirect_to root_path unless setup_done?
   end
 
   def failed_assigned_nodes(assigned)
