@@ -41,6 +41,26 @@ module Velum
       JSON.parse(res.body)["return"].first
     end
 
+    # Returns the minions that have not been accepted into the cluster
+    def self.pending_minions
+      res = perform_request(endpoint: "/", method: "post",
+                            data: { client: "wheel",
+                                    fun:    "key.list",
+                                    match:  "all",
+                                    tgt:    "ca" })
+      JSON.parse(res.body)["return"].first["data"]["return"]["minions_pre"]
+    end
+
+    # Accepts a minion into the cluster
+    def self.accept_minion(minion_id: "")
+      res = perform_request(endpoint: "/", method: "post",
+                            data: { client: "wheel",
+                                    fun:    "key.accept",
+                                    match:  minion_id,
+                                    tgt:    "ca" })
+      JSON.parse(res.body)["return"].first["data"]["return"]["minions"]
+    end
+
     # Call the salt orchestration.
     def self.orchestrate
       res = perform_request(endpoint: "/run", method: "post",

@@ -25,4 +25,13 @@ RSpec.describe SaltController, type: :controller do
       end
     end
   end
+
+  describe "POST /accept-minion" do
+    it "gets an 302 response" do
+      VCR.use_cassette("salt/accept_node", record: :none) do
+        post :accept_minion, minion_id: "81ad05b9d7ae4d26a83c421b64ca1952"
+        expect(response.status).to eq 302
+      end
+    end
+  end
 end

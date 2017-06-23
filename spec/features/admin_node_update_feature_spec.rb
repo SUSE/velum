@@ -7,6 +7,7 @@ feature "Manage nodes updates feature" do
   before do
     login_as user, scope: :user
     Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion0.k8s.local", role: "master")
+    setup_stubbed_pending_minions!
   end
 
   scenario "Admin node has no update available", js: true do

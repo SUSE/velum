@@ -1,0 +1,110 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://127.0.0.1:8000/login
+    body:
+      encoding: UTF-8
+      string: '{"username":"saltapi","password":"0COpCmgadWq9/91eNjOaoKOR0giqni+FrAFsgGnnKg/izEOOk1JlP7CHLyhY8b5wr7aog+UeWmr8","eauth":"pam"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '217'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Fri, 23 Jun 2017 11:42:58 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Auth-Token:
+      - 03fd871e370f40ddb14aedc0acf048a505ce01d3
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=03fd871e370f40ddb14aedc0acf048a505ce01d3; expires=Fri, 23 Jun 2017
+        21:42:58 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"perms": [".*", "@wheel", "@runner", "@jobs", "@events"],
+        "start": 1498218178.687943, "token": "03fd871e370f40ddb14aedc0acf048a505ce01d3",
+        "expire": 1498261378.687944, "user": "saltapi", "eauth": "pam"}]}'
+    http_version: 
+  recorded_at: Fri, 23 Jun 2017 11:42:58 GMT
+- request:
+    method: post
+    uri: http://127.0.0.1:8000/
+    body:
+      encoding: UTF-8
+      string: '{"client":"wheel","fun":"key.accept","match":"81ad05b9d7ae4d26a83c421b64ca1952","tgt":"ca"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Auth-Token:
+      - 03fd871e370f40ddb14aedc0acf048a505ce01d3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '303'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Cache-Control:
+      - private
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Fri, 23 Jun 2017 11:42:58 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=03fd871e370f40ddb14aedc0acf048a505ce01d3; expires=Fri, 23 Jun 2017
+        21:42:58 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"tag": "salt/wheel/20170623114258698842", "data": {"jid":
+        "20170623114258698842", "return": {"minions": ["81ad05b9d7ae4d26a83c421b64ca1952"]},
+        "success": true, "_stamp": "2017-06-23T11:42:58.707968", "tag": "salt/wheel/20170623114258698842",
+        "user": "saltapi", "fun": "wheel.key.accept"}}]}'
+    http_version: 
+  recorded_at: Fri, 23 Jun 2017 11:42:58 GMT
+recorded_with: VCR 3.0.3

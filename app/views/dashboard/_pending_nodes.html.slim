@@ -1,0 +1,23 @@
+.pending-nodes-container data-url=authenticated_root_path
+  .panel.panel-default
+    .panel-heading
+      h3.panel-title Pending Nodes
+
+      = link_to '#', id: "accept-all", class: "btn btn-xs btn-default pull-right accept-minion" do
+        i.fa.fa-check.fa-fw
+        | Accept All Nodes
+
+    .panel-body
+      .row.nodes-loading
+        p.text-center
+          i class="fa fa-spinner fa-pulse fa-3x fa-fw"
+          span class="sr-only" Loading...
+      .nodes-content.hidden
+        table.table
+          thead
+            tr
+              th
+                | ID
+              th
+                | Actions
+          tbody

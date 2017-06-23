@@ -14,6 +14,7 @@ feature "Add unassigned nodes" do
   before do
     login_as user, scope: :user
     setup_stubbed_update_status!
+    setup_stubbed_pending_minions!
 
     [:minion, :master].each do |role|
       allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(role)
@@ -32,6 +33,7 @@ feature "Add unassigned nodes" do
 
   # rubocop:disable RSpec/ExampleLength
   scenario "An user selects which nodes will be added", js: true do
+
     using_wait_time 10 do
       # select node minion3.k8s.local
       find("#roles_minion_#{minions[2].id}").click

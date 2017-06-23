@@ -32,6 +32,7 @@ MinionPoller = {
       cache: false,
       success: function(data) {
         var rendered = "";
+        var pendingRendered = "";
         var allApplied = true;
         var updateAvailable = false;
         var updateAvailableNodeCount = 0;
@@ -41,6 +42,7 @@ MinionPoller = {
         // want to account for them.
         var minions = data.assigned_minions || [];
         var unassignedMinions = data.unassigned_minions || [];
+        var pendingMinions = data.pending_minions || [];
 
         // for the dashboard, if we rely on radio, the first time this comes
         // it won't detect that there's a master, so we need to rely on the data
@@ -78,6 +80,23 @@ MinionPoller = {
           }
         }
         $(".nodes-container tbody").html(rendered);
+
+        // Build Pending Nodes display table
+
+        for (i = 0; i < pendingMinions.length; i++) {
+          pendingRendered += MinionPoller.renderPendingNodes(pendingMinions[i])
+        }
+        $(".pending-nodes-container tbody").html(pendingRendered);
+
+        // Show  / Hide the table depending the presence of pending nodes
+
+        if (pendingMinions.length == 0) {
+          $(".pending-nodes-container .panel-body").hide()
+          $(".pending-nodes-container #accept-all").attr('disabled', true)
+        } else {
+          $(".pending-nodes-container .panel-body").show()
+          $(".pending-nodes-container #accept-all").attr('disabled', false)
+        }
 
         MinionPoller.handleAdminUpdate(data.admin || {});
 
@@ -118,6 +137,15 @@ MinionPoller = {
       // make another request only after the last one finished
       setTimeout(MinionPoller.request, 5000);
     });
+  },
+
+  renderPendingNodes: function(pendingMinion) {
+    return "\
+      <tr> \
+        <td>" + pendingMinion + "</td>\
+        <td><a class='accept-minion' href='#' data-minion-id='" + pendingMinion +  "'>Accept Node</a></td>\
+      </tr> \
+    ";
   },
 
   handleAdminUpdate: function(admin) {
@@ -253,6 +281,27 @@ MinionPoller = {
     return MinionPoller.renderDiscovery(minion, true);
   }
 };
+
+
+$('body').on('click', '.accept-minion', function(e) {
+  var $link = $(this);
+  var selector = ''
+  e.preventDefault();
+
+  if ($link[0].id == "accept-all") {
+    selector = '*'
+  } else {
+    selector = $link.data('minionId')
+  }
+  $link.prop('disabled', true);
+
+  $.ajax({
+    url: '/accept-minion',
+    method: 'POST',
+    data: {minion_id: selector}
+  })
+});
+
 
 // reboot to update admin node handler
 $('body').on('click', '.reboot-update-btn', function(e) {

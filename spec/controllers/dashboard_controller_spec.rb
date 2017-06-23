@@ -23,6 +23,7 @@ RSpec.describe DashboardController, type: :controller do
     end
     # rubocop:enable RSpec/AnyInstance
     allow(Velum::Salt).to receive(:orchestrate)
+    setup_stubbed_pending_minions!
   end
 
   describe "GET / via HTML" do
