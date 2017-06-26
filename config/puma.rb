@@ -42,3 +42,12 @@ environment ENV.fetch("RAILS_ENV") { "development" }
 
 # Allow puma to be restarted by `rails restart` command.
 plugin :tmp_restart
+
+pidfile "/tmp/puma.pid"
+state_path "/tmp/puma.state"
+
+if ENV["VELUM_PORT"].to_i == 443
+  ssl_bind "0.0.0.0", ENV["VELUM_PORT"], key: "/etc/pki/velum.key", cert: "/etc/pki/velum.crt"
+else
+  bind "tcp://0.0.0.0:#{ENV["VELUM_PORT"]}"
+end

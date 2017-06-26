@@ -65,7 +65,7 @@ module Velum
         is_tokenless_request = tokenless_request?(endpoint: endpoint, method: method)
         token = is_tokenless_request ? nil : login!(client: client)
 
-        uri = URI.join("http://#{hostname}", endpoint)
+        uri = URI.join("https://#{hostname}", endpoint)
 
         req = Net::HTTP.const_get(method.capitalize).new(uri)
         req["Accept"]       = "application/json; charset=utf-8"
@@ -78,7 +78,14 @@ module Velum
           req.body = data.to_json unless data.blank?
         end
 
-        opts = { use_ssl: false, open_timeout: 2 }
+        # :nocov:
+        opts = case Rails.env
+               when "production", "development"
+                 { use_ssl: true, ca_file: "/etc/pki/ca.crt", ssl_version: :TLSv1, open_timeout: 2 }
+               else
+                 { use_ssl: false, open_timeout: 2 }
+        end
+        # :nocov:
         Net::HTTP.start(uri.hostname, uri.port, opts) { |http| http.request(req) }
       rescue *HTTPExceptions::EXCEPTIONS => e
         raise SaltConnectionException, e

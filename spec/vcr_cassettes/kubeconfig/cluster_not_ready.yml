@@ -57,7 +57,7 @@ http_interactions:
     uri: http://127.0.0.1:8000/
     body:
       encoding: UTF-8
-      string: '{"tgt":"ca","fun":"mine.get","expr_form":"glob","client":"local","arg":["ca","x509.get_pem_entries"]}'
+      string: '{"tgt":"ca","fun":"mine.get","expr_form":"glob","client":"local","arg":["ca","ca.crt"]}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3

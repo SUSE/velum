@@ -33,9 +33,11 @@
 #   - https://github.com/kubic-project/salt/blob/master/config/master.d/returner.conf
 class Pillar < ApplicationRecord
   validates :pillar, presence: true
-  validates :value, presence: true, alphanumeric: true
+  validates :value, presence: true
 
   scope :global, -> { where minion_id: nil }
+
+  OPTIONAL_PILLARS = [:http_proxy, :https_proxy, :no_proxy].freeze
 
   class << self
     def value(pillar:)
@@ -44,17 +46,11 @@ class Pillar < ApplicationRecord
 
     def all_pillars
       {
-        company_name: "certificate_information:subject_properties:O",
-        company_unit: "certificate_information:subject_properties:OU",
-        email:        "certificate_information:subject_properties:Email",
-        country:      "certificate_information:subject_properties:C",
-        state:        "certificate_information:subject_properties:ST",
-        city:         "certificate_information:subject_properties:L",
-        dashboard:    "dashboard",
-        apiserver:    "api:server:external_fqdn",
-        http_proxy:   "proxy:http",
-        https_proxy:  "proxy:https",
-        no_proxy:     "proxy:no_proxy"
+        dashboard:   "dashboard",
+        apiserver:   "api:server:external_fqdn",
+        http_proxy:  "proxy:http",
+        https_proxy: "proxy:https",
+        no_proxy:    "proxy:no_proxy"
       }
     end
 
