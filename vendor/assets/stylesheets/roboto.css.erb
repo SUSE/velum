@@ -11,10 +11,10 @@
 
 @font-face {
   font-family: 'Roboto';
-  src: local('Roboto Light'), local('Roboto-Light'),
-       url('<%= asset_path("roboto-light-webfont.woff2") %>') format('woff2'),
-       url('<%= asset_path("roboto-light-webfont.woff") %>') format('woff');
-  font-weight: 300;
+  src: local('Roboto'),
+       url('<%= asset_path("roboto-medium-webfont.woff2") %>') format('woff2'),
+       url('<%= asset_path("roboto-medium-webfont.woff") %>') format('woff');
+  font-weight: 500;
   font-style: normal;
 }
 
@@ -24,5 +24,14 @@
        url('<%= asset_path("roboto-regular-webfont.woff2") %>') format('woff2'),
        url('<%= asset_path("roboto-regular-webfont.woff") %>') format('woff');
   font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: local('Roboto Light'), local('Roboto-Light'),
+       url('<%= asset_path("roboto-light-webfont.woff2") %>') format('woff2'),
+       url('<%= asset_path("roboto-light-webfont.woff") %>') format('woff');
+  font-weight: 300;
   font-style: normal;
 }

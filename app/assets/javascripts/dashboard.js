@@ -82,20 +82,18 @@ MinionPoller = {
         $(".nodes-container tbody").html(rendered);
 
         // Build Pending Nodes display table
+        if (pendingMinions.length) {
+          for (i = 0; i < pendingMinions.length; i++) {
+            pendingRendered += MinionPoller.renderPendingNodes(pendingMinions[i])
+          }
 
-        for (i = 0; i < pendingMinions.length; i++) {
-          pendingRendered += MinionPoller.renderPendingNodes(pendingMinions[i])
+          $(".pending-nodes-container tbody").html(pendingRendered);
         }
-        $(".pending-nodes-container tbody").html(pendingRendered);
 
-        // Show  / Hide the table depending the presence of pending nodes
-        if (pendingMinions.length == 0) {
-          $(".pending-nodes-container .panel-body").hide()
-          $(".pending-nodes-container #accept-all").attr('disabled', true)
-        } else {
-          $(".pending-nodes-container .panel-body").show()
-          $(".pending-nodes-container #accept-all").attr('disabled', false)
-        }
+        // Show / Hide the table depending the presence of pending nodes
+        $(".pending-nodes-container #accept-all").prop('disabled', pendingMinions.length === 0)
+        $(".pending-nodes-container .table").toggleClass('hidden', pendingMinions.length === 0);
+        $(".pending-nodes-container .empty-text").toggleClass('hidden', pendingMinions.length > 0);
 
         // show/hide panels on discovery page
         $('.discovery-nodes-panel').toggleClass('hide', unassignedMinions.length === 0);
@@ -103,13 +101,12 @@ MinionPoller = {
 
         MinionPoller.handleAdminUpdate(data.admin || {});
 
-        if (updateAvailable && allApplied) {
-          $("#update-all-nodes").attr('disabled', false);
-        }
+        // show/hide "update all nodes" link
+        $("#update-all-nodes").toggleClass('hidden', !(updateAvailable && allApplied));
 
         MinionPoller.enable_kubeconfig(minions.length > 0 && allApplied);
 
-        $('#out_dated_nodes').text(updateAvailableNodeCount)
+        $('#out_dated_nodes').text(updateAvailableNodeCount + ' ');
 
         $('.assigned-count').text(minions.length);
         $('.master-count').text(MinionPoller.selectedMasters.length);
@@ -205,41 +202,34 @@ MinionPoller = {
     }
 
     masterHtml = '<input name="roles[master][]" id="roles_master_' + minion.id +
-      '" value="' + minion.id + '" type="radio" disabled="" ' + checked + '>';
-
-    statusText = ''
+      '" value="' + minion.id + '" type="radio" disabled="" ' + checked + '> ';
 
     switch(minion.update_status) {
       case 1:
         switch (minion.highstate) {
           case "applied":
-            statusHtml = '<i class="fa fa-arrow-circle-up text-info fa-2x" aria-hidden="true"></i>';
-            statusText = 'Update Available'
+            statusHtml = '<i class="fa fa-arrow-circle-up text-info fa-2x" aria-hidden="true"></i> Update Available';
             break;
           case "failed":
-            statusHtml = '<i class="fa fa-arrow-circle-up text-warning fa-2x" aria-hidden="true"></i>';
-            statusText = 'Update Failed - Retryable'
+            statusHtml = '<i class="fa fa-arrow-circle-up text-warning fa-2x" aria-hidden="true"></i> Update Failed - Retryable';
             break;
           case "pending":
-            statusText = 'Update in progress'
+            statusHtml += ' Update in progress'
             break;
         }
         break;
       case 2:
-        statusHtml = '<i class="fa fa-arrow-circle-up text-danger fa-2x" aria-hidden="true"></i>';
-        statusText = 'Update Failed'
+        statusHtml = '<i class="fa fa-arrow-circle-up text-danger fa-2x" aria-hidden="true"></i> Update Failed';
         break;
     }
 
-    return "\
+    return '\
       <tr> \
-        <td>" + statusHtml +  "</td>\
-        <td>" + statusText +  "</td>\
-        <th>" + minion.minion_id +  "</th>\
-        <td>" + minion.fqdn +  "</td>\
-        <td>" + (minion.role || '') +  "</td>\
-        <td class='text-center'>" + masterHtml + "</td>\
-      </tr>";
+        <td class="status">' + statusHtml +  '</td>\
+        <td><strong>' + minion.minion_id +  '</strong></td>\
+        <td>' + minion.fqdn +  '</td>\
+        <td>' + masterHtml + minion.role + '</td>\
+      </tr>';
   },
 
   renderDiscovery: function(minion, onlyWorkers) {

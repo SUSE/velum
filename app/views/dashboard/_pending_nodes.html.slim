@@ -3,7 +3,7 @@
     .panel-heading
       h3.panel-title Pending Nodes
 
-      = link_to '#', id: "accept-all", class: "btn btn-xs btn-default pull-right accept-minion" do
+      button#accept-all.btn.btn-sm.btn-default.pull-right.accept-minion disabled="disabled"
         i.fa.fa-check.fa-fw
         | Accept All Nodes
 
@@ -13,6 +13,8 @@
           i class="fa fa-spinner fa-pulse fa-3x fa-fw"
           span class="sr-only" Loading...
       .nodes-content.hidden
+        p.empty-text
+          | You currently have no nodes to be accepted for bootstrapping.
         table.table
           thead
             tr

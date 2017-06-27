@@ -14,11 +14,8 @@
   }
 }
 
-.nodes-container {
-  .panel-title {
-    display: inline-block;
-  }
-
+.nodes-container,
+.pending-nodes-container {
   form {
     height: 450px;
     margin-bottom: $line-height-computed;
@@ -29,21 +26,32 @@
       margin-bottom: 0px;
     }
   }
-}
 
-.pending-nodes-container {
-  .panel-title {
-    display: inline-block;
-  }
+  .table {
+    .status {
+      // 8px from default table +
+      // 6px to align with 'Status' column name
+      padding-left: 14px;
 
-  form {
-    height: 450px;
-    margin-bottom: $line-height-computed;
-    overflow-x: hidden;
-    overflow-y: scroll;
+      > .fa-stack {
+        margin-right: 8px;
+      }
 
-    table {
-      margin-bottom: 0px;
+      > .fa {
+        margin-left: 2px;
+        margin-right: 10px;
+        vertical-align: middle;
+      }
+    }
+
+    input[type="radio"] {
+      vertical-align: middle;
+      margin-top: 0;
+      margin-right: 5px;
+    }
+
+    td {
+      vertical-align: middle;
     }
   }
 }

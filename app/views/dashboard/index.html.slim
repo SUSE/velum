@@ -27,9 +27,8 @@ h1 Cluster Status
             dt # of nodes w/ outdated software
             dd.outdated-count
               span#out_dated_nodes 0
-              = link_to update_path, id: "update-all-nodes", class: "btn btn-xs btn-default pull-right", disabled: true, method: :post do
-                  i.fa.fa-arrow-circle-up
-                  | Update All Nodes
+              = link_to update_path, id: "update-all-nodes", class: "hidden", method: :post do
+                | (update all nodes)
     .panel-footer.admin-outdated-notification.hidden
       .message
         i.fa.fw.fa-exclamation-circle
@@ -46,7 +45,7 @@ h1 Cluster Status
     .panel-heading
       h3.panel-title Nodes
 
-      = link_to kubectl_config_path, id: "download-kubeconfig", class: "btn btn-xs btn-default pull-right", disabled: true do
+      = link_to kubectl_config_path, id: "download-kubeconfig", class: "btn btn-sm btn-default pull-right", disabled: true do
         i.fa.fa-download.fa-fw
         | kubectl config
 
@@ -60,8 +59,6 @@ h1 Cluster Status
           thead
             tr
               th
-                | &nbsp;
-              th
                 | Status
               th
                 | ID
@@ -69,8 +66,6 @@ h1 Cluster Status
                 | Hostname
               th
                 | Role
-              th
-                | &nbsp;
           tbody
 
 = render "dashboard/pending_nodes"
