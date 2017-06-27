@@ -74,7 +74,7 @@ MinionPoller = {
           if (minions[i].highstate != "applied") {
             allApplied = false;
           }
-          if (minions[i].update_status == 1) {
+          if (minions[i].update_status == 1 || minions[i].update_status == 3) {
             updateAvailable = true;
             updateAvailableNodeCount++;
           }
