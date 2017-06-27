@@ -65,13 +65,28 @@ feature "Bootstrap cluster feature" do
       end
     end
   end
-  # rubocop:enable RSpec/ExampleLength
 
   scenario "It shows the minions as soon as they register", js: true do
-    expect(page).not_to have_content("minion0.k8s.local")
+    expect do
+      page.to have_content("No nodes found")
+      page.not_to have_content("minion0.k8s.local")
+    end
+
     Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion0.k8s.local")
     using_wait_time 10 do
-      expect(page).to have_content("minion0.k8s.local")
+      expect do
+        page.not_to have_content("No nodes found")
+        page.to have_content("minion0.k8s.local")
+      end
+    end
+  end
+  # rubocop:enable RSpec/ExampleLength
+
+  scenario "An user sees 'No nodes found'", js: true do
+    expect do
+      page.to have_content("No nodes found")
+      # bootstrap cluster button disabled
+      page.to have_css("#bootstrap[disabled]")
     end
   end
 end
