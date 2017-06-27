@@ -12,7 +12,7 @@ class Minion < ApplicationRecord
 
   enum highstate: [:not_applied, :pending, :failed, :applied]
   enum role: [:master, :worker]
-  enum status: [:unknown, :update_needed, :update_failed]
+  enum status: [:unknown, :update_needed, :update_failed, :rebooting]
 
   validates :minion_id, presence: true, uniqueness: true
   validates :fqdn, presence: true

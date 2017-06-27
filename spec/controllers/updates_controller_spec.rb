@@ -12,20 +12,31 @@ RSpec.describe UpdatesController, type: :controller do
   end
 
   describe "reboot admin node" do
+    it "returns a json response" do
+      stubbed = [[{ "admin" => "" }], [{ "admin" => "" }]]
+      setup_stubbed_update_status!(stubbed: stubbed)
+
+      post :create
+      expect(response.content_type).to eq "application/json"
+    end
+
     it "does nothing if no update was needed" do
       stubbed = [[{ "admin" => "" }], [{ "admin" => "" }]]
       setup_stubbed_update_status!(stubbed: stubbed)
 
       post :create
-      expect(flash[:error]).to eq "There's no need to update"
+      json = JSON.parse(response.body)
+      expect(json["status"]).to eq Minion.statuses[:unknown]
     end
 
+    # rubocop:disable RSpec/ExampleLength
     it "allows the node to reboot if an update is needed" do
       stubbed = [[{ "admin" => true }], [{ "admin" => "" }]]
       setup_stubbed_update_status!(stubbed: stubbed)
 
       post :create
-      expect(flash[:info]).to eq "Rebooting..."
+      json = JSON.parse(response.body)
+      expect(json["status"]).to eq Minion.statuses[:rebooting]
       expect(::Velum::Salt).to have_received(:call).once
     end
 
@@ -34,8 +45,10 @@ RSpec.describe UpdatesController, type: :controller do
       setup_stubbed_update_status!(stubbed: stubbed)
 
       post :create
-      expect(flash[:info]).to eq "Rebooting..."
+      json = JSON.parse(response.body)
+      expect(json["status"]).to eq Minion.statuses[:rebooting]
       expect(::Velum::Salt).to have_received(:call).once
     end
+    # rubocop:enable RSpec/ExampleLength
   end
 end
