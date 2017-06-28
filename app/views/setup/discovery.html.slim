@@ -1,3 +1,8 @@
+.alert.alert-info role="alert"
+  i.fa.fa-4x.pull-left aria-hidden="true"
+  span
+    | A supported deployment of SUSE Container as a Service Platform requires a minimum of three nodes. Please select a minimum of three nodes.
+
 h1 Bootstrap Cluster
 
 .panel.panel-default.discovery-empty-panel class=('hide' if any_minion?)
@@ -10,7 +15,7 @@ h1 Bootstrap Cluster
 
     .text-right.steps-container
       = link_to "Back", setup_worker_bootstrap_path, class: "btn btn-danger"
-      = submit_tag "Bootstrap cluster", id: "bootstrap", class: "btn btn-primary", disabled: true
+      = submit_tag "Bootstrap cluster", class: "btn btn-primary", disabled: true
 
 .panel.panel-default.discovery-nodes-panel class=('hide' unless any_minion?)
   .panel-heading
@@ -47,7 +52,8 @@ h1 Bootstrap Cluster
 
         .clearfix.text-right.steps-container
           = link_to "Back", setup_worker_bootstrap_path, class: "btn btn-danger"
-          = submit_tag "Bootstrap cluster", id: "bootstrap", class: "btn btn-primary"
+          = submit_tag "Bootstrap cluster", id: "bootstrap", class: "btn btn-primary", disabled: true
 
 = render "dashboard/pending_nodes"
+= render "setup/warn_minimum_nodes_modal"
 = render "setup/polling"

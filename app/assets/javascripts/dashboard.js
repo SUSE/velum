@@ -107,9 +107,6 @@ MinionPoller = {
           $("#update-all-nodes").attr('disabled', false);
         }
 
-        // disable bootstrap button if there are no minions
-        $("#bootstrap").prop('disabled', minions.length === 0);
-
         MinionPoller.enable_kubeconfig(minions.length > 0 && allApplied);
 
         $('#out_dated_nodes').text(updateAvailableNodeCount)
@@ -381,11 +378,57 @@ function toggleAddNodesButton() {
   $('.add-nodes-btn').prop('disabled', selectedNodes === 0);
 };
 
+// unassigned nodes page
 $('body').on('change', '.new-nodes-container input[name="roles[worker][]"]', toggleAddNodesButton);
+
+// return true if master is selected
+// false otherwise
+function isMasterSelected() {
+  return $('input[name="roles[master][]"]:checked').length > 0;
+}
+
+// return number of selected checkboxes
+function selectedNodesLength() {
+  return $('input[name="roles[worker][]"]:checked').length;
+}
+
+// disable/enable button if it has 1 master and 1 worker at least
+function toggleBootstrapButton() {
+  var hasMinimumAmountToEnable = isMasterSelected() && selectedNodesLength() > 1;
+
+  $('#bootstrap').prop('disabled', !hasMinimumAmountToEnable);
+}
+
+// bootstrap cluster button click listener
+// if it has the minimum amount of nodes, form is submitted as expected
+// otherwise it shows the modal if didn't show yet
+$('body').on('click', '#bootstrap', function(e) {
+  var $warningModal = $('.warn-minimum-nodes-modal');
+  var hasMinimumAmountToSubmit = isMasterSelected() && selectedNodesLength() > 2;
+
+  if (!hasMinimumAmountToSubmit) {
+    e.preventDefault();
+
+    $warningModal.modal('show');
+    $warningModal.data('wasOpenedBefore', true);
+
+    return false;
+  }
+});
+
+// if user wants to bootstrap anyway, submit form
+$('body').on('click', '.bootstrap-anyway', function() {
+  $('.warn-minimum-nodes-modal').modal('hide');
+  $('form').submit();
+});
+
+// discovery page
+$('body').on('change', '.nodes-container input[name="roles[worker][]"]', toggleBootstrapButton);
 
 // checkbox on the top the checks/unchecks all nodes
 $('.check-all').on('change', function() {
   $('input[name="roles[worker][]"]:not(:disabled)').prop('checked', this.checked).change();
+  toggleBootstrapButton();
   toggleAddNodesButton();
 });
 
@@ -420,4 +463,6 @@ $('body').on('change', 'input[name="roles[master][]"]', function() {
     $checkbox.prop('checked', true);
     $checkbox.prop('disabled', true);
   }
+
+  toggleBootstrapButton();
 });

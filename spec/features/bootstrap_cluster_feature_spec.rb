@@ -15,9 +15,10 @@ feature "Bootstrap cluster feature" do
   # rubocop:disable RSpec/ExampleLength
   context "Nodes bootstraping" do
     let!(:minions) do
-      Minion.create!([{ minion_id: SecureRandom.hex, fqdn: "minion0.k8s.local" },
+      Minion.create! [{ minion_id: SecureRandom.hex, fqdn: "minion0.k8s.local" },
                       { minion_id: SecureRandom.hex, fqdn: "minion1.k8s.local" },
-                      { minion_id: SecureRandom.hex, fqdn: "minion2.k8s.local" }])
+                      { minion_id: SecureRandom.hex, fqdn: "minion2.k8s.local" },
+                      { minion_id: SecureRandom.hex, fqdn: "minion3.k8s.local" }]
     end
 
     before do
@@ -29,7 +30,7 @@ feature "Bootstrap cluster feature" do
       allow(Velum::Salt).to receive(:orchestrate)
     end
 
-    scenario "An user selects which nodes will be bootstraped", js: true do
+    scenario "An user sees warning modal when trying to bootstrap 2 nodes", js: true do
       using_wait_time 10 do
         # select master minion0.k8s.local
         find("#roles_master_#{minions[0].id}").click
@@ -37,12 +38,60 @@ feature "Bootstrap cluster feature" do
         find("#roles_minion_#{minions[1].id}").click
       end
 
-      click_button "Bootstrap cluster"
+      click_on_when_enabled "#bootstrap"
+
+      # means it didn't go to the overview page
+      expect(page).not_to have_content("Summary")
+      expect(page).to have_content("Cluster is too small")
+    end
+
+    scenario "An user bootstraps anyway a cluster with only 2 minions", js: true do
+      using_wait_time 10 do
+        # select master minion0.k8s.local
+        find("#roles_master_#{minions[0].id}").click
+        # select node minion1.k8s.local
+        find("#roles_minion_#{minions[1].id}").click
+      end
+
+      click_on_when_enabled "#bootstrap"
+
+      # waits modal to appear
+      expect(page).to have_content("Cluster is too small")
+
+      click_button "Proceed anyway"
+
       using_wait_time 10 do
         expect do
+          # means it went to the overview page
+          page.to have_content("Summary")
           page.to have_content(minions[0].fqdn)
           page.to have_content(minions[1].fqdn)
           page.not_to have_content(minions[2].fqdn)
+          page.not_to have_content(minions[3].fqdn)
+        end
+      end
+    end
+
+    scenario "An user selects a subset of nodes to be bootstraped", js: true do
+      using_wait_time 10 do
+        # select master minion0.k8s.local
+        find("#roles_master_#{minions[0].id}").click
+        # select node minion1.k8s.local
+        find("#roles_minion_#{minions[1].id}").click
+        # select node minion2.k8s.local
+        find("#roles_minion_#{minions[2].id}").click
+      end
+
+      click_on_when_enabled "#bootstrap"
+
+      using_wait_time 10 do
+        expect do
+          # means it went to the overview page
+          page.to have_content("Summary")
+          page.to have_content(minions[0].fqdn)
+          page.to have_content(minions[1].fqdn)
+          page.not_to have_content(minions[2].fqdn)
+          page.not_to have_content(minions[3].fqdn)
         end
       end
     end
@@ -55,12 +104,15 @@ feature "Bootstrap cluster feature" do
         find(".check-all").click
       end
 
-      click_button "Bootstrap cluster"
+      click_on_when_enabled "#bootstrap"
+
       using_wait_time 10 do
         expect do
+          page.to have_content("Summary")
           page.to have_content(minions[0].fqdn)
           page.to have_content(minions[1].fqdn)
           page.to have_content(minions[2].fqdn)
+          page.to have_content(minions[3].fqdn)
         end
       end
     end
