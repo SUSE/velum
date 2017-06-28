@@ -54,8 +54,8 @@ class DashboardController < ApplicationController
 
       # proxy related settings
       @proxy_systemwide = Pillar.value(pillar: :proxy_systemwide) == "true"
-      @proxy_http       = Pillar.value(pillar: :proxy_http)
-      @proxy_https      = Pillar.value(pillar: :proxy_https)
+      @proxy_http       = Pillar.value(pillar: :http_proxy)
+      @proxy_https      = Pillar.value(pillar: :https_proxy)
       @proxy_no_proxy   = Pillar.value(pillar: :no_proxy)
 
       render "autoyast.xml.erb", layout: false, content_type: "text/xml"

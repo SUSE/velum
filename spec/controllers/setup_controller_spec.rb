@@ -7,8 +7,9 @@ RSpec.describe SetupController, type: :controller do
   let(:minion) { create(:minion) }
   let(:settings_params) do
     {
-      dashboard: "dashboard.example.com",
-      apiserver: "apiserver.example.com"
+      dashboard:    "dashboard.example.com",
+      apiserver:    "apiserver.example.com",
+      enable_proxy: "disable"
     }
   end
 
@@ -241,14 +242,22 @@ RSpec.describe SetupController, type: :controller do
         s
       end
 
+      let(:proxy_disabled_plus_leftovers) do
+        s = no_proxy_settings.dup
+        s["http_proxy"] = "squid.corp.net:3128"
+        s["https_proxy"] = "squid.corp.net:3128"
+        s["no_proxy"] = "localhost"
+        s["proxy_systemwide"] = "true"
+        s["enable_proxy"] = "disable"
+        s
+      end
+
       before do
         sign_in user
       end
 
       it "disable proxy systemwide" do
         put :configure, settings: no_proxy_settings
-        expect(response.redirect_url).to eq "http://test.host/setup/worker-bootstrap"
-        expect(response.status).to eq 302
 
         expect(Pillar.value(pillar: :proxy_systemwide)).to eq("false")
       end
@@ -258,14 +267,7 @@ RSpec.describe SetupController, type: :controller do
         # before hitting the "submit" button.
         # In this case the proxy settings are still sent to Rails, but
         # the "disable the proxy" setting must have precedence.
-        no_proxy_settings["http_proxy"] = "squid.corp.net:3128"
-        no_proxy_settings["https_proxy"] = "squid.corp.net:3128"
-        no_proxy_settings["no_proxy"] = "localhost"
-        no_proxy_settings["proxy_systemwide"] = "true"
-
-        put :configure, settings: no_proxy_settings
-        expect(response.redirect_url).to eq "http://test.host/setup/worker-bootstrap"
-        expect(response.status).to eq 302
+        put :configure, settings: proxy_disabled_plus_leftovers
 
         [:http_proxy, :https_proxy, :no_proxy].each do |key|
           expect(Pillar.find_by(pillar: Pillar.all_pillars[key])).to be_nil

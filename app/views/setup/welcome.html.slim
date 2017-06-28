@@ -22,15 +22,14 @@ h1 Initial CaaSP Configuration
 
   .panel.panel-default
     .panel-heading.clearfix
-      | Proxy settings
-      .form-group
-        .input-group.btn-group.btn-toggle.pull-right data-toggle="buttons"
-          = label_tag :proxy_toggle, nil, class: "btn btn-default", "data-toggle" => "collapse", "data-target" => "#proxy-settings-panel"
-            = f.radio_button :enable_proxy, "enable", checked: false
-            | Enable
-          = label_tag :proxy_toggle, nil, class: "btn btn-primary active", "data-toggle" => "collapse", "data-target" => "#proxy-settings-panel"
-            = f.radio_button :enable_proxy, "disable", checked: true
-            | Disable
+      h3.panel-title Proxy settings
+      .btn-group.btn-group-sm.btn-group-toggle.pull-right data-toggle="buttons"
+        = label_tag :proxy_toggle, nil, class: "btn btn-default", data: {toggle: "collapse", target: "#proxy-settings-panel"}
+          = f.radio_button :enable_proxy, "enable", checked: false
+          | Enable
+        = label_tag :proxy_toggle, nil, class: "btn btn-primary active", data: {toggle: "collapse", target: "#proxy-settings-panel"}
+          = f.radio_button :enable_proxy, "disable", checked: true
+          | Disable
 
     #proxy-settings-panel.panel-collapse.collapse
       .panel-body
@@ -43,7 +42,7 @@ h1 Initial CaaSP Configuration
         .form-group
           = f.label :no, "No-proxy"
           .input-group
-            = f.text_field :no_proxy, value: Pillar.value(pillar: :no_proxy), class: "form-control"
+            = f.text_field :no_proxy, value: (Pillar.value(pillar: :no_proxy) || "localhost, 127.0.01"), class: "form-control"
             span class="input-group-addon"
               a data-toggle="tooltip" data-placement="left" title="Comma separated list of sites or domains that should not be accessed via the proxy server."
                 i class='glyphicon glyphicon-info-sign'
@@ -51,7 +50,7 @@ h1 Initial CaaSP Configuration
           = f.label :proxy_systemwide, "Use proxy systemwide"
           p Choose whether the proxy settings should apply only to the container
             engine or to all the processes running on the cluster nodes.
-          .input-group.btn-group.btn-toggle data-toggle="buttons"
+          .btn-group.btn-group-toggle data-toggle="buttons"
             = label_tag :proxy_systemwide, nil, class: "btn btn-primary active"
               = f.radio_button :proxy_systemwide, "false", checked: true
               | Container Engine only

@@ -46,12 +46,12 @@ class Pillar < ApplicationRecord
 
     def all_pillars
       {
-        dashboard:   "dashboard",
-        apiserver:   "api:server:external_fqdn",
+        dashboard:        "dashboard",
+        apiserver:        "api:server:external_fqdn",
         proxy_systemwide: "proxy:systemwide",
-        http_proxy:  "proxy:http",
-        https_proxy: "proxy:https",
-        no_proxy:    "proxy:no_proxy"
+        http_proxy:       "proxy:http",
+        https_proxy:      "proxy:https",
+        no_proxy:         "proxy:no_proxy"
       }
     end
 
