@@ -137,6 +137,20 @@
       <ipv4_forward config:type="boolean">false</ipv4_forward>
       <ipv6_forward config:type="boolean">false</ipv6_forward>
     </routing>
+    <% if @proxy_systemwide %>
+    <proxy>
+      <enabled config:type="boolean">true</enabled>
+      <% unless @proxy_http.blank? %>
+      <http_proxy><%= @proxy_http %></http_proxy>
+      <% end %>
+      <% unless @proxy_https.blank? %>
+      <https_proxy><%= @proxy_https %></https_proxy>
+      <% end %>
+      <% unless @proxy_no_proxy.blank? %>
+      <no_proxy><%= @proxy_no_proxy %></no_proxy>
+      <% end %>
+    </proxy>
+    <% end %>
   </networking>
   <software>
     <image/>
