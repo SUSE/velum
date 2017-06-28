@@ -232,6 +232,52 @@ RSpec.describe SetupController, type: :controller do
       end
     end
 
+    context "proxy disabled" do
+      let(:no_proxy_settings) do
+        s = settings_params.dup
+        s["dashboard"]    = "dashboard"
+        s["apiserver"]    = "api.k8s.corporate.net"
+        s["enable_proxy"] = "disable"
+        s
+      end
+
+      before do
+        sign_in user
+      end
+
+      it "disable proxy systemwide" do
+        put :configure, settings: no_proxy_settings
+        expect(response.redirect_url).to eq "http://test.host/setup/worker-bootstrap"
+        expect(response.status).to eq 302
+
+        expect(Pillar.value(pillar: :proxy_systemwide)).to eq("false")
+      end
+
+      it "erases proxy fields left by the user" do
+        # A user could enable proxy, add some data and then disable it
+        # before hitting the "submit" button.
+        # In this case the proxy settings are still sent to Rails, but
+        # the "disable the proxy" setting must have precedence.
+        no_proxy_settings["http_proxy"] = "squid.corp.net:3128"
+        no_proxy_settings["https_proxy"] = "squid.corp.net:3128"
+        no_proxy_settings["no_proxy"] = "localhost"
+        no_proxy_settings["proxy_systemwide"] = "true"
+
+        put :configure, settings: no_proxy_settings
+        expect(response.redirect_url).to eq "http://test.host/setup/worker-bootstrap"
+        expect(response.status).to eq 302
+
+        [:http_proxy, :https_proxy, :no_proxy].each do |key|
+          expect(Pillar.find_by(pillar: Pillar.all_pillars[key])).to be_nil
+        end
+
+        # this must be set to false, even though the value specied by the user
+        # was different
+        expect(Pillar.value(pillar: :proxy_systemwide)).to eq("false")
+      end
+
+    end
+
     context "when the user doesn't specify any values" do
       before do
         sign_in user

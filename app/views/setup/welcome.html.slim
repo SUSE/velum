@@ -1,5 +1,6 @@
 = content_for :body_class, "welcome"
 h1 Initial CaaSP Configuration
+
 = form_for :settings, url: setup_path, method: :put do |f|
   .panel.panel-default
     .panel-heading Generic settings
@@ -20,23 +21,43 @@ h1 Initial CaaSP Configuration
               i class='glyphicon glyphicon-info-sign'
 
   .panel.panel-default
-    .panel-heading Container engine proxy settings
-    .panel-body
-      p Proxy server the container engine will use to download images.
-      p Leave them empty if no proxy server is in place inside of your organization.
+    .panel-heading.clearfix
+      | Proxy settings
       .form-group
-        = f.label :http_proxy, "HTTP proxy"
-        = f.url_field :http_proxy, value: Pillar.value(pillar: :http_proxy), class: "form-control"
-      .form-group
-        = f.label :https_proxy, "HTTPS proxy"
-        = f.url_field :https_proxy, value: Pillar.value(pillar: :https_proxy), class: "form-control"
-      .form-group
-        = f.label :no, "No-proxy"
-        .input-group
-          = f.text_field :no_proxy, value: Pillar.value(pillar: :no_proxy), class: "form-control"
-          span class="input-group-addon"
-            a data-toggle="tooltip" data-placement="left" title="Comma separated list of sites or domains that should not be accessed via the proxy server."
-              i class='glyphicon glyphicon-info-sign'
+        .input-group.btn-group.btn-toggle.pull-right data-toggle="buttons"
+          = label_tag :proxy_toggle, nil, class: "btn btn-default", "data-toggle" => "collapse", "data-target" => "#proxy-settings-panel"
+            = f.radio_button :enable_proxy, "enable", checked: false
+            | Enable
+          = label_tag :proxy_toggle, nil, class: "btn btn-primary active", "data-toggle" => "collapse", "data-target" => "#proxy-settings-panel"
+            = f.radio_button :enable_proxy, "disable", checked: true
+            | Disable
+
+    #proxy-settings-panel.panel-collapse.collapse
+      .panel-body
+        .form-group
+          = f.label :http_proxy, "HTTP proxy"
+          = f.url_field :http_proxy, value: Pillar.value(pillar: :http_proxy), class: "form-control"
+        .form-group
+          = f.label :https_proxy, "HTTPS proxy"
+          = f.url_field :https_proxy, value: Pillar.value(pillar: :https_proxy), class: "form-control"
+        .form-group
+          = f.label :no, "No-proxy"
+          .input-group
+            = f.text_field :no_proxy, value: Pillar.value(pillar: :no_proxy), class: "form-control"
+            span class="input-group-addon"
+              a data-toggle="tooltip" data-placement="left" title="Comma separated list of sites or domains that should not be accessed via the proxy server."
+                i class='glyphicon glyphicon-info-sign'
+        .form-group
+          = f.label :proxy_systemwide, "Use proxy systemwide"
+          p Choose whether the proxy settings should apply only to the container
+            engine or to all the processes running on the cluster nodes.
+          .input-group.btn-group.btn-toggle data-toggle="buttons"
+            = label_tag :proxy_systemwide, nil, class: "btn btn-primary active"
+              = f.radio_button :proxy_systemwide, "false", checked: true
+              | Container Engine only
+            = label_tag :proxy_systemwide, nil, class: "btn btn-default"
+              = f.radio_button :proxy_systemwide, "true", checked: false
+              | Entire node
 
   .clearfix.steps-container
     = submit_tag "Next", class: "btn btn-primary pull-right"
