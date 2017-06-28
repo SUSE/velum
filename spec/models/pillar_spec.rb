@@ -11,6 +11,7 @@ describe Pillar do
       {
         dashboard: "dashboard.example.com",
         apiserver: "apiserver.example.com"
+        proxy_systemwide: "false"
       }
     end
 
