@@ -35,7 +35,7 @@ module Discovery
   #     automatic updates has not been enabled.
 
   def assigned_with_status
-    needed, failed = ::Velum::Salt.update_status(targets: "*", cached: true)
+    needed, failed = ::Velum::Salt.update_status(cached: true)
 
     # NOTE: this is highly inefficient and will disappear if we implement the
     # idea written above.
@@ -48,7 +48,7 @@ module Discovery
   end
 
   def admin_status
-    needed, failed = ::Velum::Salt.update_status(targets: "*", cached: true)
+    needed, failed = ::Velum::Salt.update_status(cached: true)
     { update_status: Minion.computed_status("admin", needed, failed) }
   end
 end
