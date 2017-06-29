@@ -38,31 +38,5 @@ h1 Initial CaaSP Configuration
             a data-toggle="tooltip" data-placement="left" title="Comma separated list of sites or domains that should not be accessed via the proxy server."
               i class='glyphicon glyphicon-info-sign'
 
-  .panel.panel-default
-    .panel-heading Certificate settings
-    .panel-body
-      p In order to secure transactions and communication between your cluster nodes, it is required to generate certificates. Please enter the details for your certificate authority (CA).
-
-      .form-group
-        = f.label :company_name, "Company Name"
-        = f.text_field :company_name, value: Pillar.value(pillar: :company_name), class: "form-control", required: true
-      .form-group
-        = f.label :company_unit, "Company Unit"
-        = f.text_field :company_unit, value: Pillar.value(pillar: :company_unit), class: "form-control", required: true
-      .form-group
-        = f.label :email, "E-Mail"
-        = f.email_field :email, value: Pillar.value(pillar: :email), class: "form-control", required: true
-      .form-group
-        = f.label :country
-        - if Pillar.value(pillar: :country)
-          = f.select :country, options_for_select(country_codes, Pillar.value(pillar: :country)), {}, class: "form-control"
-        - else
-          = f.select :country, country_codes, { include_blank: true }, class: "form-control"
-      .form-group
-        = f.label :state
-        = f.text_field :state, value: Pillar.value(pillar: :state), class: "form-control", required: true
-      .form-group
-        = f.label :city
-        = f.text_field :city, value: Pillar.value(pillar: :city), class: "form-control", required: true
   .clearfix.steps-container
     = submit_tag "Next", class: "btn btn-primary pull-right"

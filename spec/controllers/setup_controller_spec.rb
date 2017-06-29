@@ -5,6 +5,12 @@ require "rails_helper"
 RSpec.describe SetupController, type: :controller do
   let(:user)   { create(:user)   }
   let(:minion) { create(:minion) }
+  let(:settings_params) do
+    {
+      dashboard: "dashboard.example.com",
+      apiserver: "apiserver.example.com"
+    }
+  end
 
   before do
     setup_stubbed_pending_minions!
@@ -200,17 +206,6 @@ RSpec.describe SetupController, type: :controller do
   end
 
   describe "PUT /setup via HTML" do
-    let(:settings_params) do
-      {
-        company_name: "SUSE Linux GmbH",
-        company_unit: "Research and development",
-        email:        "containers@suse.de",
-        country:      "DE",
-        state:        "Bavaria",
-        city:         "Nuremberg"
-      }
-    end
-
     context "when the user configures the cluster successfully" do
       before do
         sign_in user
@@ -243,7 +238,7 @@ RSpec.describe SetupController, type: :controller do
       end
 
       it "warns and redirects to the setup_path" do
-        put :configure, settings: settings_params.each { |k, _v| settings_params[k] = "" }
+        put :configure, settings: Hash[settings_params.map { |k, _| [k, ""] }]
         expect(flash[:alert]).to be_present
         expect(response.redirect_url).to eq "http://test.host/setup"
       end
@@ -251,17 +246,6 @@ RSpec.describe SetupController, type: :controller do
   end
 
   describe "PUT /setup via JSON" do
-    let(:settings_params) do
-      {
-        company_name: "SUSE Linux GmbH",
-        company_unit: "Research and development",
-        email:        "containers@suse.de",
-        country:      "DE",
-        state:        "Bavaria",
-        city:         "Nuremberg"
-      }
-    end
-
     context "when the user configures the cluster successfully" do
       before do
         sign_in user
@@ -295,7 +279,7 @@ RSpec.describe SetupController, type: :controller do
       end
 
       it "returns unprocessable entity" do
-        put :configure, settings: settings_params.each { |k, _v| settings_params[k] = "" }
+        put :configure, settings: Hash[settings_params.map { |k, _| [k, ""] }]
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
