@@ -3,7 +3,7 @@
 # rubocop:disable Metrics/BlockLength
 Rails.application.routes.draw do
   get "/autoyast", to: "dashboard#autoyast"
-  next if ENV["VELUM_PORT"].to_i != 443
+  next if Rails.env.production? && ENV["VELUM_PORT"].to_i != 443
   devise_for :users, controllers: { registrations: "auth/registrations",
                                     sessions:      "auth/sessions" }
 
