@@ -49,6 +49,6 @@ feature "Login feature" do
     fill_in "user_password", with: user.password
     click_button("Log in")
 
-    expect(current_path).to eq setup_path
+    expect(page).to have_current_path(setup_path)
   end
 end

@@ -16,7 +16,7 @@ feature "Add unassigned nodes" do
     setup_stubbed_update_status!
     setup_stubbed_pending_minions!
 
-    [:minion, :master].each do |role|
+    [:worker, :master].each do |role|
       allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(role)
         .and_return(role)
     end
@@ -41,10 +41,7 @@ feature "Add unassigned nodes" do
 
     click_button "Add nodes"
     using_wait_time 10 do
-      expect do
-        page.to have_content(minions[2].fqdn)
-        page.not_to have_content(minions[3].fqdn)
-      end
+      expect(page).to have_content(minions[2].fqdn).and have_no_content(minions[3].fqdn)
     end
   end
 
@@ -56,10 +53,7 @@ feature "Add unassigned nodes" do
 
     click_button "Add nodes"
     using_wait_time 10 do
-      expect do
-        page.to have_content(minions[2].fqdn)
-        page.to have_content(minions[3].fqdn)
-      end
+      expect(page).to have_content(minions[2].fqdn).and have_content(minions[3].fqdn)
     end
   end
   # rubocop:enable RSpec/ExampleLength

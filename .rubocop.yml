@@ -38,6 +38,8 @@ Rails/HttpPositionalArguments:
 # expectation.
 RSpec/MultipleExpectations:
   Max: 2
+  Exclude:
+    - spec/features/**/*
 
 AllCops:
   Exclude:
