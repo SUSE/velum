@@ -399,6 +399,17 @@ function toggleBootstrapButton() {
   $('#bootstrap').prop('disabled', !hasMinimumAmountToEnable);
 }
 
+// hide minimum nodes alert
+function toggleMinimumNodesAlert() {
+  var hasMinimumNodesSelected = selectedNodesLength() > 2;
+
+  if (hasMinimumNodesSelected) {
+    $('.discovery-minimum-nodes-alert').fadeOut(500);
+  } else {
+    $('.discovery-minimum-nodes-alert').fadeIn(100);
+  }
+}
+
 // bootstrap cluster button click listener
 // if it has the minimum amount of nodes, form is submitted as expected
 // otherwise it shows the modal if didn't show yet
@@ -443,6 +454,7 @@ $('body').on('change', 'input[name="roles[worker][]"]', function() {
     var index = MinionPoller.selectedNodes.indexOf(value);
     MinionPoller.selectedNodes.splice(index, 1);
   }
+  toggleMinimumNodesAlert();
 });
 
 // when selecting a master
