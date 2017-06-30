@@ -60,7 +60,14 @@ class SetupController < ApplicationController
   private
 
   def settings_params
-    params.require(:settings).permit(*Pillar.all_pillars.keys)
+    settings = params.require(:settings).permit(*Pillar.all_pillars.keys)
+    if params["settings"]["enable_proxy"] == "disable"
+      settings["proxy_systemwide"] = "false"
+      settings["http_proxy"] = ""
+      settings["https_proxy"] = ""
+      settings["no_proxy"] = ""
+    end
+    settings
   end
 
   def update_nodes_params

@@ -46,11 +46,12 @@ class Pillar < ApplicationRecord
 
     def all_pillars
       {
-        dashboard:   "dashboard",
-        apiserver:   "api:server:external_fqdn",
-        http_proxy:  "proxy:http",
-        https_proxy: "proxy:https",
-        no_proxy:    "proxy:no_proxy"
+        dashboard:        "dashboard",
+        apiserver:        "api:server:external_fqdn",
+        proxy_systemwide: "proxy:systemwide",
+        http_proxy:       "proxy:http",
+        https_proxy:      "proxy:https",
+        no_proxy:         "proxy:no_proxy"
       }
     end
 
@@ -60,15 +61,18 @@ class Pillar < ApplicationRecord
       errors = []
 
       Pillar.all_pillars.each do |key, pillar_key|
-        # The following pillar keys can be blank, so ignore them if they are.
-        next if [:http_proxy, :https_proxy, :no_proxy].include?(key) && pillars[key].blank?
+        # The following pillar keys can be blank, delete them if they are.
+        if [:http_proxy, :https_proxy, :no_proxy].include?(key) && pillars[key].blank?
+          pillar = Pillar.find_by pillar: pillar_key
+          pillar.destroy if pillar
+        else
+          pillar = Pillar.find_or_initialize_by pillar: pillar_key
+          pillar.value = pillars[key]
+          next if pillar.save
 
-        pillar = Pillar.find_or_initialize_by pillar: pillar_key
-        pillar.value = pillars[key]
-        next if pillar.save
-
-        exp = pillar.errors.empty? ? "" : ": #{pillar.errors.messages[:value].first}"
-        errors << "'#{key}' could not be saved#{exp}."
+          exp = pillar.errors.empty? ? "" : ": #{pillar.errors.messages[:value].first}"
+          errors << "'#{key}' could not be saved#{exp}."
+        end
       end
 
       errors

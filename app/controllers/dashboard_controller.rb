@@ -51,6 +51,13 @@ class DashboardController < ApplicationController
       # rubocop:disable Style/RescueModifier
       @ssh_public_key = File.read(ssh_key_file) rescue nil
       # rubocop:enable Style/RescueModifier
+
+      # proxy related settings
+      @proxy_systemwide = Pillar.value(pillar: :proxy_systemwide) == "true"
+      @proxy_http       = Pillar.value(pillar: :http_proxy)
+      @proxy_https      = Pillar.value(pillar: :https_proxy)
+      @proxy_no_proxy   = Pillar.value(pillar: :no_proxy)
+
       render "autoyast.xml.erb", layout: false, content_type: "text/xml"
     end
   rescue Velum::SUSEConnect::SCCConnectionException

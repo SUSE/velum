@@ -7,8 +7,9 @@ RSpec.describe SetupController, type: :controller do
   let(:minion) { create(:minion) }
   let(:settings_params) do
     {
-      dashboard: "dashboard.example.com",
-      apiserver: "apiserver.example.com"
+      dashboard:    "dashboard.example.com",
+      apiserver:    "apiserver.example.com",
+      enable_proxy: "disable"
     }
   end
 
@@ -230,6 +231,53 @@ RSpec.describe SetupController, type: :controller do
         expect(flash[:alert]).to be_present
         expect(response.redirect_url).to eq "http://test.host/setup"
       end
+    end
+
+    context "proxy disabled" do
+      let(:no_proxy_settings) do
+        s = settings_params.dup
+        s["dashboard"]    = "dashboard"
+        s["apiserver"]    = "api.k8s.corporate.net"
+        s["enable_proxy"] = "disable"
+        s
+      end
+
+      let(:proxy_disabled_plus_leftovers) do
+        s = no_proxy_settings.dup
+        s["http_proxy"] = "squid.corp.net:3128"
+        s["https_proxy"] = "squid.corp.net:3128"
+        s["no_proxy"] = "localhost"
+        s["proxy_systemwide"] = "true"
+        s["enable_proxy"] = "disable"
+        s
+      end
+
+      before do
+        sign_in user
+      end
+
+      it "disable proxy systemwide" do
+        put :configure, settings: no_proxy_settings
+
+        expect(Pillar.value(pillar: :proxy_systemwide)).to eq("false")
+      end
+
+      it "erases proxy fields left by the user" do
+        # A user could enable proxy, add some data and then disable it
+        # before hitting the "submit" button.
+        # In this case the proxy settings are still sent to Rails, but
+        # the "disable the proxy" setting must have precedence.
+        put :configure, settings: proxy_disabled_plus_leftovers
+
+        [:http_proxy, :https_proxy, :no_proxy].each do |key|
+          expect(Pillar.find_by(pillar: Pillar.all_pillars[key])).to be_nil
+        end
+
+        # this must be set to false, even though the value specied by the user
+        # was different
+        expect(Pillar.value(pillar: :proxy_systemwide)).to eq("false")
+      end
+
     end
 
     context "when the user doesn't specify any values" do
