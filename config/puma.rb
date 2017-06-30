@@ -43,9 +43,6 @@ workers MAX_WORKERS
 #   ActiveRecord::Base.establish_connection if defined?(ActiveRecord)
 # end
 
-pidfile "/tmp/puma.pid"
-state_path "/tmp/puma.state"
-
 if ENV["VELUM_PORT"].to_i == 443
   ssl_bind "0.0.0.0", ENV["VELUM_PORT"], key: "/etc/pki/velum.key", cert: "/etc/pki/velum.crt"
 else
