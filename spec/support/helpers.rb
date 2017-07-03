@@ -20,8 +20,7 @@ module Helpers
 
   # click on `selector element when enabled
   def click_on_when_enabled(selector)
-    # will wait until it becomes enabled
-    find("#{selector}:not([disabled])").click
+    find("#{selector}:not([disabled])", match: :first).click
   end
 end
 
