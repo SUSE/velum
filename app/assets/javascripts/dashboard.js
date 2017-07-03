@@ -101,6 +101,8 @@ MinionPoller = {
 
         MinionPoller.handleAdminUpdate(data.admin || {});
 
+        handleBootstrapButtonTitle();
+
         // show/hide "update all nodes" link
         $("#update-all-nodes").toggleClass('hidden', !(updateAvailable && allApplied));
 
@@ -382,11 +384,40 @@ function selectedNodesLength() {
   return $('input[name="roles[worker][]"]:checked').length;
 }
 
+// handle bootstra button title
+function handleBootstrapButtonTitle() {
+  var masterSelected = isMasterSelected();
+  var hasMinimumNodes = selectedNodesLength() > 1;
+  var canBootstrap = masterSelected && hasMinimumNodes;
+  var title = 'Select ';
+
+  if (canBootstrap) {
+    title = 'Bootstrap cluster';
+  } else {
+    if (!masterSelected) {
+      title += 'the master';
+    }
+
+    if (!hasMinimumNodes) {
+      if (!masterSelected) {
+        title += ' and ';
+      }
+
+      title += 'nodes';
+    }
+  }
+
+  $('#bootstrap').prop('title', title);
+}
+
 // disable/enable button if it has 1 master and 1 worker at least
 function toggleBootstrapButton() {
-  var hasMinimumAmountToEnable = isMasterSelected() && selectedNodesLength() > 1;
+  var canBootstrap = isMasterSelected() && selectedNodesLength() > 1;
 
-  $('#bootstrap').prop('disabled', !hasMinimumAmountToEnable);
+  $('#bootstrap').prop('disabled', !canBootstrap);
+
+  // also call bootstrap title handler
+  handleBootstrapButtonTitle();
 }
 
 // hide minimum nodes alert
