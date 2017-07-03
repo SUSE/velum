@@ -6,7 +6,7 @@
 #
 # Therefore, we add some methods for waiting that will be used for these
 # corner cases. All the public methods respect a timeout of
-# `Capybara.default_wait_time`.
+# `Capybara.default_max_wait_time`.
 module WaitForEvents
   # Wait for all the AJAX requests to have concluded.
   def wait_for_ajax
@@ -19,17 +19,16 @@ module WaitForEvents
   end
 
   # This method will loop until the given block evaluates to true. It will
-  # respect to default timeout as specifyied by Capybara.
-  def wait_until
-    Timeout.timeout(Capybara.default_max_wait_time) do
-      loop until yield
-    end
+  # respect to default timeout as specifyied by Capybara, unless you change the
+  # default value of the optional parameter `to`.
+  def wait_until(to = Capybara.default_max_wait_time)
+    Timeout.timeout(to) { loop until yield }
   end
 
   private
 
   # Wait until the given JS snippet evaluates to zero. This is done while
-  # respecting the set `Capybara.default_wait_time` timeout.
+  # respecting the set `Capybara.default_max_wait_time` timeout.
   def wait_until_zero(js)
     wait_until { page.evaluate_script(js).zero? }
   end

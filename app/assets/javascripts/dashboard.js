@@ -1,8 +1,15 @@
 MinionPoller = {
   selectedNodes: [],
+  pollingTimeoutId: null,
 
   poll: function() {
     this.request();
+  },
+
+  stop: function() {
+    if (this.pollingTimeoutId) {
+      clearTimeout(this.pollingTimeoutId);
+    }
   },
 
   stateWeight: function(state) {
@@ -134,7 +141,7 @@ MinionPoller = {
       }
     }).always(function() {
       // make another request only after the last one finished
-      setTimeout(MinionPoller.request, 5000);
+      MinionPoller.pollingTimeoutId = setTimeout(MinionPoller.request, 5000);
     });
   },
 
@@ -446,6 +453,8 @@ $('body').on('click', '#bootstrap', function(e) {
 
     return false;
   }
+
+  MinionPoller.stop();
 });
 
 // if user wants to bootstrap anyway, submit form

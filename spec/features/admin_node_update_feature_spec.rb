@@ -52,7 +52,7 @@ feature "Manage nodes updates feature" do
       # clicks on "Reboot to update"
       find(".reboot-update-btn").click
 
-      expect(page).to have_content("Rebooting...", wait: 10)
+      expect(page).to have_content("Rebooting...")
 
       # NOTE: The check below is flaky: sometimes it passes and sometimes it
       # doesn't. We believe that this is Capybara/Poltergeist to blame. Since we
