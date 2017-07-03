@@ -23,7 +23,7 @@ feature "Bootstrap cluster feature" do
 
     before do
       # mock salt methods
-      [:minion, :master].each do |role|
+      [:worker, :master].each do |role|
         allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(role)
           .and_return(role)
       end
@@ -61,14 +61,12 @@ feature "Bootstrap cluster feature" do
       click_button "Proceed anyway"
 
       using_wait_time 10 do
-        expect do
-          # means it went to the overview page
-          page.to have_content("Summary")
-          page.to have_content(minions[0].fqdn)
-          page.to have_content(minions[1].fqdn)
-          page.not_to have_content(minions[2].fqdn)
-          page.not_to have_content(minions[3].fqdn)
-        end
+        # means it went to the overview page
+        expect(page).to have_content("Summary")
+        expect(page).to have_content(minions[0].fqdn)
+        expect(page).to have_content(minions[1].fqdn)
+        expect(page).not_to have_content(minions[2].fqdn)
+        expect(page).not_to have_content(minions[3].fqdn)
       end
     end
 
@@ -85,14 +83,12 @@ feature "Bootstrap cluster feature" do
       click_on_when_enabled "#bootstrap"
 
       using_wait_time 10 do
-        expect do
-          # means it went to the overview page
-          page.to have_content("Summary")
-          page.to have_content(minions[0].fqdn)
-          page.to have_content(minions[1].fqdn)
-          page.not_to have_content(minions[2].fqdn)
-          page.not_to have_content(minions[3].fqdn)
-        end
+        # means it went to the overview page
+        expect(page).to have_content("Summary")
+        expect(page).to have_content(minions[0].fqdn)
+        expect(page).to have_content(minions[1].fqdn)
+        expect(page).to have_content(minions[2].fqdn)
+        expect(page).not_to have_content(minions[3].fqdn)
       end
     end
 
@@ -107,39 +103,31 @@ feature "Bootstrap cluster feature" do
       click_on_when_enabled "#bootstrap"
 
       using_wait_time 10 do
-        expect do
-          page.to have_content("Summary")
-          page.to have_content(minions[0].fqdn)
-          page.to have_content(minions[1].fqdn)
-          page.to have_content(minions[2].fqdn)
-          page.to have_content(minions[3].fqdn)
-        end
+        expect(page).to have_content("Summary")
+        expect(page).to have_content(minions[0].fqdn)
+        expect(page).to have_content(minions[1].fqdn)
+        expect(page).to have_content(minions[2].fqdn)
+        expect(page).to have_content(minions[3].fqdn)
       end
     end
   end
 
   scenario "It shows the minions as soon as they register", js: true do
-    expect do
-      page.to have_content("No nodes found")
-      page.not_to have_content("minion0.k8s.local")
-    end
+    expect(page).to have_content("No nodes found")
+    expect(page).not_to have_content("minion0.k8s.local")
 
     Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion0.k8s.local")
     using_wait_time 10 do
-      expect do
-        page.not_to have_content("No nodes found")
-        page.to have_content("minion0.k8s.local")
-      end
+      expect(page).not_to have_content("No nodes found")
+      expect(page).to have_content("minion0.k8s.local")
     end
   end
   # rubocop:enable RSpec/ExampleLength
 
   scenario "An user sees 'No nodes found'", js: true do
-    expect do
-      page.to have_content("No nodes found")
-      # bootstrap cluster button disabled
-      page.to have_css("#bootstrap[disabled]")
-    end
+    expect(page).to have_content("No nodes found")
+    # bootstrap cluster button disabled
+    expect(page).to have_button(value: "Bootstrap cluster", disabled: true)
   end
 end
 # rubocop:enable RSpec/AnyInstance

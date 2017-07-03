@@ -5,7 +5,6 @@ feature "Signup feature" do
   let(:user) { build(:user) }
 
   # rubocop:disable RSpec/ExampleLength
-  # rubocop:disable RSpec/MultipleExpectations
 
   # XXX: the following tests depend on another and thus cannot be split into
   # multiple scenarios. This must be fixed as soon as multiuser support is
@@ -15,7 +14,7 @@ feature "Signup feature" do
     # account creation reachable
     visit new_user_session_path
     click_link("Create an account")
-    expect(current_path).to eq new_user_registration_path
+    expect(page).to have_current_path(new_user_registration_path)
 
     # wrong email format
     fill_in "user_email", with: "gibberish@asdasd"
@@ -45,8 +44,8 @@ feature "Signup feature" do
     # forcefully visiting the registration path must redirect to the
     # root_path and yield an alert.
     visit new_user_registration_path
+    expect(page).to have_current_path(root_path)
     expect(page).to have_content("Admin user already exists.")
-    expect(current_path).to eq root_path
   end
   # rubocop:enable RSpec/ExampleLength
 end

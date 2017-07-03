@@ -22,7 +22,6 @@ feature "Monitoring feature" do
   end
 
   # rubocop:disable RSpec/ExampleLength
-  # rubocop:disable RSpec/MultipleExpectations:
   scenario "It shows the number of new minions", js: true do
     using_wait_time 10 do
       unassigned_count = find(".unassigned-count")
@@ -36,5 +35,4 @@ feature "Monitoring feature" do
     end
   end
   # rubocop:enable RSpec/ExampleLength
-  # rubocop:enable RSpec/MultipleExpectations:
 end

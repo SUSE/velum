@@ -29,7 +29,6 @@ feature "Manage nodes updates feature" do
       expect(page).to have_content("Admin node is running outdated software")
     end
 
-    # rubocop:disable RSpec/MultipleExpectations
     scenario "User clicks on admin 'Update admin node'", js: true do
       expect(page).not_to have_content("Reboot to update")
 
@@ -40,7 +39,6 @@ feature "Manage nodes updates feature" do
                                    "in order to apply the software update")
       expect(page).to have_content("Reboot to update")
     end
-    # rubocop:enable RSpec/MultipleExpectations
 
     scenario "User clicks on 'Reboot to update'", js: true do
       allow(::Velum::Salt).to receive(:call).and_return(true)
