@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
 Rails.application.routes.draw do
   get "/autoyast", to: "dashboard#autoyast"
-  next if Rails.env.production? && ENV["VELUM_PORT"].to_i != 443
+
   devise_for :users, controllers: { registrations: "auth/registrations",
                                     sessions:      "auth/sessions" }
 
@@ -35,4 +34,3 @@ Rails.application.routes.draw do
     post :bootstrap
   end
 end
-# rubocop:enable Metrics/BlockLength
