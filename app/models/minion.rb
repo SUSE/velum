@@ -104,7 +104,7 @@ class Minion < ApplicationRecord
   # Updates all nodes with a grain of `tx_update_reboot_needed: True` with a
   # highstate = pending, and persists it to the database
   def self.mark_pending_update
-    needed, failed = ::Velum::Salt.update_status(targets: "*", cached: true)
+    needed, failed = ::Velum::Salt.update_status(targets: "*")
     minions = Minion.assigned_role
     minions.each do |minion|
       if Minion.computed_status(minion.minion_id, needed, failed) == Minion.statuses[:update_needed]

@@ -21,18 +21,20 @@ module Velum
     end
 
     # Returns the update status of the different minions.
-    def self.update_status(targets: "*", cached: false)
-      expiration = cached ? 1.second : 30.seconds
+    def self.update_status(targets: "*")
+      needed = []
+      failed = []
 
-      needed = Rails.cache.fetch("update_status", expires_in: expiration) do
-        _, res = Salt.call(action: "grains.get", arg: "tx_update_reboot_needed", targets: targets)
-        res
+      req_data = { tgt: targets, fun: "cache.grains", client: "runner" }
+      minions = perform_request(endpoint: "/", method: "post", data: req_data)
+
+      JSON.parse(minions.body)["return"].each do |key, _|
+        key.each do |minion, data|
+          needed.push(minion) if data.fetch("tx_update_reboot_needed", false)
+          failed.push(minion) if data.fetch("tx_update_failed", false)
+        end
       end
-      failed = Rails.cache.fetch("update_status_failed", expires_in: expiration) do
-        _, res = Salt.call(action: "grains.get", arg: "tx_update_failed", targets: targets)
-        res
-      end
-      [needed["return"], failed["return"]]
+      [needed, failed]
     end
 
     # Returns the minions as discovered by salt.

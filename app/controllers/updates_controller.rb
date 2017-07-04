@@ -20,7 +20,7 @@ class UpdatesController < ApplicationController
   protected
 
   def admin_needs_update
-    needed, failed = ::Velum::Salt.update_status(targets: "*", cached: true)
+    needed, failed = ::Velum::Salt.update_status(targets: "*")
     status = Minion.computed_status("admin", needed, failed)
 
     return if status == Minion.statuses[:update_needed] ||
