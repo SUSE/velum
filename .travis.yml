@@ -49,3 +49,6 @@ addons:
 
 after_success:
   - bundle exec codeclimate-test-reporter
+
+after_failure:
+  - cat log/test.log
