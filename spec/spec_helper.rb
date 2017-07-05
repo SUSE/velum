@@ -39,4 +39,6 @@ RSpec.configure do |config|
   end
 
   config.order = :random
+
+  config.fail_fast = ENV["RSPEC_FAIL_FAST"] == "true"
 end
