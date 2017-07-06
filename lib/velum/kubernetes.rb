@@ -14,10 +14,10 @@ module Velum
       ca_crt = Velum::Salt.read_file(targets: "ca", file: "/etc/pki/ca.crt").first
       client_crt = Velum::Salt.read_file(targets:     "roles:kube-master",
                                          target_type: "grain",
-                                         file:        "/etc/pki/minion.crt").first
+                                         file:        "/etc/pki/kubectl-client-cert.crt").first
       client_key = Velum::Salt.read_file(targets:     "roles:kube-master",
                                          target_type: "grain",
-                                         file:        "/etc/pki/minion.key").first
+                                         file:        "/etc/pki/kubectl-client-cert.key").first
       host = Pillar.value pillar: :apiserver
 
       KubeConfig.new host, ca_crt, client_crt, client_key
