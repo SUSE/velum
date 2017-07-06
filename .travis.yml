@@ -13,8 +13,10 @@ rvm:
   - ruby-head
 
 env:
-  - RSPEC_FAIL_FAST=true
   - RSPEC_FAIL_FAST=false
+# Used to get a better understanding of flaky tests. With a fail fast and a flaky test, the test.log
+# file will probably contain relevant information to fix the problem.
+#  - RSPEC_FAIL_FAST=true
 
 matrix:
   allow_failures:
@@ -27,7 +29,6 @@ cache:
     - $PWD/travis_phantomjs
 
 before_install:
-  - gem update --system
   - phantomjs --version
   - export PATH=$PWD/travis_phantomjs/phantomjs-2.1.1-linux-x86_64/bin:$PATH
   - if [ $(phantomjs --version) != '2.1.1' ]; then rm -rf $PWD/travis_phantomjs; mkdir -p $PWD/travis_phantomjs; fi

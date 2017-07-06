@@ -30,11 +30,11 @@ feature "Bootstrap cluster feature" do
       allow(Velum::Salt).to receive(:orchestrate)
     end
 
-    scenario "An user sees warning modal when trying to bootstrap 2 nodes", js: true do
+    scenario "A user sees warning modal when trying to bootstrap 2 nodes", js: true do
       # select master minion0.k8s.local
-      find("#roles_master_#{minions[0].id}", match: :first).click
+      find("#roles_master_#{minions[0].id}").click
       # select node minion1.k8s.local
-      find("#roles_minion_#{minions[1].id}", match: :first).click
+      find("#roles_minion_#{minions[1].id}").click
 
       click_on_when_enabled "#bootstrap"
 
@@ -43,11 +43,11 @@ feature "Bootstrap cluster feature" do
       expect(page).to have_content("Cluster is too small")
     end
 
-    scenario "An user bootstraps anyway a cluster with only 2 minions", js: true do
+    scenario "A user bootstraps anyway a cluster with only 2 minions", js: true do
       # select master minion0.k8s.local
-      find("#roles_master_#{minions[0].id}", match: :first).click
+      find("#roles_master_#{minions[0].id}").click
       # select node minion1.k8s.local
-      find("#roles_minion_#{minions[1].id}", match: :first).click
+      find("#roles_minion_#{minions[1].id}").click
 
       click_on_when_enabled "#bootstrap"
 
@@ -64,13 +64,13 @@ feature "Bootstrap cluster feature" do
       expect(page).not_to have_content(minions[3].fqdn)
     end
 
-    scenario "An user selects a subset of nodes to be bootstraped", js: true do
+    scenario "A user selects a subset of nodes to be bootstraped", js: true do
       # select master minion0.k8s.local
-      find("#roles_master_#{minions[0].id}", match: :first).click
+      find("#roles_master_#{minions[0].id}").click
       # select node minion1.k8s.local
-      find("#roles_minion_#{minions[1].id}", match: :first).click
+      find("#roles_minion_#{minions[1].id}").click
       # select node minion2.k8s.local
-      find("#roles_minion_#{minions[2].id}", match: :first).click
+      find("#roles_minion_#{minions[2].id}").click
 
       click_on_when_enabled "#bootstrap"
 
@@ -82,15 +82,16 @@ feature "Bootstrap cluster feature" do
       expect(page).not_to have_content(minions[3].fqdn)
     end
 
-    # TODO: flaky
-    scenario "An user check all nodes at once to be bootstraped", js: true do
-      pending("This test is flaky, revisit!")
-
+    scenario "A user check all nodes at once to be bootstraped", js: true do
+      # wait for all minions to be there
+      expect(page).to have_content(minions[0].fqdn)
+      expect(page).to have_content(minions[1].fqdn)
+      expect(page).to have_content(minions[2].fqdn)
+      expect(page).to have_content(minions[3].fqdn)
       # select master minion0.k8s.local
-      find("#roles_master_#{minions[0].id}", match: :first).click
-
+      find("#roles_master_#{minions[0].id}").click
       # select all nodes
-      find(".check-all", match: :first).click
+      find(".check-all").click
 
       click_on_when_enabled "#bootstrap"
 
@@ -99,8 +100,6 @@ feature "Bootstrap cluster feature" do
       expect(page).to have_content(minions[1].fqdn)
       expect(page).to have_content(minions[2].fqdn)
       expect(page).to have_content(minions[3].fqdn)
-
-      raise "fail"
     end
   end
 
@@ -114,7 +113,7 @@ feature "Bootstrap cluster feature" do
   end
   # rubocop:enable RSpec/ExampleLength
 
-  scenario "An user sees 'No nodes found'", js: true do
+  scenario "A user sees 'No nodes found'", js: true do
     expect(page).to have_content("No nodes found")
     # bootstrap cluster button disabled
     expect(page).to have_button(value: "Bootstrap cluster", disabled: true)

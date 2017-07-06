@@ -25,24 +25,27 @@ feature "Add unassigned nodes" do
     visit assign_nodes_path
   end
 
-  scenario "An user sees (new) link", js: true do
+  scenario "A user sees (new) link", js: true do
     visit authenticated_root_path
 
     expect(page).to have_content("(new)")
   end
 
-  scenario "An user selects which nodes will be added", js: true do
-
+  scenario "A user selects which nodes will be added", js: true do
     # select node minion3.k8s.local
-    find("#roles_minion_#{minions[2].id}", match: :first).click
+    find("#roles_minion_#{minions[2].id}").click
 
     click_button "Add nodes"
     expect(page).to have_content(minions[2].fqdn).and have_no_content(minions[3].fqdn)
   end
 
-  scenario "An user check all nodes at once to be added", js: true do
+  scenario "A user check all nodes at once to be added", js: true do
+    # wait for all minions to be there
+    expect(page).to have_content(minions[2].fqdn)
+    expect(page).to have_content(minions[3].fqdn)
+
     # select all nodes
-    find(".check-all", match: :first).click
+    find(".check-all").click
 
     click_button "Add nodes"
     expect(page).to have_content(minions[2].fqdn).and have_content(minions[3].fqdn)
