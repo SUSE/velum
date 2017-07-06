@@ -37,34 +37,26 @@ describe SaltHandler::MinionHighstate do
     end
 
     it "returns false if no matching Minion exists" do
-      VCR.use_cassette("salt/process_event", record: :none) do
-        expect(handler.process_event).to be(false)
-      end
+      expect(handler.process_event).to be(false)
     end
 
     it "returns false if a matching Minion exists but has no pending highstate" do
       matching_minion_with_no_pending_highstate
 
-      VCR.use_cassette("salt/process_event", record: :none) do
-        expect(handler.process_event).to be(false)
-      end
+      expect(handler.process_event).to be(false)
     end
 
     it "return true if a matching Minion with pending highstate exists" do
       matching_minion
 
-      VCR.use_cassette("salt/process_event", record: :none) do
-        expect(handler.process_event).to be(true)
-      end
+      expect(handler.process_event).to be(true)
     end
 
     it "updates the matching Minion's highstate column" do
       matching_minion
 
-      VCR.use_cassette("salt/process_event", record: :none) do
-        expect { handler.process_event }
-          .to change { matching_minion.reload.highstate }.from("pending").to("applied")
-      end
+      expect { handler.process_event }
+        .to change { matching_minion.reload.highstate }.from("pending").to("applied")
     end
   end
 end

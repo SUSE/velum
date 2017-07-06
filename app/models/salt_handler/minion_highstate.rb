@@ -17,8 +17,8 @@ class SaltHandler::MinionHighstate
     @salt_event = salt_event
   end
 
-  # This method is responsible for all actions needed when a minion starts.
-  # For now we simply store the Minion in our database.
+  # This method is responsible for all actions needed when a minion reaches highstate.
+  # We set the highstate result for this minion in particular.
   def process_event
     minion_id = salt_event.tag.match(TAG_MATCHER)[1]
     return false unless minion_id
