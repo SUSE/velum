@@ -15,7 +15,7 @@ setup_database() {
 
   # let the user know that the UI is about to start
   # https://bugzilla.suse.com/show_bug.cgi?id=1031682
-  ruby -r ./bin/httpsd.rb -e httpd public/503_database_not_ready.html -p $VELUM_PORT --request-timeout=$TIMEOUT --bind-address=0.0.0.0 --ssl-certificate /etc/pki/velum.crt --ssl-private-key /etc/pki/velum.key &
+  ruby bin/serve-init-page.rb -p $VELUM_PORT --request-timeout=$TIMEOUT --bind-address=0.0.0.0 --ssl-certificate /etc/pki/velum.crt --ssl-private-key /etc/pki/velum.key public/503_database_not_ready.html &
   export TEMPORARY_SERVER_PID=$!
 
   while [ $RETRY -ne 0 ]; do
