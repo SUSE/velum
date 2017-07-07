@@ -48,7 +48,3 @@ AllCops:
     - db/schema.rb
     - db/migrate/*
     - vendor/**/*
-    # This is a patched version of ruby's core un.rb file. Upstream has
-    # a particular style that conflicts with our rules -> let's ignore
-    # this file
-    - bin/httpsd.rb
