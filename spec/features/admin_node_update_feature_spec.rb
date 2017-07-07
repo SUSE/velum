@@ -40,6 +40,7 @@ feature "Manage nodes updates feature" do
       expect(page).to have_content("Reboot to update")
     end
 
+    # rubocop:disable RSpec/ExampleLength
     scenario "User clicks on 'Reboot to update'", js: true do
       allow(::Velum::Salt).to receive(:call).and_return(true)
 
@@ -52,15 +53,11 @@ feature "Manage nodes updates feature" do
       # clicks on "Reboot to update"
       find(".reboot-update-btn").click
 
-      expect(page).to have_content("Rebooting...", wait: 10)
+      wait_for_ajax
 
-      # NOTE: The check below is flaky: sometimes it passes and sometimes it
-      # doesn't. We believe that this is Capybara/Poltergeist to blame. Since we
-      # already have this check in `spec/controllers/updates_controller_spec.rb`
-      # and getting the "Rebooting..." flashy message already guarantees that
-      # the controller was reached, we have simply commented out the line below.
-      # expect(::Velum::Salt).to have_received(:call).once
+      expect(::Velum::Salt).to have_received(:call).once
     end
+    # rubocop:enable RSpec/ExampleLength
   end
 
   scenario "Admin node has an update available (failed to update)", js: true do

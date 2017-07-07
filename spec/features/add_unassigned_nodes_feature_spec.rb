@@ -25,45 +25,36 @@ feature "Add unassigned nodes" do
     visit assign_nodes_path
   end
 
-  scenario "An user sees (new) link", js: true do
+  scenario "A user sees (new) link", js: true do
     visit authenticated_root_path
 
     expect(page).to have_content("(new)")
   end
 
-  # rubocop:disable RSpec/ExampleLength
-  scenario "An user selects which nodes will be added", js: true do
-
-    using_wait_time 10 do
-      # select node minion3.k8s.local
-      find("#roles_minion_#{minions[2].id}").click
-    end
+  scenario "A user selects which nodes will be added", js: true do
+    # select node minion3.k8s.local
+    find("#roles_minion_#{minions[2].id}").click
 
     click_button "Add nodes"
-    using_wait_time 10 do
-      expect(page).to have_content(minions[2].fqdn).and have_no_content(minions[3].fqdn)
-    end
+    expect(page).to have_content(minions[2].fqdn).and have_no_content(minions[3].fqdn)
   end
 
-  scenario "An user check all nodes at once to be added", js: true do
-    using_wait_time 5 do
-      # select all nodes
-      find(".check-all").click
-    end
+  scenario "A user check all nodes at once to be added", js: true do
+    # wait for all minions to be there
+    expect(page).to have_content(minions[2].fqdn)
+    expect(page).to have_content(minions[3].fqdn)
+
+    # select all nodes
+    find(".check-all").click
 
     click_button "Add nodes"
-    using_wait_time 10 do
-      expect(page).to have_content(minions[2].fqdn).and have_content(minions[3].fqdn)
-    end
+    expect(page).to have_content(minions[2].fqdn).and have_content(minions[3].fqdn)
   end
-  # rubocop:enable RSpec/ExampleLength
 
   scenario "It shows the nodes as soon as they register", js: true do
     expect(page).not_to have_content("minion4.k8s.local")
     Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion4.k8s.local")
-    using_wait_time 10 do
-      expect(page).to have_content("minion4.k8s.local")
-    end
+    expect(page).to have_content("minion4.k8s.local")
   end
 end
 # rubocop:enable RSpec/AnyInstance
