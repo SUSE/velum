@@ -2,12 +2,13 @@
 if [ -z "$1" ]; then
   cat <<EOF
 usage:
-  ./make_spec.sh PACKAGENAME
+  ./make_spec.sh PACKAGENAME [BRANCH]
 EOF
   exit 1
 fi
 
 packagename=$1
+branch=${2:-master}
 
 bundle version 2>/dev/null
 if [ $? != 0 ];then
@@ -18,10 +19,6 @@ cd $(dirname $0)
 
 if [ $TRAVIS_BRANCH ];then
   branch=$TRAVIS_BRANCH
-else
-  branch=$(git rev-parse --abbrev-ref HEAD)
-  # the concourse git resource renders HEAD, but in this case we need master
-  [ $branch = "HEAD" ] && branch=master
 fi
 if [ $TRAVIS_COMMIT ];then
   commit=$TRAVIS_COMMIT
