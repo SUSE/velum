@@ -33,7 +33,7 @@ describe SaltEvent do
     it "processes new-minion events" do
       new_minion_event
 
-      VCR.use_cassette("salt/process_event", record: :none) do
+      VCR.use_cassette("salt/minion_list", record: :none) do
         expect do
           described_class.process_next_event(worker_id: "MyWorker")
         end.to change { Minion.where(minion_id: "3bcb66a2e50646dcabf779e50c6f3232").count }.by(1)
@@ -106,6 +106,15 @@ describe SaltEvent do
       )
 
       expect(salt_event.handler).to be_an_instance_of(SaltHandler::MinionHighstate)
+    end
+
+    it "must return an instance of SaltHandler::BootstrapOrchestration" do
+      salt_event = described_class.new(
+        tag:  "salt/run/12345/ret",
+        data: { fun: "runner.state.orchestrate", fun_args: ["orch.kubernetes"] }.to_json
+      )
+
+      expect(salt_event.handler).to be_an_instance_of(SaltHandler::BootstrapOrchestration)
     end
   end
 end

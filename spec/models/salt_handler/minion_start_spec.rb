@@ -31,7 +31,7 @@ describe SaltHandler::MinionStart do
   describe "process_event" do
     it "creates a new Minion when one with the specified id does not exist" do
       handler = described_class.new(salt_event)
-      VCR.use_cassette("salt/process_event", record: :none) do
+      VCR.use_cassette("salt/minion_list", record: :none) do
         expect { handler.process_event }.to change { Minion.where(minion_id: minion_id).count }
           .from(0).to(1)
       end
@@ -42,7 +42,7 @@ describe SaltHandler::MinionStart do
       handler = described_class.new(salt_event)
       FactoryGirl.create(:minion, minion_id: minion_id)
 
-      VCR.use_cassette("salt/process_event", record: :none) do
+      VCR.use_cassette("salt/minion_list", record: :none) do
         expect { handler.process_event }
           .not_to change { Minion.where(minion_id: minion_id).count }
       end
@@ -52,7 +52,7 @@ describe SaltHandler::MinionStart do
     it "does not create a new Minion if the event has id: 'ca'" do
       handler = described_class.new(ca_salt_event)
 
-      VCR.use_cassette("salt/process_event", record: :none) do
+      VCR.use_cassette("salt/minion_list", record: :none) do
         expect { handler.process_event }
           .not_to change { Minion.where(minion_id: "ca").count }
       end
