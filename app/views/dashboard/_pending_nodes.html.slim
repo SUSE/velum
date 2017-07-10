@@ -15,11 +15,14 @@
       .nodes-content.hidden
         p.empty-text
           | You currently have no nodes to be accepted for bootstrapping.
-        table.table
-          thead
-            tr
-              th
-                | ID
-              th
-                | Actions
-          tbody
+        .has-content.hidden
+          p Accepting nodes into the cluster might take a while.
+
+          table.table
+            thead
+              tr
+                th
+                  | ID
+                th width="30%"
+                  | Actions
+            tbody

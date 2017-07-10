@@ -98,8 +98,9 @@ MinionPoller = {
         }
 
         // Show / Hide the table depending the presence of pending nodes
-        $(".pending-nodes-container #accept-all").prop('disabled', pendingMinions.length === 0)
-        $(".pending-nodes-container .table").toggleClass('hidden', pendingMinions.length === 0);
+        var acceptLinks = $('.pending-nodes-container td > a');
+        $(".pending-nodes-container #accept-all").prop('disabled', acceptLinks.length === 0)
+        $(".pending-nodes-container .has-content").toggleClass('hidden', pendingMinions.length === 0);
         $(".pending-nodes-container .empty-text").toggleClass('hidden', pendingMinions.length > 0);
 
         // show/hide panels on discovery page
@@ -145,13 +146,21 @@ MinionPoller = {
     });
   },
 
-  renderPendingNodes: function(pendingMinion) {
-    return "\
+  renderPendingNodes: function(pendingMinionId) {
+    var acceptHtml;
+
+    if (hasPendingAcceptance(pendingMinionId)) {
+      acceptHtml = 'Acceptance in progress';
+    } else {
+      acceptHtml = '<a class="accept-minion" href="#" data-minion-id="' + pendingMinionId + '">Accept Node</a>';
+    }
+
+    return '\
       <tr> \
-        <td>" + pendingMinion + "</td>\
-        <td><a class='accept-minion' href='#' data-minion-id='" + pendingMinion +  "'>Accept Node</a></td>\
+        <td>' + pendingMinionId + '</td>\
+        <td>' + acceptHtml + '</td>\
       </tr> \
-    ";
+    ';
   },
 
   handleAdminUpdate: function(admin) {
@@ -281,23 +290,48 @@ MinionPoller = {
   }
 };
 
-$('body').on('click', '.accept-minion', function(e) {
-  var $link = $(this);
-  var selector = ''
-  e.preventDefault();
+function hasPendingAcceptance(minionId) {
+  return sessionStorage.getItem(minionId) === 'true';
+}
 
-  if ($link[0].id == "accept-all") {
-    selector = '*'
-  } else {
-    selector = $link.data('minionId')
-  }
-  $link.prop('disabled', true);
+function setPendingAcceptance(minionId) {
+  sessionStorage.setItem(minionId, true);
+  $('.pending-nodes-container a[data-minion-id="' + minionId + '"]').parent().text('Acceptance in progress');
+}
 
+function requestMinionApproval(selector) {
   $.ajax({
     url: '/accept-minion',
     method: 'POST',
-    data: {minion_id: selector}
-  })
+    data: { minion_id: selector }
+  });
+}
+
+function checkAcceptAllAvaiability() {
+  var $acceptLinks = $('.pending-nodes-container td > a');
+
+  $('#accept-all').prop('disabled', $acceptLinks.length === 0);
+}
+
+$('body').on('click', '#accept-all', function(e) {
+  var $btn = $(this);
+  var $acceptLinks = $('.pending-nodes-container td > a');
+
+  e.preventDefault();
+  $btn.prop('disabled', true);
+  $acceptLinks.each(function(_, el) {
+    setPendingAcceptance(el.dataset.minionId);
+  });
+  requestMinionApproval('*');
+});
+
+$('body').on('click', '.accept-minion', function(e) {
+  var minionId = $(this).data('minionId');
+
+  e.preventDefault();
+  setPendingAcceptance(minionId);
+  requestMinionApproval(minionId);
+  checkAcceptAllAvaiability();
 });
 
 $('.update-admin-modal').on('hide.bs.modal', function(e) {
