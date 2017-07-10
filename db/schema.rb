@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170512100610) do
+ActiveRecord::Schema.define(version: 20170710081011) do
 
   create_table "jids", id: false, force: :cascade do |t|
     t.string "jid",  limit: 255,      null: false
@@ -53,7 +53,9 @@ ActiveRecord::Schema.define(version: 20170512100610) do
     t.string   "worker_id",    limit: 255
   end
 
+  add_index "salt_events", ["processed_at"], name: "index_salt_events_on_processed_at", using: :btree
   add_index "salt_events", ["tag"], name: "tag", using: :btree
+  add_index "salt_events", ["worker_id", "taken_at"], name: "index_salt_events_on_worker_id_and_taken_at", using: :btree
 
   create_table "salt_returns", id: false, force: :cascade do |t|
     t.string   "fun",        limit: 50,       null: false

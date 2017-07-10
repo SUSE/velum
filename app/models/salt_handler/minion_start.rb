@@ -26,6 +26,7 @@ class SaltHandler::MinionStart
     return false if id == "ca" || id == "admin"
 
     minion_info = Velum::Salt.minions[id]
+    return false if minion_info.blank?
 
     # false if a minion with this minion_id or fqdn already exists (uniqueness validation)
     Minion.new(minion_id: id, fqdn: minion_info["fqdn"]).save
