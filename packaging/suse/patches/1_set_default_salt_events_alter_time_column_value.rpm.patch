@@ -1,8 +1,8 @@
 diff --git a/db/schema.rb b/db/schema.rb
-index 8071368..d941ccc 100644
+index abccd6d..802c2fb 100644
 --- a/db/schema.rb
 +++ b/db/schema.rb
-@@ -46,7 +46,7 @@ ActiveRecord::Schema.define(version: 20170227152008) do
+@@ -46,7 +46,7 @@ ActiveRecord::Schema.define(version: 20170710081011) do
    create_table "salt_events", force: :cascade do |t|
      t.string   "tag",          limit: 255,      null: false
      t.text     "data",         limit: 16777215, null: false
@@ -11,7 +11,7 @@ index 8071368..d941ccc 100644
      t.string   "master_id",    limit: 255,      null: false
      t.datetime "taken_at"
      t.datetime "processed_at"
-@@ -62,7 +62,7 @@ ActiveRecord::Schema.define(version: 20170227152008) do
+@@ -64,7 +64,7 @@ ActiveRecord::Schema.define(version: 20170710081011) do
      t.string   "id",         limit: 255,      null: false
      t.string   "success",    limit: 10,       null: false
      t.text     "full_ret",   limit: 16777215, null: false
