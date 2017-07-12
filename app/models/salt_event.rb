@@ -57,7 +57,7 @@ class SaltEvent < ApplicationRecord
     return false if taken_event.zero?
 
     SaltEvent.where(worker_id: worker_id, processed_at: nil)
-             .where.not(taken_at: nil).limit(1).first.process!
+             .where.not(taken_at: nil).limit(1).each(&:process!)
   end
 
   # Memoizes the @handler instance which is responsible to process this event.
