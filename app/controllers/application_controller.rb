@@ -2,7 +2,7 @@
 
 # ApplicationController is the superclass of all controllers.
 class ApplicationController < ActionController::Base
-  before_action :redirect_to_secure
+  before_action :force_ssl_redirect, unless: -> { Rails.env.test? }
   before_action :authenticate_user!
   before_action :redirect_to_setup
   protect_from_forgery with: :exception
@@ -19,11 +19,5 @@ class ApplicationController < ActionController::Base
   # return false otherwise
   def setup_done?
     !Minion.assigned_role.count.zero?
-  end
-
-  # TODO: (mssola) remove once we have a reverse-proxy setup in place.
-  def redirect_to_secure
-    self.class.force_ssl unless Rails.env.test?
-    true
   end
 end
