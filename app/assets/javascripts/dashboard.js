@@ -266,7 +266,7 @@ MinionPoller = {
     } else {
       masterHtml = '<td class="text-center">\
         <input name="roles[master][]" id="roles_master_' + minion.id +
-        '" value="' + minion.id + '" type="radio" ' + masterChecked + '></td>';
+        '" value="' + minion.id + '" type="radio" title="Select node as master" ' + masterChecked + '></td>';
     }
 
     if (MinionPoller.selectedNodes && MinionPoller.selectedNodes.indexOf(minion.id) != -1) {
@@ -274,7 +274,7 @@ MinionPoller = {
     }
 
     minionHtml = '<input name="roles[worker][]" id="roles_minion_' + minion.id +
-      '" value="' + minion.id + '" type="checkbox" ' + minionChecked + '>';
+      '" value="' + minion.id + '" type="checkbox" title="Select node for bootstrapping" ' + minionChecked + '>';
 
     return "\
       <tr> \
