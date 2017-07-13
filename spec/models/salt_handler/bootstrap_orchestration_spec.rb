@@ -4,7 +4,8 @@ require "rails_helper"
 describe SaltHandler::BootstrapOrchestration do
   let(:successful_orchestration_result) do
     event_data = {
-      "fun_args" => ["orch.kubernetes", { "orchestration_jid" => "20170706104527757673" }],
+      "fun_args" => [{ "mods" => "orch.kubernetes" },
+                     { "orchestration_jid" => "20170706104527757673" }],
       "jid"      => "20170706104527757673",
       "return"   => { "worker1" => {}, "worker2" => {}, "retcode" => 0 },
       "success"  => true,
@@ -20,7 +21,8 @@ describe SaltHandler::BootstrapOrchestration do
 
   let(:mid_successful_orchestration_result) do
     event_data = {
-      "fun_args" => ["orch.kubernetes", { "orchestration_jid" => "20170706104527757674" }],
+      "fun_args" => [{ "mods" => "orch.kubernetes" },
+                     { "orchestration_jid" => "20170706104527757674" }],
       "jid"      => "20170706104527757674",
       "return"   => { "worker1" => {}, "worker2" => {}, "retcode" => 1 },
       "success"  => true,
@@ -36,7 +38,8 @@ describe SaltHandler::BootstrapOrchestration do
 
   let(:failed_orchestration_result) do
     event_data = {
-      "fun_args" => ["orch.kubernetes", { "orchestration_jid" => "20170706104527757675" }],
+      "fun_args" => [{ "mods" => "orch.kubernetes" },
+                     { "orchestration_jid" => "20170706104527757675" }],
       "jid"      => "20170706104527757675",
       "return"   => { "worker1" => {}, "worker2" => {}, "retcode" => 1 },
       "success"  => false,

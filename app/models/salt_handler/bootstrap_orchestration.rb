@@ -11,7 +11,8 @@ class SaltHandler::BootstrapOrchestration
     return false unless event.tag =~ TAG_MATCHER
     parsed_event_data = JSON.parse event.data
     parsed_event_data["fun"] == "runner.state.orchestrate" &&
-      parsed_event_data["fun_args"].first == "orch.kubernetes"
+      (parsed_event_data["fun_args"].first == "orch.kubernetes" ||
+       parsed_event_data["fun_args"].first["mods"] == "orch.kubernetes")
   end
 
   def initialize(salt_event)

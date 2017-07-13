@@ -108,10 +108,19 @@ describe SaltEvent do
       expect(salt_event.handler).to be_an_instance_of(SaltHandler::MinionHighstate)
     end
 
-    it "must return an instance of SaltHandler::BootstrapOrchestration" do
+    it "must return an instance of SaltHandler::BootstrapOrchestration when mods is not provided" do
       salt_event = described_class.new(
         tag:  "salt/run/12345/ret",
         data: { fun: "runner.state.orchestrate", fun_args: ["orch.kubernetes"] }.to_json
+      )
+
+      expect(salt_event.handler).to be_an_instance_of(SaltHandler::BootstrapOrchestration)
+    end
+
+    it "must return an instance of SaltHandler::BootstrapOrchestration when mods is provided" do
+      salt_event = described_class.new(
+        tag:  "salt/run/12345/ret",
+        data: { fun: "runner.state.orchestrate", fun_args: [{ mods: "orch.kubernetes" }] }.to_json
       )
 
       expect(salt_event.handler).to be_an_instance_of(SaltHandler::BootstrapOrchestration)
