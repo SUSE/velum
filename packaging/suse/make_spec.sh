@@ -2,12 +2,14 @@
 if [ -z "$1" ]; then
   cat <<EOF
 usage:
-  ./make_spec.sh PACKAGENAME
+  ./make_spec.sh PACKAGENAME [BRANCH]
 EOF
   exit 1
 fi
 
 packagename=$1
+branch=${2:-master}
+safe_branch=${branch//\//-}
 
 bundle version 2>/dev/null
 if [ $? != 0 ];then
@@ -18,10 +20,7 @@ cd $(dirname $0)
 
 if [ $TRAVIS_BRANCH ];then
   branch=$TRAVIS_BRANCH
-else
-  branch=$(git rev-parse --abbrev-ref HEAD)
-  # the concourse git resource renders HEAD, but in this case we need master
-  [ $branch = "HEAD" ] && branch=master
+  safe_branch=${branch//\//-}
 fi
 if [ $TRAVIS_COMMIT ];then
   commit=$TRAVIS_COMMIT
@@ -50,11 +49,11 @@ additional_native_build_requirements() {
   fi
 }
 
-mkdir -p build/$packagename-$branch
-cp -v ../../Gemfile* build/$packagename-$branch
-cp -v patches/*.patch build/$packagename-$branch
+mkdir -p build/$packagename-$safe_branch
+cp -v ../../Gemfile* build/$packagename-$safe_branch
+cp -v patches/*.patch build/$packagename-$safe_branch
 
-pushd build/$packagename-$branch/
+pushd build/$packagename-$safe_branch/
   echo "apply patches if needed"
   if ls *.patch >/dev/null 2>&1 ;then
       for p in *.patch;do
@@ -91,7 +90,7 @@ popd
 
 echo "create ${packagename}.spec based on ${packagename}.spec.in"
 cp ${packagename}.spec.in ${packagename}.spec
-sed -e "s/__BRANCH__/$branch/g" -i ${packagename}.spec
+sed -e "s/__BRANCH__/$safe_branch/g" -i ${packagename}.spec
 sed -e "s/__RUBYGEMS_BUILD_REQUIRES__/$build_requires/g" -i ${packagename}.spec
 sed -e "s/__DATE__/$date/g" -i ${packagename}.spec
 sed -e "s/__COMMIT__/$commit/g" -i ${packagename}.spec
