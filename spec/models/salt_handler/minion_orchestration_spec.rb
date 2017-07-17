@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 require "rails_helper"
 
-describe SaltHandler::BootstrapOrchestration do
+describe SaltHandler::MinionOrchestration do
   let(:successful_orchestration_result) do
     event_data = {
       "fun_args" => [{ "mods" => "orch.kubernetes" },
