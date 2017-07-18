@@ -1,3 +1,6 @@
+MAX_THREADS = ENV.fetch("VELUM_THREADS", 5).freeze
+MAX_WORKERS = ENV.fetch("VELUM_WORKERS", 2).freeze
+
 # frozen_string_literal: true
 # Puma can serve each request in a thread from an internal thread pool.
 # The `threads` method setting takes two numbers a minimum and maximum.
@@ -5,8 +8,7 @@
 # the maximum value specified for Puma. Default is set to 5 threads for minimum
 # and maximum, this matches the default thread size of Active Record.
 #
-threads_count = ENV.fetch("RAILS_MAX_THREADS") { 5 }.to_i
-threads threads_count, threads_count
+threads MAX_THREADS, MAX_THREADS
 
 # Specifies the `environment` that Puma will run in.
 #
@@ -18,7 +20,8 @@ environment ENV.fetch("RAILS_ENV") { "development" }
 # Workers do not work on JRuby or Windows (both of which do not support
 # processes).
 #
-# workers ENV.fetch("WEB_CONCURRENCY") { 2 }
+# TODO: remove this again when switching to a reverse proxy container
+workers MAX_WORKERS
 
 # Use the `preload_app!` method when specifying a `workers` number.
 # This directive tells Puma to first boot the application and load code
