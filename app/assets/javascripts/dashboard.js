@@ -42,6 +42,7 @@ MinionPoller = {
         var pendingRendered = "";
         var allApplied = true;
         var updateAvailable = false;
+        var hasPendingStateNode = false;
         var updateAvailableNodeCount = 0;
 
         // In discovery, the minions to be rendered are unassigned, while on the
@@ -81,12 +82,21 @@ MinionPoller = {
           if (minions[i].highstate != "applied") {
             allApplied = false;
           }
+
+          if (minions[i].highstate === "pending") {
+            hasPendingStateNode = true;
+          }
+
           if (minions[i].update_status == 1 || minions[i].update_status == 3) {
             updateAvailable = true;
             updateAvailableNodeCount++;
           }
         }
         $(".nodes-container tbody").html(rendered);
+
+        // `hasPendingStateNode` variable aux to determine if
+        // update is possible, not used anywhere else
+        updateAvailable = updateAvailable && !hasPendingStateNode;
 
         // Build Pending Nodes display table
         if (pendingMinions.length) {
@@ -112,7 +122,7 @@ MinionPoller = {
         handleBootstrapButtonTitle();
 
         // show/hide "update all nodes" link
-        $("#update-all-nodes").toggleClass('hidden', !(updateAvailable && allApplied));
+        $("#update-all-nodes").toggleClass('hidden', !updateAvailable);
 
         MinionPoller.enable_kubeconfig(minions.length > 0 && allApplied);
 
