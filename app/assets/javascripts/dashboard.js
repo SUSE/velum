@@ -95,13 +95,13 @@ MinionPoller = {
         $(".nodes-container tbody").html(rendered);
 
         // `hasPendingStateNode` variable aux to determine if
-        // update is possible, not used anywhere else
+        // update is possible
         updateAvailable = updateAvailable && !hasPendingStateNode;
 
         // Build Pending Nodes display table
         if (pendingMinions.length) {
           for (i = 0; i < pendingMinions.length; i++) {
-            pendingRendered += MinionPoller.renderPendingNodes(pendingMinions[i])
+            pendingRendered += MinionPoller.renderPendingNodes(pendingMinions[i], hasPendingStateNode);
           }
 
           $(".pending-nodes-container tbody").html(pendingRendered);
@@ -117,12 +117,13 @@ MinionPoller = {
         $('.discovery-nodes-panel').toggleClass('hide', unassignedMinions.length === 0);
         $('.discovery-empty-panel').toggleClass('hide', unassignedMinions.length > 0);
 
-        MinionPoller.handleAdminUpdate(data.admin || {});
+        MinionPoller.handleAdminUpdate(data.admin || {}, hasPendingStateNode);
 
         handleBootstrapButtonTitle();
 
         // show/hide "update all nodes" link
-        $("#update-all-nodes").toggleClass('hidden', !updateAvailable);
+        var hasAdminNodeUpdate = data.admin.update_status === 1 || data.admin.update_status === 2;
+        $("#update-all-nodes").toggleClass('hidden', !updateAvailable || hasAdminNodeUpdate);
 
         MinionPoller.enable_kubeconfig(minions.length > 0 && allApplied);
 
@@ -131,14 +132,20 @@ MinionPoller = {
         $('.assigned-count').text(minions.length);
         $('.master-count').text(MinionPoller.selectedMasters.length);
 
-        var addNodesUrl = $('.unassigned-count').data('url');
         if (unassignedMinions.length > 0) {
           // discovery page uses #node-count,
           // overview page otherwise
           if ($("#node-count").length > 0) {
             $("#node-count").text(unassignedMinions.length + " nodes found");
           } else {
-            $('.unassigned-count').html(unassignedMinions.length + ' <a href="' + addNodesUrl + '">(new)</a>');
+            var addNodesUrl = $('.unassigned-count').data('url');
+            var unassignedCountText = unassignedMinions.length;
+
+            if (!hasPendingStateNode) {
+                unassignedCountText += ' <a href="' + addNodesUrl + '">(new)</a>';
+            }
+
+            $('.unassigned-count').html(unassignedCountText);
           }
         } else {
           $('.unassigned-count').text(0);
@@ -156,10 +163,12 @@ MinionPoller = {
     });
   },
 
-  renderPendingNodes: function(pendingMinionId) {
+  renderPendingNodes: function(pendingMinionId, hasPendingStateNode) {
     var acceptHtml;
 
-    if (hasPendingAcceptance(pendingMinionId)) {
+    if (hasPendingStateNode) {
+      acceptHtml = '';
+    } else if (hasPendingAcceptance(pendingMinionId)) {
       acceptHtml = 'Acceptance in progress';
     } else {
       acceptHtml = '<a class="accept-minion" href="#" data-minion-id="' + pendingMinionId + '">Accept Node</a>';
@@ -173,10 +182,10 @@ MinionPoller = {
     ';
   },
 
-  handleAdminUpdate: function(admin) {
+  handleAdminUpdate: function(admin, hasPendingStateNode) {
     var $notification = $('.admin-outdated-notification');
 
-    if (admin.update_status === undefined) {
+    if (admin.update_status === undefined || hasPendingStateNode) {
       return;
     }
 
