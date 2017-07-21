@@ -43,7 +43,7 @@ h1 Initial CaaSP Configuration
         .form-group
           = f.label :no, "No-proxy"
           .input-group
-            = f.text_field :no_proxy, value: (Pillar.value(pillar: :no_proxy) || "localhost, 127.0.01"), class: "form-control"
+            = f.text_field :no_proxy, value: (Pillar.value(pillar: :no_proxy) || "localhost, 127.0.0.1"), class: "form-control"
             span class="input-group-addon"
               a data-toggle="tooltip" data-placement="left" title="Comma separated list of sites or domains that should not be accessed via the proxy server."
                 i class='glyphicon glyphicon-info-sign'
