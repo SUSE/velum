@@ -49,7 +49,8 @@ setup_database() {
         ;;
       "DB_READY")
         echo "Database ready"
-        # UI is ready, so we can kill the temporary server
+        bundle exec rake db:migrate
+        # UI and database is ready, so we can kill the temporary server
         # https://bugzilla.suse.com/show_bug.cgi?id=1031682
         kill -9 $TEMPORARY_SERVER_PID
         break
@@ -60,5 +61,4 @@ setup_database() {
 }
 
 setup_database
-bundle exec rake db:migrate
 bundle exec "puma -C config/puma.rb"
