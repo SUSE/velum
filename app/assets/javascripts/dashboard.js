@@ -40,7 +40,7 @@ MinionPoller = {
       success: function(data) {
         var rendered = "";
         var pendingRendered = "";
-        var allApplied = true;
+        var masterApplied = false;
         var updateAvailable = false;
         var hasPendingStateNode = false;
         var updateAvailableNodeCount = 0;
@@ -79,8 +79,8 @@ MinionPoller = {
         for (i = 0; i < minions.length; i++) {
           rendered += MinionPoller[renderMethod].call(MinionPoller, minions[i]);
 
-          if (minions[i].highstate != "applied") {
-            allApplied = false;
+          if (minions[i].role == "master" && minions[i].highstate == "applied") {
+            masterApplied = true;
           }
 
           if (minions[i].highstate === "pending") {
@@ -125,7 +125,7 @@ MinionPoller = {
         var hasAdminNodeUpdate = data.admin.update_status === 1 || data.admin.update_status === 2;
         $("#update-all-nodes").toggleClass('hidden', !updateAvailable || hasAdminNodeUpdate);
 
-        MinionPoller.enable_kubeconfig(minions.length > 0 && allApplied);
+        MinionPoller.enable_kubeconfig(masterApplied);
 
         $('#out_dated_nodes').text(updateAvailableNodeCount + ' ');
 
