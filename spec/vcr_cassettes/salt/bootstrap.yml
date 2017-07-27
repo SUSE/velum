@@ -50,7 +50,7 @@ http_interactions:
       string: '{"return": [{"perms": [".*", "@wheel", "@runner", "@jobs", "@events"],
         "start": 1485434062.916784, "token": "26f5584c6a952b50aea191d9d4902dd0cf476a63",
         "expire": 1485477262.916785, "user": "saltapi", "eauth": "pam"}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 26 Jan 2017 12:34:22 GMT
 - request:
     method: get
@@ -149,14 +149,14 @@ http_interactions:
         "osrelease_info": [42, 2], "locale_info": {"detectedencoding": "ascii", "defaultlanguage":
         null, "defaultencoding": null}, "gpus": [], "path": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
         "machine_id": "f5c7971b6083c77151b9b992582fd51d", "os": "SUSE"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 26 Jan 2017 12:34:23 GMT
 - request:
     method: post
     uri: http://127.0.0.1:8000/minions
     body:
       encoding: UTF-8
-      string: '{"client":"local","tgt":"master","fun":"grains.append","kwarg":{"key":"roles","val":["kube-master","etcd"]}}'
+      string: '{"client":"local","tgt":"master","fun":"grains.setval","kwarg":{"key":"roles","val":["kube-master","etcd"]}}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
@@ -202,7 +202,7 @@ http_interactions:
       encoding: UTF-8
       string: '{"_links": {"jobs": [{"href": "/jobs/20170126123423100266"}]}, "return":
         [{"jid": "20170126123423100266", "minions": ["master"]}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 26 Jan 2017 12:34:23 GMT
 - request:
     method: get
@@ -302,14 +302,14 @@ http_interactions:
         "ascii", "defaultlanguage": null, "defaultencoding": null}, "gpus": [], "path":
         "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "machine_id":
         "f5c7971b6083c77151b9b992582fd51d", "os": "SUSE"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 26 Jan 2017 12:34:23 GMT
 - request:
     method: post
     uri: http://127.0.0.1:8000/minions
     body:
       encoding: UTF-8
-      string: '{"client":"local","tgt":"minion0","fun":"grains.append","kwarg":{"key":"roles","val":["kube-minion"]}}'
+      string: '{"client":"local","tgt":"minion0","fun":"grains.setval","kwarg":{"key":"roles","val":["kube-minion"]}}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
@@ -355,7 +355,7 @@ http_interactions:
       encoding: UTF-8
       string: '{"_links": {"jobs": [{"href": "/jobs/20170126123423100267"}]}, "return":
         [{"jid": "20170126123423100267", "minions": ["minion0"]}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 26 Jan 2017 12:34:23 GMT
 - request:
     method: post
@@ -400,7 +400,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"return": [{"jid": "20170126123423134992", "tag": "salt/run/20170126123423134992"}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 26 Jan 2017 12:34:23 GMT
 - request:
     method: post
@@ -452,6 +452,6 @@ http_interactions:
       string: '{"return": [{"perms": [".*", "@wheel", "@runner", "@jobs", "@events"],
         "start": 1485435250.96626, "token": "d41893c77b9d956a0f3d030b1204c2f3e33d0fc8",
         "expire": 1485478450.966261, "user": "saltapi", "eauth": "pam"}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 26 Jan 2017 12:54:10 GMT
 recorded_with: VCR 3.0.3

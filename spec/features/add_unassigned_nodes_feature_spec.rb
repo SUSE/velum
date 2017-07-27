@@ -12,14 +12,12 @@ feature "Add unassigned nodes" do
   end
 
   before do
+    setup_done
     login_as user, scope: :user
     setup_stubbed_update_status!
     setup_stubbed_pending_minions!
 
-    [:worker, :master].each do |role|
-      allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(role)
-        .and_return(role)
-    end
+    allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).and_return(true)
     allow(Velum::Salt).to receive(:orchestrate)
 
     visit assign_nodes_path

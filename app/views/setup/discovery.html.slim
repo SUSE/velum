@@ -1,9 +1,9 @@
-.alert.alert-warning.discovery-minimum-nodes-alert role="alert"
+.alert.alert-warning.discovery-minimum-nodes-alert role="alert" hidden="true"
   i.fa.fa-4x.pull-left aria-hidden="true"
   span
     | A supported deployment of SUSE Container as a Service Platform requires a minimum of three nodes. Please select a minimum of three nodes.
 
-h1 Bootstrap Cluster
+h1 Select nodes and roles
 
 .panel.panel-default.discovery-empty-panel class=('hide' if any_minion?)
   .panel-heading
@@ -15,7 +15,7 @@ h1 Bootstrap Cluster
 
     .text-right.steps-container
       = link_to "Back", setup_worker_bootstrap_path, class: "btn btn-danger"
-      = submit_tag "Bootstrap cluster", class: "btn btn-primary", disabled: true
+      = submit_tag "Next", class: "btn btn-primary", disabled: true
 
 .panel.panel-default.discovery-nodes-panel class=('hide' unless any_minion?)
   .panel-heading
@@ -29,9 +29,9 @@ h1 Bootstrap Cluster
       i.fa.fa-times.fa-fw
       | Deselect all nodes
   .panel-body
-    p After choosing the master and clicking "Bootstrap cluster" all the other selected nodes will be set to the worker role.
+    p After choosing the master and clicking "Next" all the other selected nodes will be set to the worker role.
 
-    = form_tag(setup_bootstrap_path, method: "post")
+    = form_tag(setup_discovery_path, method: "post")
       .nodes-container data-url=setup_discovery_path
         table.table
           thead
@@ -43,29 +43,17 @@ h1 Bootstrap Cluster
               th width="235"
                 | Role
           tbody
-            - Minion.all.each do |m|
-              tr class="minion_#{m.id}"
-                td
-                  | #{m.minion_id}
-                td
-                  | #{m.fqdn}
-                td.role-column
-                  = check_box_tag "roles[worker][]", m.id
-                  = check_box_tag "roles[master][]", m.id
-
-                  .btn-group.role-btn-group
-                    button type="button" class="btn btn-default master-btn" data-minion-id="#{m.id}" data-minion-role="master"
-                      | Master
-                    button type="button" class="btn btn-default worker-btn" data-minion-id="#{m.id}" data-minion-role="worker"
-                      | Worker
-                    button type="button" class="btn btn-default btn-primary unused-btn" data-minion-id="#{m.id}"
-                      | Unused
+            tr
+              th colspan=4
+                p.text-center
+                  i class="fa fa-spinner fa-pulse fa-3x fa-fw"
+                  span class="sr-only" Loading...
 
         hr
 
         .clearfix.text-right.steps-container
           = link_to "Back", setup_worker_bootstrap_path, class: "btn btn-danger"
-          = submit_tag "Bootstrap cluster", id: "bootstrap", class: "btn btn-primary", disabled: true
+          = submit_tag "Next", id: "set-roles", class: "btn btn-primary", disabled: true
 
 = render "dashboard/pending_nodes"
 = render "setup/warn_minimum_nodes_modal"

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/BlockLength
 Rails.application.routes.draw do
   get "/autoyast", to: "dashboard#autoyast"
 
@@ -31,6 +32,9 @@ Rails.application.routes.draw do
     match "/", action: :configure, via: [:put, :patch]
     get :"worker-bootstrap"
     get :discovery
-    post :bootstrap
+    post :discovery, action: :set_roles
+    get :bootstrap
+    post :bootstrap, action: :do_bootstrap
   end
 end
+# rubocop:enable Metrics/BlockLength

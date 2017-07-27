@@ -4,9 +4,6 @@ require "velum/salt_minion"
 
 # Minion represents the minions that have been registered in this application.
 class Minion < ApplicationRecord
-  # Raised when Minion doesn't exist
-  class NonExistingNode < StandardError; end
-
   scope :assigned_role, -> { where.not role: nil }
   scope :unassigned_role, -> { where role: nil }
 
@@ -28,7 +25,7 @@ class Minion < ApplicationRecord
   #     },
   #     default_role: :dns
   #   )
-  def self.assign_roles!(roles: {}, default_role: nil)
+  def self.assign_roles(roles: {}, default_role: nil, remote: false)
     # Lookup selected masters and workers
     masters = Minion.select_role_members(roles: roles, role: :master)
     minions = Minion.select_role_members(roles: roles, role: :worker)
@@ -36,35 +33,26 @@ class Minion < ApplicationRecord
     # assign roles to each master and worker
     {}.tap do |ret|
       masters.find_each do |master|
-        ret[master.minion_id] = master.assign_role(:master)
+        ret[master.minion_id] = master.assign_role(:master, remote: remote)
       end
 
       minions.find_each do |minion|
-        ret[minion.minion_id] = minion.assign_role(:worker)
+        ret[minion.minion_id] = minion.assign_role(:worker, remote: remote)
       end
 
       # assign default role if there is any minion left with no role
       if default_role
         Minion.where(role: nil).find_each do |minion|
-          ret[minion.minion_id] = minion.assign_role(default_role)
+          ret[minion.minion_id] = minion.assign_role(default_role, remote: remote)
         end
       end
     end
   end
 
   # Prepares an ActiveRecord relation which will return all the members
-  # assigned to given role. Additionally, ensures all supplied node IDs
-  # exist within the database at the time of calling.
+  # assigned to given role.
   def self.select_role_members(roles: {}, role: nil)
-    node_ids = roles.key?(role) ? roles[role].map(&:to_i) : []
-
-    node_ids.each do |node|
-      unless Minion.exists?(id: node)
-        raise NonExistingNode, "Failed to process non existing node id: #{node}"
-      end
-    end
-
-    Minion.where(id: node_ids)
+    Minion.where id: (roles.key?(role) ? roles[role].map(&:to_i) : [])
   end
 
   # Returns the update status for the given minion ID. The needed and the
@@ -82,21 +70,20 @@ class Minion < ApplicationRecord
 
   # rubocop:disable SkipsModelValidations
   # Assigns a role to this minion locally in the database, and send that role
-  # to salt subsystem.
-  def assign_role(new_role)
-    return false if role.present?
-    success = false
-
+  # to salt subsystem if remote is true.
+  def assign_role(new_role, remote: false)
     Minion.transaction do
       # We set highstate to pending since we just assigned a new role
-      success = update_columns(role:      Minion.roles[new_role],
-                               highstate: Minion.highstates[:pending])
-      break unless success
-      success = salt.assign_role new_role
+      success = update_columns role:      Minion.roles[new_role],
+                               highstate: Minion.highstates[:pending]
+      if success && remote
+        salt.assign_role
+      else
+        success
+      end
     end
-    success
   rescue Velum::SaltApi::SaltConnectionException
-    errors.add(:base, "Failed to apply role #{new_role} to #{minion_id}")
+    errors.add :base, "Failed to apply role #{new_role} to #{minion_id}"
     false
   end
   # rubocop:enable SkipsModelValidations
@@ -115,6 +102,6 @@ class Minion < ApplicationRecord
 
   # Returns the proxy for the salt minion
   def salt
-    @salt ||= Velum::SaltMinion.new minion_id: minion_id
+    @salt ||= Velum::SaltMinion.new minion: self
   end
 end

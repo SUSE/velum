@@ -9,16 +9,9 @@ h1 Initial CaaSP Configuration
       .form-group
         = f.label :dashboard, "Dashboard location"
         .input-group
-          = f.text_field :dashboard, value: (Pillar.value(pillar: :dashboard) || request.host), class: "form-control", required: true
+          = f.text_field :dashboard, value: @dashboard, class: "form-control", required: true
           span class="input-group-addon"
             a data-toggle="tooltip" data-placement="left" title="Hostname or IP of the node running this web interface."
-              i class='glyphicon glyphicon-info-sign'
-      .form-group
-        = f.label :apiserver, "External Kubernetes API server FQDN"
-        .input-group
-          = f.text_field :apiserver, value: Pillar.value(pillar: :apiserver), class: "form-control", required: true
-          span class="input-group-addon"
-            a data-toggle="tooltip" data-placement="left" title="Fully qualified domain name used to reach the cluster from the outside. In a simple, single master deployment this will be the FQDN of the node you are about to select as master. For advanced options refer to the documentation."
               i class='glyphicon glyphicon-info-sign'
 
   .panel.panel-default
@@ -36,14 +29,14 @@ h1 Initial CaaSP Configuration
       .panel-body
         .form-group
           = f.label :http_proxy, "HTTP proxy"
-          = f.url_field :http_proxy, value: Pillar.value(pillar: :http_proxy), class: "form-control"
+          = f.url_field :http_proxy, value: @http_proxy, class: "form-control"
         .form-group
           = f.label :https_proxy, "HTTPS proxy"
-          = f.url_field :https_proxy, value: Pillar.value(pillar: :https_proxy), class: "form-control"
+          = f.url_field :https_proxy, value: @https_proxy, class: "form-control"
         .form-group
           = f.label :no, "No-proxy"
           .input-group
-            = f.text_field :no_proxy, value: (Pillar.value(pillar: :no_proxy) || "localhost, 127.0.0.1"), class: "form-control"
+            = f.text_field :no_proxy, value: @no_proxy, class: "form-control"
             span class="input-group-addon"
               a data-toggle="tooltip" data-placement="left" title="Comma separated list of sites or domains that should not be accessed via the proxy server."
                 i class='glyphicon glyphicon-info-sign'

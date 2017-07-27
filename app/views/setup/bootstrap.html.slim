@@ -1,0 +1,18 @@
+h1 Confirm bootstrap
+
+= form_for :settings, url: setup_bootstrap_path, method: :post do |f|
+  .panel.panel-default
+    .panel-heading
+      h3.panel-title Cluster specific settings
+    .panel-body
+      .form-group
+        = f.label :apiserver, "External Kubernetes API server FQDN"
+        .input-group
+          = f.text_field :apiserver, value: @apiserver, class: "form-control", required: true
+          span class="input-group-addon"
+            a data-toggle="tooltip" data-placement="left" title="Fully qualified domain name used to reach the cluster from the outside. In a simple, single master deployment this will be the FQDN of the node you are about to select as master. For advanced options refer to the documentation."
+              i class='glyphicon glyphicon-info-sign'
+
+  .clearfix.text-right.steps-container
+    = link_to "Back", setup_discovery_path, class: "btn btn-danger"
+    = submit_tag "Bootstrap cluster", id: "bootstrap", class: "btn btn-primary pull-right"

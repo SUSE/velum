@@ -14,10 +14,8 @@ class ApplicationController < ActionController::Base
     redirect_to setup_path unless setup_done?
   end
 
-  # setup means minions were assigned to roles
-  # returns true if at least one minion has role != nil
-  # return false otherwise
+  # setup means the setup phase was completed
   def setup_done?
-    !Minion.assigned_role.count.zero?
+    Pillar.exists? pillar: Pillar.all_pillars[:apiserver]
   end
 end

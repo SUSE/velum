@@ -6,6 +6,7 @@ RSpec.describe UpdatesController, type: :controller do
     user = create(:user)
     create(:master_minion)
     create(:worker_minion)
+    setup_done
     sign_in user
 
     allow(::Velum::Salt).to receive(:call).and_return(true)

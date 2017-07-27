@@ -7,8 +7,6 @@ require "velum/suse_connect"
 class DashboardController < ApplicationController
   include Discovery
 
-  rescue_from Minion::NonExistingNode, with: :node_not_found
-
   # TODO: move autoyast to its own controller (following a different logic flow). It would never get
   # authenticated (as login/password -- since it's machines requesting this endpoint). It would
   # never get redirected to setup the cluster, and it should actually read some security setting for
@@ -92,17 +90,13 @@ class DashboardController < ApplicationController
 
   # POST /assign_nodes
   def assign_nodes
-    assigned = Minion.assign_roles!(roles: update_nodes_params)
-
-    respond_to do |format|
-      if assigned.values.include?(false)
-        message = "Failed to assign #{failed_assigned_nodes(assigned)}"
-        flash[:error] = message
-        format.html { redirect_to assign_nodes_path }
-      else
-        Velum::Salt.orchestrate
-        format.html { redirect_to authenticated_root_path }
-      end
+    assigned = Minion.assign_roles roles: update_nodes_params, remote: true
+    if assigned.values.include?(false)
+      redirect_to assign_nodes_path,
+                  flash: { error: "Failed to assign #{failed_assigned_nodes(assigned)}" }
+    else
+      Velum::Salt.orchestrate
+      redirect_to authenticated_root_path
     end
   end
 
@@ -118,14 +112,5 @@ class DashboardController < ApplicationController
 
   def failed_assigned_nodes(assigned)
     assigned.select { |_name, success| !success }.keys.join(", ")
-  end
-
-  def node_not_found(exception)
-    respond_to do |format|
-      format.html do
-        flash[:error] = exception.message
-        redirect_to assign_nodes_path
-      end
-    end
   end
 end
