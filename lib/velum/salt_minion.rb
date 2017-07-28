@@ -9,8 +9,8 @@ module Velum
     attr_accessor :minion_id
 
     ROLES_MAP = {
-      master: ["kube-master"],
-      worker: ["kube-minion"]
+      master: ["kube-master", "etcd"],
+      worker: ["kube-minion", "etcd"]
     }.freeze
 
     # Initializes a new salt minion identified by mid.
