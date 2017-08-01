@@ -46,7 +46,7 @@ h1 Bootstrap Cluster
                 td
                   | #{m.fqdn}
                 td.text-center
-                  = radio_button_tag "roles[master][]", m.id
+                  = check_box_tag "roles[master][]", m.id
 
         hr
 

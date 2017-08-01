@@ -1,5 +1,6 @@
 MinionPoller = {
   selectedNodes: [],
+  selectedMasters: [],
   pollingTimeoutId: null,
 
   poll: function() {
@@ -239,7 +240,7 @@ MinionPoller = {
     }
 
     masterHtml = '<input name="roles[master][]" id="roles_master_' + minion.id +
-      '" value="' + minion.id + '" type="radio" disabled="" ' + checked + '> ';
+      '" value="' + minion.id + '" type="checkbox" disabled="" ' + checked + '> ';
 
     switch(minion.update_status) {
       case 1:
@@ -285,7 +286,7 @@ MinionPoller = {
     } else {
       masterHtml = '<td class="text-center">\
         <input name="roles[master][]" id="roles_master_' + minion.id +
-        '" value="' + minion.id + '" type="radio" title="Select node as master" ' + masterChecked + '></td>';
+        '" value="' + minion.id + '" type="checkbox" title="Select node as master" ' + masterChecked + '></td>';
     }
 
     if (MinionPoller.selectedNodes && MinionPoller.selectedNodes.indexOf(minion.id) != -1) {
@@ -433,20 +434,43 @@ function toggleAddNodesButton() {
 // unassigned nodes page
 $('body').on('change', '.new-nodes-container input[name="roles[worker][]"]', toggleAddNodesButton);
 
-// return true if master is selected
-// false otherwise
-function isMasterSelected() {
-  return $('input[name="roles[master][]"]:checked').length > 0;
-}
-
-// return number of selected checkboxes
+// return number of selected nodes
 function selectedNodesLength() {
   return $('input[name="roles[worker][]"]:checked').length;
 }
 
+// return number of selected masters
+function selectedMastersLength() {
+  return $('input[name="roles[master][]"]:checked').length;
+}
+
+// return number of selected workers
+function selectedWorkersLength() {
+  var nodes = selectedNodesLength();
+  var masters = selectedMastersLength();
+  return nodes - masters;
+}
+
+// return true if the selected masters vs workers are in a supported state
+function isSupportedConfiguration() {
+  // We need at least one master
+  if (selectedMastersLength() < 1) return false;
+
+  // We need an odd number of masters
+  if (selectedMastersLength() % 2 != 1) return false;
+
+  // We need at least one worker
+  if (selectedWorkersLength() < 1) return false;
+
+  // We need at least three nodes in total
+  if (selectedNodesLength() < 3) return false;
+
+  return true;
+}
+
 // handle bootstra button title
 function handleBootstrapButtonTitle() {
-  var masterSelected = isMasterSelected();
+  var masterSelected = selectedMastersLength() >= 1;
   var hasMinimumNodes = selectedNodesLength() > 1;
   var canBootstrap = masterSelected && hasMinimumNodes;
   var title = 'Select ';
@@ -472,9 +496,7 @@ function handleBootstrapButtonTitle() {
 
 // disable/enable button if it has 1 master and 1 worker at least
 function toggleBootstrapButton() {
-  var canBootstrap = isMasterSelected() && selectedNodesLength() > 1;
-
-  $('#bootstrap').prop('disabled', !canBootstrap);
+  $('#bootstrap').prop('disabled', !isSupportedConfiguration());
 
   // also call bootstrap title handler
   handleBootstrapButtonTitle();
@@ -482,9 +504,7 @@ function toggleBootstrapButton() {
 
 // hide minimum nodes alert
 function toggleMinimumNodesAlert() {
-  var hasMinimumNodesSelected = selectedNodesLength() > 2;
-
-  if (hasMinimumNodesSelected) {
+  if (isSupportedConfiguration()) {
     $('.discovery-minimum-nodes-alert').fadeOut(500);
   } else {
     $('.discovery-minimum-nodes-alert').fadeIn(100);
@@ -496,9 +516,8 @@ function toggleMinimumNodesAlert() {
 // otherwise it shows the modal if didn't show yet
 $('body').on('click', '#bootstrap', function(e) {
   var $warningModal = $('.warn-minimum-nodes-modal');
-  var hasMinimumAmountToSubmit = isMasterSelected() && selectedNodesLength() > 2;
 
-  if (!hasMinimumAmountToSubmit) {
+  if (!isSupportedConfiguration()) {
     e.preventDefault();
 
     $warningModal.modal('show');
@@ -538,6 +557,7 @@ $('body').on('change', 'input[name="roles[worker][]"]', function() {
     MinionPoller.selectedNodes.splice(index, 1);
   }
   toggleMinimumNodesAlert();
+  toggleBootstrapButton();
 });
 
 // when selecting a master
@@ -545,19 +565,21 @@ $('body').on('change', 'input[name="roles[worker][]"]', function() {
 // enable and keep the previous state of the previous master (selected or not)
 // if user select node as master, it checks it as selected
 $('body').on('change', 'input[name="roles[master][]"]', function() {
-  var $previousMaster = $('input[name="roles[worker][]"]:disabled');
-  var previousMasterValue = parseInt($previousMaster.val(), 10);
-  var checked = MinionPoller.selectedNodes.indexOf(previousMasterValue) !== -1;
-
-  $previousMaster.prop('disabled', false);
-  $previousMaster.prop('checked', checked);
+  var $checkbox = $(this).closest('tr').find('input[name="roles[worker][]"]');
+  var value = parseInt(this.value, 10);
 
   if (this.checked) {
-    var $checkbox = $(this).closest('tr').find('input[name="roles[worker][]"]');
+    MinionPoller.selectedMasters.push(value);
 
     $checkbox.prop('checked', true);
     $checkbox.prop('disabled', true);
+  } else {
+    var index = MinionPoller.selectedMasters.indexOf(value);
+    MinionPoller.selectedMasters.splice(index, 1);
+
+    $checkbox.prop('disabled', false);
   }
 
+  toggleMinimumNodesAlert();
   toggleBootstrapButton();
 });
