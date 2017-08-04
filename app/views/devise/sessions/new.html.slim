@@ -17,7 +17,7 @@
       | Log In
     = form_for(resource, as: resource_name, url: session_path(resource_name), :html => {class: 'margins-updown'}) do |f|
       .form-group
-        = f.email_field :email, autofocus: true, class: 'form-control', placeholder: 'Enter your Email', required: true
+        = f.email_field :email, autofocus: true, class: 'form-control', placeholder: 'Enter your email address', required: true
       .form-group
         = f.password_field :password, class: 'form-control', placeholder: 'Enter your password', required: true
       button.btn.btn-success.btn-block
