@@ -56,7 +56,7 @@ MinionPoller = {
         // for the dashboard, if we rely on radio, the first time this comes
         // it won't detect that there's a master, so we need to rely on the data
         // itself for counting masters
-        if (MinionPoller.renderMode === 'dashboard') {
+        if (MinionPoller.renderMode === 'Dashboard') {
           MinionPoller.selectedMasters = data.assigned_minions.reduce(function(memo, minion) {
             if (minion.role === 'master') {
               memo.push(minion.id);
@@ -77,7 +77,7 @@ MinionPoller = {
         }
 
         var renderMethod = 'render' + MinionPoller.renderMode;
-        for (i = 0; i < minions.length; i++) {
+        for (var i = 0; i < minions.length; i++) {
           rendered += MinionPoller[renderMethod].call(MinionPoller, minions[i]);
 
           if (minions[i].highstate != "applied") {
@@ -270,26 +270,56 @@ MinionPoller = {
       </tr>';
   },
 
-  renderDiscovery: function(minion, onlyWorkers) {
+  renderDiscovery: function(minion) {
+    var isMaster = MinionPoller.selectedMasters.indexOf(minion.id) !== -1;
+    var isWorker = MinionPoller.selectedNodes.indexOf(minion.id) !== -1;
+    var isUnused = !isMaster && !isWorker;
+
     var masterHtml;
     var masterChecked = '';
     var minionHtml;
     var minionChecked = '';
 
-    if (MinionPoller.selectedMasters && MinionPoller.selectedMasters.indexOf(minion.id) != -1) {
+    if (isMaster) {
       masterChecked = 'checked';
-      minionChecked += 'disabled="disabled" checked ';
     }
 
-    if (onlyWorkers) {
-      masterHtml = '';
-    } else {
-      masterHtml = '<td class="text-center">\
-        <input name="roles[master][]" id="roles_master_' + minion.id +
-        '" value="' + minion.id + '" type="checkbox" title="Select node as master" ' + masterChecked + '></td>';
+    masterHtml = '\
+      <input name="roles[master][]" id="roles_master_' + minion.id +
+      '" value="' + minion.id + '" type="checkbox" title="Select node as master" ' + masterChecked + '>';
+
+    if (isWorker) {
+      minionChecked = 'checked';
     }
 
-    if (MinionPoller.selectedNodes && MinionPoller.selectedNodes.indexOf(minion.id) != -1) {
+    minionHtml = '<input name="roles[worker][]" id="roles_worker_' + minion.id +
+      '" value="' + minion.id + '" type="checkbox" title="Select node for bootstrapping" ' + minionChecked + '>';
+
+    var roleHtml = `
+      <td class="role-column">
+        ${masterHtml}
+        ${minionHtml}
+        <div class="btn-group role-btn-group">
+          <button type="button" class="btn btn-default ${isMaster ? 'btn-primary' : ''}" data-minion-id="${minion.id}" data-minion-role="master">Master</button>
+          <button type="button" class="btn btn-default worker-btn ${isWorker ? 'btn-primary' : ''}" data-minion-id="${minion.id}" data-minion-role="worker">Worker</button>
+          <button type="button" class="btn btn-default unused-btn ${isUnused ? 'btn-primary' : ''}" data-minion-id="${minion.id}">Unused</button>
+        </div>
+      </td>
+    `;
+
+    return "\
+      <tr> \
+        <td>" + minion.minion_id +  "</td>\
+        <td>" + minion.fqdn +  "</td>\
+        " + roleHtml + "\
+      </tr>";
+  },
+
+  renderUnassigned: function(minion) {
+    var minionHtml;
+    var minionChecked = '';
+
+    if (MinionPoller.selectedNodes.indexOf(minion.id) != -1) {
       minionChecked += 'checked';
     }
 
@@ -301,12 +331,7 @@ MinionPoller = {
         <td>" + minionHtml +  "</td>\
         <td>" + minion.minion_id +  "</td>\
         <td>" + minion.fqdn +  "</td>\
-        " + masterHtml + "\
       </tr>";
-  },
-
-  renderUnassigned: function(minion) {
-    return MinionPoller.renderDiscovery(minion, true);
   }
 };
 
@@ -435,7 +460,7 @@ function toggleAddNodesButton() {
 $('body').on('change', '.new-nodes-container input[name="roles[worker][]"]', toggleAddNodesButton);
 
 // return number of selected nodes
-function selectedNodesLength() {
+function selectedWorkersLength() {
   return $('input[name="roles[worker][]"]:checked').length;
 }
 
@@ -444,26 +469,19 @@ function selectedMastersLength() {
   return $('input[name="roles[master][]"]:checked').length;
 }
 
-// return number of selected workers
-function selectedWorkersLength() {
-  var nodes = selectedNodesLength();
-  var masters = selectedMastersLength();
-  return nodes - masters;
-}
-
 // return true if the selected masters vs workers are in a supported state
 function isSupportedConfiguration() {
   // We need at least one master
   if (selectedMastersLength() < 1) return false;
 
   // We need an odd number of masters
-  if (selectedMastersLength() % 2 != 1) return false;
+  if (selectedMastersLength() % 2 !== 1) return false;
 
   // We need at least one worker
   if (selectedWorkersLength() < 1) return false;
 
   // We need at least three nodes in total
-  if (selectedNodesLength() < 3) return false;
+  if ((selectedWorkersLength() + selectedMastersLength()) < 3) return false;
 
   return true;
 }
@@ -471,7 +489,7 @@ function isSupportedConfiguration() {
 // handle bootstra button title
 function handleBootstrapButtonTitle() {
   var masterSelected = selectedMastersLength() >= 1;
-  var hasMinimumNodes = selectedNodesLength() > 1;
+  var hasMinimumNodes = selectedWorkersLength() > 1;
   var canBootstrap = masterSelected && hasMinimumNodes;
   var title = 'Select ';
 
@@ -535,12 +553,24 @@ $('body').on('click', '.bootstrap-anyway', function() {
   $('form').submit();
 });
 
-// discovery page
-$('body').on('change', '.nodes-container input[name="roles[worker][]"]', toggleBootstrapButton);
+// deselect all nodes
+$('body').on('click', '.deselect-nodes-btn', function() {
+  var unusedSelector = '.role-btn-group .unused-btn';
 
-// checkbox on the top the checks/unchecks all nodes
-$('.check-all').on('change', function() {
-  $('input[name="roles[worker][]"]:not(:disabled)').prop('checked', this.checked).change();
+  $(this).addClass('hidden');
+  $('.select-nodes-btn').show();
+  $(unusedSelector).click();
+  toggleBootstrapButton();
+  toggleAddNodesButton();
+});
+
+// select remaining nodes as workers
+$('body').on('click', '.select-nodes-btn', function() {
+  var workersSelector = 'input[name="roles[master][]"]:not(:checked) ~ .role-btn-group .worker-btn';
+
+  $(this).hide();
+  $('.deselect-nodes-btn').removeClass('hidden');
+  $(workersSelector).click();
   toggleBootstrapButton();
   toggleAddNodesButton();
 });
@@ -554,8 +584,12 @@ $('body').on('change', 'input[name="roles[worker][]"]', function() {
     MinionPoller.selectedNodes.push(value);
   } else {
     var index = MinionPoller.selectedNodes.indexOf(value);
-    MinionPoller.selectedNodes.splice(index, 1);
+
+    if (index !== -1) {
+      MinionPoller.selectedNodes.splice(index, 1);
+    }
   }
+
   toggleMinimumNodesAlert();
   toggleBootstrapButton();
 });
@@ -565,21 +599,37 @@ $('body').on('change', 'input[name="roles[worker][]"]', function() {
 // enable and keep the previous state of the previous master (selected or not)
 // if user select node as master, it checks it as selected
 $('body').on('change', 'input[name="roles[master][]"]', function() {
-  var $checkbox = $(this).closest('tr').find('input[name="roles[worker][]"]');
   var value = parseInt(this.value, 10);
 
   if (this.checked) {
     MinionPoller.selectedMasters.push(value);
-
-    $checkbox.prop('checked', true);
-    $checkbox.prop('disabled', true);
   } else {
     var index = MinionPoller.selectedMasters.indexOf(value);
-    MinionPoller.selectedMasters.splice(index, 1);
 
-    $checkbox.prop('disabled', false);
+    if (index !== -1) {
+      MinionPoller.selectedMasters.splice(index, 1);
+    }
   }
 
   toggleMinimumNodesAlert();
   toggleBootstrapButton();
+});
+
+function unselectRoles(target) {
+  var $td = $(target).closest('td');
+
+  $td.find('.btn').removeClass('btn-primary');
+  $td.find('input').prop('checked', false).change();
+}
+
+$('body').on('click', '.role-btn-group .btn', function(e) {
+  e.preventDefault();
+
+  var dataset = e.target.dataset;
+  var minionId = dataset['minionId'];
+  var role = dataset['minionRole'];
+
+  unselectRoles(e.target);
+  $(e.target).addClass('btn-primary');
+  $(`#roles_${role}_${minionId}`).prop('checked', true).change();
 });

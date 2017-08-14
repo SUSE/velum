@@ -20,6 +20,14 @@ h1 Bootstrap Cluster
 .panel.panel-default.discovery-nodes-panel class=('hide' unless any_minion?)
   .panel-heading
     h3.panel-title#node-count #{Minion.count} nodes found
+
+    button.btn.btn-sm.btn-default.pull-right.select-nodes-btn title="Select remaining nodes as worker"
+      i.fa.fa-check.fa-fw
+      | Select remaining nodes
+
+    button.btn.btn-sm.btn-default.pull-right.hidden.deselect-nodes-btn title="Deselect all the nodes"
+      i.fa.fa-times.fa-fw
+      | Deselect all nodes
   .panel-body
     p After choosing the master and clicking "Bootstrap cluster" all the other selected nodes will be set to the worker role.
 
@@ -28,25 +36,30 @@ h1 Bootstrap Cluster
         table.table
           thead
             tr
-              th width=10
-                = check_box_tag "all", "all", false, { class: "check-all", title: "Toggle all nodes for bootstrapping" }
               th
                 | Id
               th
                 | Hostname
-              th.text-center
-                | Master
+              th width="235"
+                | Role
           tbody
             - Minion.all.each do |m|
               tr
                 td
-                  = check_box_tag "roles[worker][]", m.id
-                td
                   | #{m.minion_id}
                 td
                   | #{m.fqdn}
-                td.text-center
+                td.role-column
+                  = check_box_tag "roles[worker][]", m.id
                   = check_box_tag "roles[master][]", m.id
+
+                  .btn-group.role-btn-group
+                    button type="button" class="btn btn-default" data-minion-id="#{m.id}" data-minion-role="master"
+                      | Master
+                    button type="button" class="btn btn-default worker-btn" data-minion-id="#{m.id}" data-minion-role="worker"
+                      | Worker
+                    button type="button" class="btn btn-default btn-primary unused-btn" data-minion-id="#{m.id}"
+                      | Unused
 
         hr
 
