@@ -376,7 +376,7 @@ function setPendingAcceptance(minionId) {
 
 function requestMinionApproval(selector) {
   $.ajax({
-    url: '/accept-minion',
+    url: '/accept-minion.json',
     method: 'POST',
     data: { minion_id: selector }
   });
