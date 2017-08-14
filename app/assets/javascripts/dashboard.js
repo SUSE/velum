@@ -295,24 +295,24 @@ MinionPoller = {
     minionHtml = '<input name="roles[worker][]" id="roles_worker_' + minion.id +
       '" value="' + minion.id + '" type="checkbox" title="Select node for bootstrapping" ' + minionChecked + '>';
 
-    var roleHtml = `
-      <td class="role-column">
-        ${masterHtml}
-        ${minionHtml}
-        <div class="btn-group role-btn-group">
-          <button type="button" class="btn btn-default ${isMaster ? 'btn-primary' : ''}" data-minion-id="${minion.id}" data-minion-role="master">Master</button>
-          <button type="button" class="btn btn-default worker-btn ${isWorker ? 'btn-primary' : ''}" data-minion-id="${minion.id}" data-minion-role="worker">Worker</button>
-          <button type="button" class="btn btn-default unused-btn ${isUnused ? 'btn-primary' : ''}" data-minion-id="${minion.id}">Unused</button>
-        </div>
-      </td>
-    `;
+    var roleHtml = '\
+      <td class="role-column">' +
+        masterHtml +
+        minionHtml +
+        '<div class="btn-group role-btn-group">\
+          <button type="button" class="btn btn-default master-btn '+ (isMaster ? 'btn-primary' : '') + '" data-minion-id="' + minion.id + '" data-minion-role="master">Master</button>\
+          <button type="button" class="btn btn-default worker-btn ' + (isWorker ? 'btn-primary' : '') + '" data-minion-id="' + minion.id + '" data-minion-role="worker">Worker</button>\
+          <button type="button" class="btn btn-default unused-btn ' + (isUnused ? 'btn-primary' : '') + '" data-minion-id="' + minion.id + '">Unused</button>\
+        </div>\
+      </td>\
+    ';
 
-    return "\
-      <tr> \
-        <td>" + minion.minion_id +  "</td>\
-        <td>" + minion.fqdn +  "</td>\
-        " + roleHtml + "\
-      </tr>";
+    return '\
+      <tr class="minion_' + minion.id + '"> \
+        <td>' + minion.minion_id + '</td>\
+        <td>' + minion.fqdn + '</td>' +
+        roleHtml +
+      '</tr>';
   },
 
   renderUnassigned: function(minion) {
@@ -469,43 +469,61 @@ function selectedMastersLength() {
   return $('input[name="roles[master][]"]:checked').length;
 }
 
-// return true if the selected masters vs workers are in a supported state
-function isSupportedConfiguration() {
+function isBootstrappable() {
   // We need at least one master
-  if (selectedMastersLength() < 1) return false;
+  if (selectedMastersLength() < 1) {
+    return false;
+  }
 
   // We need an odd number of masters
-  if (selectedMastersLength() % 2 !== 1) return false;
+  if (selectedMastersLength() % 2 !== 1) {
+    return false;
+  }
 
   // We need at least one worker
-  if (selectedWorkersLength() < 1) return false;
+  if (selectedWorkersLength() < 1) {
+    return false;
+  }
+
+  return true;
+}
+
+// return true if the selected masters vs workers are in a supported state
+function isSupportedConfiguration() {
+  // bootstrappable but may not be in a supported state
+  // (e.g.: 1 master, 1 workers)
+  if (!isBootstrappable()) {
+    return false;
+  }
 
   // We need at least three nodes in total
-  if ((selectedWorkersLength() + selectedMastersLength()) < 3) return false;
+  if ((selectedWorkersLength() + selectedMastersLength()) < 3) {
+    return false;
+  }
 
   return true;
 }
 
 // handle bootstra button title
 function handleBootstrapButtonTitle() {
-  var masterSelected = selectedMastersLength() >= 1;
-  var hasMinimumNodes = selectedWorkersLength() > 1;
-  var canBootstrap = masterSelected && hasMinimumNodes;
+  var hasMasterSelected = selectedMastersLength() > 0;
+  var hasMinimumWorkers = selectedWorkersLength() > 0;
+  var canBootstrap = hasMasterSelected && hasMinimumWorkers;
   var title = 'Select ';
 
   if (canBootstrap) {
     title = 'Bootstrap cluster';
   } else {
-    if (!masterSelected) {
+    if (!hasMasterSelected) {
       title += 'the master';
     }
 
-    if (!hasMinimumNodes) {
-      if (!masterSelected) {
+    if (!hasMinimumWorkers) {
+      if (!hasMasterSelected) {
         title += ' and ';
       }
 
-      title += 'nodes';
+      title += 'workers';
     }
   }
 
@@ -514,7 +532,7 @@ function handleBootstrapButtonTitle() {
 
 // disable/enable button if it has 1 master and 1 worker at least
 function toggleBootstrapButton() {
-  $('#bootstrap').prop('disabled', !isSupportedConfiguration());
+  $('#bootstrap').prop('disabled', !isBootstrappable());
 
   // also call bootstrap title handler
   handleBootstrapButtonTitle();
@@ -535,7 +553,7 @@ function toggleMinimumNodesAlert() {
 $('body').on('click', '#bootstrap', function(e) {
   var $warningModal = $('.warn-minimum-nodes-modal');
 
-  if (!isSupportedConfiguration()) {
+  if (isBootstrappable() && !isSupportedConfiguration()) {
     e.preventDefault();
 
     $warningModal.modal('show');
@@ -551,6 +569,11 @@ $('body').on('click', '#bootstrap', function(e) {
 $('body').on('click', '.bootstrap-anyway', function() {
   $('.warn-minimum-nodes-modal').modal('hide');
   $('form').submit();
+});
+
+// checkbox on the top the checks/unchecks all nodes (only on unassigned page)
+$('body').on('change', '.check-all', function() {
+  $('input[name="roles[worker][]"]:not(:disabled)').prop('checked', this.checked).change();
 });
 
 // deselect all nodes
@@ -631,5 +654,5 @@ $('body').on('click', '.role-btn-group .btn', function(e) {
 
   unselectRoles(e.target);
   $(e.target).addClass('btn-primary');
-  $(`#roles_${role}_${minionId}`).prop('checked', true).change();
+  $('#roles_' + role + '_' +  minionId).prop('checked', true).change();
 });

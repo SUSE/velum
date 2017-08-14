@@ -18,7 +18,8 @@ feature "Bootstrap cluster feature" do
       Minion.create! [{ minion_id: SecureRandom.hex, fqdn: "minion0.k8s.local" },
                       { minion_id: SecureRandom.hex, fqdn: "minion1.k8s.local" },
                       { minion_id: SecureRandom.hex, fqdn: "minion2.k8s.local" },
-                      { minion_id: SecureRandom.hex, fqdn: "minion3.k8s.local" }]
+                      { minion_id: SecureRandom.hex, fqdn: "minion3.k8s.local" },
+                      { minion_id: SecureRandom.hex, fqdn: "minion4.k8s.local" }]
     end
 
     before do
@@ -32,9 +33,9 @@ feature "Bootstrap cluster feature" do
 
     scenario "A user sees warning modal when trying to bootstrap 2 nodes", js: true do
       # select master minion0.k8s.local
-      find("#roles_master_#{minions[0].id}").click
+      find(".minion_#{minions[0].id} .master-btn").click
       # select node minion1.k8s.local
-      find("#roles_minion_#{minions[1].id}").click
+      find(".minion_#{minions[1].id} .worker-btn").click
 
       click_on_when_enabled "#bootstrap"
 
@@ -45,9 +46,9 @@ feature "Bootstrap cluster feature" do
 
     scenario "A user bootstraps anyway a cluster with only 2 minions", js: true do
       # select master minion0.k8s.local
-      find("#roles_master_#{minions[0].id}").click
+      find(".minion_#{minions[0].id} .master-btn").click
       # select node minion1.k8s.local
-      find("#roles_minion_#{minions[1].id}").click
+      find(".minion_#{minions[1].id} .worker-btn").click
 
       click_on_when_enabled "#bootstrap"
 
@@ -66,11 +67,11 @@ feature "Bootstrap cluster feature" do
 
     scenario "A user selects a subset of nodes to be bootstraped", js: true do
       # select master minion0.k8s.local
-      find("#roles_master_#{minions[0].id}").click
+      find(".minion_#{minions[0].id} .master-btn").click
       # select node minion1.k8s.local
-      find("#roles_minion_#{minions[1].id}").click
+      find(".minion_#{minions[1].id} .worker-btn").click
       # select node minion2.k8s.local
-      find("#roles_minion_#{minions[2].id}").click
+      find(".minion_#{minions[2].id} .worker-btn").click
 
       click_on_when_enabled "#bootstrap"
 
@@ -89,9 +90,9 @@ feature "Bootstrap cluster feature" do
       expect(page).to have_content(minions[2].fqdn)
       expect(page).to have_content(minions[3].fqdn)
       # select master minion0.k8s.local
-      find("#roles_master_#{minions[0].id}").click
+      find(".minion_#{minions[0].id} .master-btn").click
       # select all nodes
-      find(".check-all").click
+      find(".select-nodes-btn").click
 
       click_on_when_enabled "#bootstrap"
 
@@ -100,6 +101,42 @@ feature "Bootstrap cluster feature" do
       expect(page).to have_content(minions[1].fqdn)
       expect(page).to have_content(minions[2].fqdn)
       expect(page).to have_content(minions[3].fqdn)
+    end
+
+    scenario "A user selects a multiple master configuration to be bootstraped", js: true do
+      # select master minion0.k8s.local
+      find(".minion_#{minions[0].id} .master-btn").click
+      # select node minion1.k8s.local
+      find(".minion_#{minions[1].id} .master-btn").click
+      # select node minion2.k8s.local
+      find(".minion_#{minions[2].id} .master-btn").click
+      # select node minion3.k8s.local
+      find(".minion_#{minions[3].id} .worker-btn").click
+      # select node minion4.k8s.local
+      find(".minion_#{minions[4].id} .worker-btn").click
+
+      click_on_when_enabled "#bootstrap"
+
+      # means it went to the overview page
+      expect(page).to have_content("Summary")
+      expect(page).to have_content(minions[0].fqdn)
+      expect(page).to have_content(minions[1].fqdn)
+      expect(page).to have_content(minions[2].fqdn)
+      expect(page).to have_content(minions[3].fqdn)
+      expect(page).to have_content(minions[4].fqdn)
+    end
+
+    scenario "A user cannot bootstap an even multiple master configuration", js: true do
+      # select master minion0.k8s.local
+      find(".minion_#{minions[0].id} .master-btn").click
+      # select node minion1.k8s.local
+      find(".minion_#{minions[1].id} .master-btn").click
+      # select node minion2.k8s.local
+      find(".minion_#{minions[2].id} .worker-btn").click
+      # select node minion3.k8s.local
+      find(".minion_#{minions[3].id} .worker-btn").click
+
+      expect(page).to have_button(value: "Bootstrap cluster", disabled: true)
     end
   end
 

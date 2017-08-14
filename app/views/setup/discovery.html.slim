@@ -44,7 +44,7 @@ h1 Bootstrap Cluster
                 | Role
           tbody
             - Minion.all.each do |m|
-              tr
+              tr class="minion_#{m.id}"
                 td
                   | #{m.minion_id}
                 td
@@ -54,7 +54,7 @@ h1 Bootstrap Cluster
                   = check_box_tag "roles[master][]", m.id
 
                   .btn-group.role-btn-group
-                    button type="button" class="btn btn-default" data-minion-id="#{m.id}" data-minion-role="master"
+                    button type="button" class="btn btn-default master-btn" data-minion-id="#{m.id}" data-minion-role="master"
                       | Master
                     button type="button" class="btn btn-default worker-btn" data-minion-id="#{m.id}" data-minion-role="worker"
                       | Worker
