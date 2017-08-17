@@ -130,3 +130,16 @@
 .pending-nodes-container {
   margin-top: 15px
 }
+
+.role-column {
+  position: relative;
+
+  input {
+    position: absolute;
+  }
+}
+.role-btn-group {
+  .btn {
+    font-weight: normal;
+  }
+}

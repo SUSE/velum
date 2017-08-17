@@ -1,5 +1,6 @@
 MinionPoller = {
   selectedNodes: [],
+  selectedMasters: [],
   pollingTimeoutId: null,
 
   poll: function() {
@@ -55,7 +56,7 @@ MinionPoller = {
         // for the dashboard, if we rely on radio, the first time this comes
         // it won't detect that there's a master, so we need to rely on the data
         // itself for counting masters
-        if (MinionPoller.renderMode === 'dashboard') {
+        if (MinionPoller.renderMode === 'Dashboard') {
           MinionPoller.selectedMasters = data.assigned_minions.reduce(function(memo, minion) {
             if (minion.role === 'master') {
               memo.push(minion.id);
@@ -76,7 +77,7 @@ MinionPoller = {
         }
 
         var renderMethod = 'render' + MinionPoller.renderMode;
-        for (i = 0; i < minions.length; i++) {
+        for (var i = 0; i < minions.length; i++) {
           rendered += MinionPoller[renderMethod].call(MinionPoller, minions[i]);
 
           if (minions[i].role == "master" && minions[i].highstate == "applied") {
@@ -239,7 +240,7 @@ MinionPoller = {
     }
 
     masterHtml = '<input name="roles[master][]" id="roles_master_' + minion.id +
-      '" value="' + minion.id + '" type="radio" disabled="" ' + checked + '> ';
+      '" value="' + minion.id + '" type="checkbox" disabled="" ' + checked + '> ';
 
     switch(minion.update_status) {
       case 1:
@@ -269,26 +270,56 @@ MinionPoller = {
       </tr>';
   },
 
-  renderDiscovery: function(minion, onlyWorkers) {
+  renderDiscovery: function(minion) {
+    var isMaster = MinionPoller.selectedMasters.indexOf(minion.id) !== -1;
+    var isWorker = MinionPoller.selectedNodes.indexOf(minion.id) !== -1;
+    var isUnused = !isMaster && !isWorker;
+
     var masterHtml;
     var masterChecked = '';
     var minionHtml;
     var minionChecked = '';
 
-    if (MinionPoller.selectedMasters && MinionPoller.selectedMasters.indexOf(minion.id) != -1) {
+    if (isMaster) {
       masterChecked = 'checked';
-      minionChecked += 'disabled="disabled" checked ';
     }
 
-    if (onlyWorkers) {
-      masterHtml = '';
-    } else {
-      masterHtml = '<td class="text-center">\
-        <input name="roles[master][]" id="roles_master_' + minion.id +
-        '" value="' + minion.id + '" type="radio" title="Select node as master" ' + masterChecked + '></td>';
+    masterHtml = '\
+      <input name="roles[master][]" id="roles_master_' + minion.id +
+      '" value="' + minion.id + '" type="checkbox" title="Select node as master" ' + masterChecked + '>';
+
+    if (isWorker) {
+      minionChecked = 'checked';
     }
 
-    if (MinionPoller.selectedNodes && MinionPoller.selectedNodes.indexOf(minion.id) != -1) {
+    minionHtml = '<input name="roles[worker][]" id="roles_worker_' + minion.id +
+      '" value="' + minion.id + '" type="checkbox" title="Select node for bootstrapping" ' + minionChecked + '>';
+
+    var roleHtml = '\
+      <td class="role-column">' +
+        masterHtml +
+        minionHtml +
+        '<div class="btn-group role-btn-group">\
+          <button type="button" class="btn btn-default master-btn '+ (isMaster ? 'btn-primary' : '') + '" data-minion-id="' + minion.id + '" data-minion-role="master">Master</button>\
+          <button type="button" class="btn btn-default worker-btn ' + (isWorker ? 'btn-primary' : '') + '" data-minion-id="' + minion.id + '" data-minion-role="worker">Worker</button>\
+          <button type="button" class="btn btn-default unused-btn ' + (isUnused ? 'btn-primary' : '') + '" data-minion-id="' + minion.id + '">Unused</button>\
+        </div>\
+      </td>\
+    ';
+
+    return '\
+      <tr class="minion_' + minion.id + '"> \
+        <td>' + minion.minion_id + '</td>\
+        <td>' + minion.fqdn + '</td>' +
+        roleHtml +
+      '</tr>';
+  },
+
+  renderUnassigned: function(minion) {
+    var minionHtml;
+    var minionChecked = '';
+
+    if (MinionPoller.selectedNodes.indexOf(minion.id) != -1) {
       minionChecked += 'checked';
     }
 
@@ -300,12 +331,7 @@ MinionPoller = {
         <td>" + minionHtml +  "</td>\
         <td>" + minion.minion_id +  "</td>\
         <td>" + minion.fqdn +  "</td>\
-        " + masterHtml + "\
       </tr>";
-  },
-
-  renderUnassigned: function(minion) {
-    return MinionPoller.renderDiscovery(minion, true);
   }
 };
 
@@ -433,37 +459,71 @@ function toggleAddNodesButton() {
 // unassigned nodes page
 $('body').on('change', '.new-nodes-container input[name="roles[worker][]"]', toggleAddNodesButton);
 
-// return true if master is selected
-// false otherwise
-function isMasterSelected() {
-  return $('input[name="roles[master][]"]:checked').length > 0;
+// return number of selected nodes
+function selectedWorkersLength() {
+  return $('input[name="roles[worker][]"]:checked').length;
 }
 
-// return number of selected checkboxes
-function selectedNodesLength() {
-  return $('input[name="roles[worker][]"]:checked').length;
+// return number of selected masters
+function selectedMastersLength() {
+  return $('input[name="roles[master][]"]:checked').length;
+}
+
+function isBootstrappable() {
+  // We need at least one master
+  if (selectedMastersLength() < 1) {
+    return false;
+  }
+
+  // We need an odd number of masters
+  if (selectedMastersLength() % 2 !== 1) {
+    return false;
+  }
+
+  // We need at least one worker
+  if (selectedWorkersLength() < 1) {
+    return false;
+  }
+
+  return true;
+}
+
+// return true if the selected masters vs workers are in a supported state
+function isSupportedConfiguration() {
+  // bootstrappable but may not be in a supported state
+  // (e.g.: 1 master, 1 workers)
+  if (!isBootstrappable()) {
+    return false;
+  }
+
+  // We need at least three nodes in total
+  if ((selectedWorkersLength() + selectedMastersLength()) < 3) {
+    return false;
+  }
+
+  return true;
 }
 
 // handle bootstra button title
 function handleBootstrapButtonTitle() {
-  var masterSelected = isMasterSelected();
-  var hasMinimumNodes = selectedNodesLength() > 1;
-  var canBootstrap = masterSelected && hasMinimumNodes;
+  var hasMasterSelected = selectedMastersLength() > 0;
+  var hasMinimumWorkers = selectedWorkersLength() > 0;
+  var canBootstrap = hasMasterSelected && hasMinimumWorkers;
   var title = 'Select ';
 
   if (canBootstrap) {
     title = 'Bootstrap cluster';
   } else {
-    if (!masterSelected) {
+    if (!hasMasterSelected) {
       title += 'the master';
     }
 
-    if (!hasMinimumNodes) {
-      if (!masterSelected) {
+    if (!hasMinimumWorkers) {
+      if (!hasMasterSelected) {
         title += ' and ';
       }
 
-      title += 'nodes';
+      title += 'workers';
     }
   }
 
@@ -472,9 +532,7 @@ function handleBootstrapButtonTitle() {
 
 // disable/enable button if it has 1 master and 1 worker at least
 function toggleBootstrapButton() {
-  var canBootstrap = isMasterSelected() && selectedNodesLength() > 1;
-
-  $('#bootstrap').prop('disabled', !canBootstrap);
+  $('#bootstrap').prop('disabled', !isBootstrappable());
 
   // also call bootstrap title handler
   handleBootstrapButtonTitle();
@@ -482,9 +540,7 @@ function toggleBootstrapButton() {
 
 // hide minimum nodes alert
 function toggleMinimumNodesAlert() {
-  var hasMinimumNodesSelected = selectedNodesLength() > 2;
-
-  if (hasMinimumNodesSelected) {
+  if (isSupportedConfiguration()) {
     $('.discovery-minimum-nodes-alert').fadeOut(500);
   } else {
     $('.discovery-minimum-nodes-alert').fadeIn(100);
@@ -496,9 +552,8 @@ function toggleMinimumNodesAlert() {
 // otherwise it shows the modal if didn't show yet
 $('body').on('click', '#bootstrap', function(e) {
   var $warningModal = $('.warn-minimum-nodes-modal');
-  var hasMinimumAmountToSubmit = isMasterSelected() && selectedNodesLength() > 2;
 
-  if (!hasMinimumAmountToSubmit) {
+  if (isBootstrappable() && !isSupportedConfiguration()) {
     e.preventDefault();
 
     $warningModal.modal('show');
@@ -516,12 +571,29 @@ $('body').on('click', '.bootstrap-anyway', function() {
   $('form').submit();
 });
 
-// discovery page
-$('body').on('change', '.nodes-container input[name="roles[worker][]"]', toggleBootstrapButton);
-
-// checkbox on the top the checks/unchecks all nodes
-$('.check-all').on('change', function() {
+// checkbox on the top the checks/unchecks all nodes (only on unassigned page)
+$('body').on('change', '.check-all', function() {
   $('input[name="roles[worker][]"]:not(:disabled)').prop('checked', this.checked).change();
+});
+
+// deselect all nodes
+$('body').on('click', '.deselect-nodes-btn', function() {
+  var unusedSelector = '.role-btn-group .unused-btn';
+
+  $(this).addClass('hidden');
+  $('.select-nodes-btn').show();
+  $(unusedSelector).click();
+  toggleBootstrapButton();
+  toggleAddNodesButton();
+});
+
+// select remaining nodes as workers
+$('body').on('click', '.select-nodes-btn', function() {
+  var workersSelector = 'input[name="roles[master][]"]:not(:checked) ~ .role-btn-group .worker-btn';
+
+  $(this).hide();
+  $('.deselect-nodes-btn').removeClass('hidden');
+  $(workersSelector).click();
   toggleBootstrapButton();
   toggleAddNodesButton();
 });
@@ -535,9 +607,14 @@ $('body').on('change', 'input[name="roles[worker][]"]', function() {
     MinionPoller.selectedNodes.push(value);
   } else {
     var index = MinionPoller.selectedNodes.indexOf(value);
-    MinionPoller.selectedNodes.splice(index, 1);
+
+    if (index !== -1) {
+      MinionPoller.selectedNodes.splice(index, 1);
+    }
   }
+
   toggleMinimumNodesAlert();
+  toggleBootstrapButton();
 });
 
 // when selecting a master
@@ -545,19 +622,37 @@ $('body').on('change', 'input[name="roles[worker][]"]', function() {
 // enable and keep the previous state of the previous master (selected or not)
 // if user select node as master, it checks it as selected
 $('body').on('change', 'input[name="roles[master][]"]', function() {
-  var $previousMaster = $('input[name="roles[worker][]"]:disabled');
-  var previousMasterValue = parseInt($previousMaster.val(), 10);
-  var checked = MinionPoller.selectedNodes.indexOf(previousMasterValue) !== -1;
-
-  $previousMaster.prop('disabled', false);
-  $previousMaster.prop('checked', checked);
+  var value = parseInt(this.value, 10);
 
   if (this.checked) {
-    var $checkbox = $(this).closest('tr').find('input[name="roles[worker][]"]');
+    MinionPoller.selectedMasters.push(value);
+  } else {
+    var index = MinionPoller.selectedMasters.indexOf(value);
 
-    $checkbox.prop('checked', true);
-    $checkbox.prop('disabled', true);
+    if (index !== -1) {
+      MinionPoller.selectedMasters.splice(index, 1);
+    }
   }
 
+  toggleMinimumNodesAlert();
   toggleBootstrapButton();
+});
+
+function unselectRoles(target) {
+  var $td = $(target).closest('td');
+
+  $td.find('.btn').removeClass('btn-primary');
+  $td.find('input').prop('checked', false).change();
+}
+
+$('body').on('click', '.role-btn-group .btn', function(e) {
+  e.preventDefault();
+
+  var dataset = e.target.dataset;
+  var minionId = dataset['minionId'];
+  var role = dataset['minionRole'];
+
+  unselectRoles(e.target);
+  $(e.target).addClass('btn-primary');
+  $('#roles_' + role + '_' +  minionId).prop('checked', true).change();
 });
