@@ -39,7 +39,25 @@ class SaltEvent < ApplicationRecord
     logger.info "Salt event processor #{worker_id} started at #{Time.current}"
 
     loop do
-      sleep(NO_EVENTS_TIMEOUT_SEC) unless process_next_event(worker_id: worker_id)
+      unless process_next_event(worker_id: worker_id)
+        purge_jobs_older_than 24.hours.ago
+        sleep NO_EVENTS_TIMEOUT_SEC
+      end
+    end
+    # :nocov:
+  end
+
+  # Purge jobs older than timestamp
+  def self.purge_jobs_older_than(date)
+    # :nocov:
+    ActiveRecord::Base.connection.execute("
+     delete from `jids` where jid in (select distinct jid from salt_returns
+                                      where alter_time < #{date.to_i})
+    ")
+    [:events, :returns].each do |table|
+      ActiveRecord::Base.connection.execute("
+        delete from `salt_#{table}` where alter_time < #{date.to_i};
+    ")
     end
     # :nocov:
   end
