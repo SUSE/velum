@@ -46,8 +46,7 @@ module Velum
       res = perform_request(endpoint: "/", method: "post",
                             data: { client: "wheel",
                                     fun:    "key.list",
-                                    match:  "all",
-                                    tgt:    "ca" })
+                                    match:  "all" })
       JSON.parse(res.body)["return"].first["data"]["return"]["minions_pre"]
     end
 
@@ -56,8 +55,7 @@ module Velum
       res = perform_request(endpoint: "/", method: "post",
                             data: { client: "wheel",
                                     fun:    "key.accept",
-                                    match:  minion_id,
-                                    tgt:    "ca" })
+                                    match:  minion_id })
       JSON.parse(res.body)["return"].first["data"]["return"]["minions"]
     end
 

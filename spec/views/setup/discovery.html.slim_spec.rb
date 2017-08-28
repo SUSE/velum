@@ -10,12 +10,12 @@ describe "setup/discovery" do
       expect(section.attribute("data-url").value).to eq setup_discovery_path
     end
 
-    it "has a button to bootstrap the cluster" do
+    it "has a button to go to the next step" do
       render
 
       section = assert_select("input[type='submit']")
       text = section[0].attributes["value"].value
-      expect(text).to eq "Bootstrap cluster"
+      expect(text).to eq "Next"
     end
   end
 end

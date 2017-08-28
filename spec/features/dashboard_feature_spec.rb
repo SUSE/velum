@@ -5,6 +5,10 @@ require "rails_helper"
 feature "Dashboard" do
   let!(:user) { create(:user) }
 
+  before do
+    setup_done
+  end
+
   describe "Downloading kubeconfig" do
     before do
       login_as user, scope: :user

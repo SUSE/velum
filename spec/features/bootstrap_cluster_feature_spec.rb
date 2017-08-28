@@ -13,7 +13,7 @@ feature "Bootstrap cluster feature" do
   end
 
   # rubocop:disable RSpec/ExampleLength
-  context "Nodes bootstraping" do
+  context "Nodes bootstrapping" do
     let!(:minions) do
       Minion.create! [{ minion_id: SecureRandom.hex, fqdn: "minion0.k8s.local" },
                       { minion_id: SecureRandom.hex, fqdn: "minion1.k8s.local" },
@@ -23,11 +23,7 @@ feature "Bootstrap cluster feature" do
     end
 
     before do
-      # mock salt methods
-      [:worker, :master].each do |role|
-        allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(role)
-          .and_return(role)
-      end
+      allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).and_return(true)
       allow(Velum::Salt).to receive(:orchestrate)
     end
 
@@ -37,7 +33,7 @@ feature "Bootstrap cluster feature" do
       # select node minion1.k8s.local
       find(".minion_#{minions[1].id} .worker-btn").click
 
-      click_on_when_enabled "#bootstrap"
+      click_on_when_enabled "#set-roles"
 
       # means it didn't go to the overview page
       expect(page).not_to have_content("Summary")
@@ -50,12 +46,16 @@ feature "Bootstrap cluster feature" do
       # select node minion1.k8s.local
       find(".minion_#{minions[1].id} .worker-btn").click
 
-      click_on_when_enabled "#bootstrap"
+      click_on_when_enabled "#set-roles"
 
       # waits modal to appear
       expect(page).to have_content("Cluster is too small")
 
       click_button "Proceed anyway"
+
+      # means it went to the confirmation page
+      expect(page).to have_content("Confirm bootstrap")
+      click_button "Bootstrap cluster"
 
       # means it went to the overview page
       expect(page).to have_content("Summary")
@@ -73,7 +73,11 @@ feature "Bootstrap cluster feature" do
       # select node minion2.k8s.local
       find(".minion_#{minions[2].id} .worker-btn").click
 
-      click_on_when_enabled "#bootstrap"
+      click_on_when_enabled "#set-roles"
+
+      # means it went to the confirmation page
+      expect(page).to have_content("Confirm bootstrap")
+      click_button "Bootstrap cluster"
 
       # means it went to the overview page
       expect(page).to have_content("Summary")
@@ -94,7 +98,11 @@ feature "Bootstrap cluster feature" do
       # select all nodes
       find(".select-nodes-btn").click
 
-      click_on_when_enabled "#bootstrap"
+      click_on_when_enabled "#set-roles"
+
+      # means it went to the confirmation page
+      expect(page).to have_content("Confirm bootstrap")
+      click_button "Bootstrap cluster"
 
       expect(page).to have_content("Summary")
       expect(page).to have_content(minions[0].fqdn)
@@ -115,6 +123,10 @@ feature "Bootstrap cluster feature" do
       # select node minion4.k8s.local
       find(".minion_#{minions[4].id} .worker-btn").click
 
+      click_on_when_enabled "#set-roles"
+
+      # means it went to the confirmation page
+      expect(page).to have_content("Confirm bootstrap")
       click_on_when_enabled "#bootstrap"
 
       # means it went to the overview page
@@ -136,7 +148,7 @@ feature "Bootstrap cluster feature" do
       # select node minion3.k8s.local
       find(".minion_#{minions[3].id} .worker-btn").click
 
-      expect(page).to have_button(value: "Bootstrap cluster", disabled: true)
+      expect(page).to have_button(value: "Next", disabled: true)
     end
   end
 
@@ -153,7 +165,7 @@ feature "Bootstrap cluster feature" do
   scenario "A user sees 'No nodes found'", js: true do
     expect(page).to have_content("No nodes found")
     # bootstrap cluster button disabled
-    expect(page).to have_button(value: "Bootstrap cluster", disabled: true)
+    expect(page).to have_button(value: "Next", disabled: true)
   end
 end
 # rubocop:enable RSpec/AnyInstance

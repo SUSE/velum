@@ -2,6 +2,7 @@ MinionPoller = {
   selectedNodes: [],
   selectedMasters: [],
   pollingTimeoutId: null,
+  initialized: false,
 
   poll: function() {
     this.request();
@@ -29,7 +30,7 @@ MinionPoller = {
 
   sortMinions: function(minions) {
     minions.sort(function(a, b) {
-      return MinionPoller.stateWeight(b.highstate)- MinionPoller.stateWeight(a.highstate);
+      return MinionPoller.stateWeight(b.highstate) - MinionPoller.stateWeight(a.highstate);
     });
   },
 
@@ -51,6 +52,7 @@ MinionPoller = {
         // want to account for them.
         var minions = data.assigned_minions || [];
         var unassignedMinions = data.unassigned_minions || [];
+        var allMinions = minions.concat(unassignedMinions);
         var pendingMinions = data.pending_minions || [];
 
         // for the dashboard, if we rely on radio, the first time this comes
@@ -70,10 +72,37 @@ MinionPoller = {
           }).get();
         }
 
-        if (MinionPoller.renderMode !== "Dashboard") {
+        var minionId = function(node) {
+          return node.id;
+        }
+
+        var isMaster = function(node) {
+          return node.role === "master";
+        }
+
+        var isWorker = function(node) {
+          return node.role === "worker";
+        }
+
+        if (!MinionPoller.initialized) {
+          if (MinionPoller.selectedNodes.length == 0) {
+            MinionPoller.selectedNodes = $.grep(minions, isWorker).map(minionId);
+          }
+          if (MinionPoller.selectedMasters.length == 0) {
+            MinionPoller.selectedMasters = $.grep(minions, isMaster).map(minionId);
+          }
+          MinionPoller.initialized = true;
+        }
+
+        switch (MinionPoller.renderMode) {
+        case "Discovery":
+          minions = allMinions;
+          break;
+        case "Unassigned":
           minions = unassignedMinions;
-        } else {
-          MinionPoller.sortMinions(minions);
+          break;
+        default:
+          MinionPoller.sortMinions(allMinions);
         }
 
         var renderMethod = 'render' + MinionPoller.renderMode;
@@ -115,8 +144,8 @@ MinionPoller = {
         $(".pending-nodes-container .empty-text").toggleClass('hidden', pendingMinions.length > 0);
 
         // show/hide panels on discovery page
-        $('.discovery-nodes-panel').toggleClass('hide', unassignedMinions.length === 0);
-        $('.discovery-empty-panel').toggleClass('hide', unassignedMinions.length > 0);
+        $('.discovery-nodes-panel').toggleClass('hide', allMinions.length === 0);
+        $('.discovery-empty-panel').toggleClass('hide', allMinions.length > 0);
 
         MinionPoller.handleAdminUpdate(data.admin || {}, hasPendingStateNode);
 
@@ -133,11 +162,9 @@ MinionPoller = {
         $('.assigned-count').text(minions.length);
         $('.master-count').text(MinionPoller.selectedMasters.length);
 
-        if (unassignedMinions.length > 0) {
-          // discovery page uses #node-count,
-          // overview page otherwise
-          if ($("#node-count").length > 0) {
-            $("#node-count").text(unassignedMinions.length + " nodes found");
+        if (allMinions.length > 0) {
+          if (MinionPoller.renderMode === "Discovery") {
+            $("#node-count").text(allMinions.length + " nodes found");
           } else {
             var addNodesUrl = $('.unassigned-count').data('url');
             var unassignedCountText = unassignedMinions.length;
@@ -157,6 +184,9 @@ MinionPoller = {
         $('.summary-content').removeClass('hidden');
         $('.nodes-loading').hide();
         $('.nodes-content').removeClass('hidden');
+
+        toggleBootstrapButton();
+        toggleMinimumNodesAlert();
       }
     }).always(function() {
       // make another request only after the last one finished
@@ -512,7 +542,7 @@ function handleBootstrapButtonTitle() {
   var title = 'Select ';
 
   if (canBootstrap) {
-    title = 'Bootstrap cluster';
+    title = 'Next';
   } else {
     if (!hasMasterSelected) {
       title += 'the master';
@@ -527,12 +557,12 @@ function handleBootstrapButtonTitle() {
     }
   }
 
-  $('#bootstrap').prop('title', title);
+  $('#set-roles').prop('title', title);
 }
 
 // disable/enable button if it has 1 master and 1 worker at least
 function toggleBootstrapButton() {
-  $('#bootstrap').prop('disabled', !isBootstrappable());
+  $('#set-roles').prop('disabled', !isBootstrappable());
 
   // also call bootstrap title handler
   handleBootstrapButtonTitle();
@@ -550,7 +580,7 @@ function toggleMinimumNodesAlert() {
 // bootstrap cluster button click listener
 // if it has the minimum amount of nodes, form is submitted as expected
 // otherwise it shows the modal if didn't show yet
-$('body').on('click', '#bootstrap', function(e) {
+$('body').on('click', '#set-roles', function(e) {
   var $warningModal = $('.warn-minimum-nodes-modal');
 
   if (isBootstrappable() && !isSupportedConfiguration()) {

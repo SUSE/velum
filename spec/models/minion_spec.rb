@@ -5,7 +5,7 @@ describe Minion do
   it { is_expected.to validate_uniqueness_of(:minion_id) }
 
   # rubocop:disable RSpec/ExampleLength
-  describe ".assign_roles!" do
+  describe ".assign_roles" do
     let(:minions) do
       described_class.create! [
         { minion_id: SecureRandom.hex, fqdn: "master.example.com" },
@@ -14,24 +14,25 @@ describe Minion do
       ]
     end
 
-    context "when a master role cannot be assigned" do
+    context "when a master role cannot be assigned remotely" do
       before do
         minions
       end
 
       it "returns a hash with the master fqdn false" do
         # rubocop:disable RSpec/AnyInstance
-        allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role)
-          .with(:master).and_return(false)
-        allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role)
-          .with(:worker).and_return(true)
+        allow_any_instance_of(described_class).to receive(:assign_role)
+          .with(:master, remote: true).and_return(false)
+        allow_any_instance_of(described_class).to receive(:assign_role)
+          .with(:worker, remote: true).and_return(true)
         # rubocop:enable RSpec/AnyInstance
         expect(
-          described_class.assign_roles!(
-            roles: {
+          described_class.assign_roles(
+            roles:  {
               master: [described_class.first.id],
               worker: described_class.all[1..-1].map(&:id)
-            }
+            },
+            remote: true
           )
         ).to eq(
           minions[0].minion_id => false,
@@ -41,24 +42,25 @@ describe Minion do
       end
     end
 
-    context "when a minion role cannot be assigned" do
+    context "when a minion role cannot be assigned remotely" do
       before do
         minions
       end
 
       it "returns a hash with the minion fqdns false" do
         # rubocop:disable RSpec/AnyInstance
-        allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role)
-          .with(:master).and_return(true)
-        allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role)
-          .with(:worker).and_return(false)
+        allow_any_instance_of(described_class).to receive(:assign_role)
+          .with(:master, remote: true).and_return(true)
+        allow_any_instance_of(described_class).to receive(:assign_role)
+          .with(:worker, remote: true).and_return(false)
         # rubocop:enable RSpec/AnyInstance
         expect(
-          described_class.assign_roles!(
-            roles: {
+          described_class.assign_roles(
+            roles:  {
               master: [described_class.first.id],
               worker: described_class.all[1..-1].map(&:id)
-            }
+            },
+            remote: true
           )
         ).to eq(
           minions[0].minion_id => true,
@@ -68,30 +70,31 @@ describe Minion do
       end
     end
 
-    context "when a default role cannot be assigned" do
+    context "when a default role cannot be assigned remotely" do
       before do
         minions
       end
 
       it "returns a hash with the default_role fqdn false" do
         # rubocop:disable RSpec/AnyInstance
-        allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(:master)
-          .and_return(true)
-        allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(:worker)
-          .and_return(true)
-        allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(:another_role)
-          .and_return(false)
+        allow_any_instance_of(described_class).to receive(:assign_role)
+          .with(:master, remote: true) do
+          # rubocop:disable Rails/SkipsModelValidations
+          minions[0].update_column :role, described_class.roles[:master]
+          # rubocop:enable Rails/SkipsModelValidations
+        end
+        allow_any_instance_of(described_class).to receive(:assign_role)
+          .with(:worker, remote: true).and_return(false)
         # rubocop:enable RSpec/AnyInstance
         expect(
-          described_class.assign_roles!(
+          described_class.assign_roles(
             roles: {
-              master: [described_class.first.id],
-              worker: described_class.all[1..-2].map(&:id)
-            }, default_role: :another_role
+              master: [described_class.first.id]
+            }, default_role: :worker, remote: true
           )
         ).to eq(
           minions[0].minion_id => true,
-          minions[1].minion_id => true,
+          minions[1].minion_id => false,
           minions[2].minion_id => false
         )
       end
@@ -100,35 +103,29 @@ describe Minion do
     context "when default_role is set" do
       before do
         minions
-        # rubocop:disable RSpec/AnyInstance
-        allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role)
-          .and_return(true)
-        # rubocop:enable RSpec/AnyInstance
       end
 
       it "assigns the default role to the rest of the available minions" do
-        described_class.assign_roles!(
-          roles: {
-            master: [described_class.first.id],
-            worker: described_class.all[1..-1].map(&:id)
-          }
+        described_class.assign_roles(
+          roles:        {
+            master: [described_class.first.id]
+          },
+          default_role: :worker
         )
 
-        expect(described_class.all.map(&:role).sort).to eq(["master", "worker", "worker"])
+        expect(described_class.all.map(&:role).sort).to eq(["master",
+                                                            "worker",
+                                                            "worker"])
       end
     end
 
     context "when default_role is not set" do
       before do
         minions
-        # rubocop:disable RSpec/AnyInstance
-        allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role)
-          .and_return(true)
-        # rubocop:enable RSpec/AnyInstance
       end
 
       it "assigns the minion role to the rest of the available minions" do
-        described_class.assign_roles!(
+        described_class.assign_roles(
           roles: {
             master: [described_class.first.id],
             worker: described_class.all[1..-1].map(&:id)
@@ -142,14 +139,10 @@ describe Minion do
     context "when explicit worker role is set" do
       before do
         minions
-        # rubocop:disable RSpec/AnyInstance
-        allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role)
-          .and_return(true)
-        # rubocop:enable RSpec/AnyInstance
       end
 
       it "assigns the worker role to specific minions" do
-        described_class.assign_roles!(
+        described_class.assign_roles(
           roles: {
             master: [described_class.first.id],
             worker: described_class.all[1..-1].map(&:id)
@@ -162,11 +155,7 @@ describe Minion do
 
     it "returns a hash of the minions that were assigned a role" do
       minions
-      # rubocop:disable RSpec/AnyInstance
-      allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role)
-        .and_return(true)
-      # rubocop:enable RSpec/AnyInstance
-      roles = described_class.assign_roles!(
+      roles = described_class.assign_roles(
         roles: { master: [described_class.first.id], worker: described_class.all[1..-1].map(&:id) }
       )
 
@@ -179,16 +168,15 @@ describe Minion do
   end
 
   context "with some roles assigned" do
-    let(:minion) { create(:minion, role: :master) }
+    let(:minion) { create(:minion, role: described_class.roles[:master]) }
 
-    before { allow(minion.salt).to receive(:assign_role) { true } }
-
-    it "returns false when calling assign_role" do
-      expect(minion.assign_role(:other_role)).to be false
+    it "returns true when calling assign_role" do
+      expect(minion.assign_role(:worker)).to be true
     end
 
-    it "does not update the role in the database" do
-      expect(minion.role).to eq("master")
+    it "updates the role in the database" do
+      minion.assign_role :worker
+      expect(minion.role).to eq("worker")
     end
   end
 
@@ -221,7 +209,7 @@ describe Minion do
       end
 
       it "does not save the role in the database" do
-        expect(minion.assign_role(:master)).to be false
+        expect(minion.assign_role(:master, remote: true)).to be false
         expect(minion.reload.role).to be_nil
       end
     end

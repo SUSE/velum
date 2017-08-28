@@ -5,6 +5,7 @@ feature "Manage nodes updates feature" do
   let!(:user) { create(:user) }
 
   before do
+    setup_done
     login_as user, scope: :user
     Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion0.k8s.local", role: "master")
     setup_stubbed_pending_minions!

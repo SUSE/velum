@@ -37,7 +37,7 @@ class Pillar < ApplicationRecord
 
   scope :global, -> { where minion_id: nil }
 
-  OPTIONAL_PILLARS = [:http_proxy, :https_proxy, :no_proxy].freeze
+  PROTECTED_PILLARS = [:dashboard, :apiserver].freeze
 
   class << self
     def value(pillar:)
@@ -57,25 +57,34 @@ class Pillar < ApplicationRecord
 
     # Apply the given pillars into the database. It returns an array with the
     # encountered errors.
-    def apply(pillars)
+    def apply(pillars, required_pillars: [])
       errors = []
 
       Pillar.all_pillars.each do |key, pillar_key|
-        # The following pillar keys can be blank, delete them if they are.
-        if [:http_proxy, :https_proxy, :no_proxy].include?(key) && pillars[key].blank?
-          pillar = Pillar.find_by pillar: pillar_key
-          pillar.destroy if pillar
-        else
-          pillar = Pillar.find_or_initialize_by pillar: pillar_key
-          pillar.value = pillars[key]
-          next if pillar.save
+        next if PROTECTED_PILLARS.include?(key) && pillars[key].blank?
+        set_pillar key: key, pillar_key: pillar_key, value: pillars[key],
+                   required_pillars: required_pillars, errors: errors
+      end
 
+      errors
+    end
+
+    private
+
+    def set_pillar(key:, pillar_key:, value:, required_pillars:, errors:)
+      optional_pillars = Pillar.all_pillars.keys - required_pillars
+      # The following pillar keys can be blank, delete them if they are.
+      if optional_pillars.include?(key) && value.blank?
+        Pillar.destroy_all pillar: pillar_key
+      else
+        pillar = Pillar.find_or_initialize_by(pillar: pillar_key).tap do |pillar_|
+          pillar_.value = value
+        end
+        unless pillar.save
           exp = pillar.errors.empty? ? "" : ": #{pillar.errors.messages[:value].first}"
           errors << "'#{key}' could not be saved#{exp}."
         end
       end
-
-      errors
     end
   end
 end

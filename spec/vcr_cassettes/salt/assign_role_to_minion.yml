@@ -57,7 +57,7 @@ http_interactions:
     uri: http://127.0.0.1:8000/minions
     body:
       encoding: UTF-8
-      string: '{"client":"local","tgt":"minion1","fun":"grains.append","kwarg":{"key":"roles","val":["kube-master","etcd"]}}'
+      string: '{"client":"local","tgt":"minion1","fun":"grains.setval","kwarg":{"key":"roles","val":["kube-master","etcd"]}}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3

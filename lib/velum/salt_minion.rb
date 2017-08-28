@@ -6,22 +6,22 @@ module Velum
   class SaltMinion
     include SaltApi
 
-    attr_accessor :minion_id
+    attr_accessor :minion
 
     ROLES_MAP = {
       master: ["kube-master"],
       worker: ["kube-minion"]
     }.freeze
 
-    # Initializes a new salt minion identified by mid.
-    def initialize(minion_id:)
-      @minion_id = minion_id
+    # Initializes a new salt minion backend matching minion
+    def initialize(minion:)
+      @minion = minion
     end
 
     # Return information for this minion.
     def info
-      res = perform_request(endpoint: "/minions/#{@minion_id}", method: "get")
-      JSON.parse(res.body)["return"].first[@minion_id]
+      res = perform_request(endpoint: "/minions/#{@minion.minion_id}", method: "get")
+      JSON.parse(res.body)["return"].first[@minion.minion_id]
     end
 
     # Check if this minion has any role assigned.
@@ -30,21 +30,21 @@ module Velum
     end
 
     # Assign role to this minion.
-    def assign_role(role)
-      append_grain key: "roles", val: ROLES_MAP[role]
-      role
+    def assign_role
+      set_grain key: "roles", val: ROLES_MAP[@minion.role.to_sym]
+      true
     end
 
     protected
 
     # Appends a grain with key and val to this minion.
-    def append_grain(key:, val:)
+    def set_grain(key:, val:)
       perform_request(endpoint: "/minions",
                       method:   "post",
                       data:     {
                         client: "local",
-                        tgt:    @minion_id,
-                        fun:    "grains.append",
+                        tgt:    @minion.minion_id,
+                        fun:    "grains.setval",
                         kwarg:  { key: key, val: val }
                       })
       [key, val]

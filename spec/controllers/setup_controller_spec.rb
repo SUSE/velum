@@ -8,7 +8,6 @@ RSpec.describe SetupController, type: :controller do
   let(:settings_params) do
     {
       dashboard:    "dashboard.example.com",
-      apiserver:    "apiserver.example.com",
       enable_proxy: "disable"
     }
   end
@@ -52,156 +51,58 @@ RSpec.describe SetupController, type: :controller do
     end
   end
 
-  describe "POST /setup/bootstrap via HTML" do
+  describe "POST /setup/discovery via HTML" do
     let(:salt) { Velum::Salt }
     before do
+      setup_done apiserver: false
       sign_in user
       Minion.create! [{ minion_id: SecureRandom.hex, fqdn: "master" },
                       { minion_id: SecureRandom.hex, fqdn: "worker0" }]
     end
 
-    context "when the minion doesn't exist" do
-      it "renders an error with not_found" do
-        post :bootstrap, roles: { master: [9999999] }
-        expect(flash[:error]).to be_present
-        expect(response.redirect_url).to eq "http://test.host/setup"
-      end
-    end
-
     context "when the user successfully chooses the master" do
-      before do
-        [:worker, :master].each do |role|
-          allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(role)
-            .and_return(role)
-        end
-        allow(salt).to receive(:orchestrate)
-      end
-
       it "sets the master" do
-        post :bootstrap, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
+        post :set_roles, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
         expect(Minion.first.role).to eq "master"
       end
 
       it "sets the other roles to minions" do
-        post :bootstrap, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
+        post :set_roles, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
         expect(Minion.where("fqdn REGEXP ?", "worker*").map(&:role).uniq).to eq ["worker"]
       end
 
-      it "calls the orchestration" do
-        post :bootstrap, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
-        expect(salt).to have_received(:orchestrate)
-      end
-
-      it "gets redirected to the list of nodes" do
-        post :bootstrap, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
-        expect(response.redirect_url).to eq "http://test.host/"
+      it "gets redirected to the bootstrap page" do
+        post :set_roles, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
+        expect(response.redirect_url).to eq setup_bootstrap_url
         expect(response.status).to eq 302
       end
     end
 
     context "when the user fails to choose the master" do
       before do
-        [:worker, :master].each do |role|
-          allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(role)
-            .and_return(false)
-        end
-        allow(salt).to receive(:orchestrate)
+        allow_any_instance_of(Minion).to receive(:assign_role).with(:master, remote: false)
+          .and_return(false)
+        allow_any_instance_of(Minion).to receive(:assign_role).with(:worker, remote: false)
+          .and_return(true)
       end
 
       it "gets redirected to the discovery page" do
-        post :bootstrap, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
+        post :set_roles, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
         expect(flash[:error]).to be_present
-        expect(response.redirect_url).to eq "http://test.host/setup/discovery"
-      end
-
-      it "doesn't call the orchestration" do
-        post :bootstrap, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
-        expect(Velum::Salt).to have_received(:orchestrate).exactly(0).times
+        expect(response.redirect_url).to eq setup_discovery_url
       end
     end
 
     context "when the user bootstraps without selecting a master" do
       before do
         sign_in user
+        Pillar.create pillar: "dashboard", value: "localhost"
       end
 
-      it "warns and redirects to the setup_discovery_path" do
-        put :bootstrap, settings: {}
+      it "warns and redirects to the setup" do
+        post :set_roles, roles: {}
         expect(flash[:alert]).to be_present
-        expect(response.redirect_url).to eq "http://test.host/setup/discovery"
-      end
-    end
-  end
-
-  describe "POST /setup/bootstrap via JSON" do
-    let(:salt) { Velum::Salt }
-    before do
-      sign_in user
-      Minion.create! [{ minion_id: SecureRandom.hex, fqdn: "master" },
-                      { minion_id: SecureRandom.hex, fqdn: "worker0" }]
-      request.accept = "application/json"
-    end
-
-    context "when the minion doesn't exist" do
-      it "renders an error with not_found" do
-        post :bootstrap, roles: { master: [9999999] }
-        expect(response).to have_http_status(:not_found)
-      end
-    end
-
-    context "when the user successfully chooses the master" do
-      before do
-        [:worker, :master].each do |role|
-          allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(role)
-            .and_return(role)
-        end
-        allow(salt).to receive(:orchestrate)
-      end
-
-      it "sets the master" do
-        post :bootstrap, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
-        expect(Minion.first.role).to eq "master"
-      end
-
-      it "sets the other roles to minions" do
-        post :bootstrap, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
-        expect(Minion.where("fqdn REGEXP ?", "worker*").map(&:role).uniq).to eq ["worker"]
-      end
-
-      it "calls the orchestration" do
-        post :bootstrap, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
-        expect(salt).to have_received(:orchestrate)
-      end
-    end
-
-    context "when the user fails to choose the master" do
-      before do
-        [:worker, :master].each do |role|
-          allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).with(role)
-            .and_return(false)
-        end
-        allow(salt).to receive(:orchestrate)
-      end
-
-      it "returns unprocessable entity" do
-        post :bootstrap, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
-        expect(response).to have_http_status(:unprocessable_entity)
-      end
-
-      it "doesn't call the orchestration" do
-        post :bootstrap, roles: { master: [Minion.first.id], worker: Minion.all[1..-1].map(&:id) }
-        expect(Velum::Salt).to have_received(:orchestrate).exactly(0).times
-      end
-    end
-
-    context "when the user bootstraps without selecting a master" do
-      before do
-        sign_in user
-      end
-
-      it "warns and redirects to the setup_discovery_path" do
-        put :bootstrap, settings: {}
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.redirect_url).to eq setup_discovery_url
       end
     end
   end
@@ -215,13 +116,14 @@ RSpec.describe SetupController, type: :controller do
 
       it "gets redirected to the setup_worker_bootstrap_path" do
         put :configure, settings: settings_params
-        expect(response.redirect_url).to eq "http://test.host/setup/worker-bootstrap"
+        expect(response.redirect_url).to eq setup_worker_bootstrap_url
         expect(response.status).to eq 302
       end
     end
 
     context "when the user fails to configure the cluster" do
       before do
+        setup_done apiserver: false
         sign_in user
         allow_any_instance_of(Pillar).to receive(:save).and_return(false)
       end
@@ -229,7 +131,7 @@ RSpec.describe SetupController, type: :controller do
       it "gets redirected to the setup_worker_bootstrap_path with an error" do
         put :configure, settings: settings_params
         expect(flash[:alert]).to be_present
-        expect(response.redirect_url).to eq "http://test.host/setup"
+        expect(response.redirect_url).to eq setup_url
       end
     end
 
@@ -288,47 +190,7 @@ RSpec.describe SetupController, type: :controller do
       it "warns and redirects to the setup_path" do
         put :configure, settings: Hash[settings_params.map { |k, _| [k, ""] }]
         expect(flash[:alert]).to be_present
-        expect(response.redirect_url).to eq "http://test.host/setup"
-      end
-    end
-  end
-
-  describe "PUT /setup via JSON" do
-    context "when the user configures the cluster successfully" do
-      before do
-        sign_in user
-        allow_any_instance_of(Pillar).to receive(:save).and_return(true)
-        request.accept = "application/json"
-      end
-
-      it "returns with 200" do
-        put :configure, settings: settings_params
-        expect(response).to have_http_status(:ok)
-      end
-    end
-
-    context "when the user fails to configure the cluster" do
-      before do
-        sign_in user
-        allow_any_instance_of(Pillar).to receive(:save).and_return(false)
-        request.accept = "application/json"
-      end
-
-      it "returns unprocessable entity" do
-        put :configure, settings: settings_params
-        expect(response).to have_http_status(:unprocessable_entity)
-      end
-    end
-
-    context "when the user doesn't specify any values" do
-      before do
-        sign_in user
-        request.accept = "application/json"
-      end
-
-      it "returns unprocessable entity" do
-        put :configure, settings: Hash[settings_params.map { |k, _| [k, ""] }]
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.redirect_url).to eq setup_url
       end
     end
   end
@@ -344,6 +206,67 @@ RSpec.describe SetupController, type: :controller do
     it "shows the minions" do
       get :discovery
       expect(response.status).to eq 200
+    end
+  end
+
+  describe "POST /setup/bootstrap" do
+    before do
+      sign_in user
+      allow(Velum::Salt).to receive(:orchestrate)
+      Minion.create! [{ minion_id: SecureRandom.hex, fqdn: "master", role: Minion.roles[:master] },
+                      { minion_id: SecureRandom.hex, fqdn: "worker0", role: Minion.roles[:worker] }]
+    end
+
+    let(:settings_params) do
+      {
+        apiserver: "apiserver.example.com"
+      }
+    end
+
+    context "when the pillar fails to save" do
+      before do
+        allow(Pillar).to receive(:apply).and_return(["apiserver could not be saved"])
+      end
+
+      it "redirects to bootstrap path and contains an alert" do
+        post :do_bootstrap, settings: settings_params
+        expect(flash[:alert]).to be_present
+        expect(response.redirect_url).to eq setup_bootstrap_url
+      end
+
+      it "does not call the orchestration" do
+        post :do_bootstrap, settings: settings_params
+        expect(Velum::Salt).to have_received(:orchestrate).exactly(0).times
+      end
+    end
+
+    context "when assigning roles fails on the remote end" do
+      before do
+        allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).and_return(false)
+      end
+
+      it "redirects to bootstrap path and contains an error" do
+        post :do_bootstrap, settings: settings_params
+        expect(flash[:error]).to be_present
+        expect(response.redirect_url).to eq setup_bootstrap_url
+      end
+
+      it "does not call the orchestration" do
+        post :do_bootstrap, settings: settings_params
+        expect(Velum::Salt).to have_received(:orchestrate).exactly(0).times
+      end
+    end
+
+    context "when assigning roles works on the remote end" do
+      before do
+        allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).and_return(true)
+      end
+
+      it "calls to the orchestration and redirects to the root path" do
+        post :do_bootstrap, settings: settings_params
+        expect(Velum::Salt).to have_received(:orchestrate).exactly(1).times
+        expect(response.redirect_url).to eq root_url
+      end
     end
   end
 end
