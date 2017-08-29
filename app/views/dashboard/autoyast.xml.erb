@@ -93,6 +93,12 @@
       <use>all</use>
       <partitions config:type="list">
         <partition>
+          <mount>/boot/efi</mount>
+          <size>200mb</size>
+          <partition_id config:type="integer">1</partition_id>
+          <filesystem config:type="symbol">vfat</filesystem>
+        </partition>
+        <partition>
           <mount>/</mount>
           <size>30gb</size>
         </partition>
