@@ -51,7 +51,8 @@ class Pillar < ApplicationRecord
         proxy_systemwide: "proxy:systemwide",
         http_proxy:       "proxy:http",
         https_proxy:      "proxy:https",
-        no_proxy:         "proxy:no_proxy"
+        no_proxy:         "proxy:no_proxy",
+        tiller:           "addons:tiller"
       }
     end
 
