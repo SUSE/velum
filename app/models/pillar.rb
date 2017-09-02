@@ -37,8 +37,6 @@ class Pillar < ApplicationRecord
 
   scope :global, -> { where minion_id: nil }
 
-  PROTECTED_PILLARS = [:dashboard, :apiserver].freeze
-
   class << self
     def value(pillar:)
       Pillar.find_by(pillar: all_pillars[pillar]).try(:value)
@@ -65,11 +63,11 @@ class Pillar < ApplicationRecord
 
     # Apply the given pillars into the database. It returns an array with the
     # encountered errors.
-    def apply(pillars, required_pillars: [])
+    def apply(pillars, required_pillars: [], unprotected_pillars: [])
       errors = []
 
       Pillar.all_pillars.each do |key, pillar_key|
-        next if PROTECTED_PILLARS.include?(key) && pillars[key].blank?
+        next if !unprotected_pillars.include?(key) && pillars[key].blank?
         set_pillar key: key, pillar_key: pillar_key, value: pillars[key],
                    required_pillars: required_pillars, errors: errors
       end
