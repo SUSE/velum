@@ -18,7 +18,7 @@ feature "Add unassigned nodes" do
     setup_stubbed_pending_minions!
 
     allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).and_return(true)
-    allow(Velum::Salt).to receive(:orchestrate)
+    allow(Orchestration).to receive(:run)
 
     visit assign_nodes_path
   end

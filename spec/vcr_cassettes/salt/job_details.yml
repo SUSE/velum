@@ -5,7 +5,7 @@ http_interactions:
     uri: https://127.0.0.1:8000/login
     body:
       encoding: UTF-8
-      string: '{"username":"saltapi","password":"saltapi","eauth":"pam"}'
+      string: '{"username":"saltapi","password":"Gcc9oTVbyAN3yU+974m1mS0h0U6CSgnwDV/QiJesjYneg7WRyjbtEey+PvDH1smFjvX5rR7wzDuW","eauth":"pam"}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
@@ -35,29 +35,29 @@ http_interactions:
       Access-Control-Allow-Credentials:
       - 'true'
       Date:
-      - Thu, 26 Jan 2017 12:21:51 GMT
+      - Thu, 07 Sep 2017 15:23:55 GMT
       Access-Control-Allow-Origin:
       - "*"
       X-Auth-Token:
-      - 7afae68fd3b9a44d456cfa464836bb7c78d49e38
+      - ae290a091b2eed1a88f2e9e370baed5c1098a4f3
       Content-Type:
       - application/json
       Set-Cookie:
-      - session_id=7afae68fd3b9a44d456cfa464836bb7c78d49e38; expires=Thu, 26 Jan 2017
-        22:21:51 GMT; Path=/
+      - session_id=ae290a091b2eed1a88f2e9e370baed5c1098a4f3; expires=Fri, 08 Sep 2017
+        01:23:55 GMT; Path=/
     body:
       encoding: UTF-8
       string: '{"return": [{"perms": [".*", "@wheel", "@runner", "@jobs", "@events"],
-        "start": 1485433311.182769, "token": "7afae68fd3b9a44d456cfa464836bb7c78d49e38",
-        "expire": 1485476511.182769, "user": "saltapi", "eauth": "pam"}]}'
-    http_version:
-  recorded_at: Thu, 26 Jan 2017 12:21:51 GMT
+        "start": 1504797835.804358, "token": "ae290a091b2eed1a88f2e9e370baed5c1098a4f3",
+        "expire": 1504841035.804358, "user": "saltapi", "eauth": "pam"}]}'
+    http_version: 
+  recorded_at: Thu, 07 Sep 2017 15:23:55 GMT
 - request:
-    method: post
-    uri: https://127.0.0.1:8000/minions
+    method: get
+    uri: https://127.0.0.1:8000/jobs/20170907082713587615
     body:
-      encoding: UTF-8
-      string: '{"client":"local","tgt":"minion1","fun":"grains.setval","kwarg":{"key":"roles","val":["kube-master","etcd"]}}'
+      encoding: US-ASCII
+      string: ''
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
@@ -70,14 +70,14 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       X-Auth-Token:
-      - 7afae68fd3b9a44d456cfa464836bb7c78d49e38
+      - ae290a091b2eed1a88f2e9e370baed5c1098a4f3
   response:
     status:
-      code: 202
-      message: Accepted
+      code: 200
+      message: OK
     headers:
       Content-Length:
-      - '131'
+      - '587'
       Access-Control-Expose-Headers:
       - GET, POST
       Cache-Control:
@@ -91,18 +91,24 @@ http_interactions:
       Access-Control-Allow-Credentials:
       - 'true'
       Date:
-      - Thu, 26 Jan 2017 12:21:51 GMT
+      - Thu, 07 Sep 2017 15:23:55 GMT
       Access-Control-Allow-Origin:
       - "*"
       Content-Type:
       - application/json
       Set-Cookie:
-      - session_id=7afae68fd3b9a44d456cfa464836bb7c78d49e38; expires=Thu, 26 Jan 2017
-        22:21:51 GMT; Path=/
+      - session_id=ae290a091b2eed1a88f2e9e370baed5c1098a4f3; expires=Fri, 08 Sep 2017
+        01:23:55 GMT; Path=/
     body:
       encoding: UTF-8
-      string: '{"_links": {"jobs": [{"href": "/jobs/20170126122151197077"}]}, "return":
-        [{"jid": "20170126122151197077", "minions": ["minion1"]}]}'
-    http_version:
-  recorded_at: Thu, 26 Jan 2017 12:21:51 GMT
+      string: '{"info": [{"Function": "grains.setval", "jid": "20170907082713587615",
+        "Target": "roles:(admin|kube-(master|minion))", "Target-type": "grain_pcre",
+        "User": "root", "Result": {"admin": {"fun_args": ["bootstrap_complete", true],
+        "jid": "20170907082713587615", "return": {"bootstrap_complete": true}, "retcode":
+        0, "success": true, "cmd": "_return", "_stamp": "2017-09-07T08:27:13.701317",
+        "fun": "grains.setval", "id": "admin", "out": "nested"}}, "StartTime": "2017,
+        Sep 07 08:27:13.587615", "Arguments": ["bootstrap_complete", true]}], "return":
+        [{"admin": {"bootstrap_complete": true}}]}'
+    http_version: 
+  recorded_at: Thu, 07 Sep 2017 15:23:59 GMT
 recorded_with: VCR 3.0.3

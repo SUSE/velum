@@ -78,14 +78,7 @@ module Velum
           req.body = data.to_json unless data.blank?
         end
 
-        # :nocov:
-        opts = case Rails.env
-               when "production", "development"
-                 { use_ssl: true, ca_file: "/etc/pki/ca.crt", ssl_version: :TLSv1, open_timeout: 2 }
-               else
-                 { use_ssl: false, open_timeout: 2 }
-        end
-        # :nocov:
+        opts = { use_ssl: true, ca_file: "/etc/pki/ca.crt", ssl_version: :TLSv1, open_timeout: 2 }
         Net::HTTP.start(uri.hostname, uri.port, opts) { |http| http.request(req) }
       rescue *HTTPExceptions::EXCEPTIONS => e
         raise SaltConnectionException, e

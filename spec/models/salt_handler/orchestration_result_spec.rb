@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 require "rails_helper"
 
-describe SaltHandler::MinionOrchestration do
+describe SaltHandler::OrchestrationResult do
   let(:successful_orchestration_result) do
     event_data = {
-      "fun_args" => [{ "mods" => "orch.kubernetes" },
-                     { "orchestration_jid" => "20170706104527757673" }],
+      "fun_args" => ["orch.kubernetes", { "orchestration_jid" => "20170706104527757673" }],
       "jid"      => "20170706104527757673",
-      "return"   => { "worker1" => {}, "worker2" => {}, "retcode" => 0 },
+      "return"   => { "retcode" => 0 },
       "success"  => true,
       "_stamp"   => "2017-07-06T10:45:54.734096",
       "fun"      => "runner.state.orchestrate",
@@ -21,10 +20,9 @@ describe SaltHandler::MinionOrchestration do
 
   let(:mid_successful_orchestration_result) do
     event_data = {
-      "fun_args" => [{ "mods" => "orch.kubernetes" },
-                     { "orchestration_jid" => "20170706104527757674" }],
-      "jid"      => "20170706104527757674",
-      "return"   => { "worker1" => {}, "worker2" => {}, "retcode" => 1 },
+      "fun_args" => ["orch.kubernetes", { "orchestration_jid" => "20170706104527757673" }],
+      "jid"      => "20170706104527757673",
+      "return"   => { "retcode" => 1 },
       "success"  => true,
       "_stamp"   => "2017-07-06T10:45:54.734096",
       "fun"      => "runner.state.orchestrate",
@@ -32,16 +30,15 @@ describe SaltHandler::MinionOrchestration do
     }.to_json
 
     FactoryGirl.create(:salt_event,
-                       tag:  "salt/run/20170706104527757674/ret",
+                       tag:  "salt/run/20170706104527757673/ret",
                        data: event_data)
   end
 
   let(:failed_orchestration_result) do
     event_data = {
-      "fun_args" => [{ "mods" => "orch.kubernetes" },
-                     { "orchestration_jid" => "20170706104527757675" }],
-      "jid"      => "20170706104527757675",
-      "return"   => { "worker1" => {}, "worker2" => {}, "retcode" => 1 },
+      "fun_args" => ["orch.kubernetes", { "orchestration_jid" => "20170706104527757673" }],
+      "jid"      => "20170706104527757673",
+      "return"   => { "retcode" => 1 },
       "success"  => false,
       "_stamp"   => "2017-07-06T10:45:54.734096",
       "fun"      => "runner.state.orchestrate",
@@ -49,7 +46,7 @@ describe SaltHandler::MinionOrchestration do
     }.to_json
 
     FactoryGirl.create(:salt_event,
-                       tag:  "salt/run/20170706104527757675/ret",
+                       tag:  "salt/run/20170706104527757673/ret",
                        data: event_data)
   end
 
@@ -71,6 +68,8 @@ describe SaltHandler::MinionOrchestration do
     before do
       pending_minion
       applied_minion
+      FactoryGirl.create(:orchestration,
+                         jid: "20170706104527757673")
     end
 
     describe "with a successful orchestration result" do

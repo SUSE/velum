@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: http://127.0.0.1:8000/login
+    uri: https://127.0.0.1:8000/login
     body:
       encoding: UTF-8
       string: ''
@@ -20,7 +20,7 @@ http_interactions:
   recorded_at: Mon, 23 Jan 2017 10:06:19 GMT
 - request:
     method: post
-    uri: http://127.0.0.1:8000/
+    uri: https://127.0.0.1:8000/
     body:
       encoding: UTF-8
       string: ''

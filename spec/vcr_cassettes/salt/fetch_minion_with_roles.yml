@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: http://127.0.0.1:8000/login
+    uri: https://127.0.0.1:8000/login
     body:
       encoding: UTF-8
       string: '{"username":"saltapi","password":"saltapi","eauth":"pam"}'
@@ -54,7 +54,7 @@ http_interactions:
   recorded_at: Thu, 26 Jan 2017 12:14:44 GMT
 - request:
     method: get
-    uri: http://127.0.0.1:8000/minions/minion1
+    uri: https://127.0.0.1:8000/minions/minion1
     body:
       encoding: US-ASCII
       string: ''

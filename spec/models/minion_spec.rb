@@ -4,16 +4,16 @@ require "rails_helper"
 describe Minion do
   it { is_expected.to validate_uniqueness_of(:minion_id) }
 
+  let(:minions) do
+    described_class.create! [
+      { minion_id: SecureRandom.hex, fqdn: "master.example.com" },
+      { minion_id: SecureRandom.hex, fqdn: "worker0.example.com" },
+      { minion_id: SecureRandom.hex, fqdn: "worker1.example.com" }
+    ]
+  end
+
   # rubocop:disable RSpec/ExampleLength
   describe ".assign_roles" do
-    let(:minions) do
-      described_class.create! [
-        { minion_id: SecureRandom.hex, fqdn: "master.example.com" },
-        { minion_id: SecureRandom.hex, fqdn: "worker0.example.com" },
-        { minion_id: SecureRandom.hex, fqdn: "worker1.example.com" }
-      ]
-    end
-
     context "when a master role cannot be assigned remotely" do
       before do
         minions
@@ -256,4 +256,29 @@ describe Minion do
     end
   end
   # rubocop:enable RSpec/ExampleLength
+
+  describe "#mark_pending_update" do
+    before do
+      minions
+      described_class.first.assign_role :master, remote: false
+      described_class.all[1..-1].each { |minion| minion.assign_role :worker, remote: false }
+      # rubocop:disable Rails/SkipsModelValidations
+      described_class.update_all highstate: described_class.highstates[:applied]
+      # rubocop:enable Rails/SkipsModelValidations
+      setup_stubbed_update_status! stubbed: [[described_class.first.minion_id  => true,
+                                              described_class.second.minion_id => true,
+                                              described_class.third.minion_id  => ""],
+                                             [described_class.first.minion_id  => "",
+                                              described_class.second.minion_id => "",
+                                              described_class.third.minion_id  => true]]
+    end
+
+    context "when and update is needed" do
+      it "sets the highstate of the upgradable minions as pending" do
+        expect { described_class.mark_pending_update }.to change {
+          described_class.applied.count
+        }.from(3).to(1)
+      end
+    end
+  end
 end

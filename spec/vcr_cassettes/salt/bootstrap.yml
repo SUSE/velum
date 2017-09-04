@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: http://127.0.0.1:8000/login
+    uri: https://127.0.0.1:8000/login
     body:
       encoding: UTF-8
       string: '{"username":"saltapi","password":"saltapi","eauth":"pam"}'
@@ -54,7 +54,7 @@ http_interactions:
   recorded_at: Thu, 26 Jan 2017 12:34:22 GMT
 - request:
     method: get
-    uri: http://127.0.0.1:8000/minions/master
+    uri: https://127.0.0.1:8000/minions/master
     body:
       encoding: US-ASCII
       string: ''
@@ -153,7 +153,7 @@ http_interactions:
   recorded_at: Thu, 26 Jan 2017 12:34:23 GMT
 - request:
     method: post
-    uri: http://127.0.0.1:8000/minions
+    uri: https://127.0.0.1:8000/minions
     body:
       encoding: UTF-8
       string: '{"client":"local","tgt":"master","fun":"grains.setval","kwarg":{"key":"roles","val":["kube-master","etcd"]}}'
@@ -206,7 +206,7 @@ http_interactions:
   recorded_at: Thu, 26 Jan 2017 12:34:23 GMT
 - request:
     method: get
-    uri: http://127.0.0.1:8000/minions/minion0
+    uri: https://127.0.0.1:8000/minions/minion0
     body:
       encoding: US-ASCII
       string: ''
@@ -306,7 +306,7 @@ http_interactions:
   recorded_at: Thu, 26 Jan 2017 12:34:23 GMT
 - request:
     method: post
-    uri: http://127.0.0.1:8000/minions
+    uri: https://127.0.0.1:8000/minions
     body:
       encoding: UTF-8
       string: '{"client":"local","tgt":"minion0","fun":"grains.setval","kwarg":{"key":"roles","val":["kube-minion"]}}'
@@ -359,7 +359,7 @@ http_interactions:
   recorded_at: Thu, 26 Jan 2017 12:34:23 GMT
 - request:
     method: post
-    uri: http://127.0.0.1:8000/run
+    uri: https://127.0.0.1:8000/run
     body:
       encoding: UTF-8
       string: '{"client":"runner_async","fun":"state.orchestrate","kwargs":{"mods":"orch.kubernetes"},"username":"saltapi","password":"saltapi","eauth":"pam"}'
@@ -404,7 +404,7 @@ http_interactions:
   recorded_at: Thu, 26 Jan 2017 12:34:23 GMT
 - request:
     method: post
-    uri: http://127.0.0.1:8000/login
+    uri: https://127.0.0.1:8000/login
     body:
       encoding: UTF-8
       string: '{"username":"saltapi","password":"saltapi","eauth":"pam"}'

@@ -153,6 +153,7 @@ MinionPoller = {
         $('.discovery-empty-panel').toggleClass('hide', allMinions.length > 0);
 
         MinionPoller.handleAdminUpdate(data.admin || {}, hasPendingStateNode);
+        MinionPoller.handleRetryableBootstrapOrchestration(data.retryable_bootstrap_orchestration);
 
         handleBootstrapErrors();
 
@@ -240,6 +241,14 @@ MinionPoller = {
       default:
         $notification.addClass('hidden');
         break;
+    }
+  },
+
+  handleRetryableBootstrapOrchestration: function(retryableBootstrapOrchestration) {
+    if (retryableBootstrapOrchestration) {
+      $('#retry-cluster-bootstrap').removeClass('hidden');
+    } else {
+      $('#retry-cluster-bootstrap').addClass('hidden');
     }
   },
 

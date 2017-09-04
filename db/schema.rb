@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171027115228) do
+ActiveRecord::Schema.define(version: 20171117145421) do
 
   create_table "jids", id: false, force: :cascade do |t|
     t.string "jid",  limit: 255,      null: false
@@ -31,6 +31,19 @@ ActiveRecord::Schema.define(version: 20171027115228) do
 
   add_index "minions", ["fqdn"], name: "index_minions_on_fqdn", using: :btree
   add_index "minions", ["minion_id"], name: "index_minions_on_minion_id", unique: true, using: :btree
+
+  create_table "orchestrations", force: :cascade do |t|
+    t.string   "jid",         limit: 255
+    t.integer  "kind",        limit: 4
+    t.integer  "status",      limit: 4,   default: 0
+    t.datetime "started_at"
+    t.datetime "finished_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "orchestrations", ["jid"], name: "index_orchestrations_on_jid", using: :btree
+  add_index "orchestrations", ["kind", "status"], name: "index_orchestrations_on_kind_and_status", using: :btree
 
   create_table "pillars", force: :cascade do |t|
     t.string   "minion_id",  limit: 255

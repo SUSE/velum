@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: http://127.0.0.1:8000/login
+    uri: https://127.0.0.1:8000/login
     body:
       encoding: UTF-8
       string: '{"username":"saltapi","password":"saltapi","eauth":"pam"}'
@@ -54,7 +54,7 @@ http_interactions:
   recorded_at: Mon, 12 Jun 2017 07:48:13 GMT
 - request:
     method: post
-    uri: http://127.0.0.1:8000/
+    uri: https://127.0.0.1:8000/
     body:
       encoding: UTF-8
       string: '{"tgt":"*","fun":"grains.get","expr_form":"glob","client":"local","arg":"tx_update_reboot_needed"}'
@@ -106,7 +106,7 @@ http_interactions:
   recorded_at: Mon, 12 Jun 2017 07:48:14 GMT
 - request:
     method: post
-    uri: http://127.0.0.1:8000/login
+    uri: https://127.0.0.1:8000/login
     body:
       encoding: UTF-8
       string: '{"username":"saltapi","password":"saltapi","eauth":"pam"}'
@@ -158,7 +158,7 @@ http_interactions:
   recorded_at: Mon, 12 Jun 2017 07:48:14 GMT
 - request:
     method: post
-    uri: http://127.0.0.1:8000/
+    uri: https://127.0.0.1:8000/
     body:
       encoding: UTF-8
       string: '{"tgt":"*","fun":"grains.get","expr_form":"glob","client":"local","arg":"tx_update_failed"}'

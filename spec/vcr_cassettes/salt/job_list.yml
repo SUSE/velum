@@ -1,0 +1,367 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://127.0.0.1:8000/login
+    body:
+      encoding: UTF-8
+      string: '{"username":"saltapi","password":"Gcc9oTVbyAN3yU+974m1mS0h0U6CSgnwDV/QiJesjYneg7WRyjbtEey+PvDH1smFjvX5rR7wzDuW","eauth":"pam"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '215'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Thu, 07 Sep 2017 14:21:25 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Auth-Token:
+      - 8a5aabbf6a08426b21781b49c10c76d33ebc6815
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=8a5aabbf6a08426b21781b49c10c76d33ebc6815; expires=Fri, 08 Sep 2017
+        00:21:25 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"perms": [".*", "@wheel", "@runner", "@jobs", "@events"],
+        "start": 1504794085.79417, "token": "8a5aabbf6a08426b21781b49c10c76d33ebc6815",
+        "expire": 1504837285.79417, "user": "saltapi", "eauth": "pam"}]}'
+    http_version: 
+  recorded_at: Thu, 07 Sep 2017 14:21:25 GMT
+- request:
+    method: get
+    uri: https://127.0.0.1:8000/jobs
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Auth-Token:
+      - 8a5aabbf6a08426b21781b49c10c76d33ebc6815
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '21675'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Cache-Control:
+      - private
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Thu, 07 Sep 2017 14:21:25 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=8a5aabbf6a08426b21781b49c10c76d33ebc6815; expires=Fri, 08 Sep 2017
+        00:21:25 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"20170907091236309613": {"Function": "event.fire", "Target":
+        "admin", "Target-type": "glob", "Arguments": [{"force_refresh": true, "_stamp":
+        "2017-09-07T09:12:36.247305"}, "grains_refresh"], "StartTime": "2017, Sep
+        07 09:12:36.309613", "User": "root"}, "20170907121234431128": {"Function":
+        "event.fire", "Target": "ca", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T12:12:34.361824"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 12:12:34.431128", "User": "root"}, "20170907114234425501": {"Function":
+        "event.fire", "Target": "ca", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T11:42:34.362832"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 11:42:34.425501", "User": "root"}, "20170907105236326027": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T10:52:36.249945"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 10:52:36.326027", "User": "root"}, "20170907123236315780": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T12:32:36.251828"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 12:32:36.315780", "User": "root"}, "20170907131236324648": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T13:12:36.263322"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 13:12:36.324648", "User": "root"}, "20170907130234455850": {"Function":
+        "event.fire", "Target": "ca", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T13:02:34.366124"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 13:02:34.455850", "User": "root"}, "20170907083236315541": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T08:32:36.248283"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 08:32:36.315541", "User": "root"}, "20170907113236307818": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T11:32:36.248082"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 11:32:36.307818", "User": "root"}, "20170907094234437893": {"Function":
+        "event.fire", "Target": "ca", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T09:42:34.377308"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 09:42:34.437893", "User": "root"}, "20170907082706611767": {"Function":
+        "mine.update", "Target": "*", "Target-type": "glob", "Arguments": [], "StartTime":
+        "2017, Sep 07 08:27:06.611767", "User": "root"}, "20170907140236328989": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T14:02:36.250161"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 14:02:36.328989", "User": "root"}, "20170907082236349084": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T08:22:36.249479"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 08:22:36.349084", "User": "root"}, "20170907112236328463": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T11:22:36.259023"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 11:22:36.328463", "User": "root"}, "20170907090234496458": {"Function":
+        "event.fire", "Target": "ca", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T09:02:34.378864"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 09:02:34.496458", "User": "root"}, "20170907084234425104": {"Function":
+        "event.fire", "Target": "ca", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T08:42:34.359028"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 08:42:34.425104", "User": "root"}, "20170907131234429339": {"Function":
+        "event.fire", "Target": "ca", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T13:12:34.362463"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 13:12:34.429339", "User": "root"}, "20170907104234424634": {"Function":
+        "event.fire", "Target": "ca", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T10:42:34.358570"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 10:42:34.424634", "User": "root"}, "20170907082705480200": {"Function":
+        "saltutil.refresh_grains", "Target": "*", "Target-type": "glob", "Arguments":
+        [], "StartTime": "2017, Sep 07 08:27:05.480200", "User": "root"}, "20170907081234463938":
+        {"Function": "event.fire", "Target": "ca", "Target-type": "glob", "Arguments":
+        [{"force_refresh": true, "_stamp": "2017-09-07T08:12:34.374685"}, "grains_refresh"],
+        "StartTime": "2017, Sep 07 08:12:34.463938", "User": "root"}, "20170907124234432106":
+        {"Function": "event.fire", "Target": "ca", "Target-type": "glob", "Arguments":
+        [{"force_refresh": true, "_stamp": "2017-09-07T12:42:34.367162"}, "grains_refresh"],
+        "StartTime": "2017, Sep 07 12:42:34.432106", "User": "root"}, "20170907140234460263":
+        {"Function": "event.fire", "Target": "ca", "Target-type": "glob", "Arguments":
+        [{"force_refresh": true, "_stamp": "2017-09-07T14:02:34.365111"}, "grains_refresh"],
+        "StartTime": "2017, Sep 07 14:02:34.460263", "User": "root"}, "20170907122234463013":
+        {"Function": "event.fire", "Target": "ca", "Target-type": "glob", "Arguments":
+        [{"force_refresh": true, "_stamp": "2017-09-07T12:22:34.366460"}, "grains_refresh"],
+        "StartTime": "2017, Sep 07 12:22:34.463013", "User": "root"}, "20170907082704089723":
+        {"Function": "state.sls", "Target": "roles:(admin|kube-(master|minion))",
+        "Target-type": "grain_pcre", "Arguments": ["hostname", {"queue": false, "concurrent":
+        false, "saltenv": "base", "__kwarg__": true}], "StartTime": "2017, Sep 07
+        08:27:04.089723", "User": "root"}, "20170907102236305602": {"Function": "event.fire",
+        "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T10:22:36.249085"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 10:22:36.305602", "User": "root"}, "20170907120234462915": {"Function":
+        "event.fire", "Target": "ca", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T12:02:34.375111"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 12:02:34.462915", "User": "root"}, "20170907135234441118": {"Function":
+        "event.fire", "Target": "ca", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T13:52:34.370817"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 13:52:34.441118", "User": "root"}, "20170907102234422874": {"Function":
+        "event.fire", "Target": "ca", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T10:22:34.361385"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 10:22:34.422874", "User": "root"}, "20170907100234464239": {"Function":
+        "event.fire", "Target": "ca", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T10:02:34.374749"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 10:02:34.464239", "User": "root"}, "20170907082704400422": {"Function":
+        "saltutil.refresh_pillar", "Target": "*", "Target-type": "glob", "Arguments":
+        [], "StartTime": "2017, Sep 07 08:27:04.400422", "User": "root"}, "20170907101234436412":
+        {"Function": "event.fire", "Target": "ca", "Target-type": "glob", "Arguments":
+        [{"force_refresh": true, "_stamp": "2017-09-07T10:12:34.365265"}, "grains_refresh"],
+        "StartTime": "2017, Sep 07 10:12:34.436412", "User": "root"}, "20170907110236337602":
+        {"Function": "event.fire", "Target": "admin", "Target-type": "glob", "Arguments":
+        [{"force_refresh": true, "_stamp": "2017-09-07T11:02:36.257410"}, "grains_refresh"],
+        "StartTime": "2017, Sep 07 11:02:36.337602", "User": "root"}, "20170907100236341374":
+        {"Function": "event.fire", "Target": "admin", "Target-type": "glob", "Arguments":
+        [{"force_refresh": true, "_stamp": "2017-09-07T10:02:36.265377"}, "grains_refresh"],
+        "StartTime": "2017, Sep 07 10:02:36.341374", "User": "root"}, "20170907085234438607":
+        {"Function": "event.fire", "Target": "ca", "Target-type": "glob", "Arguments":
+        [{"force_refresh": true, "_stamp": "2017-09-07T08:52:34.367640"}, "grains_refresh"],
+        "StartTime": "2017, Sep 07 08:52:34.438607", "User": "root"}, "20170907123234429573":
+        {"Function": "event.fire", "Target": "ca", "Target-type": "glob", "Arguments":
+        [{"force_refresh": true, "_stamp": "2017-09-07T12:32:34.362902"}, "grains_refresh"],
+        "StartTime": "2017, Sep 07 12:32:34.429573", "User": "root"}, "20170907082708177849":
+        {"Function": "saltutil.sync_all", "Target": "*", "Target-type": "glob", "Arguments":
+        [{"refresh": true, "__kwarg__": true}], "StartTime": "2017, Sep 07 08:27:08.177849",
+        "User": "root"}, "20170907105234432173": {"Function": "event.fire", "Target":
+        "ca", "Target-type": "glob", "Arguments": [{"force_refresh": true, "_stamp":
+        "2017-09-07T10:52:34.364303"}, "grains_refresh"], "StartTime": "2017, Sep
+        07 10:52:34.432173", "User": "root"}, "20170907134236335686": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T13:42:36.251594"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 13:42:36.335686", "User": "root"}, "20170907080234798572": {"Function":
+        "event.fire", "Target": "ca", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T08:02:34.427954"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 08:02:34.798572", "User": "root"}, "20170907133236333553": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T13:32:36.264490"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 13:32:36.333553", "User": "root"}, "20170907104236309718": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T10:42:36.248891"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 10:42:36.309718", "User": "root"}, "20170907092236339830": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T09:22:36.262645"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 09:22:36.339830", "User": "root"}, "20170907121236319232": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T12:12:36.256558"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 12:12:36.319232", "User": "root"}, "20170907133234444174": {"Function":
+        "event.fire", "Target": "ca", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T13:32:34.366107"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 13:32:34.444174", "User": "root"}, "20170907081236321431": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T08:12:36.246961"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 08:12:36.321431", "User": "root"}, "20170907110234447806": {"Function":
+        "event.fire", "Target": "ca", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T11:02:34.360496"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 11:02:34.447806", "User": "root"}, "20170907082703684624": {"Function":
+        "state.sls", "Target": "roles:(admin|kube-(master|minion))", "Target-type":
+        "grain_pcre", "Arguments": ["rebootmgr", {"queue": false, "concurrent": false,
+        "saltenv": "base", "__kwarg__": true}], "StartTime": "2017, Sep 07 08:27:03.684624",
+        "User": "root"}, "20170907085236318551": {"Function": "event.fire", "Target":
+        "admin", "Target-type": "glob", "Arguments": [{"force_refresh": true, "_stamp":
+        "2017-09-07T08:52:36.251707"}, "grains_refresh"], "StartTime": "2017, Sep
+        07 08:52:36.318551", "User": "root"}, "20170907141236308822": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T14:12:36.253122"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 14:12:36.308822", "User": "root"}, "20170907101236307520": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T10:12:36.248734"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 10:12:36.307520", "User": "root"}, "20170907111236323592": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T11:12:36.261773"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 11:12:36.323592", "User": "root"}, "20170907134234422601": {"Function":
+        "event.fire", "Target": "ca", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T13:42:34.360892"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 13:42:34.422601", "User": "root"}, "20170907120236367965": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T12:02:36.256308"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 12:02:36.367965", "User": "root"}, "20170907082234441039": {"Function":
+        "event.fire", "Target": "ca", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T08:22:34.359098"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 08:22:34.441039", "User": "root"}, "20170907082710201008": {"Function":
+        "state.highstate", "Target": "roles:ca", "Target-type": "grain", "Arguments":
+        [{"queue": false, "concurrent": false, "saltenv": "base", "__kwarg__": true}],
+        "StartTime": "2017, Sep 07 08:27:10.201008", "User": "root"}, "20170907093236306971":
+        {"Function": "event.fire", "Target": "admin", "Target-type": "glob", "Arguments":
+        [{"force_refresh": true, "_stamp": "2017-09-07T09:32:36.245676"}, "grains_refresh"],
+        "StartTime": "2017, Sep 07 09:32:36.306971", "User": "root"}, "20170907125234424025":
+        {"Function": "event.fire", "Target": "ca", "Target-type": "glob", "Arguments":
+        [{"force_refresh": true, "_stamp": "2017-09-07T12:52:34.360615"}, "grains_refresh"],
+        "StartTime": "2017, Sep 07 12:52:34.424025", "User": "root"}, "20170907111234426949":
+        {"Function": "event.fire", "Target": "ca", "Target-type": "glob", "Arguments":
+        [{"force_refresh": true, "_stamp": "2017-09-07T11:12:34.363717"}, "grains_refresh"],
+        "StartTime": "2017, Sep 07 11:12:34.426949", "User": "root"}, "20170907115236324901":
+        {"Function": "event.fire", "Target": "admin", "Target-type": "glob", "Arguments":
+        [{"force_refresh": true, "_stamp": "2017-09-07T11:52:36.266037"}, "grains_refresh"],
+        "StartTime": "2017, Sep 07 11:52:36.324901", "User": "root"}, "20170907082713587615":
+        {"Function": "grains.setval", "Target": "roles:(admin|kube-(master|minion))",
+        "Target-type": "grain_pcre", "Arguments": ["bootstrap_complete", true], "StartTime":
+        "2017, Sep 07 08:27:13.587615", "User": "root"}, "20170907135236310063": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T13:52:36.253208"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 13:52:36.310063", "User": "root"}, "20170907090236327219": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T09:02:36.247450"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 09:02:36.327219", "User": "root"}, "20170907114236326916": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T11:42:36.259364"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 11:42:36.326916", "User": "root"}, "20170907091234428071": {"Function":
+        "event.fire", "Target": "ca", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T09:12:34.359351"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 09:12:34.428071", "User": "root"}, "20170907113234423223": {"Function":
+        "event.fire", "Target": "ca", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T11:32:34.360590"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 11:32:34.423223", "User": "root"}, "20170907132234440493": {"Function":
+        "event.fire", "Target": "ca", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T13:22:34.374792"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 13:22:34.440493", "User": "root"}, "20170907130236363228": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T13:02:36.254283"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 13:02:36.363228", "User": "root"}, "20170907082709062474": {"Function":
+        "state.sls", "Target": "roles:(admin|kube-(master|minion))", "Target-type":
+        "grain_pcre", "Arguments": ["etc-hosts", {"queue": false, "concurrent": false,
+        "saltenv": "base", "__kwarg__": true}], "StartTime": "2017, Sep 07 08:27:09.062474",
+        "User": "root"}, "20170907132236316735": {"Function": "event.fire", "Target":
+        "admin", "Target-type": "glob", "Arguments": [{"force_refresh": true, "_stamp":
+        "2017-09-07T13:22:36.254414"}, "grains_refresh"], "StartTime": "2017, Sep
+        07 13:22:36.316735", "User": "root"}, "20170907093234440898": {"Function":
+        "event.fire", "Target": "ca", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T09:32:34.377643"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 09:32:34.440898", "User": "root"}, "20170907125236332764": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T12:52:36.249882"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 12:52:36.332764", "User": "root"}, "20170907084236311378": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T08:42:36.247345"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 08:42:36.311378", "User": "root"}, "20170907083234429222": {"Function":
+        "event.fire", "Target": "ca", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T08:32:34.357416"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 08:32:34.429222", "User": "root"}, "20170907122236330771": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T12:22:36.264693"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 12:22:36.330771", "User": "root"}, "20170907095236344015": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T09:52:36.248637"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 09:52:36.344015", "User": "root"}, "20170907103234429477": {"Function":
+        "event.fire", "Target": "ca", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T10:32:34.362735"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 10:32:34.429477", "User": "root"}, "20170907103236319643": {"Function":
+        "event.fire", "Target": "admin", "Target-type": "glob", "Arguments": [{"force_refresh":
+        true, "_stamp": "2017-09-07T10:32:36.255834"}, "grains_refresh"], "StartTime":
+        "2017, Sep 07 10:32:36.319643", "User": "root"}, "20170907082712084635": {"Function":
+        "test.ping", "Target": "roles:admin", "Target-type": "grain", "Arguments":
+        [], "StartTime": "2017, Sep 07 08:27:12.084635", "User": "root"}, "20170907115234441083":
+        {"Function": "event.fire", "Target": "ca", "Target-type": "glob", "Arguments":
+        [{"force_refresh": true, "_stamp": "2017-09-07T11:52:34.378821"}, "grains_refresh"],
+        "StartTime": "2017, Sep 07 11:52:34.441083", "User": "root"}, "20170907141234420761":
+        {"Function": "event.fire", "Target": "ca", "Target-type": "glob", "Arguments":
+        [{"force_refresh": true, "_stamp": "2017-09-07T14:12:34.361836"}, "grains_refresh"],
+        "StartTime": "2017, Sep 07 14:12:34.420761", "User": "root"}, "20170907124236314231":
+        {"Function": "event.fire", "Target": "admin", "Target-type": "glob", "Arguments":
+        [{"force_refresh": true, "_stamp": "2017-09-07T12:42:36.252431"}, "grains_refresh"],
+        "StartTime": "2017, Sep 07 12:42:36.314231", "User": "root"}, "20170907095234448338":
+        {"Function": "event.fire", "Target": "ca", "Target-type": "glob", "Arguments":
+        [{"force_refresh": true, "_stamp": "2017-09-07T09:52:34.358631"}, "grains_refresh"],
+        "StartTime": "2017, Sep 07 09:52:34.448338", "User": "root"}, "20170907080236487124":
+        {"Function": "event.fire", "Target": "admin", "Target-type": "glob", "Arguments":
+        [{"force_refresh": true, "_stamp": "2017-09-07T08:02:36.274933"}, "grains_refresh"],
+        "StartTime": "2017, Sep 07 08:02:36.487124", "User": "root"}, "20170907094236313385":
+        {"Function": "event.fire", "Target": "admin", "Target-type": "glob", "Arguments":
+        [{"force_refresh": true, "_stamp": "2017-09-07T09:42:36.250922"}, "grains_refresh"],
+        "StartTime": "2017, Sep 07 09:42:36.313385", "User": "root"}, "20170907082712291331":
+        {"Function": "state.highstate", "Target": ["admin"], "Target-type": "list",
+        "Arguments": [{"queue": false, "concurrent": false, "saltenv": "base", "__kwarg__":
+        true}], "StartTime": "2017, Sep 07 08:27:12.291331", "User": "root"}, "20170907092234463609":
+        {"Function": "event.fire", "Target": "ca", "Target-type": "glob", "Arguments":
+        [{"force_refresh": true, "_stamp": "2017-09-07T09:22:34.372314"}, "grains_refresh"],
+        "StartTime": "2017, Sep 07 09:22:34.463609", "User": "root"}, "20170907112234436560":
+        {"Function": "event.fire", "Target": "ca", "Target-type": "glob", "Arguments":
+        [{"force_refresh": true, "_stamp": "2017-09-07T11:22:34.365103"}, "grains_refresh"],
+        "StartTime": "2017, Sep 07 11:22:34.436560", "User": "root"}}]}'
+    http_version: 
+  recorded_at: Thu, 07 Sep 2017 14:21:29 GMT
+recorded_with: VCR 3.0.3

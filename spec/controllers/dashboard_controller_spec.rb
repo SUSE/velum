@@ -20,7 +20,7 @@ RSpec.describe DashboardController, type: :controller do
     # rubocop:disable RSpec/AnyInstance
     allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).and_return(true)
     # rubocop:enable RSpec/AnyInstance
-    allow(Velum::Salt).to receive(:orchestrate)
+    allow(Orchestration).to receive(:run)
     setup_stubbed_pending_minions!
   end
 
@@ -208,7 +208,6 @@ RSpec.describe DashboardController, type: :controller do
 
   # rubocop:disable RSpec/AnyInstance
   describe "POST /assign_nodes via HTML" do
-    let(:salt) { Velum::Salt }
     before do
       sign_in user
       # creates 2 bootstrapped minions
@@ -230,7 +229,7 @@ RSpec.describe DashboardController, type: :controller do
 
       it "calls the orchestration" do
         post :assign_nodes, roles: { worker: Minion.all[2..-1].map(&:id) }
-        expect(salt).to have_received(:orchestrate)
+        expect(Orchestration).to have_received(:run)
       end
 
       it "gets redirected to the list of nodes" do
@@ -242,7 +241,7 @@ RSpec.describe DashboardController, type: :controller do
 
     context "when nodes were not able to be assigned to its role" do
       before do
-        allow(salt).to receive(:orchestrate)
+        allow(Orchestration).to receive(:run)
         allow_any_instance_of(Minion).to receive(:assign_role).and_return(false)
       end
 
@@ -254,7 +253,7 @@ RSpec.describe DashboardController, type: :controller do
 
       it "doesn't call the orchestration" do
         post :assign_nodes, roles: { worker: Minion.all[1..-1].map(&:id) }
-        expect(Velum::Salt).to have_received(:orchestrate).exactly(0).times
+        expect(Orchestration).to have_received(:run).exactly(0).times
       end
     end
   end

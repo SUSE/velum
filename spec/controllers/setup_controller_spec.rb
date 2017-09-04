@@ -92,7 +92,6 @@ RSpec.describe SetupController, type: :controller do
   end
 
   describe "POST /setup/discovery via HTML" do
-    let(:salt) { Velum::Salt }
     before do
       setup_done apiserver: false
       sign_in user
@@ -252,7 +251,7 @@ RSpec.describe SetupController, type: :controller do
   describe "POST /setup/bootstrap" do
     before do
       sign_in user
-      allow(Velum::Salt).to receive(:orchestrate)
+      allow(Orchestration).to receive(:run)
       Minion.create! [{ minion_id: SecureRandom.hex, fqdn: "master", role: Minion.roles[:master] },
                       { minion_id: SecureRandom.hex, fqdn: "worker0", role: Minion.roles[:worker] }]
     end
@@ -276,7 +275,7 @@ RSpec.describe SetupController, type: :controller do
 
       it "does not call the orchestration" do
         post :do_bootstrap, settings: settings_params
-        expect(Velum::Salt).to have_received(:orchestrate).exactly(0).times
+        expect(Orchestration).to have_received(:run).exactly(0).times
       end
     end
 
@@ -293,7 +292,7 @@ RSpec.describe SetupController, type: :controller do
 
       it "does not call the orchestration" do
         post :do_bootstrap, settings: settings_params
-        expect(Velum::Salt).to have_received(:orchestrate).exactly(0).times
+        expect(Orchestration).to have_received(:run).exactly(0).times
       end
     end
 
@@ -304,7 +303,7 @@ RSpec.describe SetupController, type: :controller do
 
       it "calls to the orchestration and redirects to the root path" do
         post :do_bootstrap, settings: settings_params
-        expect(Velum::Salt).to have_received(:orchestrate).exactly(1).times
+        expect(Orchestration).to have_received(:run).exactly(1).times
         expect(response.redirect_url).to eq root_url
       end
     end

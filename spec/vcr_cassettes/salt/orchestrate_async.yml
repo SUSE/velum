@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: http://127.0.0.1:8000/run
+    uri: https://127.0.0.1:8000/run
     body:
       encoding: UTF-8
       string: '{"client":"runner_async","fun":"state.orchestrate","kwargs":{"mods":"orch.kubernetes"},"username":"saltapi","password":"saltapi","eauth":"pam"}'

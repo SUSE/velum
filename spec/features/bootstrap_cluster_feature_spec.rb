@@ -24,7 +24,7 @@ feature "Bootstrap cluster feature" do
 
     before do
       allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).and_return(true)
-      allow(Velum::Salt).to receive(:orchestrate)
+      allow(Orchestration).to receive(:run)
     end
 
     scenario "A user sees warning modal when trying to bootstrap 2 nodes", js: true do

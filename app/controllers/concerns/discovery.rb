@@ -7,18 +7,20 @@ module Discovery
 
   # Responds with either an HTML or JSON version of the available minions.
   def discovery
-    @assigned_minions   = assigned_with_status
-    @unassigned_minions = Minion.unassigned_role
-    pending_minions     = ::Velum::Salt.pending_minions
+    assigned_minions                  = assigned_with_status
+    unassigned_minions                = Minion.unassigned_role
+    pending_minions                   = ::Velum::Salt.pending_minions
+    retryable_bootstrap_orchestration = Orchestration.retryable?
 
     respond_to do |format|
       format.html
       format.json do
         hsh = {
-          assigned_minions:   @assigned_minions,
-          unassigned_minions: @unassigned_minions,
-          pending_minions:    pending_minions,
-          admin:              admin_status
+          assigned_minions:                  assigned_minions,
+          unassigned_minions:                unassigned_minions,
+          pending_minions:                   pending_minions,
+          admin:                             admin_status,
+          retryable_bootstrap_orchestration: retryable_bootstrap_orchestration
         }
         render json: hsh, methods: [:update_status]
       end

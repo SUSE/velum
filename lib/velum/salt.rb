@@ -59,6 +59,18 @@ module Velum
       JSON.parse(res.body)["return"].first["data"]["return"]["minions"]
     end
 
+    # Returns the list of jobs
+    def self.jobs
+      res = perform_request(endpoint: "/jobs", method: "get")
+      JSON.parse(res.body)["return"]
+    end
+
+    # Returns information about a job
+    def self.job(jid:)
+      res = perform_request(endpoint: "/jobs/#{jid}", method: "get")
+      JSON.parse(res.body)
+    end
+
     # Call the salt orchestration.
     def self.orchestrate
       res = perform_request(endpoint: "/run", method: "post",

@@ -44,6 +44,15 @@ describe Velum::Salt do
     end
   end
 
+  describe "update orchestration" do
+    it "runs the orchestration in async mode" do
+      VCR.use_cassette("salt/update_orchestrate_async", record: :none) do
+        _, hsh = described_class.update_orchestration
+        expect(hsh["return"].count).to eq 1
+      end
+    end
+  end
+
   describe "update_status" do
     it "returns the update status of the given nodes" do
       VCR.use_cassette("salt/update_status", record: :none) do
@@ -51,6 +60,20 @@ describe Velum::Salt do
         # In the VCR both values were set to true, so we can check this in a
         # single 'expect' statement.
         expect(needed.first["admin"] && failed.first["admin"]).to be_truthy
+      end
+    end
+  end
+
+  describe "jobs" do
+    it "returns the list of jobs" do
+      VCR.use_cassette("salt/job_list", record: :none) do
+        expect(described_class.jobs).not_to be_empty
+      end
+    end
+
+    it "shows one job details in particular" do
+      VCR.use_cassette("salt/job_details", record: :none) do
+        expect(described_class.job(jid: "20170907082713587615").keys).to eq ["info", "return"]
       end
     end
   end

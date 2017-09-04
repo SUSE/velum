@@ -11,6 +11,7 @@ RSpec.describe SaltController, type: :controller do
       [{ "admin" => true, master_minion.minion_id => true, worker_minion.minion_id => ""   }]
     ]
   end
+
   before do
     sign_in user
 

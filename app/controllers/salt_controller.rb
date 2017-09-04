@@ -4,8 +4,7 @@ class SaltController < ApplicationController
   skip_before_action :redirect_to_setup
 
   def update
-    Minion.mark_pending_update
-    Velum::Salt.update_orchestration
+    Orchestration.run kind: :upgrade
 
     respond_to do |format|
       format.html { redirect_to root_path }

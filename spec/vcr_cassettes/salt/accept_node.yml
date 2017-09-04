@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: http://127.0.0.1:8000/login
+    uri: https://127.0.0.1:8000/login
     body:
       encoding: UTF-8
       string: '{"username":"saltapi","password":"0COpCmgadWq9/91eNjOaoKOR0giqni+FrAFsgGnnKg/izEOOk1JlP7CHLyhY8b5wr7aog+UeWmr8","eauth":"pam"}'
@@ -50,11 +50,11 @@ http_interactions:
       string: '{"return": [{"perms": [".*", "@wheel", "@runner", "@jobs", "@events"],
         "start": 1498218178.687943, "token": "03fd871e370f40ddb14aedc0acf048a505ce01d3",
         "expire": 1498261378.687944, "user": "saltapi", "eauth": "pam"}]}'
-    http_version: 
+    http_version:
   recorded_at: Fri, 23 Jun 2017 11:42:58 GMT
 - request:
     method: post
-    uri: http://127.0.0.1:8000/
+    uri: https://127.0.0.1:8000/
     body:
       encoding: UTF-8
       string: '{"client":"wheel","fun":"key.accept","match":"81ad05b9d7ae4d26a83c421b64ca1952","tgt":"ca"}'
@@ -105,6 +105,6 @@ http_interactions:
         "20170623114258698842", "return": {"minions": ["81ad05b9d7ae4d26a83c421b64ca1952"]},
         "success": true, "_stamp": "2017-06-23T11:42:58.707968", "tag": "salt/wheel/20170623114258698842",
         "user": "saltapi", "fun": "wheel.key.accept"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Fri, 23 Jun 2017 11:42:58 GMT
 recorded_with: VCR 3.0.3

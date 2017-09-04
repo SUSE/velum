@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: http://127.0.0.1:8000/minions
+    uri: https://127.0.0.1:8000/minions
     body:
       encoding: US-ASCII
       string: ''
@@ -265,11 +265,11 @@ http_interactions:
         [1, 0], "locale_info": {"detectedencoding": "UTF-8", "defaultlanguage": "en_US",
         "defaultencoding": "UTF-8"}, "gpus": [], "path": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
         "machine_id": "91103109314442658dfc2dd3e41bb921", "os": "SUSE"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Fri, 23 Jun 2017 11:47:44 GMT
 - request:
     method: post
-    uri: http://127.0.0.1:8000/login
+    uri: https://127.0.0.1:8000/login
     body:
       encoding: UTF-8
       string: '{"username":"saltapi","password":"0COpCmgadWq9/91eNjOaoKOR0giqni+FrAFsgGnnKg/izEOOk1JlP7CHLyhY8b5wr7aog+UeWmr8","eauth":"pam"}'
@@ -317,11 +317,11 @@ http_interactions:
       string: '{"return": [{"perms": [".*", "@wheel", "@runner", "@jobs", "@events"],
         "start": 1498218483.492372, "token": "27f6a2136e2d1771782f2672805295947a8e25e7",
         "expire": 1498261683.492373, "user": "saltapi", "eauth": "pam"}]}'
-    http_version: 
+    http_version:
   recorded_at: Fri, 23 Jun 2017 11:48:03 GMT
 - request:
     method: post
-    uri: http://127.0.0.1:8000/
+    uri: https://127.0.0.1:8000/
     body:
       encoding: UTF-8
       string: '{"client":"wheel","fun":"key.list","match":"all","tgt":"ca"}'
@@ -375,6 +375,6 @@ http_interactions:
         "81ad05b9d7ae4d26a83c421b64ca1952", "91103109314442658dfc2dd3e41bb921", "ca"]},
         "success": true, "_stamp": "2017-06-23T11:48:03.508614", "tag": "salt/wheel/20170623114803502780",
         "user": "saltapi", "fun": "wheel.key.list"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Fri, 23 Jun 2017 11:48:03 GMT
 recorded_with: VCR 3.0.3

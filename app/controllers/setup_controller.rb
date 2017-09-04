@@ -85,7 +85,7 @@ class SetupController < ApplicationController
       redirect_to setup_bootstrap_path,
                   flash: { error: "Failed to assign #{failed_assigned_nodes(assigned)}" }
     else
-      Velum::Salt.orchestrate
+      Orchestration.run
       redirect_to root_path
     end
   end

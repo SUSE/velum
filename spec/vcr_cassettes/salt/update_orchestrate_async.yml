@@ -5,7 +5,7 @@ http_interactions:
     uri: https://127.0.0.1:8000/run
     body:
       encoding: UTF-8
-      string: '{"client":"runner_async","fun":"state.orchestrate","mods":"orch.update","username":"saltapi","password":"b0ugrUDP3C5KfP3vymLiTlAqWHJF3ExNIMkqVe/V45eOJZSFU8VVK75XX2XTg6IK+jk10jOOsu6o","eauth":"pam"}'
+      string: '{"client":"runner_async","fun":"state.orchestrate","mods":"orch.update","username":"saltapi","password":"Gcc9oTVbyAN3yU+974m1mS0h0U6CSgnwDV/QiJesjYneg7WRyjbtEey+PvDH1smFjvX5rR7wzDuW","eauth":"pam"}'
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
@@ -35,14 +35,14 @@ http_interactions:
       Access-Control-Allow-Credentials:
       - 'true'
       Date:
-      - Tue, 13 Jun 2017 11:44:08 GMT
+      - Thu, 07 Sep 2017 14:47:26 GMT
       Access-Control-Allow-Origin:
       - "*"
       Content-Type:
       - application/json
     body:
       encoding: UTF-8
-      string: '{"return": [{"jid": "20170613114408589568", "tag": "salt/run/20170613114408589568"}]}'
-    http_version:
-  recorded_at: Tue, 13 Jun 2017 11:44:08 GMT
+      string: '{"return": [{"jid": "20170907144726994064", "tag": "salt/run/20170907144726994064"}]}'
+    http_version: 
+  recorded_at: Thu, 07 Sep 2017 14:47:27 GMT
 recorded_with: VCR 3.0.3
