@@ -13,7 +13,7 @@ rvm:
   - ruby-head
 
 env:
-  - RSPEC_FAIL_FAST=false
+  - RSPEC_FAIL_FAST=false LDAP_BIND_PASSWORD=Password1234 LDAP_PORT=3389 LDAP_HOST=localhost
 # Used to get a better understanding of flaky tests. With a fail fast and a flaky test, the test.log
 # file will probably contain relevant information to fix the problem.
 #  - RSPEC_FAIL_FAST=true
@@ -37,6 +37,10 @@ before_install:
   - phantomjs --version
 
 before_script:
+  - mkdir /tmp/slapd
+  - slapd -f travisci-slapd.conf -h ldap://localhost:3389 &
+  - sleep 5
+  - ldapadd -H ldap://localhost:3389 -D cn=admin,dc=infra,dc=caasp,dc=local -w Password1234 -f default.ldif
   - bundle exec rake db:setup
 
 script:
@@ -51,7 +55,9 @@ addons:
   mariadb: '10.0'
   apt:
     packages:
-      libmariadbclient-dev
+    - ldap-utils
+    - slapd
+    - libmariadbclient-dev
 
 after_success:
   - bundle exec codeclimate-test-reporter

@@ -1,0 +1,24 @@
+<%= Rails.env.downcase %>:
+  host: <%= ENV["LDAP_HOST"] || "127.0.0.1" %>
+  port: <%= (ENV["LDAP_PORT"] || "389").to_i %>
+  attribute: <%= ENV["LDAP_MAIL_ATTRIBUTE"] || "mail" %>
+  base: <%= ENV["LDAP_PEOPLE_BASE_DN"] || "ou=People,dc=infra,dc=caasp,dc=local" %>
+  admin_user: <%= ENV["LDAP_BIND_DN"] || "cn=admin,dc=infra,dc=caasp,dc=local" %>
+  # this password exists as a default for Travis CI integration
+  admin_password: <%= ENV["LDAP_BIND_PASSWORD"] || "" %>
+  <% if ENV["LDAP_TLS_METHOD"] %>
+  ssl: <%= ENV["LDAP_TLS_METHOD"] %>
+  <% end %>
+  tree_base: <%= ENV["LDAP_BASE_DN"] || "dc=infra,dc=caasp,dc=local" %>
+
+  allow_unauthenticated_bind: false
+  group_base: <%= ENV["LDAP_GROUP_BASE_DN"] || "ou=Groups,dc=infra,dc=caasp,dc=local" %>
+  ## Requires config.ldap_check_group_membership in devise.rb be true
+  # Can have multiple values, must match all to be authorized
+  required_groups:
+    # If only a group name is given, membership will be checked against "uniqueMember"
+    - <%= ENV["LDAP_ADMIN_GROUP_DN"] || "cn=Administrators,ou=Groups,dc=infra,dc=caasp,dc=local" %>
+  ## Requires config.ldap_check_attributes in devise.rb to be true
+  ## Can have multiple attributes and values, must match all to be authorized
+  require_attribute:
+    objectClass: inetOrgPerson

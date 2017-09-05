@@ -65,7 +65,7 @@ feature "Bootstrap cluster feature" do
       expect(page).not_to have_content(minions[3].fqdn)
     end
 
-    scenario "A user selects a subset of nodes to be bootstraped", js: true do
+    scenario "A user selects a subset of nodes to be bootstrapped", js: true do
       # select master minion0.k8s.local
       find(".minion_#{minions[0].id} .master-btn").click
       # select node minion1.k8s.local
@@ -87,7 +87,7 @@ feature "Bootstrap cluster feature" do
       expect(page).not_to have_content(minions[3].fqdn)
     end
 
-    scenario "A user check all nodes at once to be bootstraped", js: true do
+    scenario "A user check all nodes at once to be bootstrapped", js: true do
       # wait for all minions to be there
       expect(page).to have_content(minions[0].fqdn)
       expect(page).to have_content(minions[1].fqdn)
@@ -111,7 +111,7 @@ feature "Bootstrap cluster feature" do
       expect(page).to have_content(minions[3].fqdn)
     end
 
-    scenario "A user selects a multiple master configuration to be bootstraped", js: true do
+    scenario "A user selects a multiple master configuration to be bootstrapped", js: true do
       # select master minion0.k8s.local
       find(".minion_#{minions[0].id} .master-btn").click
       # select node minion1.k8s.local

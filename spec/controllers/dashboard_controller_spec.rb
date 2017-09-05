@@ -210,7 +210,7 @@ RSpec.describe DashboardController, type: :controller do
     let(:salt) { Velum::Salt }
     before do
       sign_in user
-      # creates 2 bootstraped minion
+      # creates 2 bootstrapped minions
       master_minion && worker_minion
       Minion.create! [{ minion_id: SecureRandom.hex, fqdn: "worker1" },
                       { minion_id: SecureRandom.hex, fqdn: "worker2" }]

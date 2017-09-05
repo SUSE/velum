@@ -1,0 +1,6 @@
+dn: dc=infra,dc=caasp,dc=local
+objectClass: dcObject
+objectClass: organization
+dc: infra
+o: CaaSP
+description: CaaSP
