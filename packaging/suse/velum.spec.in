@@ -29,6 +29,7 @@ License:        Apache-2.0
 Summary:        Dashboard for CaasP
 Url:            https://github.com/kubic-project/velum
 Source:         %{branch}.tar.gz
+Source2:        velum-rpmlintrc
 __PATCHSOURCES__
 
 Group:          System/Management
