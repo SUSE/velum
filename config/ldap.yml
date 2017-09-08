@@ -5,7 +5,11 @@
   base: <%= ENV["LDAP_PEOPLE_BASE_DN"] || "ou=People,dc=infra,dc=caasp,dc=local" %>
   admin_user: <%= ENV["LDAP_BIND_DN"] || "cn=admin,dc=infra,dc=caasp,dc=local" %>
   # this password exists as a default for Travis CI integration
+  <% if ENV["LDAP_PASSWORD_FILE"] %>
+  admin_password: <%= File.read(ENV["LDAP_PASSWORD_FILE"]) %>
+  <% else %>
   admin_password: <%= ENV["LDAP_BIND_PASSWORD"] || "" %>
+  <% end %>
   <% if ENV["LDAP_TLS_METHOD"] %>
   ssl: <%= ENV["LDAP_TLS_METHOD"] %>
   <% end %>

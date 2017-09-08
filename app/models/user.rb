@@ -29,8 +29,7 @@ class User < ApplicationRecord
     # check to see if this is because the LDAP auth succeeded, or if we're coming from registration
     # we do this by performing an LDAP search for the new user. If it fails, we need to create the
     # user in LDAP
-    cfg_file = ::Devise.ldap_config || Rails.root.join("config", "ldap.yml")
-    ldap_config = YAML.safe_load(ERB.new(File.read(cfg_file)).result)[Rails.env]
+    ldap_config = Velum::LDAP.ldap_config
 
     conn_params = {
       host: ldap_config["host"],
