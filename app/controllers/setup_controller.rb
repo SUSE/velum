@@ -6,6 +6,7 @@ require "velum/salt"
 # process:
 # welcoming, setting certain general settings, master selection, discovery and
 # bootstrapping
+# rubocop:disable Metrics/ClassLength
 class SetupController < ApplicationController
   include Discovery
 
@@ -14,12 +15,21 @@ class SetupController < ApplicationController
   before_action :check_empty_settings, only: :configure
   before_action :check_empty_roles, only: :set_roles
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def welcome
     @dashboard = Pillar.value(pillar: :dashboard) || request.host
     @http_proxy = Pillar.value pillar: :http_proxy
     @https_proxy = Pillar.value pillar: :https_proxy
     @no_proxy = Pillar.value(pillar: :no_proxy) || "localhost, 127.0.0.1"
+    @cluster_cidr = Pillar.value(pillar: :cluster_cidr) || "172.16.0.0/13"
+    @cluster_cidr_min = Pillar.value(pillar: :cluster_cidr_min) || "172.16.0.0"
+    @cluster_cidr_max = Pillar.value(pillar: :cluster_cidr_max) || "172.23.255.255"
+    @cluster_cidr_len = Pillar.value(pillar: :cluster_cidr_len) || "23"
+    @services_cidr = Pillar.value(pillar: :services_cidr) || "172.24.0.0/16"
+    @api_cluster_ip = Pillar.value(pillar: :api_cluster_ip) || "172.24.0.1"
+    @dns_cluster_ip = Pillar.value(pillar: :dns_cluster_ip) || "172.24.0.2"
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def configure
     res = Pillar.apply(settings_params, required_pillars: required_pillars)
@@ -121,3 +131,4 @@ class SetupController < ApplicationController
     end
   end
 end
+# rubocop:enable Metrics/ClassLength

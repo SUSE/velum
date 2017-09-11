@@ -16,6 +16,77 @@ h1 Initial CaaSP Configuration
 
   .panel.panel-default
     .panel-heading.clearfix
+      h3.panel-title Overlay network settings
+      .pull-right
+        = label_tag :cluster_network_settings_toggle, nil, class: "btn btn-default btn-sm js-toggle-overlay-settings-btn", data: {toggle: "collapse", target: "#cluster-network-settings-panel"}
+          | Show
+
+    #cluster-network-settings-panel.panel-collapse.collapse
+      .panel-body
+        p The Cluster Network is used interally within Kubernetes for pod to pod communications. Each master and worker node will receive a slice of this range, from which each Kubernetes pod will be allocated an IP. This network range will not be accessible from outside the cluster, however, conflicts with preexisting address ranges used elsewhere should be avoided.
+
+        .form-group
+          = f.label :cluster_cidr, "Cluster CIDR"
+          .input-group
+            = f.text_field :cluster_cidr, value: @cluster_cidr, class: "form-control", required: true
+            span class="input-group-addon"
+              a data-toggle="tooltip" data-placement="left" title="Cluster CIDR"
+                i class='glyphicon glyphicon-info-sign'
+
+        .form-group
+          = f.label :cluster_cidr_min, "Cluster CIDR (lower bound)"
+          .input-group
+            = f.text_field :cluster_cidr_min, value: @cluster_cidr_min, class: "form-control", required: true
+            span class="input-group-addon"
+              a data-toggle="tooltip" data-placement="left" title="Cluster CIDR (lower bound)"
+                i class='glyphicon glyphicon-info-sign'
+
+        .form-group
+          = f.label :cluster_cidr_max, "Cluster CIDR (upper bound)"
+          .input-group
+            = f.text_field :cluster_cidr_max, value: @cluster_cidr_max, class: "form-control", required: true
+            span class="input-group-addon"
+              a data-toggle="tooltip" data-placement="left" title="Cluster CIDR (upper bound)"
+                i class='glyphicon glyphicon-info-sign'
+
+        .form-group
+          = f.label :cluster_cidr_len, "Node allocation size (CIDR length per worker node)"
+          .input-group
+            = f.text_field :cluster_cidr_len, value: @cluster_cidr_len, class: "form-control", required: true
+            span class="input-group-addon"
+              a data-toggle="tooltip" data-placement="left" title="Node allocation size (CIDR length per worker node)"
+                i class='glyphicon glyphicon-info-sign'
+
+        hr
+
+        p The Service Network is used internally within Kubernetes for pod to service communications. Each Kubernetes service will be allocated an IP from this range, this IP will be independant of any single master or worker. This network range will not be accessible from outside the cluster, however, conflicts with preexisting address ranges used elsewhere should be avoided.
+
+        .form-group
+          = f.label :services_cidr, "Services CIDR"
+          .input-group
+            = f.text_field :services_cidr, value: @services_cidr, class: "form-control", required: true
+            span class="input-group-addon"
+              a data-toggle="tooltip" data-placement="left" title="Services CIDR"
+                i class='glyphicon glyphicon-info-sign'
+
+        .form-group
+          = f.label :api_cluster_ip, "API IP address"
+          .input-group
+            = f.text_field :api_cluster_ip, value: @api_cluster_ip, class: "form-control", required: true
+            span class="input-group-addon"
+              a data-toggle="tooltip" data-placement="left" title="API IP address (must be inside the Services CIDR)"
+                i class='glyphicon glyphicon-info-sign'
+
+        .form-group
+          = f.label :dns_cluster_ip, "DNS IP address"
+          .input-group
+            = f.text_field :dns_cluster_ip, value: @dns_cluster_ip, class: "form-control", required: true
+            span class="input-group-addon"
+              a data-toggle="tooltip" data-placement="left" title="DNS IP address (must be inside the Services CIDR)"
+                i class='glyphicon glyphicon-info-sign'
+
+  .panel.panel-default
+    .panel-heading.clearfix
       h3.panel-title Proxy settings
       .btn-group.btn-group-sm.btn-group-toggle.pull-right data-toggle="buttons"
         = label_tag :proxy_toggle, nil, class: "btn btn-default", data: {toggle: "collapse", target: "#proxy-settings-panel"}

@@ -48,6 +48,13 @@ class Pillar < ApplicationRecord
       {
         dashboard:        "dashboard",
         apiserver:        "api:server:external_fqdn",
+        cluster_cidr:     "cluster_cidr",
+        cluster_cidr_min: "cluster_cidr_min",
+        cluster_cidr_max: "cluster_cidr_max",
+        cluster_cidr_len: "cluster_cidr_len",
+        services_cidr:    "services_cidr",
+        api_cluster_ip:   "api:cluster_ip",
+        dns_cluster_ip:   "dns:cluster_ip",
         proxy_systemwide: "proxy:systemwide",
         http_proxy:       "proxy:http",
         https_proxy:      "proxy:https",
