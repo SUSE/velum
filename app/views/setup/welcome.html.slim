@@ -89,14 +89,14 @@ h1 Initial CaaSP Configuration
     .panel-heading.clearfix
       h3.panel-title Proxy settings
       .btn-group.btn-group-sm.btn-group-toggle.pull-right data-toggle="buttons"
-        = label_tag :proxy_toggle, nil, class: "btn btn-default", data: {toggle: "collapse", target: "#proxy-settings-panel"}
-          = f.radio_button :enable_proxy, "enable", checked: false
+        = label_tag :proxy_toggle, nil, class: "btn btn-default #{'btn-primary active' if @enable_proxy}", data: {toggle: "collapse", target: "#proxy-settings-panel"}
+          = f.radio_button :enable_proxy, "enable", checked: @enable_proxy
           | Enable
-        = label_tag :proxy_toggle, nil, class: "btn btn-primary active", data: {toggle: "collapse", target: "#proxy-settings-panel"}
-          = f.radio_button :enable_proxy, "disable", checked: true
+        = label_tag :proxy_toggle, nil, class: "btn btn-default #{'btn-primary active' unless @enable_proxy}", data: {toggle: "collapse", target: "#proxy-settings-panel"}
+          = f.radio_button :enable_proxy, "disable", checked: !@enable_proxy
           | Disable
 
-    #proxy-settings-panel.panel-collapse.collapse
+    #proxy-settings-panel.panel-collapse.collapse class="#{'in' if @enable_proxy}"
       .panel-body
         .form-group
           = f.label :http_proxy, "HTTP proxy"
@@ -116,11 +116,11 @@ h1 Initial CaaSP Configuration
           p Choose whether the proxy settings should apply only to the container
             engine or to all the processes running on the cluster nodes.
           .btn-group.btn-group-toggle data-toggle="buttons"
-            = label_tag :proxy_systemwide, nil, class: "btn btn-primary active"
-              = f.radio_button :proxy_systemwide, "false", checked: true
+            = label_tag :proxy_systemwide, nil, class: "btn btn-default #{'btn-primary active' if @proxy_systemwide == "false"}"
+              = f.radio_button :proxy_systemwide, "false", checked: @proxy_systemwide == "false"
               | Container Engine only
-            = label_tag :proxy_systemwide, nil, class: "btn btn-default"
-              = f.radio_button :proxy_systemwide, "true", checked: false
+            = label_tag :proxy_systemwide, nil, class: "btn btn-default #{'btn-primary active' if @proxy_systemwide == "true"}"
+              = f.radio_button :proxy_systemwide, "true", checked: @proxy_systemwide == "true"
               | Entire node
 
   .clearfix.steps-container

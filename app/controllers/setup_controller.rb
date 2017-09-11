@@ -21,6 +21,8 @@ class SetupController < ApplicationController
     @http_proxy = Pillar.value pillar: :http_proxy
     @https_proxy = Pillar.value pillar: :https_proxy
     @no_proxy = Pillar.value(pillar: :no_proxy) || "localhost, 127.0.0.1"
+    @proxy_systemwide = Pillar.value(pillar: :proxy_systemwide) || "false"
+    @enable_proxy = proxy_enabled
     @cluster_cidr = Pillar.value(pillar: :cluster_cidr) || "172.16.0.0/13"
     @cluster_cidr_min = Pillar.value(pillar: :cluster_cidr_min) || "172.16.0.0"
     @cluster_cidr_max = Pillar.value(pillar: :cluster_cidr_max) || "172.23.255.255"
@@ -98,6 +100,13 @@ class SetupController < ApplicationController
 
   def update_nodes_params
     params.require(:roles)
+  end
+
+  def proxy_enabled
+    (!@http_proxy.blank? &&
+     !@https_proxy.blank? &&
+     !@no_proxy.blank?) ||
+      @proxy_systemwide == "true"
   end
 
   def redirect_to_dashboard

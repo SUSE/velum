@@ -22,18 +22,58 @@ RSpec.describe SetupController, type: :controller do
       expect(response.status).to eq 302
     end
 
-    context "HTML rendering" do
-      it "returns a 200 if logged in" do
+    context "previous configure with proxy settings" do
+      let(:pillars) do
+        {
+          dashboard:        "dashboard.example.com",
+          http_proxy:       "squid.corp.net:3128",
+          https_proxy:      "squid.corp.net:3128",
+          no_proxy:         "localhost",
+          proxy_systemwide: "true"
+        }
+      end
+
+      before do
+        Pillar.apply(pillars, required_pillars: [:dashboard])
+
         sign_in user
 
         get :welcome
+      end
+
+      it "assigns @enable_proxy" do
+        expect(assigns(:enable_proxy)).to eq(true)
+      end
+
+      it "assigns @proxy_systemwide" do
+        expect(assigns(:proxy_systemwide)).to eq("true")
+      end
+
+      it "assigns @http_proxy" do
+        expect(assigns(:http_proxy)).to eq("squid.corp.net:3128")
+      end
+
+      it "assigns @https_proxy" do
+        expect(assigns(:https_proxy)).to eq("squid.corp.net:3128")
+      end
+
+      it "assigns @no_proxy" do
+        expect(assigns(:no_proxy)).to eq("localhost")
+      end
+    end
+
+    context "HTML rendering" do
+      before do
+        sign_in user
+
+        get :welcome
+      end
+
+      it "returns a 200 if logged in" do
         expect(response.status).to eq 200
       end
 
       it "renders with HTML if no format was specified" do
-        sign_in user
-
-        get :welcome
         expect(response["Content-Type"].include?("text/html")).to be true
       end
     end
