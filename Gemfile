@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 gem "puma"
-gem "rails", "4.2.7.1"
+gem "rails", "4.2.10"
 
 gem "jbuilder", "~> 2.5"
 gem "jquery-rails"
@@ -18,11 +18,12 @@ gem "mysql2"
 
 gem "gravatar_image_tag"
 gem "devise"
-gem "kubeclient", "~> 2.3.0"
+gem "kubeclient", "~> 2.4.0"
 gem "devise_ldap_authenticatable"
 gem "net-ldap", require: "net/ldap"
 
 gem "openid_connect"
+gem "rake", "12.2.1"
 
 # Assets group.
 #
@@ -35,7 +36,6 @@ gem "openid_connect"
 # run:
 #
 # IGNORE_ASSETS=yes bundle list
-
 unless ENV["IGNORE_ASSETS"] == "yes"
   gem "sass-rails", "~> 5.0"
   gem "bootstrap-sass"
