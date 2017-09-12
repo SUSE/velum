@@ -32,7 +32,9 @@ class SetupController < ApplicationController
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def configure
-    res = Pillar.apply(settings_params, required_pillars: required_pillars)
+    res = Pillar.apply(settings_params,
+                       required_pillars:    required_pillars,
+                       unprotected_pillars: unprotected_pillars)
     if res.empty?
       redirect_to setup_worker_bootstrap_path
     else
@@ -63,7 +65,9 @@ class SetupController < ApplicationController
   end
 
   def do_bootstrap
-    res = Pillar.apply(settings_params, required_pillars: required_pillars)
+    res = Pillar.apply(settings_params,
+                       required_pillars:    required_pillars,
+                       unprotected_pillars: unprotected_pillars)
     unless res.empty?
       redirect_to setup_bootstrap_path, alert: res
       return
@@ -128,6 +132,16 @@ class SetupController < ApplicationController
       [:dashboard]
     when "do_bootstrap"
       [:apiserver]
+    end
+  end
+
+  def unprotected_pillars
+    case action_name
+    when "configure"
+      [:proxy_systemwide, :http_proxy, :https_proxy, :no_proxy, :cluster_cidr, :cluster_cidr_min,
+       :cluster_cidr_max, :cluster_cidr_len, :services_cidr, :api_cluster_ip, :dns_cluster_ip]
+    when "do_bootstrap"
+      []
     end
   end
 end
