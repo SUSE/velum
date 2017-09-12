@@ -148,8 +148,7 @@ class SetupController < ApplicationController
   def unprotected_pillars
     case action_name
     when "configure"
-      [:proxy_systemwide, :http_proxy, :https_proxy, :no_proxy, :cluster_cidr, :cluster_cidr_min,
-       :cluster_cidr_max, :cluster_cidr_len, :services_cidr, :api_cluster_ip, :dns_cluster_ip]
+      [:proxy_systemwide, :http_proxy, :https_proxy, :no_proxy]
     when "do_bootstrap"
       []
     end
