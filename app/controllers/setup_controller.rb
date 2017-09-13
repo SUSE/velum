@@ -99,7 +99,7 @@ class SetupController < ApplicationController
       settings["https_proxy"] = ""
       settings["no_proxy"] = ""
     end
-    settings
+    Velum::LDAP.ldap_pillar_settings!(settings)
   end
 
   def update_nodes_params

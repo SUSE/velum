@@ -9,9 +9,7 @@ feature "LDAP Integration feature" do
   let(:user) { build(:user) }
 
   let(:ldap_config) do
-    # open LDAP connection
-    cfg = ::Devise.ldap_config || Rails.root.join("config", "ldap.yml")
-    YAML.safe_load(ERB.new(File.read(cfg)).result)[Rails.env]
+    Velum::LDAP.ldap_config
   end
 
   let(:ldap) do
@@ -26,7 +24,7 @@ feature "LDAP Integration feature" do
     }
 
     if ldap_config.key?("ssl")
-      conn_params[:auth][:encryption] = ldap_config["ssl"].to_sym
+      conn_params[:encryption] = ldap_config["ssl"].to_sym
     end
 
     Net::LDAP.new(**conn_params)
@@ -93,7 +91,7 @@ feature "LDAP Integration feature" do
   end
 
   scenario "TLS is configured properly when needed" do
-    expect(tls_conn_params[:auth][:encryption]).to be(:start_tls)
+    expect(tls_conn_params[:encryption]).to be(:start_tls)
   end
 
   scenario "People org unit does not exist" do
