@@ -59,7 +59,6 @@ class Pillar < ApplicationRecord
         http_proxy:            "proxy:http",
         https_proxy:           "proxy:https",
         no_proxy:              "proxy:no_proxy",
-        tiller:                "addons:tiller",
         ldap_host:             "ldap:host",
         ldap_port:             "ldap:port",
         ldap_bind_dn:          "ldap:bind_dn",
