@@ -1,7 +1,7 @@
 doctype html
 html
   head
-    title SUSE CaaSP: Velum
+    title SUSE CaaS Platform: Velum
     = stylesheet_link_tag 'authentication', media: 'all'
     = javascript_include_tag 'application'
     = csrf_meta_tags
@@ -26,7 +26,7 @@ html
         .row
           .col-sm-9
             .copyright
-              | SUSE CaaSP&reg; #{Rails.root.join("VERSION").read} | &copy; SUSE Linux #{Time.now.year}
+              | SUSE&reg; CaaS Platform #{Rails.root.join("VERSION").read} | &copy; SUSE Linux #{Time.now.year}
           .col-sm-3
             = image_tag "logo-footer.png", class: "suse-logo-footer pull-right"
       .bottom-line

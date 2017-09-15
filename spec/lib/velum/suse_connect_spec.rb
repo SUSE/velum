@@ -105,7 +105,7 @@ describe Velum::SUSEConnect do
     end
   end
 
-  context "when requesting the regcode for CaaSP product" do
+  context "when requesting the regcode for CaaS Platform product" do
     let(:suse_connect_client) do
       described_class.new credentials: {
         username: "valid_username",
@@ -133,7 +133,7 @@ describe Velum::SUSEConnect do
       end
     end
 
-    context "with valid login information if there a CaaSP activation active" do
+    context "with valid login information if there a CaaS Platform activation active" do
       it "returns the regcode for the product" do
         VCR.use_cassette("suse_connect/caasp_activation_active", record: :none) do
           expect(suse_connect_client.regcode).to eq "valid_regcode"

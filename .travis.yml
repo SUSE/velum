@@ -1,7 +1,7 @@
 language: ruby
 
 rvm:
-  # The version used at CaaSP
+  # The version used at CaaS Platform
   - 2.1.9
 
   # Other ruby versions
