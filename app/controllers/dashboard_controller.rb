@@ -43,9 +43,7 @@ class DashboardController < ApplicationController
         @suse_regcode = suse_connect_config.regcode
         @do_registration = true
       rescue Velum::SUSEConnect::MissingRegCodeException,
-             Velum::SUSEConnect::MissingCredentialsException,
-             Velum::SUSEConnect::SCCConnectionException => e
-        @registration_error = e.to_s
+             Velum::SUSEConnect::MissingCredentialsException
         @do_registration = false
       end
       ssh_key_file = "/var/lib/misc/ssh-public-key/id_rsa.pub"
@@ -61,6 +59,8 @@ class DashboardController < ApplicationController
 
       render "autoyast.xml.erb", layout: false, content_type: "text/xml"
     end
+  rescue Velum::SUSEConnect::SCCConnectionException
+    head :service_unavailable
   end
 
   # Return the kubeconfig file that allows the customer to use the cluster using the kubectl tool.

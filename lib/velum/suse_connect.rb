@@ -6,23 +6,11 @@ module Velum
   # This class handles interaction with the SUSE Connect service (whether is the SCC or SMT).
   class SUSEConnect
     # Raised when there is a connection exception with the SMT/SCC service
-    class SCCConnectionException < StandardError
-      def initialize
-        super "Error connecting to SCC/SMT"
-      end
-    end
+    class SCCConnectionException < StandardError; end
     # Raised when an active registration code for CaaSP is missing
-    class MissingRegCodeException < StandardError
-      def initialize
-        super "Missing registration code"
-      end
-    end
+    class MissingRegCodeException < StandardError; end
     # Raised when no credentials were found for SCC service
-    class MissingCredentialsException < StandardError
-      def initialize
-        super "Missing credentials for SCC/SMT"
-      end
-    end
+    class MissingCredentialsException < StandardError; end
 
     DEFAULT_SMT_URL = "https://scc.suse.com".freeze
 
@@ -150,8 +138,8 @@ module Velum
       else
         return response, nil
       end
-    rescue *HTTPExceptions::EXCEPTIONS
-      raise SCCConnectionException
+    rescue *HTTPExceptions::EXCEPTIONS => e
+      raise SCCConnectionException, e
     end
   end
 end

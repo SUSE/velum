@@ -90,8 +90,6 @@ RSpec.describe DashboardController, type: :controller do
   end
 
   describe "GET /autoyast" do
-    render_views
-
     before do
       Pillar.create pillar: "dashboard", value: "localhost"
       allow(Velum::SUSEConnect).to receive(:config).and_return(
@@ -142,7 +140,6 @@ RSpec.describe DashboardController, type: :controller do
         VCR.use_cassette("suse_connect/caasp_registration_active", record: :none) do
           get :autoyast
           expect(response.status).to eq 200
-          expect(response.body).to include("Missing credentials for SCC/SMT")
         end
       end
     end
@@ -158,7 +155,6 @@ RSpec.describe DashboardController, type: :controller do
         VCR.use_cassette("suse_connect/caasp_registration_active", record: :none) do
           get :autoyast
           expect(response.status).to eq 200
-          expect(response.body).to include("Missing registration code")
         end
       end
     end
@@ -170,11 +166,11 @@ RSpec.describe DashboardController, type: :controller do
         )
       end
 
-      it "serves the autoyast content" do
+      it "renders a 503 status and a blank page" do
         VCR.use_cassette("suse_connect/caasp_registration_active", record: :none) do
           get :autoyast
-          expect(response.status).to eq 200
-          expect(response.body).to include("Error connecting to SCC/SMT")
+          expect(response.body).to be_blank
+          expect(response.status).to eq 503
         end
       end
     end

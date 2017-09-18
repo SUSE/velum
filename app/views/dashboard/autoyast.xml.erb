@@ -76,14 +76,7 @@
     </global>
   </bootloader>
   <general>
-    <% if @registration_error %>
-    <ask-list config:type="list">
-      <ask>
-        <default>This system will not be registered. Reason: <%= @registration_error %></default>
-        <type>static_text</type>
-      </ask>
-    </ask-list>
-    <% end %>
+    <ask-list config:type="list"/>
     <mode>
       <confirm config:type="boolean">false</confirm>
       <second_stage config:type="boolean">false</second_stage>
