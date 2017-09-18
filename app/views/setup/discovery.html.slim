@@ -3,6 +3,13 @@
   span
     | A supported deployment of SUSE CaaS Platform requires a minimum of three nodes. Please select a minimum of three nodes.
 
+.alert.alert-danger.discovery-bootstrap-alert role="alert" hidden="true"
+  i.fa.fa-4x.pull-left aria-hidden="true"
+  span
+    p Unable to bootstrap cluster:
+
+    ul.list
+
 h1 Select nodes and roles
 
 .panel.panel-default.discovery-empty-panel class=('hide' if any_minion?)
@@ -53,7 +60,7 @@ h1 Select nodes and roles
 
         .clearfix.text-right.steps-container
           = link_to "Back", setup_worker_bootstrap_path, class: "btn btn-danger"
-          = submit_tag "Next", id: "set-roles", class: "btn btn-primary", disabled: true
+          = submit_tag "Next", id: "set-roles", class: "btn btn-primary"
 
 = render "dashboard/pending_nodes"
 = render "setup/warn_minimum_nodes_modal"
