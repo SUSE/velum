@@ -74,9 +74,6 @@ class SetupController < ApplicationController
       redirect_to setup_bootstrap_path, alert: res
       return
     end
-    Pillar.find_or_create_by pillar: "api:etcd_version" do |pillar|
-      pillar.value = "etcd3"
-    end
     masters = Minion.where(role: Minion.roles[:master]).pluck :id
     workers = Minion.where(role: Minion.roles[:worker]).pluck :id
     assigned = Minion.assign_roles roles: { master: masters, worker: workers }, remote: true
