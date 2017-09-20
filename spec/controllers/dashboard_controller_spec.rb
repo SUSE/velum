@@ -177,34 +177,34 @@ RSpec.describe DashboardController, type: :controller do
     end
   end
 
-  describe "GET /kubectl-config" do
-    it "gets redirected if not logged in" do
-      get :kubectl_config
-      expect(response.status).to eq 302
-    end
+  # describe "GET /kubectl-config" do
+  #   it "gets redirected if not logged in" do
+  #     get :kubectl_config
+  #     expect(response.status).to eq 302
+  #   end
 
-    context "YAML delivery" do
-      before do
-        sign_in user
-        external_fqdn_pillar
-        worker_minion
-      end
+  #   context "YAML delivery" do
+  #     before do
+  #       sign_in user
+  #       external_fqdn_pillar
+  #       worker_minion
+  #     end
 
-      it "returns a 302 if the orchestration didn't yet finish" do
-        VCR.use_cassette("kubeconfig/cluster_not_ready", record: :none) do
-          get :kubectl_config
-          expect(response.status).to eq 302
-        end
-      end
+  #     it "returns a 302 if the orchestration didn't yet finish" do
+  #       VCR.use_cassette("kubeconfig/cluster_not_ready", record: :none) do
+  #         get :kubectl_config
+  #         expect(response.status).to eq 302
+  #       end
+  #     end
 
-      it "renders the kubeconfig file if the orchestration did finish" do
-        VCR.use_cassette("kubeconfig/cluster_ready", record: :none) do
-          get :kubectl_config
-          expect(response.status).to eq 200
-        end
-      end
-    end
-  end
+  #     it "renders the kubeconfig file if the orchestration did finish" do
+  #       VCR.use_cassette("kubeconfig/cluster_ready", record: :none) do
+  #         get :kubectl_config
+  #         expect(response.status).to eq 200
+  #       end
+  #     end
+  #   end
+  # end
 
   # rubocop:disable RSpec/AnyInstance
   describe "POST /assign_nodes via HTML" do
