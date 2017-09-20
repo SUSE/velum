@@ -6,6 +6,14 @@ set -e
 
 : ${VELUM_PORT:=80}
 
+setup_root_ca() {
+  # Velum is going to need this CA to talk to the running CaaSP Cluster
+  [ -f "/etc/pki/trust/anchors/SUSE_CaaSP_CA.pem" ] && return
+
+  cp /etc/pki/ca.crt /etc/pki/trust/anchors/SUSE_CaaSP_CA.pem
+  update-ca-certificates
+}
+
 setup_database() {
   set +e
 
@@ -60,5 +68,6 @@ setup_database() {
   set -e
 }
 
+setup_root_ca
 setup_database
 bundle exec "puma -C config/puma.rb"
