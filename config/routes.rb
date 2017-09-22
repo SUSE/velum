@@ -40,5 +40,11 @@ Rails.application.routes.draw do
     get :bootstrap
     post :bootstrap, action: :do_bootstrap
   end
+
+  namespace :internal_api, path: "internal-api" do
+    namespace :v1 do
+      resource :pillar, only: :show
+    end
+  end
 end
 # rubocop:enable Metrics/BlockLength

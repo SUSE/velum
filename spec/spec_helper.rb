@@ -40,6 +40,13 @@ RSpec.configure do |config|
     ENV["VELUM_SALT_PORT"] ||= "8000"
   end
 
+  config.before :each do
+    allow(Rails.application.secrets).to receive(:internal_api).and_return(
+      username: "test",
+      password: "test"
+    )
+  end
+
   config.order = :random
 
   config.fail_fast = ENV["RSPEC_FAIL_FAST"] == "true"
