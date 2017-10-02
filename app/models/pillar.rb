@@ -74,7 +74,8 @@ class Pillar < ApplicationRecord
         ldap_tls_method:           "ldap:tls_method",
         ldap_mail_attribute:       "ldap:mail_attribute",
         suse_registry_mirror_url:  "suse_registry_mirror:url",
-        suse_registry_mirror_cert: "suse_registry_mirror:cert"
+        suse_registry_mirror_cert: "suse_registry_mirror:cert",
+        cloud_framework:           "cloud:framework"
       }
     end
 
