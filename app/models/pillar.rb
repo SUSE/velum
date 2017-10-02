@@ -40,7 +40,8 @@ class Pillar < ApplicationRecord
         ldap_admin_group_dn:     "ldap:admin_group_dn",
         ldap_admin_group_name:   "ldap:admin_group_name",
         ldap_tls_method:         "ldap:tls_method",
-        ldap_mail_attribute:     "ldap:mail_attribute"
+        ldap_mail_attribute:     "ldap:mail_attribute",
+        cloud_framework:         "cloud:framework"
       }
     end
 
