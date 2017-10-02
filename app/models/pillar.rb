@@ -30,7 +30,7 @@
 # This is because how we configure our salt master using this table as an external pillar. For
 # further information you can visit:
 #   - https://github.com/kubic-project/velum/blob/master/docs/salt.md
-#   - https://github.com/kubic-project/salt/blob/master/config/master.d/returner.conf
+#   - https://github.com/kubic-project/salt/blob/master/config/master.d/50-returner.conf
 class Pillar < ApplicationRecord
   validates :pillar, presence: true
   validates :value, presence: true
