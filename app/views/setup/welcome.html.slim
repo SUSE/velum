@@ -16,6 +16,17 @@ h1 Initial CaaS Platform Configuration
 
   .panel.panel-default
     .panel-heading.clearfix
+      h3.panel-title Cluster services
+
+    .panel-body
+      .form-group
+        .checkbox
+          label
+            = f.check_box "tiller", { checked: @tiller }, "true", "false"
+            | Install Tiller (Helm's server component)
+
+  .panel.panel-default
+    .panel-heading.clearfix
       h3.panel-title Overlay network settings
       .pull-right
         = label_tag :cluster_network_settings_toggle, nil, class: "btn btn-default btn-sm js-toggle-overlay-settings-btn", data: {toggle: "collapse", target: "#cluster-network-settings-panel"}
