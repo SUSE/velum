@@ -12,11 +12,6 @@ h1 Confirm bootstrap
           span class="input-group-addon"
             a data-toggle="tooltip" data-placement="left" title="Fully qualified domain name used to reach the cluster from the outside. In a simple, single master deployment this will be the FQDN of the node you are about to select as master. For advanced options refer to the documentation."
               i class='glyphicon glyphicon-info-sign'
-      .checkbox
-        label
-          = f.check_box "tiller", {}, "true", "false"
-          |
-            Install Tiller (Helm's server component)
 
   .clearfix.text-right.steps-container
     = link_to "Back", setup_discovery_path, class: "btn btn-danger"
