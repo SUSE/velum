@@ -18,6 +18,7 @@ class SetupController < ApplicationController
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def welcome
     @dashboard = Pillar.value(pillar: :dashboard) || request.host
+    @tiller = Pillar.value(pillar: :tiller) == "true"
     @http_proxy = Pillar.value pillar: :http_proxy
     @https_proxy = Pillar.value pillar: :https_proxy
     @no_proxy = Pillar.value(pillar: :no_proxy) || "localhost, 127.0.0.1"
