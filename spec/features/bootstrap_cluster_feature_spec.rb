@@ -138,7 +138,7 @@ feature "Bootstrap cluster feature" do
       expect(page).to have_content(minions[4].fqdn)
     end
 
-    scenario "A user cannot bootstap an even multiple master configuration", js: true do
+    scenario "A user cannot bootstrap an even multiple master configuration", js: true do
       # select master minion0.k8s.local
       find(".minion_#{minions[0].id} .master-btn").click
       # select node minion1.k8s.local
@@ -148,6 +148,29 @@ feature "Bootstrap cluster feature" do
       # select node minion3.k8s.local
       find(".minion_#{minions[3].id} .worker-btn").click
 
+      click_on_when_enabled "#set-roles"
+
+      expect(page).to have_content("The number of masters has to be an odd number")
+      expect(page).to have_button(value: "Next", disabled: true)
+    end
+
+    scenario "A user cannot bootstap if no worker is selected", js: true do
+      # select master minion0.k8s.local
+      find(".minion_#{minions[0].id} .master-btn").click
+
+      click_on_when_enabled "#set-roles"
+
+      expect(page).to have_content("You haven't selected one worker at least")
+      expect(page).to have_button(value: "Next", disabled: true)
+    end
+
+    scenario "A user cannot bootstap if no master is selected", js: true do
+      # select master minion0.k8s.local
+      find(".minion_#{minions[0].id} .worker-btn").click
+
+      click_on_when_enabled "#set-roles"
+
+      expect(page).to have_content("You haven't selected one master at least")
       expect(page).to have_button(value: "Next", disabled: true)
     end
   end
