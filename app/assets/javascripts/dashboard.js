@@ -1,3 +1,8 @@
+State = {
+  nextClicked: false,
+  bootstrapErrors: [],
+},
+
 MinionPoller = {
   selectedNodes: [],
   selectedMasters: [],
@@ -149,7 +154,7 @@ MinionPoller = {
 
         MinionPoller.handleAdminUpdate(data.admin || {}, hasPendingStateNode);
 
-        handleBootstrapButtonTitle();
+        handleBootstrapErrors();
 
         // show/hide "update all nodes" link
         var hasAdminNodeUpdate = data.admin.update_status === 1 || data.admin.update_status === 2;
@@ -185,7 +190,7 @@ MinionPoller = {
         $('.nodes-loading').hide();
         $('.nodes-content').removeClass('hidden');
 
-        toggleBootstrapButton();
+        handleBootstrapErrors();
         toggleMinimumNodesAlert();
       }
     }).always(function() {
@@ -499,73 +504,51 @@ function selectedMastersLength() {
   return $('input[name="roles[master][]"]:checked').length;
 }
 
+
 function isBootstrappable() {
+  var errors = [];
+
   // We need at least one master
   if (selectedMastersLength() < 1) {
-    return false;
-  }
-
-  // We need an odd number of masters
-  if (selectedMastersLength() % 2 !== 1) {
-    return false;
+    errors.push("You haven't selected one master at least");
   }
 
   // We need at least one worker
   if (selectedWorkersLength() < 1) {
-    return false;
+    errors.push("You haven't selected one worker at least");
   }
 
-  return true;
+  // We need an odd number of masters
+  if (selectedMastersLength() % 2 !== 1) {
+    errors.push('The number of masters has to be an odd number');
+  }
+
+  State.bootstrapErrors = errors;
+
+  return errors.length === 0;
 }
 
 // return true if the selected masters vs workers are in a supported state
 function isSupportedConfiguration() {
-  // bootstrappable but may not be in a supported state
-  // (e.g.: 1 master, 1 workers)
-  if (!isBootstrappable()) {
-    return false;
-  }
-
   // We need at least three nodes in total
-  if ((selectedWorkersLength() + selectedMastersLength()) < 3) {
-    return false;
-  }
-
-  return true;
+  return (selectedWorkersLength() + selectedMastersLength()) >= 3;
 }
 
 // handle bootstra button title
-function handleBootstrapButtonTitle() {
-  var hasMasterSelected = selectedMastersLength() > 0;
-  var hasMinimumWorkers = selectedWorkersLength() > 0;
-  var canBootstrap = hasMasterSelected && hasMinimumWorkers;
-  var title = 'Select ';
+function handleBootstrapErrors() {
+  var nextClicked = State.nextClicked;
+  var title;
 
-  if (canBootstrap) {
-    title = 'Next';
+  if (nextClicked && !isBootstrappable()) {
+    var errors = State.bootstrapErrors;
+    var listHtml = errors.map(function(e) { return '<li>' + e + '</li>' }).join('');
+    $('.discovery-bootstrap-alert .list').html(listHtml);
+    $('.discovery-bootstrap-alert').fadeIn(100);
+    $('#set-roles').prop('disabled', true);
   } else {
-    if (!hasMasterSelected) {
-      title += 'the master';
-    }
-
-    if (!hasMinimumWorkers) {
-      if (!hasMasterSelected) {
-        title += ' and ';
-      }
-
-      title += 'workers';
-    }
+    $('.discovery-bootstrap-alert').fadeOut(100);
+    $('#set-roles').prop('disabled', false);
   }
-
-  $('#set-roles').prop('title', title);
-}
-
-// disable/enable button if it has 1 master and 1 worker at least
-function toggleBootstrapButton() {
-  $('#set-roles').prop('disabled', !isBootstrappable());
-
-  // also call bootstrap title handler
-  handleBootstrapButtonTitle();
 }
 
 // hide minimum nodes alert
@@ -583,16 +566,23 @@ function toggleMinimumNodesAlert() {
 $('body').on('click', '#set-roles', function(e) {
   var $warningModal = $('.warn-minimum-nodes-modal');
 
-  if (isBootstrappable() && !isSupportedConfiguration()) {
-    e.preventDefault();
+  e.preventDefault();
+  State.nextClicked = true;
+  handleBootstrapErrors();
 
-    $warningModal.modal('show');
-    $warningModal.data('wasOpenedBefore', true);
+  if (isBootstrappable()) {
+    if (!isSupportedConfiguration()) {
+      $warningModal.modal('show');
+      $warningModal.data('wasOpenedBefore', true);
 
-    return false;
+      return false;
+    } else {
+      MinionPoller.stop();
+      $('form').submit();
+    }
+  } else {
+    window.scrollTo(0, 0);
   }
-
-  MinionPoller.stop();
 });
 
 // if user wants to bootstrap anyway, submit form
@@ -613,7 +603,7 @@ $('body').on('click', '.deselect-nodes-btn', function() {
   $(this).addClass('hidden');
   $('.select-nodes-btn').show();
   $(unusedSelector).click();
-  toggleBootstrapButton();
+  handleBootstrapErrors();
   toggleAddNodesButton();
 });
 
@@ -624,7 +614,8 @@ $('body').on('click', '.select-nodes-btn', function() {
   $(this).hide();
   $('.deselect-nodes-btn').removeClass('hidden');
   $(workersSelector).click();
-  toggleBootstrapButton();
+
+  handleBootstrapErrors();
   toggleAddNodesButton();
 });
 
@@ -644,7 +635,7 @@ $('body').on('change', 'input[name="roles[worker][]"]', function() {
   }
 
   toggleMinimumNodesAlert();
-  toggleBootstrapButton();
+  handleBootstrapErrors();
 });
 
 // when selecting a master
@@ -665,7 +656,7 @@ $('body').on('change', 'input[name="roles[master][]"]', function() {
   }
 
   toggleMinimumNodesAlert();
-  toggleBootstrapButton();
+  handleBootstrapErrors();
 });
 
 function unselectRoles(target) {
