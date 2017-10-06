@@ -65,7 +65,15 @@ class OidcController < ApplicationController
     @access_token = access_token
     @id_token = id_token
 
-    response.headers["Content-Disposition"] = "attachment; filename=kubeconfig"
+    # TODO: phantomjs does not download files (https://github.com/ariya/phantomjs/issues/10052), so
+    #       we only set the content-disposition as attachment in production.
+    #
+    # :nocov:
+    if Rails.env.production?
+      response.headers["Content-Disposition"] = "attachment; filename=kubeconfig"
+    end
+    # :nocov:
+
     render "kubeconfig.erb", layout: false, content_type: "text/yaml"
   end
 
