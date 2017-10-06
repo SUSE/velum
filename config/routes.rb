@@ -22,10 +22,13 @@ Rails.application.routes.draw do
   end
 
   get "/autoyast", to: "dashboard#autoyast"
-  get "/kubectl-config", to: "dashboard#kubectl_config"
+  get "/kubectl-config", to: "oidc#index"
   get "/_health", to: "health#index"
   post "/update", to: "salt#update"
   post "/accept-minion", to: "salt#accept_minion"
+
+  get "/oidc", to: "oidc#index"
+  get "/oidc/done", to: "oidc#done"
 
   namespace :setup do
     get "/", action: :welcome

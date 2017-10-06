@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "velum/kubernetes"
 require "velum/suse_connect"
 
 # DashboardController shows the main page.
@@ -59,26 +58,6 @@ class DashboardController < ApplicationController
       @proxy_no_proxy   = Pillar.value(pillar: :no_proxy)
 
       render "autoyast.xml.erb", layout: false, content_type: "text/xml"
-    end
-  end
-
-  # Return the kubeconfig file that allows the customer to use the cluster using the kubectl tool.
-  #
-  # If everything is successfull, the kubeconfig file will be served. Otherwise (e.g. the cluster is
-  # not yet provisioned or is still being provisioned) it will redirect to the main page giving the
-  # user feedback about the current situation.
-  def kubectl_config
-    kubeconfig = Velum::Kubernetes.kubeconfig
-    @apiserver_host = kubeconfig.host
-    @ca_crt = kubeconfig.ca_crt
-    @client_crt = kubeconfig.client_crt
-    @client_key = kubeconfig.client_key
-    if [@apiserver_host, @ca_crt, @client_crt, @client_key].none?(&:blank?)
-      response.headers["Content-Disposition"] = "attachment; filename=kubeconfig"
-      render "kubeconfig.erb", layout: false, content_type: "text/yaml"
-    else
-      redirect_to root_path,
-                  alert: "Provisioning did not yet finish. Please wait until the cluster is ready."
     end
   end
 

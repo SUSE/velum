@@ -23,6 +23,8 @@ gem "kubeclient", "~> 2.3.0"
 gem "devise_ldap_authenticatable"
 gem "net-ldap", require: "net/ldap"
 
+gem "openid_connect"
+
 # Assets group.
 #
 # Do not set it or set it to no when precompiling the assets.
