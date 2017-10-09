@@ -37,7 +37,7 @@ class Pillar < ApplicationRecord
 
   scope :global, -> { where minion_id: nil }
 
-  PROTECTED_PILLARS = [:dashboard, :apiserver].freeze
+  PROTECTED_PILLARS = [:dashboard, :apiserver, :dashboard_external_fqdn].freeze
 
   class << self
     def value(pillar:)
@@ -46,32 +46,33 @@ class Pillar < ApplicationRecord
 
     def all_pillars
       {
-        dashboard:             "dashboard",
-        apiserver:             "api:server:external_fqdn",
-        cluster_cidr:          "cluster_cidr",
-        cluster_cidr_min:      "cluster_cidr_min",
-        cluster_cidr_max:      "cluster_cidr_max",
-        cluster_cidr_len:      "cluster_cidr_len",
-        services_cidr:         "services_cidr",
-        api_cluster_ip:        "api:cluster_ip",
-        dns_cluster_ip:        "dns:cluster_ip",
-        proxy_systemwide:      "proxy:systemwide",
-        http_proxy:            "proxy:http",
-        https_proxy:           "proxy:https",
-        no_proxy:              "proxy:no_proxy",
-        tiller:                "addons:tiller",
-        ldap_host:             "ldap:host",
-        ldap_port:             "ldap:port",
-        ldap_bind_dn:          "ldap:bind_dn",
-        ldap_bind_pw:          "ldap:bind_pw",
-        ldap_domain:           "ldap:domain",
-        ldap_group_dn:         "ldap:group_dn",
-        ldap_people_dn:        "ldap:people_dn",
-        ldap_base_dn:          "ldap:base_dn",
-        ldap_admin_group_dn:   "ldap:admin_group_dn",
-        ldap_admin_group_name: "ldap:admin_group_name",
-        ldap_tls_method:       "ldap:tls_method",
-        ldap_mail_attribute:   "ldap:mail_attribute"
+        dashboard:               "dashboard",
+        dashboard_external_fqdn: "dashboard_external_fqdn",
+        apiserver:               "api:server:external_fqdn",
+        cluster_cidr:            "cluster_cidr",
+        cluster_cidr_min:        "cluster_cidr_min",
+        cluster_cidr_max:        "cluster_cidr_max",
+        cluster_cidr_len:        "cluster_cidr_len",
+        services_cidr:           "services_cidr",
+        api_cluster_ip:          "api:cluster_ip",
+        dns_cluster_ip:          "dns:cluster_ip",
+        proxy_systemwide:        "proxy:systemwide",
+        http_proxy:              "proxy:http",
+        https_proxy:             "proxy:https",
+        no_proxy:                "proxy:no_proxy",
+        tiller:                  "addons:tiller",
+        ldap_host:               "ldap:host",
+        ldap_port:               "ldap:port",
+        ldap_bind_dn:            "ldap:bind_dn",
+        ldap_bind_pw:            "ldap:bind_pw",
+        ldap_domain:             "ldap:domain",
+        ldap_group_dn:           "ldap:group_dn",
+        ldap_people_dn:          "ldap:people_dn",
+        ldap_base_dn:            "ldap:base_dn",
+        ldap_admin_group_dn:     "ldap:admin_group_dn",
+        ldap_admin_group_name:   "ldap:admin_group_name",
+        ldap_tls_method:         "ldap:tls_method",
+        ldap_mail_attribute:     "ldap:mail_attribute"
       }
     end
 

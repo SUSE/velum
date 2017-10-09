@@ -65,6 +65,9 @@ class SetupController < ApplicationController
   def bootstrap
     @apiserver = Pillar.value(pillar: :apiserver) ||
       Minion.find_by(role: Minion.roles[:master]).fqdn
+    # TODO: Minion.find_by(role: Minion.roles[:admin]).fqdn ?
+    @dashboard_external_fqdn = Pillar.value(pillar: :dashboard_external_fqdn) ||
+      ""
   end
 
   def do_bootstrap
@@ -138,7 +141,7 @@ class SetupController < ApplicationController
     when "configure"
       [:dashboard]
     when "do_bootstrap"
-      [:apiserver]
+      [:apiserver, :dashboard_external_fqdn]
     end
   end
 
