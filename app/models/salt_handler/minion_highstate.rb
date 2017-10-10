@@ -29,9 +29,10 @@ class SaltHandler::MinionHighstate
     data = JSON.parse(salt_event.data)
 
     highstate_succeeded = data["success"] && data["retcode"].zero?
-    new_highstate = Minion.highstates[highstate_succeeded ? :applied : :failed]
     # rubocop:disable SkipsModelValidations
-    minion.update_column(:highstate, new_highstate)
+    minion.update_column(:highstate, Minion.highstates[:failed]) unless highstate_succeeded
     # rubocop:enable SkipsModelValidations
+
+    true
   end
 end

@@ -35,10 +35,10 @@ class SaltHandler::MinionOrchestration
     data = JSON.parse salt_event.data
 
     orchestration_succeeded = data["success"] && data["return"]["retcode"].zero?
-    return if orchestration_succeeded
+    new_highstate = Minion.highstates[orchestration_succeeded ? :applied : :failed]
 
     # rubocop:disable SkipsModelValidations
-    Minion.pending.update_all highstate: Minion.highstates[:failed]
+    Minion.pending.update_all highstate: new_highstate
     # rubocop:enable SkipsModelValidations
   end
 end
