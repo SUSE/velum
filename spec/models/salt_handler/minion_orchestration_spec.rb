@@ -75,11 +75,11 @@ describe SaltHandler::MinionOrchestration do
 
     describe "with a successful orchestration result" do
       let(:handler) { described_class.new(successful_orchestration_result) }
-      it "does not affect pending minions" do
-        expect { handler.process_event }.not_to change { Minion.pending.count }.from(1)
+      it "does set pending minions to successful" do
+        expect { handler.process_event }.to change { Minion.pending.count }.from(1).to(0)
       end
-      it "does not affect applied minions" do
-        expect { handler.process_event }.not_to change { Minion.applied.count }.from(1)
+      it "does affect applied minions" do
+        expect { handler.process_event }.to change { Minion.applied.count }.from(1).to(2)
       end
     end
 

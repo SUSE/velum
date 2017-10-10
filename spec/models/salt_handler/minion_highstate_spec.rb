@@ -21,8 +21,28 @@ describe SaltHandler::MinionHighstate do
       data: event_data)
   end
 
+  let(:failed_salt_event) do
+    event_data = {
+      "fun_args" => [{ "queue" => false, "concurrent" => false, "saltenv" => "base" }],
+      "jid"      => "20170201134300539551",
+      "return"   => "some_return",
+      "retcode"  => 1,
+      "success"  => false,
+      "cmd"      => "_return",
+      "_stamp"   => "2017-02-01T13:43:00.348440",
+      "fun"      => "state.highstate",
+      "id"       => "3bcb66a2e50646dcabf779e50c6f3232",
+      "out"      => "highstate"
+    }.to_json
+
+    FactoryGirl.create(:salt_event,
+      tag:  "salt/job/20170201134101334637/ret/3bcb66a2e50646dcabf779e50c6f3232",
+      data: event_data)
+  end
+
   describe "process_event" do
     let(:handler) { described_class.new(salt_event) }
+    let(:failed_handler) { described_class.new(failed_salt_event) }
     let(:matching_minion) do
       FactoryGirl.create(:minion,
                          minion_id: "3bcb66a2e50646dcabf779e50c6f3232",
@@ -52,11 +72,18 @@ describe SaltHandler::MinionHighstate do
       expect(handler.process_event).to be(true)
     end
 
-    it "updates the matching Minion's highstate column" do
+    it "does not update the matching Minion's highstate column if it's success" do
       matching_minion
 
       expect { handler.process_event }
-        .to change { matching_minion.reload.highstate }.from("pending").to("applied")
+        .not_to change { matching_minion.reload.highstate }
+    end
+
+    it "updates the matching Minion's highstate column if it's failure" do
+      matching_minion
+
+      expect { failed_handler.process_event }
+        .to change { matching_minion.reload.highstate }.from("pending").to("failed")
     end
   end
 end
