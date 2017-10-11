@@ -6,11 +6,19 @@ h1 Confirm bootstrap
       h3.panel-title Cluster specific settings
     .panel-body
       .form-group
-        = f.label :apiserver, "External Kubernetes API server FQDN"
+        = f.label :apiserver, "External Kubernetes API FQDN"
         .input-group
           = f.text_field :apiserver, value: @apiserver, class: "form-control", required: true
           span class="input-group-addon"
             a data-toggle="tooltip" data-placement="left" title="Fully qualified domain name used to reach the cluster from the outside. In a simple, single master deployment this will be the FQDN of the node you are about to select as master. For advanced options refer to the documentation."
+              i class='glyphicon glyphicon-info-sign'
+
+      .form-group
+        = f.label :dashboard_external_fqdn, "External Dashboard FQDN"
+        .input-group
+          = f.text_field :dashboard_external_fqdn, value: @dashboard_external_fqdn, class: "form-control", required: true
+          span class="input-group-addon"
+            a data-toggle="tooltip" data-placement="left" title="Fully qualified domain name used to reach the Velum UI from the outside."
               i class='glyphicon glyphicon-info-sign'
 
   .clearfix.text-right.steps-container

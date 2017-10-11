@@ -7,7 +7,7 @@ h1 Initial CaaS Platform Configuration
       h3.panel-title Generic settings
     .panel-body
       .form-group
-        = f.label :dashboard, "Dashboard location"
+        = f.label :dashboard, "Internal Dashboard FQDN/IP"
         .input-group
           = f.text_field :dashboard, value: @dashboard, class: "form-control", required: true
           span class="input-group-addon"
