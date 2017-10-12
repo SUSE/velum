@@ -15,6 +15,9 @@ class OidcController < ApplicationController
   # we'll need to add an "except" or an "only" clause to this.
   skip_before_action :verify_authenticity_token
 
+  # make sure that the request comes from a registered host
+  before_action :verify_host
+
   def new_nonce
     session[:nonce] = SecureRandom.hex(16)
   end
@@ -111,7 +114,16 @@ class OidcController < ApplicationController
       authorization_endpoint: config.authorization_endpoint,
       token_endpoint:         config.token_endpoint,
       userinfo_endpoint:      config.userinfo_endpoint,
-      redirect_uri:           url_for(controller: "oidc", action: "done")
+      redirect_uri:           oidc_done_url
     )
+  end
+
+  def verify_host
+    return true if accessible_hosts.include? request.host
+    sign_out(current_user)
+    redirect_to root_path,
+                alert: "You have been logged out as #{request.host} " \
+                       "is not within the registered hosts. Please access velum from either " \
+                       "#{accessible_hosts.join(" or ")}"
   end
 end

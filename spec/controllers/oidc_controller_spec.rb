@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-# rubocop:disable ExampleLength,MultipleExpectations,MessageSpies
+# rubocop:disable ExampleLength,MultipleExpectations,MessageSpies,RSpec/AnyInstance
 RSpec.describe OidcController, type: :controller do
   let(:external_fqdn_pillar) { create(:external_fqdn_pillar) }
 
@@ -10,6 +10,9 @@ RSpec.describe OidcController, type: :controller do
     it "returns a 302 if the orchestration didn't yet finish" do
       VCR.use_cassette("kubeconfig/cluster_not_ready", record: :none) do
         setup_undone
+
+        allow_any_instance_of(OidcController).to receive(:verify_host)
+          .and_return(true)
 
         get :index
 
@@ -34,6 +37,9 @@ RSpec.describe OidcController, type: :controller do
 
         allow(OpenIDConnect::Discovery::Provider::Config).to receive(:discover!)
           .and_return(config)
+
+        allow_any_instance_of(OidcController).to receive(:verify_host)
+          .and_return(true)
 
         get :index
 
@@ -78,11 +84,30 @@ RSpec.describe OidcController, type: :controller do
 
         expect(OpenIDConnect::Client).to receive(:new).and_return(client)
 
+        allow_any_instance_of(OidcController).to receive(:verify_host)
+          .and_return(true)
+
         get :done, { code: "v5v3q7kzhgrctd6qfdpvvo5uz" }, nonce: "foobar"
 
         expect(response.status).to eq 200
       end
     end
+
+    it "logs out if velum is accessed from a non registered host" do
+      # VCR can do the salt stuff, we'll just mock Dex
+      VCR.use_cassette("kubeconfig/cluster_ready2", record: :none) do
+        setup_done
+        external_fqdn_pillar
+
+        allow_any_instance_of(ApplicationController).to receive(:accessible_hosts)
+          .and_return(["http://some.legal.host"])
+
+        get :done, { code: "v5v3q7kzhgrctd6qfdpvvo5uz" }, nonce: "foobar"
+
+        expect(flash.alert).to match(/You have been logged out/)
+        expect(response.status).to eq 302
+      end
+    end
   end
 end
-# rubocop:enable ExampleLength,MultipleExpectations,MessageSpies
+# rubocop:enable ExampleLength,MultipleExpectations,MessageSpies,RSpec/AnyInstance
