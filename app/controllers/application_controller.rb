@@ -21,4 +21,11 @@ class ApplicationController < ActionController::Base
   def setup_done?
     Pillar.exists? pillar: Pillar.all_pillars[:apiserver]
   end
+
+  def accessible_hosts
+    [
+      Pillar.value(pillar: :dashboard),
+      Pillar.value(pillar: :dashboard_external_fqdn)
+    ]
+  end
 end
