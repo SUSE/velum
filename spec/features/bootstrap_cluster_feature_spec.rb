@@ -55,7 +55,9 @@ feature "Bootstrap cluster feature" do
 
       # means it went to the confirmation page
       expect(page).to have_content("Confirm bootstrap")
-      click_button "Bootstrap cluster"
+      fill_in("External Kubernetes API FQDN", with: "some.url")
+      fill_in("External Dashboard FQDN", with: "some.url")
+      click_on_when_enabled "#bootstrap"
 
       # means it went to the overview page
       expect(page).to have_content("Summary")
@@ -77,7 +79,9 @@ feature "Bootstrap cluster feature" do
 
       # means it went to the confirmation page
       expect(page).to have_content("Confirm bootstrap")
-      click_button "Bootstrap cluster"
+      fill_in("External Kubernetes API FQDN", with: "some.url")
+      fill_in("External Dashboard FQDN", with: "some.url")
+      click_on_when_enabled "#bootstrap"
 
       # means it went to the overview page
       expect(page).to have_content("Summary")
@@ -102,7 +106,9 @@ feature "Bootstrap cluster feature" do
 
       # means it went to the confirmation page
       expect(page).to have_content("Confirm bootstrap")
-      click_button "Bootstrap cluster"
+      fill_in("External Kubernetes API FQDN", with: "some.url")
+      fill_in("External Dashboard FQDN", with: "some.url")
+      click_on_when_enabled "#bootstrap"
 
       expect(page).to have_content("Summary")
       expect(page).to have_content(minions[0].fqdn)
@@ -127,6 +133,8 @@ feature "Bootstrap cluster feature" do
 
       # means it went to the confirmation page
       expect(page).to have_content("Confirm bootstrap")
+      fill_in("External Kubernetes API FQDN", with: "some.url")
+      fill_in("External Dashboard FQDN", with: "some.url")
       click_on_when_enabled "#bootstrap"
 
       # means it went to the overview page
