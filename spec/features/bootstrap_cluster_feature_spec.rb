@@ -67,6 +67,36 @@ feature "Bootstrap cluster feature" do
       expect(page).not_to have_content(minions[3].fqdn)
     end
 
+    scenario "A user set roles, go next, then back and can still accept new nodes", js: true do
+      setup_stubbed_pending_minions!(stubbed: [minions[3].minion_id])
+
+      # select master minion0.k8s.local
+      find(".minion_#{minions[0].id} .master-btn").click
+      # select node minion1.k8s.local
+      find(".minion_#{minions[1].id} .worker-btn").click
+      # select node minion2.k8s.local
+      find(".minion_#{minions[2].id} .worker-btn").click
+
+      expect(page).to have_content(minions[3].minion_id)
+      expect(page).to have_content("Accept Node")
+
+      click_on_when_enabled "#set-roles"
+
+      # means it went to the confirmation page
+      expect(page).to have_content("Confirm bootstrap")
+      click_on "Back"
+
+      # means it went back to discovery page
+      expect(page).to have_content("Select nodes and roles")
+      expect(page).to have_content(minions[0].fqdn)
+      expect(page).to have_content(minions[1].fqdn)
+      expect(page).to have_content(minions[2].fqdn)
+
+      # means it can accept pending node
+      expect(page).to have_content(minions[3].minion_id)
+      expect(page).to have_content("Accept Node")
+    end
+
     scenario "A user selects a subset of nodes to be bootstrapped", js: true do
       # select master minion0.k8s.local
       find(".minion_#{minions[0].id} .master-btn").click

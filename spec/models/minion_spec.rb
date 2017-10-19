@@ -194,9 +194,16 @@ describe Minion do
       expect(minion.reload.role).to eq("master")
     end
 
-    it "updates the highstate column to 'pending' in the database" do
+    it "updates the highstate column to 'not_applied' if not remote" do
       minion.update!(highstate: :applied)
       expect { minion.assign_role(:master) }
+        .to change { minion.reload.highstate }.from("applied")
+        .to("not_applied")
+    end
+
+    it "updates the highstate column to 'pending' if remote" do
+      minion.update!(highstate: :applied)
+      expect { minion.assign_role(:master, remote: true) }
         .to change { minion.reload.highstate }.from("applied")
         .to("pending")
     end
