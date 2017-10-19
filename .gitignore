@@ -3,7 +3,7 @@
 /**/*.swp
 /log/*
 /tmp
-/coverage
+/public/coverage
 /public/assets
 /config/config-local.yml
 /bin/pharos
