@@ -38,7 +38,8 @@ class SaltHandler::MinionOrchestration
     new_highstate = Minion.highstates[orchestration_succeeded ? :applied : :failed]
 
     # rubocop:disable SkipsModelValidations
-    Minion.pending.update_all highstate: new_highstate
+    Minion.where(highstate: [Minion.highstates[:pending], Minion.highstates[:failed]])
+          .update_all(highstate: new_highstate)
     # rubocop:enable SkipsModelValidations
   end
 end
