@@ -3,8 +3,10 @@ require "simplecov"
 require "webmock/rspec"
 require "vcr"
 
-SimpleCov.minimum_coverage 100
-SimpleCov.start "rails"
+SimpleCov.start("rails") do
+  minimum_coverage 100
+  coverage_dir "public/coverage"
+end
 
 VCR.configure do |c|
   c.cassette_library_dir = "spec/vcr_cassettes"
