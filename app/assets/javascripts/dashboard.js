@@ -247,6 +247,14 @@ MinionPoller = {
     $("#download-kubeconfig").attr("disabled", !enabled);
   },
 
+  alertFailedBootstrap: function(message) {
+    if ($('.alert-message span').is(':empty')) {
+      $('.alert-message span').append(message);
+    }
+    $('#float-alert').removeClass('collapse');
+    $('.alert-info').addClass('alert-danger').removeClass('alert-info');
+  },
+
   renderDashboard: function(minion) {
     var statusHtml;
     var checked;
@@ -265,6 +273,7 @@ MinionPoller = {
         break;
       case "failed":
         statusHtml = '<i class="fa fa-times-circle text-danger fa-2x" aria-hidden="true"></i>';
+        MinionPoller.alertFailedBootstrap('At least one of the nodes is in a failed state. Please run "supportconfig" on the failed node(s) to gather the logs.');
         break;
       case "applied":
         statusHtml = '<i class="fa fa-check-circle-o text-success fa-2x" aria-hidden="true"></i>';
