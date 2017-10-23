@@ -14,7 +14,7 @@ class DashboardController < ApplicationController
   skip_before_action :authenticate_user!, only: :autoyast
   skip_before_action :redirect_to_setup, only: :autoyast
   # make sure that access comes from a registered host
-  before_action :host_warning
+  before_action :host_warning, unless: :known_host?
 
   # The index method is provided through the Discovery concern.
   alias index discovery
@@ -95,7 +95,6 @@ class DashboardController < ApplicationController
   end
 
   def host_warning
-    return true if accessible_hosts.include? request.host
     flash[:alert] = "You are accessing velum from an unregistered host (#{request.host}). " \
                     "It is advised to access velum via one of the registered hosts " \
                     "#{accessible_hosts.join(" or ")}"

@@ -26,6 +26,10 @@ class ApplicationController < ActionController::Base
     [
       Pillar.value(pillar: :dashboard),
       Pillar.value(pillar: :dashboard_external_fqdn)
-    ]
+    ].uniq
+  end
+
+  def known_host?
+    accessible_hosts.include? request.host
   end
 end
