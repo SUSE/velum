@@ -73,9 +73,10 @@ class Minion < ApplicationRecord
   # to salt subsystem if remote is true.
   def assign_role(new_role, remote: false)
     Minion.transaction do
-      # We set highstate to pending since we just assigned a new role
-      success = update_columns role:      Minion.roles[new_role],
-                               highstate: Minion.highstates[:pending]
+      # We set highstate to pending only if we are gonna call salt
+      highstate = remote ? :pending : :not_applied
+      success   = update_columns role:      Minion.roles[new_role],
+                                 highstate: Minion.highstates[highstate]
       if success && remote
         salt.assign_role
       else
