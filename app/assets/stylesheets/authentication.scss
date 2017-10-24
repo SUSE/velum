@@ -7,6 +7,8 @@
 @import 'authentication_variables.scss';
 @import 'bootstrap';
 
+@import 'components/**/*';
+
 
 html {
   min-height: 100%;
@@ -138,7 +140,7 @@ html {
 
       .footer-links {
         margin-top: 35px;
-      
+
         & a {
           color: #ccc;
           font-size: 13px;
@@ -148,7 +150,7 @@ html {
           &:hover {
             color: $suse-brand-green;
           }
-          
+
         }
 
       }
