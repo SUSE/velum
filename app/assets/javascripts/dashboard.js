@@ -192,7 +192,10 @@ MinionPoller = {
 
         handleBootstrapErrors();
         toggleMinimumNodesAlert();
+        $('.connection-failed-alert').fadeOut(100);
       }
+    }).fail(function() {
+      $('.connection-failed-alert').fadeIn(100);
     }).always(function() {
       // make another request only after the last one finished
       MinionPoller.pollingTimeoutId = setTimeout(MinionPoller.request, 5000);
