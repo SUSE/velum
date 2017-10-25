@@ -12,7 +12,10 @@ def seed_development
 end
 
 def seed_production
-  # nothing yet
+  Registry.where(name: "SUSE").find_or_initialize.tap do |r|
+    r.url = "https://registry.suse.com"
+    r.save
+  end
 end
 
 case Rails.env

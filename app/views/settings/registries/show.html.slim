@@ -1,0 +1,46 @@
+header.settings-content-header.clearfix
+  .title.pull-left
+    h2 #{@registry.name} registry details
+  .actions.pull-right
+    = link_to settings_registry_path(@registry), method: "delete", class: "btn btn-danger", data: { confirm: "Are you sure?" } do
+      | Delete
+    = link_to edit_settings_registry_path(@registry), class: "btn btn-primary" do
+      | Edit
+
+section.registry-details
+  .field
+    .details-label URL
+    .details-value
+      = display_registry_url(@registry.url)
+
+  - if @registry.certificate.present?
+    .field
+      .details-label Certificate
+      .details-value
+        = @registry.certificate.certificate
+
+h3 Mirrors
+
+= link_to "Add Mirror", new_settings_registry_mirror_path(registry_id: @registry.id), class: "btn btn-primary add-entry-btn"
+
+- if @registry.registry_mirrors.any?
+  table.table
+    thead
+      tr
+        th Name
+        th URL
+        th width="110"
+    tbody
+      - @registry.registry_mirrors.each do |mirror|
+        tr class="mirror_#{mirror.id}"
+          td
+            = link_to mirror.name, settings_registry_mirror_path(mirror)
+          td
+            = display_registry_url(mirror.url)
+          td.actions
+            = link_to edit_settings_registry_mirror_path(mirror), class: "btn btn-default edit-btn" do
+              .fa.fa-pencil
+            = link_to settings_registry_mirror_path(mirror), method: "delete", class: "btn btn-danger delete-btn", data: { confirm: "Are you sure?" } do
+              .fa.fa-trash-o
+- else
+  p No mirrors found

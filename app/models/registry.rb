@@ -10,6 +10,9 @@ class Registry < ActiveRecord::Base
   SUSE_REGISTRY_NAME = "SUSE".freeze
   SUSE_REGISTRY_URL  = "https://registry.suse.com".freeze
 
+  scope :suse, -> { where(name: SUSE_REGISTRY_NAME) }
+  scope :displayable, -> { where.not(name: SUSE_REGISTRY_NAME) }
+
   class << self
     # create or update suse Registry model
     # rubocop:disable Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity,Metrics/AbcSize
@@ -52,5 +55,10 @@ class Registry < ActiveRecord::Base
       errors
     end
     # rubocop:enable Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity,Metrics/AbcSize
+
+    def grouped_mirrors
+      registries = Registry.suse + Registry.displayable
+      registries.map { |reg| [reg, reg.registry_mirrors] }
+    end
   end
 end

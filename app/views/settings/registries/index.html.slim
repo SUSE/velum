@@ -1,0 +1,26 @@
+h2 Remote Registries
+
+= link_to "Add Remote Registry", new_settings_registry_path, class: "btn btn-primary add-entry-btn"
+
+section
+  - if @registries.present?
+    table.table
+      thead
+        tr
+          th Name
+          th URL
+          th width="110"
+      tbody
+        - @registries.each do |registry|
+          tr class="registry_#{registry.id}"
+            td
+              = link_to registry.name, settings_registry_path(registry)
+            td
+              = display_registry_url(registry.url)
+            td.actions
+              = link_to edit_settings_registry_path(registry), class: "btn btn-default edit-btn" do
+                .fa.fa-pencil
+              = link_to settings_registry_path(registry), method: "delete", class: "btn btn-danger delete-btn", data: { confirm: "Are you sure?" } do
+                .fa.fa-trash-o
+  - else
+    | No registry found.

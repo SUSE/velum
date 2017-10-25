@@ -10,7 +10,7 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
     {
       dashboard:  "dashboard.example.com",
       registries: [
-        url:  "https://registry.suse.com",
+        url:  Registry::SUSE_REGISTRY_URL,
         cert: nil
       ]
     }
@@ -24,7 +24,7 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
   describe "GET /pillar" do
     before do
       Pillar.create pillar: "dashboard", value: "dashboard.example.com"
-      create(:registry)
+      create(:registry, name: Registry::SUSE_REGISTRY_NAME, url: Registry::SUSE_REGISTRY_URL)
     end
 
     it "has the expected response status" do
@@ -43,7 +43,7 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
       {
         registries: [
           {
-            url:  "https://registry.suse.com",
+            url:  Registry::SUSE_REGISTRY_URL,
             cert: nil
           },
           {
@@ -69,7 +69,7 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
     end
 
     before do
-      create(:registry)
+      create(:registry, name: Registry::SUSE_REGISTRY_NAME, url: Registry::SUSE_REGISTRY_URL)
       Registry.create(name: "example", url: "https://example.com")
       registry = Registry.create(name: "remote", url: "https://remote.registry.com")
       registry_mirror = RegistryMirror.create(url: "https://mirror.local.lan") do |m|

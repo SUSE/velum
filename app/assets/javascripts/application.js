@@ -15,6 +15,7 @@
 //= require bootstrap.min
 //= require bootstrap-slider.min
 //
+//= require_tree ./settings
 //= require_tree ./dashboard
 //= require_tree ./setup
 //= require_tree ./users

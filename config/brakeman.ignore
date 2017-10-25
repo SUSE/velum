@@ -1,6 +1,26 @@
 {
   "ignored_warnings": [
     {
+      "warning_type": "Unscoped Find",
+      "warning_code": 82,
+      "fingerprint": "4ed1ea893b8d2b5d3627f79f09b96f52fa765a0b3ae46921bf4546028eb29aa0",
+      "check_name": "UnscopedFind",
+      "message": "Unscoped call to RegistryMirror#find",
+      "file": "app/controllers/settings/registry_mirrors_controller.rb",
+      "line": 81,
+      "link": "http://brakemanscanner.org/docs/warning_types/unscoped_find/",
+      "code": "RegistryMirror.find(params[:id])",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Settings::RegistryMirrorsController",
+        "method": "set_registry_mirror"
+      },
+      "user_input": "params[:id]",
+      "confidence": "Weak",
+      "note": ""
+    },
+    {
       "warning_type": "SQL Injection",
       "warning_code": 0,
       "fingerprint": "6d8def71ff08f847b07b8d4791d3c2c900635c3991c4b5a14f55b5aab6ba2950",
@@ -60,6 +80,6 @@
       "note": ""
     }
   ],
-  "updated": "2017-09-27 16:17:54 +0000",
+  "updated": "2018-03-01 12:41:56 +0000",
   "brakeman_version": "3.5.0"
 }

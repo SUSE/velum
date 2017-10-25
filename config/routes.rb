@@ -50,5 +50,11 @@ Rails.application.routes.draw do
       resource :pillar, only: :show
     end
   end
+
+  namespace :settings do
+    get "/", action: :index
+    resources :registries
+    resources :registry_mirrors, path: :mirrors
+  end
 end
 # rubocop:enable Metrics/BlockLength

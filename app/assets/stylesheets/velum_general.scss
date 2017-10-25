@@ -1,7 +1,5 @@
 // Background color for mail container
 $velum-container-bg:          #f0f1f3;
-// Background color for header
-$velum-header-bg:             #00243e;
 
 html,
 body {
@@ -20,69 +18,60 @@ dl.side-by-side {
     clear: left;
   }
 }
+
 .container {
-    background-color: $velum-container-bg;
-    min-height: 100%;
-    position: relative;
-    padding-bottom: 45px;
+  background-color: $velum-container-bg;
+  min-height: 100%;
+  position: relative;
+  padding-bottom: 45px;
 
-    header .col-xs-12 {
-        background-color: $velum-header-bg ;
+  .alert {
+    margin-top: $line-height-computed;
+    margin-bottom: 0px;
 
-        .page-header {
-            border-bottom: 0px;
-            margin: 0px 0px;
-            padding: 0px;
-
-            img {
-                height: 60px;
-            }
-        }
+    i {
+      bottom: 10px;
+      position: relative;
     }
+  }
 
-    .alert {
-        margin-top: $line-height-computed;
-        margin-bottom: 0px;
+  .btn-table {
+    margin-bottom: 5px;
+  }
 
-        i {
-            bottom: 10px;
-            position: relative;
-        }
+  .panel-body {
+    > .table,
+    > table {
+      margin-bottom: 0
     }
+  }
 
-    .btn-logout {
-        border: 1px solid #02AB74;
-        color: #00BF81;
-        margin-top: 12px;
+  table,
+  .table {
+    td, th {
+      vertical-align: middle;
     }
+  }
 
-    .btn-logout:hover {
-        color: #ffffff;
+  h1 {
+    margin: 30px 0px;
+  }
+
+  .steps-container .btn-danger {
+    margin-right: $line-height-computed;
+  }
+
+  footer {
+    bottom: 0px;
+    margin-bottom: 15px;
+    position: absolute;
+    width: 100%;
+
+    p {
+      margin: 0px;
+      font-size: 11px;
     }
-
-    .btn-table {
-        margin-bottom: 5px;
-    }
-
-    h1 {
-        margin: 30px 0px;
-    }
-
-    .steps-container .btn-danger {
-        margin-right: $line-height-computed;
-    }
-
-    footer {
-        bottom: 0px;
-        margin-bottom: 15px;
-        position: absolute;
-        width: 100%;
-
-        p {
-            margin: 0px;
-            font-size: 11px;
-        }
-    }
+  }
 }
 
 @import 'pages/**/*';
