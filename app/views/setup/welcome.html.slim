@@ -34,7 +34,7 @@ h1 Initial CaaS Platform Configuration
 
     #cluster-network-settings-panel.panel-collapse.collapse
       .panel-body
-        p The Cluster Network is used interally within Kubernetes for pod to pod communications. Each master and worker node will receive a slice of this range, from which each Kubernetes pod will be allocated an IP. This network range will not be accessible from outside the cluster, however, conflicts with preexisting address ranges used elsewhere should be avoided.
+        p The Cluster Network is used internally within Kubernetes for pod to pod communications. Each master and worker node will receive a slice of this range, from which each Kubernetes pod will be allocated an IP. This network range will not be accessible from outside the cluster, however, conflicts with preexisting address ranges used elsewhere should be avoided.
 
         .form-group
           = f.label :cluster_cidr, "Cluster CIDR"
