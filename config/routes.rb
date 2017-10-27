@@ -29,6 +29,7 @@ Rails.application.routes.draw do
 
   get "/oidc", to: "oidc#index"
   get "/oidc/done", to: "oidc#done"
+  get "/oidc/kubeconfig", to: "oidc#kubeconfig"
 
   namespace :setup do
     get "/", action: :welcome
