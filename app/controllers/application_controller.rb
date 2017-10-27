@@ -30,6 +30,6 @@ class ApplicationController < ActionController::Base
   end
 
   def known_host?
-    accessible_hosts.include? request.host
+    accessible_hosts.include?(request.host) || accessible_hosts.include?(request.host_with_port)
   end
 end

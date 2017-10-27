@@ -5,6 +5,7 @@ require "velum/kubernetes"
 # OidcController is used for performing an OpenID Connect auth
 # flow against Dex, allowing Velum to generate a complete kubeconfig
 # file for a user, including their JWT token
+# rubocop:disable Metrics/ClassLength
 class OidcController < ApplicationController
   # allow anyone to start this, the auth will happen inside
   # Dex.
@@ -63,10 +64,29 @@ class OidcController < ApplicationController
       nonce:     stored_nonce
     )
 
-    lookup_config
+    email = id_token.raw_attributes["email"]
+    client_id = access_token.client.identifier
+    client_secret = access_token.client.secret
+    idp_issuer_url = id_token.iss
+    refresh_token = access_token.refresh_token
 
-    @access_token = access_token
-    @id_token = id_token
+    @redirect_target = oidc_kubeconfig_url email:          email,
+                                           client_id:      client_id,
+                                           client_secret:  client_secret,
+                                           id_token:       access_token.id_token,
+                                           idp_issuer_url: idp_issuer_url,
+                                           refresh_token:  refresh_token
+  end
+
+  def kubeconfig
+    @email = params[:email]
+    @client_id = params[:client_id]
+    @client_secret = params[:client_secret]
+    @id_token = params[:id_token]
+    @idp_issuer_url = params[:idp_issuer_url]
+    @refresh_token = params[:refresh_token]
+
+    lookup_config
 
     # TODO: phantomjs does not download files (https://github.com/ariya/phantomjs/issues/10052), so
     #       we only set the content-disposition as attachment in production.
@@ -126,3 +146,4 @@ class OidcController < ApplicationController
                        "#{accessible_hosts.join(" or ")}"
   end
 end
+# rubocop:enable Metrics/ClassLength
