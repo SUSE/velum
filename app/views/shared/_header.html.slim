@@ -1,7 +1,7 @@
 header.row
   .col-xs-12
     .page-header.col-xs-6
-        = image_tag "logo.svg", class: "logo"
+        = link_to image_tag("logo.svg", class: "logo"), root_path
     .col-xs-6
       - if user_signed_in?
       = link_to('Logout', destroy_user_session_path, class: "btn btn-logout pull-right", :method => :delete)
