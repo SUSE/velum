@@ -133,13 +133,21 @@
 
 .role-column {
   position: relative;
+  width: 1px;
+  white-space: nowrap;
 
   input {
     position: absolute;
   }
 }
+
 .role-btn-group {
   .btn {
+    float: none;
     font-weight: normal;
+  }
+
+  .btn:not(:first-child) {
+    margin-left: -5px;
   }
 }
