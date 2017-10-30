@@ -1,4 +1,18 @@
 h1 Download your kubeconfig file
 
+p
+  | You will see a download dialog that will allow you to download your kubeconfig file. Please,
+  |  accept it and save it in a known location.
+
+p
+  | You can refer to it using kubectl by setting the <strong>KUBECONFIG</strong> environment variable,
+  |  like <strong>KUBECONFIG=~/Downloads/kubeconfig kubectl get nodes</strong>.
+
+p
+  | You can also save it to your home in `~/.kube/config`, `kubectl` will automatically read this
+  |  file without the need to specify the <strong>KUBECONFIG</strong> environment variable.
+
+p= link_to "You can navigate to the dashboard now, once you have downloaded your kubeconfig file", root_path
+
 javascript:
   window.location.href = "#{@redirect_target}"
