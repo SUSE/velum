@@ -267,7 +267,7 @@ MinionPoller = {
       case "pending":
         statusHtml = '\
           <span class="fa-stack" aria-hidden="true">\
-            <i class="fa fa-circle fa-stack-2x text-success" aria-hidden="true"></i>\
+            <i class="fa fa-circle fa-stack-2x text-muted" aria-hidden="true"></i>\
             <i class="fa fa-refresh fa-stack-1x fa-spin fa-inverse" aria-hidden="true"></i>\
           </span>';
         break;
