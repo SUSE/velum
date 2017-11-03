@@ -645,9 +645,6 @@ $('body').on('change', 'input[name="roles[worker][]"]', function() {
       MinionPoller.selectedNodes.splice(index, 1);
     }
   }
-
-  toggleMinimumNodesAlert();
-  handleBootstrapErrors();
 });
 
 // when selecting a master
@@ -666,9 +663,6 @@ $('body').on('change', 'input[name="roles[master][]"]', function() {
       MinionPoller.selectedMasters.splice(index, 1);
     }
   }
-
-  toggleMinimumNodesAlert();
-  handleBootstrapErrors();
 });
 
 function unselectRoles(target) {
@@ -688,4 +682,7 @@ $('body').on('click', '.role-btn-group .btn', function(e) {
   unselectRoles(e.target);
   $(e.target).addClass('btn-primary');
   $('#roles_' + role + '_' +  minionId).prop('checked', true).change();
+
+  toggleMinimumNodesAlert();
+  handleBootstrapErrors();
 });
