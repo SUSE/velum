@@ -5,12 +5,19 @@ default: &default
   port:     <%= ENV['VELUM_DB_PORT'] || 0 %>
   username: <%= ENV['VELUM_DB_USERNAME'] || "root" %>
   password: <%= ENV['VELUM_DB_PASSWORD'] || "" %>
+  database: <%= "velum_#{Rails.env.downcase}" %>
   encoding: utf8
   pool:     <%= ENV['VELUM_DB_POOL'] || 5 %>
 <% if ENV['VELUM_DB_SOCKET'] %>
   socket:   <%= ENV['VELUM_DB_SOCKET'] %>
 <% end %>
 
-<%= Rails.env.downcase %>:
+development:
   <<: *default
-  database: <%= ENV['VELUM_DB_NAME'] || "velum_#{Rails.env.downcase}" %>
+  database: <%= ENV['VELUM_DB_NAME'] || "velum_development" %>
+
+test:
+  <<: *default
+
+production:
+  <<: *default
