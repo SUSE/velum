@@ -14,5 +14,8 @@ p
 
 p= link_to "You can navigate to the dashboard now, once you have downloaded your kubeconfig file", root_path
 
-javascript:
-  window.location.href = "#{@redirect_target}"
+= content_for :page_javascript do
+  javascript:
+    $(function() {
+      window.location.href = "#{@redirect_target}"
+    });
