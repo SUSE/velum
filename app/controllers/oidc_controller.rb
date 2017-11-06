@@ -24,9 +24,7 @@ class OidcController < ApplicationController
   end
 
   def stored_nonce
-    n = session.delete(:nonce)
-    raise "Invalid Session" if n.nil?
-    n
+    session.delete(:nonce)
   end
 
   def issuer
@@ -76,6 +74,9 @@ class OidcController < ApplicationController
                                            id_token:       access_token.id_token,
                                            idp_issuer_url: idp_issuer_url,
                                            refresh_token:  refresh_token
+  rescue OpenIDConnect::ResponseObject::IdToken::InvalidNonce => e
+    redirect_to root_path,
+                alert: e.message
   end
 
   def kubeconfig
