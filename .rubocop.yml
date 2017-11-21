@@ -18,6 +18,9 @@ Metrics/BlockLength:
 Style/ClassAndModuleChildren:
   Enabled: false
 
+Layout/EmptyLineAfterMagicComment:
+  Enabled: false
+
 Rails:
   Enabled: true
 
