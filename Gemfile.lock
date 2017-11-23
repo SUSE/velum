@@ -165,7 +165,7 @@ GEM
     pry-nav (0.2.4)
       pry (>= 0.9.10, < 0.11.0)
     public_suffix (2.0.5)
-    puma (3.7.0)
+    puma (3.10.0)
     rack (1.6.5)
     rack-oauth2 (1.6.2)
       activesupport (>= 2.3)
