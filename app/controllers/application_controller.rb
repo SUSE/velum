@@ -5,7 +5,6 @@ class ApplicationController < ActionController::Base
   rescue_from DeviseLdapAuthenticatable::LdapException do |exception|
     render text: exception, status: 500
   end
-  before_action :force_ssl_redirect, unless: -> { Rails.env.test? }
   before_action :authenticate_user!
   before_action :redirect_to_setup
   protect_from_forgery with: :exception

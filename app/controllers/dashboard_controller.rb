@@ -10,7 +10,6 @@ class DashboardController < ApplicationController
   # authenticated (as login/password -- since it's machines requesting this endpoint). It would
   # never get redirected to setup the cluster, and it should actually read some security setting for
   # only serving the autoyast profile to a set of IP ranges (provided by the customer).
-  skip_before_action :force_ssl_redirect, only: :autoyast
   skip_before_action :authenticate_user!, only: :autoyast
   skip_before_action :redirect_to_setup, only: :autoyast
   # make sure that access comes from a registered host
