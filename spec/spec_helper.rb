@@ -40,7 +40,7 @@ RSpec.configure do |config|
     ENV["VELUM_SALT_PORT"] ||= "8000"
   end
 
-  config.before :each do
+  config.before do
     allow(Rails.application.secrets).to receive(:internal_api).and_return(
       username: "test",
       password: "test"
