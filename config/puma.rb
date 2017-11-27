@@ -1,5 +1,7 @@
-MAX_THREADS = ENV.fetch("VELUM_THREADS", 5).freeze
-MAX_WORKERS = ENV.fetch("VELUM_WORKERS", 2).freeze
+WORKERS = ENV.fetch("VELUM_WORKERS", 8).freeze
+MIN_THREADS = ENV.fetch("VELUM_MIN_THREADS", 8).freeze
+MAX_THREADS = ENV.fetch("VELUM_MAX_THREADS", 32).freeze
+SOCKET_NAME = ENV.fetch("VELUM_SOCKET_NAME", "dashboard.sock").freeze
 
 # frozen_string_literal: true
 # Puma can serve each request in a thread from an internal thread pool.
@@ -8,20 +10,13 @@ MAX_WORKERS = ENV.fetch("VELUM_WORKERS", 2).freeze
 # the maximum value specified for Puma. Default is set to 5 threads for minimum
 # and maximum, this matches the default thread size of Active Record.
 #
-threads MAX_THREADS, MAX_THREADS
+threads MIN_THREADS, MAX_THREADS
+
+workers WORKERS
 
 # Specifies the `environment` that Puma will run in.
 #
 environment ENV.fetch("RAILS_ENV") { "development" }
-
-# Specifies the number of `workers` to boot in clustered mode.
-# Workers are forked webserver processes. If using threads and workers together
-# the concurrency of the application would be max `threads` * `workers`.
-# Workers do not work on JRuby or Windows (both of which do not support
-# processes).
-#
-# TODO: remove this again when switching to a reverse proxy container
-workers MAX_WORKERS
 
 # Use the `preload_app!` method when specifying a `workers` number.
 # This directive tells Puma to first boot the application and load code
@@ -43,8 +38,4 @@ workers MAX_WORKERS
 #   ActiveRecord::Base.establish_connection if defined?(ActiveRecord)
 # end
 
-if ENV["VELUM_PORT"].to_i == 443
-  ssl_bind "0.0.0.0", ENV["VELUM_PORT"], key: "/etc/pki/velum.key", cert: "/etc/pki/velum.crt"
-else
-  bind "tcp://0.0.0.0:#{ENV["VELUM_PORT"]}"
-end
+bind "unix:///var/run/puma/#{SOCKET_NAME}"

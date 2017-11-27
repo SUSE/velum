@@ -21,11 +21,6 @@ setup_database() {
   COUNT=0
   RETRY=1
 
-  # let the user know that the UI is about to start
-  # https://bugzilla.suse.com/show_bug.cgi?id=1031682
-  ruby bin/serve-init-page.rb -p $VELUM_PORT --request-timeout=$TIMEOUT --bind-address=0.0.0.0 --ssl-certificate /etc/pki/velum.crt --ssl-private-key /etc/pki/velum.key public/503_database_not_ready.html &
-  export TEMPORARY_SERVER_PID=$!
-
   while [ $RETRY -ne 0 ]; do
     case $(bundle exec rails r bin/check_db.rb | grep DB) in
       "DB_DOWN")
@@ -58,9 +53,6 @@ setup_database() {
       "DB_READY")
         echo "Database ready"
         bundle exec rake db:migrate
-        # UI and database is ready, so we can kill the temporary server
-        # https://bugzilla.suse.com/show_bug.cgi?id=1031682
-        kill -9 $TEMPORARY_SERVER_PID
         break
         ;;
     esac
