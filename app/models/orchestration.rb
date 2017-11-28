@@ -50,11 +50,7 @@ class Orchestration < ApplicationRecord
   def update_minions
     case kind
     when "bootstrap"
-      # rubocop:disable Rails/SkipsModelValidations
-      Minion.assigned_role.where(highstate: [Minion.highstates[:not_applied],
-                                             Minion.highstates[:failed]])
-            .update_all highstate: Minion.highstates[:pending]
-      # rubocop:enable Rails/SkipsModelValidations
+      Minion.mark_pending_bootstrap
     when "upgrade"
       Minion.mark_pending_update
     end

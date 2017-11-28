@@ -12,11 +12,4 @@ FactoryGirl.define do
       orchestration.class.skip_callback :create, :after, :update_minions
     end
   end
-  factory :upgrade_orchestration_with_callback, parent: :upgrade_orchestration do
-    after(:create) do |orchestration|
-      VCR.use_cassette("salt/update_status", record: :none) do
-        orchestration.send :update_minions
-      end
-    end
-  end
 end

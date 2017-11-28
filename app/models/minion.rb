@@ -101,6 +101,15 @@ class Minion < ApplicationRecord
     end
   end
 
+  # rubocop:disable Rails/SkipsModelValidations
+  # Updates all nodes in `not_applied` or `failed` highstate to a pending highstate
+  def self.mark_pending_bootstrap
+    Minion.assigned_role.where(highstate: [Minion.highstates[:not_applied],
+                                           Minion.highstates[:failed]])
+          .update_all highstate: Minion.highstates[:pending]
+  end
+  # rubocop:enable Rails/SkipsModelValidations
+
   # Returns the proxy for the salt minion
   def salt
     @salt ||= Velum::SaltMinion.new minion: self

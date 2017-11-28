@@ -8,9 +8,6 @@ SimpleCov.start("rails") do
   coverage_dir "public/coverage"
 end
 
-ENV["VELUM_SALT_HOST"] ||= "127.0.0.1"
-ENV["VELUM_SALT_PORT"] ||= "8000"
-
 VCR.configure do |c|
   c.cassette_library_dir = "spec/vcr_cassettes"
   c.hook_into :webmock
@@ -43,6 +40,11 @@ RSpec.configure do |config|
       username: "test",
       password: "test"
     )
+  end
+
+  config.before :all do
+    ENV["VELUM_SALT_HOST"] ||= "127.0.0.1"
+    ENV["VELUM_SALT_PORT"] ||= "8000"
   end
 
   config.order = :random
