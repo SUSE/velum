@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 require "velum/salt"
 
 # This class is responsible to handle the salt events with tag "minion_start".
@@ -23,7 +22,7 @@ class SaltHandler::MinionStart
     # Ignore the ca and the dashboard minions. It shouldn't be used as part of
     # the k8s cluster.
     id = parsed_data["id"]
-    return false if id == "ca" || id == "admin"
+    return false if ["ca", "admin"].include? id
 
     minion_info = Velum::Salt.minions[id]
     return false if minion_info.blank?

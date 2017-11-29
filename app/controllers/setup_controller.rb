@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "velum/salt"
 
 # SetupController is responsible for everything related to the bootstrapping
@@ -108,9 +106,7 @@ class SetupController < ApplicationController
   end
 
   def proxy_enabled
-    (!@http_proxy.blank? &&
-     !@https_proxy.blank? &&
-     !@no_proxy.blank?) ||
+    (@http_proxy.present? && @https_proxy.present? && @no_proxy.present?) ||
       @proxy_systemwide == "true"
   end
 
@@ -119,7 +115,7 @@ class SetupController < ApplicationController
   end
 
   def failed_assigned_nodes(assigned)
-    assigned.select { |_name, success| !success }.keys.join(", ")
+    assigned.reject { |_name, success| success }.keys.join(", ")
   end
 
   def check_empty_settings

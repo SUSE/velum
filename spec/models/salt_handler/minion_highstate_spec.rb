@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 require "rails_helper"
 
 describe SaltHandler::MinionHighstate do
@@ -76,14 +75,14 @@ describe SaltHandler::MinionHighstate do
       matching_minion
 
       expect { handler.process_event }
-        .not_to change { matching_minion.reload.highstate }
+        .not_to(change { matching_minion.reload.highstate })
     end
 
     it "updates the matching Minion's highstate column if it's failure" do
       matching_minion
 
       expect { failed_handler.process_event }
-        .to change { matching_minion.reload.highstate }.from("pending").to("failed")
+        .to(change { matching_minion.reload.highstate }.from("pending").to("failed"))
     end
   end
 end

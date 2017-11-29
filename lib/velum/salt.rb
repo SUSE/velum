@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 require "velum/salt_api"
 
 module Velum

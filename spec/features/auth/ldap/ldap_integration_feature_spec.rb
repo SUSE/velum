@@ -1,11 +1,10 @@
-# frozen_string_literal: true
 require "rails_helper"
 
 require "velum/ldap"
 
 # Tests out that the LDAP integration works as expected.
 
-feature "LDAP Integration feature" do
+describe "LDAP Integration feature" do
   let(:user) { build(:user) }
 
   let(:ldap_config) do
@@ -90,18 +89,18 @@ feature "LDAP Integration feature" do
     conn_params
   end
 
-  scenario "TLS is configured properly when needed" do
+  it "TLS is configured properly when needed" do
     expect(tls_conn_params[:encryption]).to be(:start_tls)
   end
 
-  scenario "People org unit does not exist" do
+  it "People org unit does not exist" do
     create_account
 
     expect(ldap.search(base: people_base,
                        return_result: false, scope: Net::LDAP::SearchScope_BaseObject)).to be(true)
   end
 
-  scenario "Administrators groupOfUniqueNames does not exist" do
+  it "Administrators groupOfUniqueNames does not exist" do
     create_account
 
     expect(ldap.search(base: admin_group,
@@ -131,7 +130,7 @@ feature "LDAP Integration feature" do
     expect(ldap.add(dn: admin_group, attributes: attrs)).to be(true)
   end
 
-  scenario "User is already a member of Administrators group" do
+  it "User is already a member of Administrators group" do
     create_user_already_in_group
 
     create_account
@@ -167,7 +166,7 @@ feature "LDAP Integration feature" do
     Net::LDAP::Filter.eq("uniqueMember", user_dn)
   end
 
-  scenario "User is not already a member of Administrators group" do
+  it "User is not already a member of Administrators group" do
     expect(ldap.search(base: admin_group,
                       filter: create_group_without_member, return_result: false,
                       scope: Net::LDAP::SearchScope_BaseObject)).to be(true)
@@ -227,12 +226,12 @@ feature "LDAP Integration feature" do
     expect(ldap.add(dn: user_dn, attributes: attrs)).to be(true)
   end
 
-  scenario "User already exists" do
+  it "User already exists" do
     create_user
     create_account
   end
 
-  scenario "Fail_if_with tests failure case" do
+  it "Fail_if_with tests failure case" do
     expect { Velum::LDAP.fail_if_with(false, "Foobar") }.to raise_error(RuntimeError)
   end
 
@@ -253,7 +252,7 @@ feature "LDAP Integration feature" do
     click_button("Log in")
   end
 
-  scenario "LDAP Failure causes 500" do
+  it "LDAP Failure causes 500" do
     setup_ldap_for_failure
 
     expect(page.status_code).to eq(500)

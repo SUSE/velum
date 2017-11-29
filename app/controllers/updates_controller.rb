@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "velum/salt"
 
 # UpdatesController handles all the interaction with the updates of all nodes.
@@ -23,8 +21,7 @@ class UpdatesController < ApplicationController
     needed, failed = ::Velum::Salt.update_status(targets: "*", cached: true)
     status = Minion.computed_status("admin", needed, failed)
 
-    return if status == Minion.statuses[:update_needed] ||
-        status == Minion.statuses[:update_failed]
+    return if [Minion.statuses[:update_needed], Minion.statuses[:update_failed]].include? status
 
     render json: { status: Minion.statuses[:unknown] }
   end

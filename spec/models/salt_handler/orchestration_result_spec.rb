@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 require "rails_helper"
 
 describe SaltHandler::OrchestrationResult do
@@ -74,6 +73,7 @@ describe SaltHandler::OrchestrationResult do
 
     describe "with a successful orchestration result" do
       let(:handler) { described_class.new(successful_orchestration_result) }
+
       it "does set pending minions to successful" do
         expect { handler.process_event }.to change { Minion.pending.count }.from(1).to(0)
       end
@@ -84,6 +84,7 @@ describe SaltHandler::OrchestrationResult do
 
     describe "with a mid-successful orchestration result" do
       let(:handler) { described_class.new(mid_successful_orchestration_result) }
+
       it "marks pending minions as failed" do
         expect { handler.process_event }.to change { pending_minion.reload.highstate }
           .from("pending").to("failed")
@@ -95,6 +96,7 @@ describe SaltHandler::OrchestrationResult do
 
     describe "with a failed orchestration result" do
       let(:handler) { described_class.new(failed_orchestration_result) }
+
       it "marks pending minions as failed" do
         expect { handler.process_event }.to change { pending_minion.reload.highstate }
           .from("pending").to("failed")

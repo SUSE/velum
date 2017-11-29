@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 FactoryGirl.define do
   factory :orchestration do
     jid    "20170706104527757674"

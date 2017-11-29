@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This class is responsible to handle the salt events that are highstate job
 # successful returns. When we run a highstate successfully on a minion then
 # that Minion must be have the highstate attribute updated.

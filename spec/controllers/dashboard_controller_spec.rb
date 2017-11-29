@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 require "rails_helper"
 
 require "velum/suse_connect"
@@ -99,7 +98,7 @@ RSpec.describe DashboardController, type: :controller do
       )
     end
 
-    context "no dashboard pillar is set" do
+    context "when no dashboard pillar is set" do
       before do
         Pillar.where(pillar: "dashboard").destroy_all
       end
@@ -131,7 +130,7 @@ RSpec.describe DashboardController, type: :controller do
       end
     end
 
-    context "if the credentials are missing for SMT or SCC" do
+    context "when the credentials are missing for SMT or SCC" do
       before do
         allow(Velum::SUSEConnect).to receive(:config).and_raise(
           Velum::SUSEConnect::MissingCredentialsException
@@ -146,7 +145,7 @@ RSpec.describe DashboardController, type: :controller do
       end
     end
 
-    context "if the registration code is missing" do
+    context "when the registration code is missing" do
       before do
         allow(Velum::SUSEConnect).to receive(:config).and_raise(
           Velum::SUSEConnect::MissingRegCodeException
@@ -161,7 +160,7 @@ RSpec.describe DashboardController, type: :controller do
       end
     end
 
-    context "if there is a connectivity problem with SMT or SCC" do
+    context "when there is a connectivity problem with SMT or SCC" do
       before do
         allow(Velum::SUSEConnect).to receive(:config).and_raise(
           Velum::SUSEConnect::SCCConnectionException
@@ -176,35 +175,6 @@ RSpec.describe DashboardController, type: :controller do
       end
     end
   end
-
-  # describe "GET /kubectl-config" do
-  #   it "gets redirected if not logged in" do
-  #     get :kubectl_config
-  #     expect(response.status).to eq 302
-  #   end
-
-  #   context "YAML delivery" do
-  #     before do
-  #       sign_in user
-  #       external_fqdn_pillar
-  #       worker_minion
-  #     end
-
-  #     it "returns a 302 if the orchestration didn't yet finish" do
-  #       VCR.use_cassette("kubeconfig/cluster_not_ready", record: :none) do
-  #         get :kubectl_config
-  #         expect(response.status).to eq 302
-  #       end
-  #     end
-
-  #     it "renders the kubeconfig file if the orchestration did finish" do
-  #       VCR.use_cassette("kubeconfig/cluster_ready", record: :none) do
-  #         get :kubectl_config
-  #         expect(response.status).to eq 200
-  #       end
-  #     end
-  #   end
-  # end
 
   # rubocop:disable RSpec/AnyInstance
   describe "POST /assign_nodes via HTML" do

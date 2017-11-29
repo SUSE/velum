@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 FactoryGirl.define do
   factory :minion do
     sequence(:minion_id) { SecureRandom.hex }

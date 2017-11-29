@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "velum/salt_minion"
 
 # Minion represents the minions that have been registered in this application.
@@ -59,9 +57,9 @@ class Minion < ApplicationRecord
   # failed arguments are the results as given by salt, with the form of an array
   # of hashes.
   def self.computed_status(id, needed, failed)
-    if failed.first && !failed.first[id].blank?
+    if failed.first && failed.first[id].present?
       Minion.statuses[:update_failed]
-    elsif needed.first && !needed.first[id].blank?
+    elsif needed.first && needed.first[id].present?
       Minion.statuses[:update_needed]
     else
       Minion.statuses[:unknown]

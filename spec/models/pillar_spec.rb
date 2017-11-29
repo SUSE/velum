@@ -1,5 +1,3 @@
-# coding: utf-8
-
 describe Pillar do
   subject { create(:pillar) }
 
@@ -20,7 +18,7 @@ describe Pillar do
       expect(res).to be_empty
     end
 
-    context "disable proxy settings" do
+    context "when proxy settings are disabled" do
       let(:proxy_enabled_settings_params) do
         proxy_enabled = settings_params.dup
         proxy_enabled[:http_proxy]  = "squid.corp.net:3128"
@@ -35,7 +33,9 @@ describe Pillar do
 
       before do
         described_class.apply(proxy_enabled_settings_params)
+      end
 
+      it "has the expected attributes set to nil" do
         proxy_pillars_that_can_be_blank.each do |key|
           expect(settings_params[key]).to be_nil
         end

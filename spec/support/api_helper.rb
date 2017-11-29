@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module ApiHelper
   def http_login
     request.env["HTTP_AUTHORIZATION"] =

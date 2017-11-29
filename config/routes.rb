@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # rubocop:disable Metrics/BlockLength
 Rails.application.routes.draw do
   get "/autoyast", to: "dashboard#autoyast"

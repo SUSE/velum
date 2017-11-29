@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 require "rails_helper"
 require "velum/salt"
 
@@ -13,7 +12,7 @@ describe Velum::SaltApi do
     expect(salt_api.new).to respond_to(:token=)
   end
 
-  context "given a client" do
+  context "with a client" do
     let(:client) { salt_api.new }
 
     it "has an empty token cache" do

@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 require "rails_helper"
 
 describe Orchestration do
@@ -6,15 +5,15 @@ describe Orchestration do
   let(:orchestration) { FactoryGirl.create :orchestration }
   let(:upgrade_orchestration) { FactoryGirl.create :upgrade_orchestration }
 
-  context "run a bootstrap orchestration" do
+  context "when a bootstrap orchestration is ran" do
     before do
-      allow(Velum::Salt).to receive(:orchestrate) do
+      allow(Velum::Salt).to receive(:orchestrate).and_return(
         [nil, { "return" => [{ "jid" => "20170706104527757674" }] }]
-      end
+      )
     end
 
     it "spawns a new bootstrap orchestration" do
-      expect { described_class.run kind: :bootstrap }.to change { described_class.bootstrap.count }
+      expect { described_class.run kind: :bootstrap }.to(change { described_class.bootstrap.count })
       expect(Velum::Salt).to have_received(:orchestrate).once
     end
 
@@ -25,15 +24,15 @@ describe Orchestration do
     end
   end
 
-  context "run an upgrade orchestration" do
+  context "when an upgrade orchestration is ran" do
     before do
-      allow(Velum::Salt).to receive(:update_orchestration) do
+      allow(Velum::Salt).to receive(:update_orchestration).and_return(
         [nil, { "return" => [{ "jid" => "20170706104527757674" }] }]
-      end
+      )
     end
 
     it "spawns a new bootstrap orchestration" do
-      expect { described_class.run kind: :upgrade }.to change { described_class.upgrade.count }
+      expect { described_class.run kind: :upgrade }.to(change { described_class.upgrade.count })
       expect(Velum::Salt).to have_received(:update_orchestration).once
     end
 
@@ -50,7 +49,7 @@ describe Orchestration do
     end
   end
 
-  context "is bootstrap orchestration retryable" do
+  context "when the bootstrap orchestration is retryable" do
     context "when the last orchestration was successful" do
       before do
         FactoryGirl.create :orchestration,
@@ -59,7 +58,7 @@ describe Orchestration do
       end
 
       it "is not retryable" do
-        expect(described_class.retryable?(kind: :bootstrap)).to be_falsey
+        expect(described_class).not_to be_retryable(kind: :bootstrap)
       end
     end
 
@@ -71,7 +70,7 @@ describe Orchestration do
       end
 
       it "is not retryable" do
-        expect(described_class.retryable?(kind: :bootstrap)).to be_falsey
+        expect(described_class).not_to be_retryable(kind: :bootstrap)
       end
     end
 
@@ -83,12 +82,12 @@ describe Orchestration do
       end
 
       it "is retryable" do
-        expect(described_class.retryable?(kind: :bootstrap)).to be_truthy
+        expect(described_class).to be_retryable(kind: :bootstrap)
       end
     end
   end
 
-  context "is upgrade orchestration retryable" do
+  context "when the upgrade orchestration is retryable" do
     context "when the last orchestration was successful" do
       before do
         FactoryGirl.create :orchestration,
@@ -97,7 +96,7 @@ describe Orchestration do
       end
 
       it "is not retryable" do
-        expect(described_class.retryable?(kind: :upgrade)).to be_falsey
+        expect(described_class).not_to be_retryable(kind: :upgrade)
       end
     end
 
@@ -109,7 +108,7 @@ describe Orchestration do
       end
 
       it "is not retryable" do
-        expect(described_class.retryable?(kind: :upgrade)).to be_falsey
+        expect(described_class).not_to be_retryable(kind: :upgrade)
       end
     end
 
@@ -121,7 +120,7 @@ describe Orchestration do
       end
 
       it "is retryable" do
-        expect(described_class.retryable?(kind: :upgrade)).to be_truthy
+        expect(described_class).to be_retryable(kind: :upgrade)
       end
     end
   end

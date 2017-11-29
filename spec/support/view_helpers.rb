@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Velum
   # ViewHelpers adds some methods to view specs.
   module ViewHelpers

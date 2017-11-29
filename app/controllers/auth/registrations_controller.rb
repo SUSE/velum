@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 # Auth::RegistrationsController manages user signup/removal.
 class Auth::RegistrationsController < Devise::RegistrationsController
   before_action :restrict_admin_users

@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 require "net/http"
 require "velum/http_exceptions"
 
@@ -31,7 +30,7 @@ module Velum
 
       def smt_config_file_contents(prefix:)
         YAML.load_file File.join(prefix, "SUSEConnect")
-      rescue
+      rescue StandardError
         nil
       end
 
@@ -57,7 +56,7 @@ module Velum
 
       def credentials_file_contents(prefix:)
         File.read File.join(prefix, "credentials.d", "SCCcredentials")
-      rescue
+      rescue StandardError
         nil
       end
 
@@ -127,7 +126,7 @@ module Velum
       req.basic_auth @credentials[:username], @credentials[:password]
       req["Accept"]       = "application/json; charset=utf-8"
       req["Content-Type"] = "application/json; charset=utf-8"
-      req.body = data.to_json unless data.blank?
+      req.body = data.to_json if data.present?
 
       opts = { open_timeout: 2, use_ssl: uri.scheme == "https" }
       opts[:verify_mode] = OpenSSL::SSL::VERIFY_NONE if opts[:use_ssl] && @smt_insecure

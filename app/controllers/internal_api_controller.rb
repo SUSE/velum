@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # InternalApiController is the superclass of all internal API controllers.
 class InternalApiController < ActionController::Base
   include Api

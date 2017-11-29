@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 require "rails_helper"
 
 # rubocop:disable RSpec/AnyInstance
@@ -22,7 +21,7 @@ RSpec.describe SetupController, type: :controller do
       expect(response.status).to eq 302
     end
 
-    context "previous configure with proxy settings" do
+    context "when proxy settings were previously configured" do
       let(:pillars) do
         {
           dashboard:        "dashboard.example.com",
@@ -62,7 +61,7 @@ RSpec.describe SetupController, type: :controller do
       end
     end
 
-    context "HTML rendering" do
+    context "with HTML rendering" do
       before do
         sign_in user
 
@@ -120,9 +119,9 @@ RSpec.describe SetupController, type: :controller do
     context "when the user fails to choose the master" do
       before do
         allow_any_instance_of(Minion).to receive(:assign_role).with(:master, remote: false)
-          .and_return(false)
+                                                              .and_return(false)
         allow_any_instance_of(Minion).to receive(:assign_role).with(:worker, remote: false)
-          .and_return(true)
+                                                              .and_return(true)
       end
 
       it "gets redirected to the discovery page" do
@@ -174,7 +173,7 @@ RSpec.describe SetupController, type: :controller do
       end
     end
 
-    context "proxy disabled" do
+    context "when the proxy is disabled" do
       let(:no_proxy_settings) do
         s = settings_params.dup
         s["dashboard"]    = "dashboard"

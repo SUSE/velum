@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This class wraps salt's events. Salt stores the events in the same database
 # we use for this application. This model is mapped to the same table salt-master
 # writes events into.

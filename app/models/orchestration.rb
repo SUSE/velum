@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "velum/salt"
 require "velum/salt_orchestration"
 
@@ -14,7 +12,7 @@ class Orchestration < ApplicationRecord
 
   # rubocop:disable Rails/SkipsModelValidations
   def run
-    raise OrchestrationAlreadyRan unless jid.blank?
+    raise OrchestrationAlreadyRan if jid.present?
     update_column :status, Orchestration.statuses[:in_progress]
     _, job = case kind
              when "bootstrap"

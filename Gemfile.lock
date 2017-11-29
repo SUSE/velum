@@ -203,7 +203,7 @@ GEM
       thor (>= 0.18.1, < 2.0)
     rainbow (2.2.2)
       rake
-    rake (12.0.0)
+    rake (12.3.0)
     recursive-open-struct (1.0.0)
     responders (2.3.0)
       railties (>= 4.2.0, < 5.1)
@@ -235,8 +235,8 @@ GEM
       rainbow (>= 2.2.2, < 3.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (~> 1.0, >= 1.0.1)
-    rubocop-rspec (1.10.0)
-      rubocop (>= 0.42.0)
+    rubocop-rspec (1.20.1)
+      rubocop (>= 0.51.0)
     ruby-progressbar (1.9.0)
     safe_yaml (1.0.4)
     sass (3.4.23)
@@ -342,7 +342,7 @@ DEPENDENCIES
   rails (= 4.2.7.1)
   rails_stdout_logging
   rspec-rails
-  rubocop (~> 0.49)
+  rubocop (~> 0.51)
   rubocop-rspec
   sass-rails (~> 5.0)
   shoulda
@@ -354,4 +354,4 @@ DEPENDENCIES
   webmock
 
 BUNDLED WITH
-   1.15.3
+   1.15.4

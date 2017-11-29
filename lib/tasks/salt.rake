@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 namespace :salt do
   desc "Process salt events"
   task process: :environment do

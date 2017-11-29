@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 require "rails_helper"
 require "velum/suse_connect"
 
@@ -8,7 +7,7 @@ describe Velum::SUSEConnect do
     context "when the file exists" do
       before do
         allow(YAML).to receive(:load_file).with("/run/secrets/SUSEConnect")
-          .and_return("url" => "https://smt.mycompany.com")
+                                          .and_return("url" => "https://smt.mycompany.com")
       end
 
       it "returns the contents unmarshalled" do
@@ -20,7 +19,7 @@ describe Velum::SUSEConnect do
     context "when the file does not exist" do
       before do
         allow(YAML).to receive(:load_file).with("/run/secrets/SUSEConnect")
-          .and_raise(Errno::ENOENT)
+                                          .and_raise(Errno::ENOENT)
       end
 
       it "returns nil" do
@@ -29,7 +28,7 @@ describe Velum::SUSEConnect do
     end
   end
 
-  context "smt server set as https://smt.mycompany.com" do
+  context "when smt server set as https://smt.mycompany.com" do
     before do
       allow(described_class).to receive(:smt_config_file_contents)
         .and_return("url" => "https://smt.mycompany.com")
@@ -54,7 +53,7 @@ describe Velum::SUSEConnect do
     end
   end
 
-  context "smt server not set (defaults to https://scc.suse.com)" do
+  context "when smt server not set (defaults to https://scc.suse.com)" do
     before do
       allow(described_class).to receive(:smt_config_file_contents).and_return({})
     end

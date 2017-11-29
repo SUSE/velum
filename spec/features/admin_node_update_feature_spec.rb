@@ -1,7 +1,6 @@
-# frozen_string_literal: true
 require "rails_helper"
 
-feature "Manage nodes updates feature" do
+describe "Manage nodes updates feature" do
   let!(:user) { create(:user) }
 
   before do
@@ -11,7 +10,7 @@ feature "Manage nodes updates feature" do
     setup_stubbed_pending_minions!
   end
 
-  scenario "Admin node has no update available", js: true do
+  it "Admin node has no update available", js: true do
     setup_stubbed_update_status!(stubbed: [["admin" => ""], ["admin" => ""]])
 
     visit authenticated_root_path
@@ -19,18 +18,18 @@ feature "Manage nodes updates feature" do
     expect(page).not_to have_content("Update admin node")
   end
 
-  context "Admin node has an update available" do
+  context "when the admin node has an update available" do
     before do
       setup_stubbed_update_status!(stubbed: [["admin" => true], ["admin" => ""]])
 
       visit authenticated_root_path
     end
 
-    scenario "Admin node has an update available", js: true do
+    it "Admin node has an update available", js: true do
       expect(page).to have_content("Admin node is running outdated software")
     end
 
-    scenario "User clicks on admin 'Update admin node'", js: true do
+    it "User clicks on admin 'Update admin node'", js: true do
       expect(page).not_to have_content("Reboot to update")
 
       # clicks on "Update admin node"
@@ -42,7 +41,7 @@ feature "Manage nodes updates feature" do
     end
 
     # rubocop:disable RSpec/ExampleLength
-    scenario "User clicks on 'Reboot to update'", js: true do
+    it "User clicks on 'Reboot to update'", js: true do
       allow(::Velum::Salt).to receive(:call).and_return(true)
 
       # clicks on "Update admin node"
@@ -61,7 +60,7 @@ feature "Manage nodes updates feature" do
     # rubocop:enable RSpec/ExampleLength
   end
 
-  scenario "Admin node has an update available (failed to update)", js: true do
+  it "Admin node has an update available (failed to update)", js: true do
     setup_stubbed_update_status!(stubbed: [["admin" => ""], ["admin" => true]])
 
     visit authenticated_root_path

@@ -1,8 +1,7 @@
-# frozen_string_literal: true
 require "rails_helper"
 
 # rubocop:disable RSpec/AnyInstance
-feature "Add unassigned nodes" do
+describe "Add unassigned nodes" do
   let!(:user) { create(:user) }
   let!(:minions) do
     Minion.create! [{ minion_id: SecureRandom.hex, fqdn: "minion0.k8s.local", role: "master" },
@@ -23,13 +22,13 @@ feature "Add unassigned nodes" do
     visit assign_nodes_path
   end
 
-  scenario "A user sees (new) link", js: true do
+  it "A user sees (new) link", js: true do
     visit authenticated_root_path
 
     expect(page).to have_content("(new)")
   end
 
-  scenario "A user selects which nodes will be added", js: true do
+  it "A user selects which nodes will be added", js: true do
     # select node minion3.k8s.local
     find("#roles_minion_#{minions[2].id}").click
 
@@ -37,7 +36,7 @@ feature "Add unassigned nodes" do
     expect(page).to have_content(minions[2].fqdn).and have_no_content(minions[3].fqdn)
   end
 
-  scenario "A user check all nodes at once to be added", js: true do
+  it "A user check all nodes at once to be added", js: true do
     # wait for all minions to be there
     expect(page).to have_content(minions[2].fqdn)
     expect(page).to have_content(minions[3].fqdn)
@@ -49,7 +48,7 @@ feature "Add unassigned nodes" do
     expect(page).to have_content(minions[2].fqdn).and have_content(minions[3].fqdn)
   end
 
-  scenario "It shows the nodes as soon as they register", js: true do
+  it "shows the nodes as soon as they register", js: true do
     expect(page).not_to have_content("minion4.k8s.local")
     Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion4.k8s.local")
     expect(page).to have_content("minion4.k8s.local")

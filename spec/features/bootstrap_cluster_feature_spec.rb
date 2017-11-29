@@ -1,8 +1,7 @@
-# frozen_string_literal: true
 require "rails_helper"
 
 # rubocop:disable RSpec/AnyInstance
-feature "Bootstrap cluster feature" do
+describe "Bootstrap cluster feature" do
   let!(:user) { create(:user) }
 
   before do
@@ -13,7 +12,7 @@ feature "Bootstrap cluster feature" do
   end
 
   # rubocop:disable RSpec/ExampleLength
-  context "Nodes bootstrapping" do
+  context "when nodes are bootstrapping" do
     let!(:minions) do
       Minion.create! [{ minion_id: SecureRandom.hex, fqdn: "minion0.k8s.local" },
                       { minion_id: SecureRandom.hex, fqdn: "minion1.k8s.local" },
@@ -27,7 +26,7 @@ feature "Bootstrap cluster feature" do
       allow(Orchestration).to receive(:run)
     end
 
-    scenario "A user sees warning modal when trying to bootstrap 2 nodes", js: true do
+    it "A user sees warning modal when trying to bootstrap 2 nodes", js: true do
       # select master minion0.k8s.local
       find(".minion_#{minions[0].id} .master-btn").click
       # select node minion1.k8s.local
@@ -40,7 +39,7 @@ feature "Bootstrap cluster feature" do
       expect(page).to have_content("Cluster is too small")
     end
 
-    scenario "A user bootstraps anyway a cluster with only 2 minions", js: true do
+    it "A user bootstraps anyway a cluster with only 2 minions", js: true do
       # select master minion0.k8s.local
       find(".minion_#{minions[0].id} .master-btn").click
       # select node minion1.k8s.local
@@ -67,7 +66,7 @@ feature "Bootstrap cluster feature" do
       expect(page).not_to have_content(minions[3].fqdn)
     end
 
-    scenario "A user set roles, go next, then back and can still accept new nodes", js: true do
+    it "A user set roles, go next, then back and can still accept new nodes", js: true do
       setup_stubbed_pending_minions!(stubbed: [minions[3].minion_id])
 
       # select master minion0.k8s.local
@@ -97,7 +96,7 @@ feature "Bootstrap cluster feature" do
       expect(page).to have_content("Accept Node")
     end
 
-    scenario "A user selects a subset of nodes to be bootstrapped", js: true do
+    it "A user selects a subset of nodes to be bootstrapped", js: true do
       # select master minion0.k8s.local
       find(".minion_#{minions[0].id} .master-btn").click
       # select node minion1.k8s.local
@@ -121,7 +120,7 @@ feature "Bootstrap cluster feature" do
       expect(page).not_to have_content(minions[3].fqdn)
     end
 
-    scenario "A user check all nodes at once to be bootstrapped", js: true do
+    it "A user check all nodes at once to be bootstrapped", js: true do
       # wait for all minions to be there
       expect(page).to have_content(minions[0].fqdn)
       expect(page).to have_content(minions[1].fqdn)
@@ -147,7 +146,7 @@ feature "Bootstrap cluster feature" do
       expect(page).to have_content(minions[3].fqdn)
     end
 
-    scenario "A user selects a multiple master configuration to be bootstrapped", js: true do
+    it "A user selects a multiple master configuration to be bootstrapped", js: true do
       # select master minion0.k8s.local
       find(".minion_#{minions[0].id} .master-btn").click
       # select node minion1.k8s.local
@@ -176,7 +175,7 @@ feature "Bootstrap cluster feature" do
       expect(page).to have_content(minions[4].fqdn)
     end
 
-    scenario "A user cannot bootstrap an even multiple master configuration", js: true do
+    it "A user cannot bootstrap an even multiple master configuration", js: true do
       # select master minion0.k8s.local
       find(".minion_#{minions[0].id} .master-btn").click
       # select node minion1.k8s.local
@@ -192,7 +191,7 @@ feature "Bootstrap cluster feature" do
       expect(page).to have_button(value: "Next", disabled: true)
     end
 
-    scenario "A user cannot bootstap if no worker is selected", js: true do
+    it "A user cannot bootstap if no worker is selected", js: true do
       # select master minion0.k8s.local
       find(".minion_#{minions[0].id} .master-btn").click
 
@@ -202,7 +201,7 @@ feature "Bootstrap cluster feature" do
       expect(page).to have_button(value: "Next", disabled: true)
     end
 
-    scenario "A user cannot bootstap if no master is selected", js: true do
+    it "A user cannot bootstap if no master is selected", js: true do
       # select master minion0.k8s.local
       find(".minion_#{minions[0].id} .worker-btn").click
 
@@ -213,7 +212,7 @@ feature "Bootstrap cluster feature" do
     end
   end
 
-  scenario "It shows the minions as soon as they register", js: true do
+  it "shows the minions as soon as they register", js: true do
     expect(page).to have_content("No nodes found")
     expect(page).not_to have_content("minion0.k8s.local")
 
@@ -223,7 +222,7 @@ feature "Bootstrap cluster feature" do
   end
   # rubocop:enable RSpec/ExampleLength
 
-  scenario "A user sees 'No nodes found'", js: true do
+  it "A user sees 'No nodes found'", js: true do
     expect(page).to have_content("No nodes found")
     # bootstrap cluster button disabled
     expect(page).to have_button(value: "Next", disabled: true)

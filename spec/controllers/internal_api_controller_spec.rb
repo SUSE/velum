@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 require "rails_helper"
 
 describe InternalApiController, type: :controller do
@@ -34,7 +33,7 @@ describe InternalApiController, type: :controller do
     end
   end
 
-  context "With an invalid authentication" do
+  context "with an invalid authentication" do
     describe "get any endpoint" do
       it "returns a Unauthorized HTTP status" do
         get :ok_action_blank
@@ -43,13 +42,13 @@ describe InternalApiController, type: :controller do
     end
   end
 
-  context "With a valid authentication" do
+  context "with a valid authentication" do
     before do
       http_login
       request.accept = "application/json"
     end
 
-    context "ok without content" do
+    context "when ok without content is called" do
       it "returns 200 HTTP status and blank content" do
         get :ok_action_blank
         expect(response.status).to eq 200
@@ -57,7 +56,7 @@ describe InternalApiController, type: :controller do
       end
     end
 
-    context "ok with content" do
+    context "when ok with content is called" do
       it "returns 200 HTTP status and not blank content" do
         get :ok_action_not_blank
         expect(response.status).to eq 200
@@ -65,7 +64,7 @@ describe InternalApiController, type: :controller do
       end
     end
 
-    context "ko without content" do
+    context "when ko without content is called" do
       it "returns 422 HTTP status and blank content" do
         get :ko_action_blank
         expect(response.status).to eq 422
@@ -73,7 +72,7 @@ describe InternalApiController, type: :controller do
       end
     end
 
-    context "ok with content" do
+    context "when ok with content is called" do
       it "returns 422 HTTP status and not blank content" do
         get :ko_action_not_blank
         expect(response.status).to eq 422

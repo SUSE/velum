@@ -1,8 +1,7 @@
-# frozen_string_literal: true
 require "rails_helper"
 
 describe "dashboard/index" do
-  context "regular render" do
+  context "with a regular render" do
     it "has the url on the data-url attribute" do
       @unassigned_minions = []
       render

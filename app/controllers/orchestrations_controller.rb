@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # OrchestrationsController allows to handle orchestrations
 class OrchestrationsController < ApplicationController
   before_action :check_orchestration_can_be_retried, only: :create

@@ -18,6 +18,14 @@ Metrics/BlockLength:
 Style/ClassAndModuleChildren:
   Enabled: false
 
+Style/SymbolArray:
+  StyleGuide: https://github.com/SUSE/style-guides/blob/master/Ruby.md#stylesymbolarray
+  EnforcedStyle: brackets
+
+Style/WordArray:
+  StyleGuide: https://github.com/SUSE/style-guides/blob/master/Ruby.md#stylewordarray
+  EnforcedStyle: brackets
+
 Layout/EmptyLineAfterMagicComment:
   Enabled: false
 
@@ -30,6 +38,9 @@ Bundler/OrderedGems:
 
 # This does not happen when testing views.
 RSpec/DescribeClass:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
   Enabled: false
 
 # NOTE: drop this when switching to [Rails 5] as it's no longer needed there"
@@ -45,6 +56,12 @@ RSpec/MultipleExpectations:
     - spec/features/**/*
 
 AllCops:
+  TargetRubyVersion: 2.1.9
+  TargetRailsVersion: 4.2
+
+  DisplayCopNames: true
+  DisplayStyleGuide: false
+
   Exclude:
     # Files that are out of our control and that are not excluded in the
     # default config of rubocop.

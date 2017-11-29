@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "velum/kubernetes"
 
 # OidcController is used for performing an OpenID Connect auth

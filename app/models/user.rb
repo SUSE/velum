@@ -1,13 +1,11 @@
-# frozen_string_literal: true
-
 require "net/ldap/dn"
 require "velum/ldap"
 
 # User represents administrators in this application.
 # rubocop:disable ClassLength
 class User < ApplicationRecord
-  enabled_devise_modules = [:ldap_authenticatable, :registerable,
-                            :rememberable, :trackable, :validatable].freeze
+  enabled_devise_modules = [:ldap_authenticatable, :registerable, :rememberable, :trackable,
+                            :validatable].freeze
 
   devise(*enabled_devise_modules)
 

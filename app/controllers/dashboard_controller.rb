@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "velum/suse_connect"
 
 # DashboardController shows the main page.
@@ -90,7 +88,7 @@ class DashboardController < ApplicationController
   end
 
   def failed_assigned_nodes(assigned)
-    assigned.select { |_name, success| !success }.keys.join(", ")
+    assigned.reject { |_name, success| success }.keys.join(", ")
   end
 
   def host_warning

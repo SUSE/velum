@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # DeviseMock is a module that provides methods used as helpers in devise-related
 # views.
 module DeviseMock

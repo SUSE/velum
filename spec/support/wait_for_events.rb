@@ -1,4 +1,3 @@
-
 # Theoretically, Capybara is clever enough to wait for asynchronous events to
 # happen (e.g. AJAX). Sadly, this is not always true. For more, read:
 #

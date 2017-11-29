@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # ApplicationHelper contains all the view helpers.
 module ApplicationHelper
   # Render the user profile picture depending on the gravatar configuration.

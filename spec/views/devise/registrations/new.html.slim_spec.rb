@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 require "rails_helper"
 
 describe "devise/registrations/new" do
@@ -36,7 +35,7 @@ describe "devise/registrations/new" do
     expect(form_request(section, :post, user_registration_path)).to be_truthy
   end
 
-  context "login link" do
+  describe "login link" do
     it "shows the link if there's no user" do
       assign(:have_users, false)
       render

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This class is responsible to handle the salt events that are orchestration triggers.
 # Only the bootstrap and update orchestrations will be handled by this class.
 class SaltHandler::OrchestrationTrigger < SaltHandler::Orchestration

@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 require "rails_helper"
 
 describe SaltHandler::MinionStart do
@@ -32,8 +31,8 @@ describe SaltHandler::MinionStart do
     it "creates a new Minion when one with the specified id does not exist" do
       handler = described_class.new(salt_event)
       VCR.use_cassette("salt/minion_list", record: :none) do
-        expect { handler.process_event }.to change { Minion.where(minion_id: minion_id).count }
-          .from(0).to(1)
+        expect { handler.process_event }.to(change { Minion.where(minion_id: minion_id).count }
+          .from(0).to(1))
       end
     end
 
@@ -44,7 +43,7 @@ describe SaltHandler::MinionStart do
 
       VCR.use_cassette("salt/minion_list", record: :none) do
         expect { handler.process_event }
-          .not_to change { Minion.where(minion_id: minion_id).count }
+          .not_to(change { Minion.where(minion_id: minion_id).count })
       end
     end
     # rubocop:enable RSpec/ExampleLength
@@ -54,7 +53,7 @@ describe SaltHandler::MinionStart do
 
       VCR.use_cassette("salt/minion_list", record: :none) do
         expect { handler.process_event }
-          .not_to change { Minion.where(minion_id: "ca").count }
+          .not_to(change { Minion.where(minion_id: "ca").count })
       end
     end
   end

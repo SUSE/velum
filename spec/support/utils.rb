@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 # A simple module containing some utility methods.
 module Utils
   # Stubs the ::Velum::Salt.update_status method with the given data.

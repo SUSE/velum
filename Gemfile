@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 source "https://rubygems.org"
 
 gem "puma"
@@ -13,7 +11,7 @@ gem "font-awesome-rails"
 # NOTE: this is no longer needed in Rails 5. See
 # https://github.com/heroku/rails_stdout_logging#rails-5 for instructions on how
 # to transition.
-gem "rails_stdout_logging", group: %i(development staging production)
+gem "rails_stdout_logging", group: [:development, :staging, :production]
 
 gem "bcrypt", "~> 3.1.7"
 gem "mysql2"
@@ -53,7 +51,7 @@ end
 unless ENV["PACKAGING"] && ENV["PACKAGING"] == "yes"
   group :development, :test do
     gem "rspec-rails"
-    gem "rubocop", "~> 0.49", require: false
+    gem "rubocop", "~> 0.51", require: false
     gem "brakeman", require: false
     gem "database_cleaner"
     gem "pry"

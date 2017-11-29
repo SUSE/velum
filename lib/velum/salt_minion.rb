@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 require "velum/salt_api"
 
 module Velum
@@ -26,7 +25,7 @@ module Velum
 
     # Check if this minion has any role assigned.
     def roles?
-      !info["roles"].blank?
+      info["roles"].present?
     end
 
     # Assign role to this minion.

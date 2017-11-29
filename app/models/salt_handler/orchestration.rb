@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This is a subclass for common logic across Orchestration trigger and result.
 class SaltHandler::Orchestration
   attr_reader :salt_event
@@ -20,7 +18,7 @@ class SaltHandler::Orchestration
     fun_args = event_data["fun_args"]
 
     ORCHESTRATIONS.each do |o|
-      return o if fun_args.first == o || fun_args.first["mods"] == o
+      return o if [fun_args.first, fun_args.first["mods"]].include? o
     end
 
     nil

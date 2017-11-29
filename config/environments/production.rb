@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -24,7 +23,7 @@ Rails.application.configure do
   # config.assets.css_compressor = :sass
 
   # include svg in the precompile
-  config.assets.precompile += %w(.svg)
+  config.assets.precompile += [".svg"]
 
   # Do not fallback to assets pipeline if a precompiled asset is missed.
   config.assets.compile = true

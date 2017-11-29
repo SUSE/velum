@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 require "net/http"
 require "velum/http_exceptions"
 
@@ -75,7 +74,7 @@ module Velum
           req.body = data.merge(auth_details).to_json
         else
           req["X-Auth-Token"] = token
-          req.body = data.to_json unless data.blank?
+          req.body = data.to_json if data.present?
         end
 
         opts = { use_ssl: true, ca_file: "/etc/pki/ca.crt", ssl_version: :TLSv1, open_timeout: 2 }

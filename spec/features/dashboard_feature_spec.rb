@@ -1,8 +1,7 @@
-# frozen_string_literal: true
 require "rails_helper"
 
 # rubocop:disable RSpec/ExampleLength
-feature "Dashboard" do
+describe "Dashboard" do
   let!(:user) { create(:user) }
 
   before do
@@ -52,7 +51,7 @@ feature "Dashboard" do
       visit authenticated_root_path
     end
 
-    scenario "A user see the update link if update is available", js: true do
+    it "A user see the update link if update is available", js: true do
       expect(page).not_to have_content("update all nodes")
 
       # minion[1].highstate == :applied
@@ -62,7 +61,7 @@ feature "Dashboard" do
       expect(page).to have_content("update all nodes")
     end
 
-    scenario "A user see the update link if update is available (retryable)", js: true do
+    it "A user see the update link if update is available (retryable)", js: true do
       expect(page).not_to have_content("update all nodes")
 
       minions[1].update(highstate: Minion.highstates[:failed])
@@ -72,7 +71,7 @@ feature "Dashboard" do
       expect(page).to have_content("update all nodes")
     end
 
-    scenario "A user doesn't see link if there's a pending state", js: true do
+    it "A user doesn't see link if there's a pending state", js: true do
       # update is available and all minions has applied state
       stubbed = [[{ minions[1].minion_id => true }], [{ minions[1].minion_id => "" }]]
       setup_stubbed_update_status!(stubbed: stubbed)
@@ -86,7 +85,7 @@ feature "Dashboard" do
       expect(page).not_to have_content("update all nodes")
     end
 
-    scenario "A user doesn't see link if there's a admin update available", js: true do
+    it "A user doesn't see link if there's a admin update available", js: true do
       # admin node update and node are available and all minions has applied state
       stubbed = [
         [{ "admin" => true, minions[1].minion_id => true }],
@@ -98,7 +97,7 @@ feature "Dashboard" do
       expect(page).not_to have_content("update all nodes")
     end
 
-    scenario "A user doesn't see notification if there's a pending highstate node", js: true do
+    it "A user doesn't see notification if there's a pending highstate node", js: true do
       # admin node update is available
       stubbed = [[{ "admin" => true }], [{ "admin" => "" }]]
       setup_stubbed_update_status!(stubbed: stubbed)
@@ -110,7 +109,7 @@ feature "Dashboard" do
       expect(page).not_to have_content("update all nodes")
     end
 
-    scenario "A user doesn't see Accept Node link if there's a pending highstate node", js: true do
+    it "A user doesn't see Accept Node link if there's a pending highstate node", js: true do
       setup_stubbed_pending_minions!(stubbed: [minions[3].minion_id])
 
       visit authenticated_root_path
@@ -124,7 +123,7 @@ feature "Dashboard" do
       expect(page).not_to have_content("Accept Node")
     end
 
-    scenario "A user doesn't see (new) link if there's a pending highstate node", js: true do
+    it "A user doesn't see (new) link if there's a pending highstate node", js: true do
       expect(page).to have_content("(new)")
 
       # one of the minions is pending (bootstrapping or update in progress)

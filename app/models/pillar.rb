@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 # Pillar represents a pillar value on Salt.
 class Pillar < ApplicationRecord
   validates :pillar, presence: true

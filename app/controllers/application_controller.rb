@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # ApplicationController is the superclass of all controllers.
 class ApplicationController < ActionController::Base
   rescue_from DeviseLdapAuthenticatable::LdapException do |exception|

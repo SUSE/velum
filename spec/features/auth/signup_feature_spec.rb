@@ -1,16 +1,15 @@
-# frozen_string_literal: true
 require "rails_helper"
 
-feature "Signup feature" do
+describe "Signup feature" do
   let(:user) { build(:user) }
 
   # rubocop:disable RSpec/ExampleLength
 
   # XXX: the following tests depend on another and thus cannot be split into
-  # multiple scenarios. This must be fixed as soon as multiuser support is
+  # multiple its. This must be fixed as soon as multiuser support is
   # implemented.
 
-  scenario "Account creation tests", js: true do
+  it "Account creation tests", js: true do
     # account creation reachable
     visit new_user_session_path
     click_link("Create an account")

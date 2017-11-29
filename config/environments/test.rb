@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 ENV["VELUM_SECRETS_DIR"] ||= File.join(Dir.tmpdir, "test_velum_secrets_dir")
 
 Rails.application.configure do

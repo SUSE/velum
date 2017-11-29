@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 # A simple module containing some helper methods for acceptance tests.
 module Helpers
   # Login the given user and visit the root url.

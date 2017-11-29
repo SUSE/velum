@@ -1,9 +1,6 @@
-# frozen_string_literal: true
 require "rails_helper"
 
 describe Minion do
-  it { is_expected.to validate_uniqueness_of(:minion_id) }
-
   let(:minions) do
     described_class.create! [
       { minion_id: SecureRandom.hex, fqdn: "master.example.com" },
@@ -11,6 +8,8 @@ describe Minion do
       { minion_id: SecureRandom.hex, fqdn: "worker1.example.com" }
     ]
   end
+
+  it { is_expected.to validate_uniqueness_of(:minion_id) }
 
   # rubocop:disable RSpec/ExampleLength
   describe ".assign_roles" do
@@ -183,7 +182,7 @@ describe Minion do
   context "with no roles assigned" do
     let(:minion) { create(:minion, role: nil) }
 
-    before { allow(minion.salt).to receive(:assign_role) { true } }
+    before { allow(minion.salt).to receive(:assign_role).and_return(true) }
 
     it "returns true when calling assign_role" do
       expect(minion.reload.assign_role(:master)).to be true
@@ -198,17 +197,17 @@ describe Minion do
       minion.update!(highstate: :applied)
       expect { minion.assign_role(:master) }
         .to change { minion.reload.highstate }.from("applied")
-        .to("not_applied")
+                                              .to("not_applied")
     end
 
     it "updates the highstate column to 'pending' if remote" do
       minion.update!(highstate: :applied)
       expect { minion.assign_role(:master, remote: true) }
         .to change { minion.reload.highstate }.from("applied")
-        .to("pending")
+                                              .to("pending")
     end
 
-    context "role fails to be assigned on the remote" do
+    context "when role fails to be assigned on the remote" do
       before do
         allow(minion.salt).to receive(:assign_role) do
           raise Velum::SaltApi::SaltConnectionException

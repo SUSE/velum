@@ -3,7 +3,6 @@ MIN_THREADS = ENV.fetch("VELUM_MIN_THREADS", 8).freeze
 MAX_THREADS = ENV.fetch("VELUM_MAX_THREADS", 32).freeze
 SOCKET_NAME = ENV.fetch("VELUM_SOCKET_NAME", "dashboard.sock").freeze
 
-# frozen_string_literal: true
 # Puma can serve each request in a thread from an internal thread pool.
 # The `threads` method setting takes two numbers a minimum and maximum.
 # Any libraries that use thread pools should be configured to match

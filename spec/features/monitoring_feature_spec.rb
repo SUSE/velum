@@ -1,7 +1,6 @@
-# frozen_string_literal: true
 require "rails_helper"
 
-feature "Monitoring feature" do
+describe "Monitoring feature" do
   let!(:user) { create(:user) }
 
   before do
@@ -13,7 +12,7 @@ feature "Monitoring feature" do
     visit authenticated_root_path
   end
 
-  scenario "It updates the status of the minions automatically", js: true do
+  it "updates the status of the minions automatically", js: true do
     # We poll every 5 seconds so the default Capybara wait time might not be enough
     expect(page).to have_selector(".nodes-container tbody tr i.fa.fa-circle-o")
     Minion.first.update!(highstate: "pending")
@@ -21,7 +20,7 @@ feature "Monitoring feature" do
   end
 
   # rubocop:disable RSpec/ExampleLength
-  scenario "It shows the number of new minions", js: true do
+  it "shows the number of new minions", js: true do
     unassigned_count = find(".unassigned-count")
     expect(page).not_to have_content("minion1.k8s.local")
     expect(unassigned_count).to have_content("0")
