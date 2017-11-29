@@ -17,6 +17,12 @@ describe Orchestration do
       expect { described_class.run kind: :bootstrap }.to change { described_class.bootstrap.count }
       expect(Velum::Salt).to have_received(:orchestrate).once
     end
+
+    it "updates all minions with roles" do
+      allow(Minion).to receive :mark_pending_bootstrap
+      orchestration.send :update_minions
+      expect(Minion).to have_received :mark_pending_bootstrap
+    end
   end
 
   context "run an upgrade orchestration" do
@@ -29,6 +35,12 @@ describe Orchestration do
     it "spawns a new bootstrap orchestration" do
       expect { described_class.run kind: :upgrade }.to change { described_class.upgrade.count }
       expect(Velum::Salt).to have_received(:update_orchestration).once
+    end
+
+    it "updates all minions with roles" do
+      allow(Minion).to receive :mark_pending_update
+      upgrade_orchestration.send :update_minions
+      expect(Minion).to have_received :mark_pending_update
     end
   end
 
