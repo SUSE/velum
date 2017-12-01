@@ -14,7 +14,7 @@ index 7b0e396..4eca8ad 100644
 @@ -204,7 +204,7 @@ GEM
      rainbow (2.2.2)
        rake
-     rake (12.3.0)
+     rake (12.0.0)
 -    recursive-open-struct (1.0.0)
 +    recursive-open-struct (1.0.2)
      responders (2.3.0)
