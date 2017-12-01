@@ -87,14 +87,7 @@ class OidcController < ApplicationController
 
     lookup_config
 
-    # TODO: phantomjs does not download files (https://github.com/ariya/phantomjs/issues/10052), so
-    #       we only set the content-disposition as attachment in production.
-    #
-    # :nocov:
-    if Rails.env.production?
-      response.headers["Content-Disposition"] = "attachment; filename=kubeconfig"
-    end
-    # :nocov:
+    response.headers["Content-Disposition"] = "attachment; filename=kubeconfig"
 
     render "kubeconfig.erb", layout: false, content_type: "text/yaml"
   end
