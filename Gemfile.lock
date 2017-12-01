@@ -203,7 +203,7 @@ GEM
       thor (>= 0.18.1, < 2.0)
     rainbow (2.2.2)
       rake
-    rake (12.3.0)
+    rake (12.0.0)
     recursive-open-struct (1.0.0)
     responders (2.3.0)
       railties (>= 4.2.0, < 5.1)
