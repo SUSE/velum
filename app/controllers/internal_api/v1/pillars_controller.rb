@@ -8,7 +8,9 @@ class InternalApi::V1::PillarsController < InternalApiController
 
   def pillar_contents
     pillar_struct = {}.tap do |h|
-      Pillar.all_pillars.collect { |k, v| h[v] = Pillar.value(pillar: k.to_sym) }
+      Pillar.all_pillars.each do |k, v|
+        h[v] = Pillar.value(pillar: k.to_sym) unless Pillar.value(pillar: k.to_sym).nil?
+      end
     end
     {}.tap do |json_response|
       pillar_struct.each do |key, value|

@@ -11,6 +11,10 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
   end
 
   describe "GET /pillar" do
+    before do
+      Pillar.create pillar: "dashboard", value: "dashboard.example.com"
+    end
+
     it "retrieves the pillar contents" do
       get :show
       expect(response.status).to eq 200
