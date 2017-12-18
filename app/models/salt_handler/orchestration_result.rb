@@ -11,7 +11,7 @@ class SaltHandler::OrchestrationResult < SaltHandler::Orchestration
   def process_event
     event_data = JSON.parse @salt_event.data
 
-    orchestration_succeeded = event_data["success"] && event_data["return"]["retcode"].zero?
+    orchestration_succeeded = event_data["success"]
 
     update_orchestration orchestration_succeeded: orchestration_succeeded, event_data: event_data
     update_minions orchestration_succeeded: orchestration_succeeded
