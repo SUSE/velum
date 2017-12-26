@@ -173,6 +173,168 @@ RSpec.describe SetupController, type: :controller do
       end
     end
 
+    context "when suse registry mirror is disabled" do
+      let(:no_registry_mirror_settings) do
+        settings_params.dup.tap do |s|
+          s["dashboard"]                    = "dashboard"
+          s["apiserver"]                    = "api.k8s.corporate.net"
+          s["suse_registry_mirror_enabled"] = "disable"
+        end
+      end
+
+      let(:registry_mirror_disabled_plus_leftovers) do
+        no_registry_mirror_settings.dup.tap do |s|
+          s["suse_registry_mirror"] = {
+            url:         "https://local.registry",
+            certificate: "something"
+          }
+        end
+      end
+
+      before do
+        sign_in user
+      end
+
+      it "doesn't store any related data" do
+        put :configure, settings: no_registry_mirror_settings
+
+        expect(DockerRegistry.count).to eq(0)
+        expect(Certificate.count).to eq(0)
+      end
+
+      it "erases fields left by the user" do
+        # A user could enable, add certificate and then disable certificate it
+        # before hitting the "submit" button.
+        # In this case the settings are still sent to Rails, but
+        # the "disable the suse registry mirror certificate" setting must have precedence.
+        put :configure, settings: registry_mirror_disabled_plus_leftovers
+
+        expect(DockerRegistry.count).to eq(0)
+        expect(Certificate.count).to eq(0)
+      end
+    end
+
+    context "when suse registry mirror weren't previously configured" do
+      let(:registry_mirror_enabled) do
+        settings_params.dup.tap do |s|
+          s["dashboard"]                                = "dashboard"
+          s["apiserver"]                                = "api.k8s.corporate.net"
+          s["suse_registry_mirror_enabled"]             = "enable"
+          s["suse_registry_mirror_certificate_enabled"] = "enable"
+          s["suse_registry_mirror"] = {
+            url: "https://local.registry"
+          }
+        end
+      end
+
+      let(:registry_mirror_enabled_plus_certificate) do
+        registry_mirror_enabled.dup.tap do |s|
+          s["suse_registry_mirror"]["certificate"] = "something"
+        end
+      end
+
+      before do
+        sign_in user
+      end
+
+      it "stores registry without certificate" do
+        put :configure, settings: registry_mirror_enabled
+
+        registry = DockerRegistry.first
+        expect(registry.url).to eq("https://local.registry")
+        expect(registry.certificate).to be_nil
+      end
+
+      it "stores registry and associate with the certificate" do
+        put :configure, settings: registry_mirror_enabled_plus_certificate
+
+        registry = DockerRegistry.first
+        expect(registry.url).to eq("https://local.registry")
+        expect(registry.certificate.certificate).to eq("something")
+      end
+    end
+
+    context "when suse registry mirror was previously configured" do
+      let(:pillars) do
+        {
+          dashboard: "dashboard.example.com"
+        }
+      end
+
+      let(:registry_mirror_enabled_plus_certificate_leftover) do
+        settings_params.dup.tap do |s|
+          s["suse_registry_mirror_enabled"]             = "enable"
+          s["suse_registry_mirror_certificate_enabled"] = "disable"
+          s["suse_registry_mirror"] = {
+            url:         "https://local.registry",
+            certificate: "something"
+          }
+        end
+      end
+
+      let(:registry_mirror_changed_plus_certificate) do
+        settings_params.dup.tap do |s|
+          s["suse_registry_mirror_enabled"]             = "enable"
+          s["suse_registry_mirror_certificate_enabled"] = "enable"
+          s["suse_registry_mirror"] = {
+            url:         "https://local2.registry",
+            certificate: "something"
+          }
+        end
+      end
+
+      before do
+        mirror      = "https://registry.suse.com"
+        url         = "https://local.registry"
+        certificate = Certificate.create(certificate: "something")
+        registry    = DockerRegistry.create(url: url, mirror: mirror)
+        CertificateService.create(service: registry, certificate: certificate)
+        Pillar.apply(pillars, required_pillars: [:dashboard])
+
+        sign_in user
+
+        get :welcome
+      end
+
+      it "assigns @suse_registry_mirror" do
+        registry = assigns(:suse_registry_mirror)
+
+        expect(registry.url).to eq("https://local.registry")
+        expect(registry.certificate.certificate).to eq("something")
+      end
+
+      it "assigns @suse_registry_mirror_certificate_enabled" do
+        expect(assigns(:suse_registry_mirror_certificate_enabled)).to eq(true)
+      end
+
+      it "assigns @suse_registry_mirror_enabled" do
+        expect(assigns(:suse_registry_mirror_enabled)).to eq(true)
+      end
+
+      it "changes mirror url but keep the certificate" do
+        put :configure, settings: registry_mirror_changed_plus_certificate
+
+        registry = DockerRegistry.first
+        expect(registry.url).to eq("https://local2.registry")
+        expect(registry.certificate.certificate).to eq("something")
+      end
+
+      it "erases certificate field left by the user if field disabled" do
+        # A user could enable, add url and certificate and then disable it
+        # before hitting the "submit" button.
+        # In this case the settings are still sent to Rails, but
+        # the "disable the suse registry mirror" setting must have precedence.
+        put :configure, settings: registry_mirror_enabled_plus_certificate_leftover
+
+        registry = DockerRegistry.first
+        expect(registry.url).to eq("https://local.registry")
+
+        # this must be set to nil, even though the value specied by the user
+        # was different
+        expect(registry.certificate).to be_nil
+      end
+    end
+
     context "when the proxy is disabled" do
       let(:no_proxy_settings) do
         s = settings_params.dup
@@ -217,7 +379,6 @@ RSpec.describe SetupController, type: :controller do
         # was different
         expect(Pillar.value(pillar: :proxy_systemwide)).to eq("false")
       end
-
     end
 
     context "when the user doesn't specify any values" do

@@ -6,12 +6,12 @@ class DockerRegistry < ActiveRecord::Base
   validates :url, presence: true, uniqueness: true, url: { schemes: ["https", "http"] }
 
   class << self
-    def apply(settings_params)
+    def apply(registries_params)
       errors = []
-      settings_params["registries"].each do |registry|
-        errors += configure_registry(registry) if registry["docker_registry_url"].present?
+      registries_params.each do |registry|
+        errors += configure_registry(registry) if registry["url"].present?
       end
-      cleanup settings_params
+      cleanup registries_params
       errors
     end
 
@@ -20,33 +20,40 @@ class DockerRegistry < ActiveRecord::Base
     # create or update DockerRegistry model
     def configure_registry(registry)
       errors      = []
-      url         = registry["docker_registry_url"]
-      cert        = registry["docker_registry_certificate"]
-      mirror      = registry["docker_registry_mirror"]
+      url         = registry["url"]
+      cert        = registry["certificate"]
+      mirror      = registry["mirror"]
+
+      registry = DockerRegistry.find_or_create_by(url: url) do |r|
+        r.mirror = mirror
+      end
+
+      unless registry.persisted?
+        errors << "Registry url #{url} doesn't match a docker registry pattern"
+        return errors
+      end
 
       if cert.present?
-        certificate = Certificate.find_or_create_by certificate: cert.strip
-        errors << "Failed to validate certificate" unless certificate.persisted?
-      end
+        certificate = Certificate.find_or_create_by(certificate: cert.strip)
+        unless certificate.persisted?
+          errors << "Failed to validate certificate"
+          return errors
+        end
 
-      service = DockerRegistry.find_or_create_by(url: url) do |r|
-        r.mirror = mirror
-        r.certificate = certificate
-      end
-
-      unless service.persisted?
-        errors << "Registry url #{url} doesn't match a docker registry pattern"
+        CertificateService.create(service: registry, certificate: certificate)
+      elsif registry.certificate.present?
+        registry.certificate_service.destroy
       end
 
       errors
     end
 
     # remove old registries from the db if they were deleted in the UI
-    def cleanup(settings_params)
-      passed_registries = settings_params["registries"].collect do |r|
-        r["docker_registry_url"]
+    def cleanup(registries_params)
+      passed_registries = registries_params.collect do |r|
+        r["url"]
       end
-      saved_registries = DockerRegistry.pluck :url
+      saved_registries = DockerRegistry.pluck(:url)
       DockerRegistry.where(url: saved_registries - passed_registries).destroy_all
     end
   end

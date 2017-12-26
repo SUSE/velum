@@ -8,3 +8,10 @@
     margin-right: 3px;
   }
 }
+
+.btn-group-toggle .btn {
+  &:focus,
+  &.focus {
+    outline: 0;
+  }
+}

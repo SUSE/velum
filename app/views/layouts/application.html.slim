@@ -9,8 +9,11 @@ html(lang='en')
     meta(name='author', content='')
     link(rel='icon', href='/favicon.ico')
     title Velum
-    = stylesheet_link_tag 'application', media: 'all'
     = csrf_meta_tags
+    = stylesheet_link_tag 'application', media: 'all'
+
+    - if Rails.env.test?
+      = stylesheet_link_tag 'test', media: 'all'
 
   body class="#{yield :body_class}"
     .container
@@ -28,4 +31,8 @@ html(lang='en')
               'SUSE&reg; CaaS Platform #{Rails.root.join("VERSION").read} | &copy; SUSE Linux #{Time.now.year}
 
     = javascript_include_tag 'application'
+
+    - if Rails.env.test?
+      = javascript_include_tag 'test'
+
     = yield :page_javascript

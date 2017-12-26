@@ -134,5 +134,7 @@ h1 Initial CaaS Platform Configuration
               = f.radio_button :proxy_systemwide, "true", checked: @proxy_systemwide == "true"
               | Entire node
 
+  = render partial: 'setup/settings/mirror', locals: { form: f }
+
   .clearfix.steps-container
     = submit_tag "Next", class: "btn btn-primary pull-right"

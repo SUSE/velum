@@ -8,6 +8,8 @@ require "velum/salt"
 class SetupController < ApplicationController
   include Discovery
 
+  SUSE_REGISTRY_URL = "https://registry.suse.com".freeze
+
   skip_before_action :redirect_to_setup
   before_action :redirect_to_dashboard
   before_action :check_empty_settings, only: :configure
@@ -29,6 +31,9 @@ class SetupController < ApplicationController
     @services_cidr = Pillar.value(pillar: :services_cidr) || "172.24.0.0/16"
     @api_cluster_ip = Pillar.value(pillar: :api_cluster_ip) || "172.24.0.1"
     @dns_cluster_ip = Pillar.value(pillar: :dns_cluster_ip) || "172.24.0.2"
+    @suse_registry_mirror = DockerRegistry.find_or_initialize_by(mirror: SUSE_REGISTRY_URL)
+    @suse_registry_mirror_enabled = @suse_registry_mirror.persisted?
+    @suse_registry_mirror_certificate_enabled = @suse_registry_mirror.certificate.present?
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
@@ -36,10 +41,12 @@ class SetupController < ApplicationController
     res = Pillar.apply(settings_params,
                        required_pillars:    required_pillars,
                        unprotected_pillars: unprotected_pillars)
-    if res.empty?
+    registry_errors = DockerRegistry.apply(suse_registry_mirror_params)
+
+    if res.empty? && registry_errors.empty?
       redirect_to setup_worker_bootstrap_path
     else
-      redirect_to setup_path, alert: res
+      redirect_to setup_path, alert: res + registry_errors
     end
   end
 
@@ -92,13 +99,34 @@ class SetupController < ApplicationController
 
   def settings_params
     settings = params.require(:settings).permit(*Pillar.all_pillars.keys)
+
     if params["settings"]["enable_proxy"] == "disable"
       settings["proxy_systemwide"] = "false"
       settings["http_proxy"] = ""
       settings["https_proxy"] = ""
       settings["no_proxy"] = ""
     end
+
     Velum::LDAP.ldap_pillar_settings!(settings)
+  end
+
+  def suse_registry_mirror_params
+    if params["settings"]["suse_registry_mirror_enabled"].blank? ||
+        params["settings"]["suse_registry_mirror_enabled"] == "disable"
+      return []
+    end
+
+    parameters = params["settings"]["suse_registry_mirror"]
+
+    if params["settings"]["suse_registry_mirror_certificate_enabled"] == "disable"
+      parameters.delete :certificate
+    end
+
+    if params["settings"]["suse_registry_mirror_enabled"] == "enable"
+      parameters["mirror"] = SUSE_REGISTRY_URL
+    end
+
+    [parameters]
   end
 
   def update_nodes_params
@@ -144,7 +172,12 @@ class SetupController < ApplicationController
   def unprotected_pillars
     case action_name
     when "configure"
-      [:proxy_systemwide, :http_proxy, :https_proxy, :no_proxy]
+      [
+        :proxy_systemwide,
+        :http_proxy,
+        :https_proxy,
+        :no_proxy
+      ]
     when "do_bootstrap"
       []
     end
