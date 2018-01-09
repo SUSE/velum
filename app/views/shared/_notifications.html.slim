@@ -1,7 +1,7 @@
 - flash.each do |key, value|
   - if key == 'notice' || key == 'alert'
     = render template: 'shared/_notification.html.slim',
-        locals: { messages: value, alert: key, float: flash[:float], klass: "" }
+        locals: { messages: value, alert: key, klass: "" }
 
 = render template: 'shared/_notification.html.slim',
-    locals: { messages: "Could not connect with Velum API. If you're bootstrapping for the first time, this is expected due to an update of our certificate. Please, try #{link_to "reloading the session", root_path}.".html_safe, alert: "alert", klass: "connection-failed-alert", float: false }
+    locals: { messages: "Could not connect with Velum API. If you're bootstrapping for the first time, this is expected due to an update of our certificate. Please, try #{link_to "reloading the session", root_path}.".html_safe, alert: "alert", klass: "connection-failed-alert" }
