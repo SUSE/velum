@@ -1,4 +1,3 @@
-
 ENV["RAILS_ENV"] ||= "test"
 
 require "spec_helper"
@@ -19,6 +18,8 @@ RSpec.configure do |config|
   # If we want Capybara + DatabaseCleaner + Poltergeist to work correctly, we
   # have to just set this to false.
   config.use_transactional_fixtures = false
+
+  config.include JsonSpecHelper, type: :controller
 
   config.infer_spec_type_from_file_location!
   config.include FactoryGirl::Syntax::Methods
