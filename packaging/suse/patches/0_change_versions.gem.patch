@@ -1,5 +1,5 @@
 diff --git a/Gemfile.lock b/Gemfile.lock
-index 7b0e396..4eca8ad 100644
+index 6becbab..a54b2cf 100644
 --- a/Gemfile.lock
 +++ b/Gemfile.lock
 @@ -121,7 +121,7 @@ GEM
