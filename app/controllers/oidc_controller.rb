@@ -17,7 +17,7 @@ class OidcController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   # make sure that the request comes from a registered host
-  before_action :verify_host
+  before_action :verify_host, unless: :known_host?
 
   def new_nonce
     session[:nonce] = SecureRandom.hex(16)
@@ -140,7 +140,6 @@ class OidcController < ApplicationController
   end
 
   def verify_host
-    return true if accessible_hosts.include? request.host
     sign_out(current_user)
     redirect_to root_path,
                 alert: "You have been logged out as #{request.host} " \
