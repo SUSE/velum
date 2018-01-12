@@ -20,7 +20,7 @@ Name:           velum
 # When you release a new version, set Version and branch accordingly.
 # For example:
 # Version:      1.0.0
-# %define branch 1.0.0
+# %%define branch 1.0.0
 
 Version:        __VERSION__
 %define branch __BRANCH__
@@ -78,6 +78,8 @@ export IGNORE_ASSETS=yes
 
 # run bundle list to redo the Gemfile.lock
 bundle list
+# FIXME: once we are based on factory, which contains the new bundler, use bundle lock instead of list
+#bundle lock --local
 
 # deploy gems
 bundle install --retry=3 --local --deployment
@@ -90,26 +92,14 @@ rm -rf vendor/cache
 %install
 install -d %{buildroot}/%{velumdir}
 
-cp -av . %{buildroot}/%{velumdir}
+cp -a . %{buildroot}/%{velumdir}
 
 rm -rf %{buildroot}/%{velumdir}/log
 mkdir %{buildroot}/%{velumdir}/log
 rm -rf %{buildroot}/%{velumdir}/tmp
 mkdir %{buildroot}/%{velumdir}/tmp
 
-# remove any .orig files that might have been created by a successful patch with an offset
-# unfortunately there is no option to patch that prevents that
-rm -rf %{buildroot}/%{velumdir}/Gemfile.lock.orig
-
-%fdupes %{buildroot}/%{velumdir}
-
-%pre
-
-%post
-
-%preun
-
-%postun
+%fdupes -s %{buildroot}/%{velumdir}
 
 %files
 %defattr(-,root,root)
