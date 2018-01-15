@@ -9,6 +9,9 @@ rvm:
   - 2.3.4
   - 2.4.1
 
+  # Latest stable supported one
+  - 2.5.0
+
   # Latest ruby
   - ruby-head
 
