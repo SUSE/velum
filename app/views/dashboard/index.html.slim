@@ -49,9 +49,13 @@ h1 Cluster Status
         i.fa.fa-download.fa-fw
         | kubectl config
 
-      = link_to orchestration_path, method: :post, id: "retry-cluster-bootstrap", class: "hidden btn btn-sm btn-primary pull-right" do
+      = link_to orchestrations_bootstrap_path, method: :post, id: "retry-cluster-bootstrap", class: "hidden btn btn-sm btn-primary pull-right" do
         i.fa.fa-refresh.fa-fw
         | Retry cluster bootstrap
+
+      = link_to orchestrations_upgrade_path, method: :post, id: "retry-cluster-upgrade", class: "hidden btn btn-sm btn-primary pull-right" do
+        i.fa.fa-refresh.fa-fw
+        | Retry cluster upgrade
 
     .panel-body
       .row.nodes-loading

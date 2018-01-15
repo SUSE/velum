@@ -153,7 +153,7 @@ MinionPoller = {
         $('.discovery-empty-panel').toggleClass('hide', allMinions.length > 0);
 
         MinionPoller.handleAdminUpdate(data.admin || {}, hasPendingStateNode);
-        MinionPoller.handleRetryableBootstrapOrchestration(data.retryable_bootstrap_orchestration);
+        MinionPoller.handleRetryableOrchestrations(data);
 
         handleBootstrapErrors();
 
@@ -244,11 +244,16 @@ MinionPoller = {
     }
   },
 
-  handleRetryableBootstrapOrchestration: function(retryableBootstrapOrchestration) {
-    if (retryableBootstrapOrchestration) {
+  handleRetryableOrchestrations: function(data) {
+    if (data.retryable_bootstrap_orchestration) {
       $('#retry-cluster-bootstrap').removeClass('hidden');
     } else {
       $('#retry-cluster-bootstrap').addClass('hidden');
+    }
+    if (data.retryable_upgrade_orchestration) {
+      $('#retry-cluster-upgrade').removeClass('hidden');
+    } else {
+      $('#retry-cluster-upgrade').addClass('hidden');
     }
   },
 
