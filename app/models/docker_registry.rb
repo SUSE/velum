@@ -5,6 +5,9 @@ class DockerRegistry < ActiveRecord::Base
 
   validates :url, presence: true, uniqueness: true, url: { schemes: ["https", "http"] }
 
+  scope :is_mirror, -> { where.not(mirror: nil) }
+  scope :is_registry, -> { where(mirror: nil) }
+
   class << self
     def apply(registries_params)
       errors = []
