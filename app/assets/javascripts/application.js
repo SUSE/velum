@@ -13,7 +13,11 @@
 //= require jquery
 //= require jquery_ujs
 //= require bootstrap.min
-//= require_tree .
+//
+//= require_tree ./dashboard
+//= require_tree ./setup
+//= require_tree ./users
+//= require_tree ./utils
 
 $('body').on('click', '[disabled]', function(e) {
   e.preventDefault();

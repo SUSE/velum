@@ -31,6 +31,10 @@ class SetupController < ApplicationController
     @services_cidr = Pillar.value(pillar: :services_cidr) || "172.24.0.0/16"
     @api_cluster_ip = Pillar.value(pillar: :api_cluster_ip) || "172.24.0.1"
     @dns_cluster_ip = Pillar.value(pillar: :dns_cluster_ip) || "172.24.0.2"
+    @registry_mirror_url = Pillar.value(pillar: :suse_registry_mirror_url)
+    @registry_mirror_cert = Pillar.value(pillar: :suse_registry_mirror_cert)
+    @registry_mirror_enabled = @registry_mirror_url.present?
+    @registry_mirror_cert_enabled = @registry_mirror_cert.present?
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
@@ -100,6 +104,13 @@ class SetupController < ApplicationController
       settings["https_proxy"] = ""
       settings["no_proxy"] = ""
     end
+    if params["settings"]["suse_registry_mirror_enabled"] == "disable"
+      settings["suse_registry_mirror_url"] = ""
+      settings["suse_registry_mirror_cert"] = ""
+    end
+    if params["settings"]["suse_registry_mirror_cert_enabled"] == "disable"
+      settings["suse_registry_mirror_cert"] = ""
+    end
     Velum::LDAP.ldap_pillar_settings!(settings)
   end
 
@@ -149,7 +160,8 @@ class SetupController < ApplicationController
     case action_name
     when "configure"
       [:proxy_systemwide, :http_proxy, :https_proxy, :no_proxy, :cluster_cidr, :cluster_cidr_min,
-       :cluster_cidr_max, :cluster_cidr_len, :services_cidr, :api_cluster_ip, :dns_cluster_ip]
+       :cluster_cidr_max, :cluster_cidr_len, :services_cidr, :api_cluster_ip, :dns_cluster_ip,
+       :suse_registry_mirror_url, :suse_registry_mirror_cert]
     when "do_bootstrap"
       []
     end

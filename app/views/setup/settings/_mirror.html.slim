@@ -1,0 +1,35 @@
+.suse-mirror-panel.panel.panel-default
+  .panel-heading.clearfix
+    h3.panel-title SUSE registry mirror
+    .btn-group.btn-group-sm.btn-group-toggle.pull-right data-toggle="buttons"
+      = label_tag :mirror_toggle, nil, class: "enable-suse-registry-mirror btn btn-default #{'btn-primary active' if @registry_mirror_enabled}", data: {toggle: "collapse", target: ".suse-mirror-panel-body"}
+        = form.radio_button :suse_registry_mirror_enabled, "enable", checked: @registry_mirror_enabled
+        | Enable
+      = label_tag :mirror_toggle, nil, class: "disable-suse-registry-mirror btn btn-default #{'btn-primary active' unless @registry_mirror_enabled}", data: {toggle: "collapse", target: ".suse-mirror-panel-body"}
+        = form.radio_button :suse_registry_mirror_enabled, "disable", checked: !@registry_mirror_enabled
+        | Disable
+
+  .suse-mirror-panel-body.panel-collapse.collapse class="#{'in' if @registry_mirror_enabled}"
+    .panel-body
+      .form-group.mirror-url-group
+        = form.label :suse_registry_mirror_url, "URL"
+        .input-group
+          = form.url_field :suse_registry_mirror_url, value: @registry_mirror_url, class: "form-control", placeholder: "https://suse-mirror.local.lan:5000"
+          span class="input-group-addon"
+            a data-toggle="tooltip" data-placement="left" title="This is the URL of the local registry configured to be a mirror of the SUSE container registry. Use the http:// or https:// prefixes depending on how the local mirror has been deployed. Include also the port number if the mirror isn't using a standard one, eg: https://suse-mirror.local.lan:5000"
+              i class='glyphicon glyphicon-info-sign'
+        span.help-block.invalid-url.hide This is not a valid URL. Please try something like https://registry.local
+        span.help-block.invalid-insecure.hide Security warning: You are using an insecure mirror address for a secure remote registry
+      .form-group
+        = form.label :suse_registry_mirror_cert, "Certificate"
+        p Use this option to provide the self-signed certificate used by your local mirror of the SUSE registry.
+        div
+          .btn-group.btn-group-toggle data-toggle="buttons"
+            = label_tag :suse_registry_mirror_cert_enabled, nil, class: "disable-mirror-certificate btn btn-default #{'btn-primary active' unless @registry_mirror_cert_enabled}", data: {toggle: "collapse", target: ".suse-mirror-certificate"}
+              = form.radio_button :suse_registry_mirror_cert_enabled, "disable", checked: !@registry_mirror_cert_enabled
+              | No
+            = label_tag :suse_registry_mirror_cert_enabled, nil, class: "enable-mirror-certificate btn btn-default #{'btn-primary active' if @registry_mirror_cert_enabled}", data: {toggle: "collapse", target: ".suse-mirror-certificate"}
+              = form.radio_button :suse_registry_mirror_cert_enabled, "enable", checked: @registry_mirror_cert_enabled
+              | Yes
+        .suse-mirror-certificate.collapse class="#{'in' if @registry_mirror_cert_enabled}"
+          = form.text_area :suse_registry_mirror_cert, value: @registry_mirror_cert, class: "form-control", rows: 5
