@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171027115228) do
+ActiveRecord::Schema.define(version: 20180118103201) do
 
   create_table "jids", id: false, force: :cascade do |t|
     t.string "jid",  limit: 255,      null: false
@@ -35,7 +35,7 @@ ActiveRecord::Schema.define(version: 20171027115228) do
   create_table "pillars", force: :cascade do |t|
     t.string   "minion_id",  limit: 255
     t.string   "pillar",     limit: 255
-    t.string   "value",      limit: 255
+    t.text     "value",      limit: 65535
     t.datetime "created_at"
     t.datetime "updated_at"
   end
