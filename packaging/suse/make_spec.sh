@@ -41,7 +41,8 @@ additional_native_build_requirements() {
   if [ $1 == "nokogiri" ];then
     echo "BuildRequires: libxml2-devel libxslt-devel\n"
   elif [ $1 == "mysql2" ];then
-    echo "BuildRequires: libmariadb-devel\nRequires: mariadb-client\nRecommends: mariadb\n"
+    # if Tumbleweed
+    echo "%if 0%{?suse_version} > 1500\nBuildRequires: libmariadb-devel\nRequires: mariadb-client\n%else\nBuildRequires: libmysqlclient-devel < 10.1\nRequires: libmysqlclient18 < 10.1\n%endif\nRecommends: mariadb\n"
   elif [ $1 == "ethon" ];then
     echo "BuildRequires: libcurl-devel\nRequires: libcurl4\n"
   elif [ $1 == "ffi" ];then
