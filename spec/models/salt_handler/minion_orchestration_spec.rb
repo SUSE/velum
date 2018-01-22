@@ -85,12 +85,12 @@ describe SaltHandler::MinionOrchestration do
 
     describe "with a mid-successful orchestration result" do
       let(:handler) { described_class.new(mid_successful_orchestration_result) }
-      it "marks pending minions as failed" do
+      it "marks pending minions as applied" do
         expect { handler.process_event }.to change { pending_minion.reload.highstate }
-          .from("pending").to("failed")
+          .from("pending").to("applied")
       end
-      it "does not affect applied minions" do
-        expect { handler.process_event }.not_to change { Minion.applied.count }.from(1)
+      it "does affect applied minions" do
+        expect { handler.process_event }.to change { Minion.applied.count }.from(1).to(2)
       end
     end
 
