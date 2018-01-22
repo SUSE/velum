@@ -73,13 +73,20 @@ install -d vendor/cache
 cp %{_libdir}/ruby/gems/%{rb_ver}/cache/*.gem vendor/cache
 export NOKOGIRI_USE_SYSTEM_LIBRARIES=1
 export PACKAGING=yes
-VELUM_SECRETS_DIR=%{buildroot}/%{velumdir}/tmp RAILS_ENV=production bundle exec rake assets:precompile
+VELUM_SECRETS_DIR=%{buildroot}%{velumdir}/tmp RAILS_ENV=production bundle exec rake assets:precompile
+# fix permissions of generated assets
+# this is necessary to make them linkable by fdupes later
+for ext in woff woff2 eot ttf svg; do
+  find . -name "*.$ext" -exec chmod -R 755 {} \;
+done
 export IGNORE_ASSETS=yes
 
-# run bundle list to redo the Gemfile.lock
+# redo the Gemfile.lock
+%if 0%{?suse_version} > 1500
+bundle lock --local
+%else
 bundle list
-# FIXME: once we are based on factory, which contains the new bundler, use bundle lock instead of list
-#bundle lock --local
+%endif
 
 # deploy gems
 bundle install --retry=3 --local --deployment
@@ -90,14 +97,14 @@ gem install --no-rdoc --no-ri --install-dir vendor/bundle/ruby/%{rb_ver}/ vendor
 rm -rf vendor/cache
 
 %install
-install -d %{buildroot}/%{velumdir}
+install -d %{buildroot}%{velumdir}
 
-cp -a . %{buildroot}/%{velumdir}
+cp -a . %{buildroot}%{velumdir}
 
-rm -rf %{buildroot}/%{velumdir}/log
-mkdir %{buildroot}/%{velumdir}/log
-rm -rf %{buildroot}/%{velumdir}/tmp
-mkdir %{buildroot}/%{velumdir}/tmp
+for folder in log tmp; do
+  rm -rf %{buildroot}%{velumdir}/$folder
+  mkdir %{buildroot}%{velumdir}/$folder
+done
 
 %fdupes -s %{buildroot}/%{velumdir}
 
@@ -107,11 +114,5 @@ mkdir %{buildroot}/%{velumdir}/tmp
 %exclude %{velumdir}/spec
 %doc %{velumdir}/README.md
 %doc %{velumdir}/LICENSE
-%defattr(0640, root, www)
-%config(noreplace) %{velumdir}/config/environment.rb
-%defattr(-, root, www, 1770)
-%{velumdir}/log/
-%{velumdir}/tmp/
-%{velumdir}/db/
 
 %changelog
