@@ -82,11 +82,7 @@ done
 export IGNORE_ASSETS=yes
 
 # redo the Gemfile.lock
-%if 0%{?suse_version} > 1500
 bundle lock --local
-%else
-bundle list
-%endif
 
 # deploy gems
 bundle install --retry=3 --local --deployment
