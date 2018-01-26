@@ -85,7 +85,7 @@ export IGNORE_ASSETS=yes
 bundle lock --local
 
 # deploy gems
-bundle install --retry=3 --local --deployment
+bundle install --retry=3 --local --deployment --without development test
 
 # install bundler
 gem install --no-rdoc --no-ri --install-dir vendor/bundle/ruby/%{rb_ver}/ vendor/cache/bundler-*.gem

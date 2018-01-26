@@ -42,34 +42,26 @@ unless ENV["IGNORE_ASSETS"] == "yes"
   gem "uglifier", ">= 1.3.0"
 end
 
-# In order to create the Gemfile.lock required for packaging
-# meaning that it should contain only the production packages
-# run:
-#
-# PACKAGING=yes bundle list
+group :development, :test do
+  gem "rspec-rails"
+  gem "rubocop", "~> 0.51", require: false
+  gem "brakeman", require: false
+  gem "database_cleaner"
+  gem "pry"
+  gem "pry-nav"
+end
 
-unless ENV["PACKAGING"] && ENV["PACKAGING"] == "yes"
-  group :development, :test do
-    gem "rspec-rails"
-    gem "rubocop", "~> 0.51", require: false
-    gem "brakeman", require: false
-    gem "database_cleaner"
-    gem "pry"
-    gem "pry-nav"
-  end
-
-  group :test do
-    gem "shoulda"
-    gem "vcr"
-    gem "webmock", require: false
-    gem "simplecov", require: false
-    gem "capybara", "~> 2.14.3"
-    gem "poltergeist", "~> 1.15.0", require: false
-    gem "json-schema"
-    gem "timecop"
-    gem "codeclimate-test-reporter", "~> 1.0.0", require: nil
-    gem "factory_girl_rails"
-    gem "ffaker"
-    gem "rubocop-rspec"
-  end
+group :test do
+  gem "shoulda"
+  gem "vcr"
+  gem "webmock", require: false
+  gem "simplecov", require: false
+  gem "capybara", "~> 2.14.3"
+  gem "poltergeist", "~> 1.15.0", require: false
+  gem "json-schema"
+  gem "timecop"
+  gem "codeclimate-test-reporter", "~> 1.0.0", require: nil
+  gem "factory_girl_rails"
+  gem "ffaker"
+  gem "rubocop-rspec"
 end
