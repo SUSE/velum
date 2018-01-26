@@ -78,13 +78,9 @@ VELUM_SECRETS_DIR=%{buildroot}%{velumdir}/tmp RAILS_ENV=production bundle exec r
 for ext in woff woff2 eot ttf svg; do
   find . -name "*.$ext" -exec chmod -R 755 {} \;
 done
-export IGNORE_ASSETS=yes
-
-# redo the Gemfile.lock
-bundle lock --local
 
 # deploy gems
-bundle install --retry=3 --local --deployment --without development test
+bundle install --retry=3 --local --deployment --without development test assets
 
 # install bundler
 gem install --no-rdoc --no-ri --install-dir vendor/bundle/ruby/%{rb_ver}/ vendor/cache/bundler-*.gem

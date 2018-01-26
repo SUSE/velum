@@ -25,18 +25,8 @@ gem "net-ldap", require: "net/ldap"
 gem "openid_connect"
 gem "rake", "12.2.1"
 
-# Assets group.
-#
-# Do not set it or set it to no when precompiling the assets.
-#
-# IGNORE_ASSETS="no" RAILS_ENV=production bundle exec rake assets:precompile
-#
-# Set IGNORE_ASSETS to YES when creating the Gemfile.lock for
-# production after having precompiled the assets
-# run:
-#
-# IGNORE_ASSETS=yes bundle list
-unless ENV["IGNORE_ASSETS"] == "yes"
+
+group :assets do
   gem "sass-rails", "~> 5.0"
   gem "bootstrap-sass"
   gem "uglifier", ">= 1.3.0"
