@@ -18,7 +18,6 @@ gem "mysql2"
 
 gem "gravatar_image_tag"
 gem "devise"
-gem "kubeclient", "~> 2.4.0"
 gem "devise_ldap_authenticatable"
 gem "net-ldap", require: "net/ldap"
 

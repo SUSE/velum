@@ -71,7 +71,7 @@ pushd build/$packagename-$safe_branch/
   export BUNDLE_GEMFILE=$PWD/Gemfile
   cp Gemfile.lock Gemfile.lock.orig
   bundle config build.nokogiri --use-system-libraries
-  bundle install --retry=3 --no-deployment --without development test
+  bundle install --retry=3 --no-deployment --path .bundler --without development test
   grep "git-review" Gemfile.lock
   if [ $? == 0 ];then
     echo "DEBUG: ohoh something went wrong and you have devel packages"
