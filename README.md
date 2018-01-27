@@ -28,16 +28,12 @@ and much more.
 
 ## Configuration
 
-From an existing Kubernetes application, set the following environment variables
-and start the server:
+Given that you have already running the salt master instance, set the following environment
+variables and start the server:
 
 - `VELUM_SALT_HOST`: IP of the Salt API server.
 - `VELUM_SALT_PORT`: Port of the Salt API server.
 - `VELUM_SALT_USER`: The user allowed to access the Salt API.
-- `VELUM_KUBERNETES_HOST`: IP of the Kubernetes API server.
-- `VELUM_KUBERNETES_PORT`: port of the Kubernetes API server.
-- `VELUM_KUBERNETES_CERT_DIRECTORY`: directory where the Kubernetes
-  certificates are located.
 
 Note that the development environment already sets all these values for you.
 

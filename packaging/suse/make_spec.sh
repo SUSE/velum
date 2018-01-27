@@ -71,20 +71,20 @@ pushd build/$packagename-$safe_branch/
   export BUNDLE_GEMFILE=$PWD/Gemfile
   cp Gemfile.lock Gemfile.lock.orig
   bundle config build.nokogiri --use-system-libraries
-  PACKAGING=yes bundle install --retry=3 --no-deployment
+  bundle install --retry=3 --no-deployment --path .bundler --without development test
   grep "git-review" Gemfile.lock
   if [ $? == 0 ];then
     echo "DEBUG: ohoh something went wrong and you have devel packages"
     diff Gemfile.lock Gemfile.lock.orig
     exit -1
   fi
+  extracted_requires=$(ruby -rbundler -e 'Bundler.definition.specs_for([:default, :production]).any? { |s| puts "BuildRequires:  %{rubygem #{s.name} = #{s.version}}" }')
   echo "get requirements from Gemfile.lock"
   IFS=$'\n' # do not split on spaces
   build_requires=""
-  for gem in $(cat Gemfile.lock | grep "    "  | grep "     " -v | sort | uniq);do
-    gem_name=$(echo $gem | cut -d" " -f5)
-    gem_version=$(echo $gem | cut -d "(" -f2 | cut -d ")" -f1)
-    build_requires="$build_requires\nBuildRequires: %{rubygem $gem_name} = $gem_version"
+  for build_require in $extracted_requires; do
+    gem_name=$(echo $build_require | cut -d" " -f4)
+    build_requires="$build_requires\n$build_require"
     build_requires="$build_requires\n$(additional_native_build_requirements $gem_name)"
   done
 popd
