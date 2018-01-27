@@ -44,6 +44,7 @@ class Pillar < ApplicationRecord
       Pillar.find_by(pillar: all_pillars[pillar]).try(:value)
     end
 
+    # rubocop:disable Layout/AlignHash
     def all_pillars
       {
         dashboard:                 "dashboard",
@@ -76,8 +77,14 @@ class Pillar < ApplicationRecord
         suse_registry_mirror_url:  "suse_registry_mirror:url",
         suse_registry_mirror_cert: "suse_registry_mirror:cert",
         cloud_framework:           "cloud:framework"
+        cloud_worker_type:         "cloud:profiles:cluster_node:size",
+        cloud_worker_subnet:
+          "cloud:profiles:cluster_node:network_interfaces:0:SubnetId",
+        cloud_worker_security_group:
+          "cloud:profiles:cluster_node:network_interfaces:0:SecurityGroupId"
       }
     end
+    # rubocop:enable Layout/AlignHash
 
     # Apply the given pillars into the database. It returns an array with the
     # encountered errors.

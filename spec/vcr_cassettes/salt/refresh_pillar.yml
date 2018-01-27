@@ -1,0 +1,107 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://127.0.0.1:8000/login
+    body:
+      encoding: UTF-8
+      string: '{"username":"saltapi","password":"x3NTblSaFzs2+SjtkW8zkUXL65L5AWbTPScpuzYkcDjmBMgvzixpuPTxDERT7Y1JEjqkMo7KG0+r","eauth":"pam"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '216'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Sat, 27 Jan 2018 00:12:03 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Auth-Token:
+      - cd96f194d3bb5a73ea6f5acd427abe4ff677cb27
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=cd96f194d3bb5a73ea6f5acd427abe4ff677cb27; expires=Sat, 27 Jan 2018
+        10:12:03 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"perms": [".*", "@wheel", "@runner", "@jobs", "@events"],
+        "start": 1517011923.448009, "token": "cd96f194d3bb5a73ea6f5acd427abe4ff677cb27",
+        "expire": 1517055123.44801, "user": "saltapi", "eauth": "pam"}]}'
+    http_version:
+  recorded_at: Sat, 27 Jan 2018 00:12:03 GMT
+- request:
+    method: post
+    uri: http://127.0.0.1:8000/
+    body:
+      encoding: UTF-8
+      string: '{"tgt":"*","fun":"saltutil.refresh_pillar","expr_form":"glob","client":"local"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Auth-Token:
+      - cd96f194d3bb5a73ea6f5acd427abe4ff677cb27
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '41'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Cache-Control:
+      - private
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Sat, 27 Jan 2018 00:12:03 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=cd96f194d3bb5a73ea6f5acd427abe4ff677cb27; expires=Sat, 27 Jan 2018
+        10:12:03 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"admin": true, "ca": true}]}'
+    http_version:
+  recorded_at: Sat, 27 Jan 2018 00:12:04 GMT
+recorded_with: VCR 3.0.3
