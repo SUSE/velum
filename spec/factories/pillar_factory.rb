@@ -7,4 +7,8 @@ FactoryGirl.define do
     pillar { Pillar.all_pillars[:apiserver] }
     value  "myapiserver.example.com"
   end
+  factory :ec2_pillar, parent: :pillar do
+    pillar { Pillar.all_pillars[:cloud_framework] }
+    value  "ec2"
+  end
 end

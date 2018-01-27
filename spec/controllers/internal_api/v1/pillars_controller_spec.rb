@@ -74,4 +74,56 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
       expect(json).to match expected_registries_response
     end
   end
+
+  context "when in EC2 framework" do
+    let(:custom_instance_type) { "custom-instance-type" }
+    let(:subnet_id) { "subnet-9d4a7b6c" }
+    let(:security_group_id) { "sg-903004f8" }
+
+    let(:expected_response) do
+      {
+        registries: [],
+        cloud:      {
+          framework: "ec2",
+          profiles:  {
+            cluster_node: {
+              size:               custom_instance_type,
+              network_interfaces: [
+                {
+                  DeviceIndex:              0,
+                  AssociatePublicIpAddress: false,
+                  SubnetId:                 subnet_id,
+                  SecurityGroupId:          security_group_id
+                }
+              ]
+            }
+          }
+        }
+      }
+    end
+
+    before do
+      create(:ec2_pillar)
+      create(
+        :pillar,
+        pillar: "cloud:profiles:cluster_node:size",
+        value:  custom_instance_type
+      )
+      create(
+        :pillar,
+        pillar: "cloud:profiles:cluster_node:network_interfaces:SubnetId",
+        value:  subnet_id
+      )
+      create(
+        :pillar,
+        pillar: "cloud:profiles:cluster_node:network_interfaces:SecurityGroupId",
+        value:  security_group_id
+      )
+    end
+
+    it "has remote registries and respective mirrors" do
+      get :show
+      expect(json).to eq(expected_response)
+    end
+  end
 end

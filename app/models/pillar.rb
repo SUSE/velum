@@ -13,6 +13,10 @@ class Pillar < ApplicationRecord
     end
 
     def all_pillars
+      simple_pillars.merge(cloud_worker_pillars)
+    end
+
+    def simple_pillars
       {
         dashboard:                     "dashboard",
         dashboard_external_fqdn:       "dashboard_external_fqdn",
@@ -46,6 +50,19 @@ class Pillar < ApplicationRecord
         dex_client_secrets_velum:      "dex:client_secrets:velum"
       }
     end
+
+    # rubocop:disable Layout/AlignHash
+    def cloud_worker_pillars
+      {
+        cloud_worker_type:
+          "cloud:profiles:cluster_node:size",
+        cloud_worker_subnet:
+          "cloud:profiles:cluster_node:network_interfaces:SubnetId",
+        cloud_worker_security_group:
+          "cloud:profiles:cluster_node:network_interfaces:SecurityGroupId"
+      }
+    end
+    # rubocop:enable Layout/AlignHash
 
     # Apply the given pillars into the database. It returns an array with the
     # encountered errors.

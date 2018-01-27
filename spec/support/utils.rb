@@ -19,6 +19,17 @@ module Utils
   def setup_undone
     Pillar.delete_all
   end
+
+  def ensure_pillar_refresh
+    VCR.use_cassette(
+      "salt/refresh_pillar",
+      allow_unused_http_interactions: false,
+      allow_playback_repeats:         true,
+      record: :none
+    ) do
+      yield
+    end
+  end
 end
 
 RSpec.configure { |config| config.include Utils }
