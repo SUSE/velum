@@ -1,4 +1,5 @@
 require "velum/salt_api"
+require "securerandom"
 
 module Velum
   # This class allows to interact with global salt actions
@@ -32,6 +33,23 @@ module Velum
         res
       end
       [needed["return"], failed["return"]]
+    end
+
+    # Trigger salt-cloud to construct a cluster
+    def self.build_cloud_cluster(count)
+      instance_names = (1..count).collect { "caasp-node-" + SecureRandom.hex(4) }
+      instance_names.collect do |instance_name|
+        perform_request(
+          endpoint: "/",
+          method:   "post",
+          data:     {
+            client: "local_async",
+            tgt:    "admin",
+            fun:    "cloud.profile",
+            arg:    ["cluster_node", instance_name]
+          }
+        )
+      end
     end
 
     # Returns the minions as discovered by salt.

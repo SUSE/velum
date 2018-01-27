@@ -76,4 +76,16 @@ describe Velum::Salt do
       end
     end
   end
+
+  describe "#build_cloud_cluster" do
+    let(:count) { rand(49) + 1 } # 1..50
+
+    it "calls cloud.profile salt function the specified number of times" do
+      VCR.use_cassette("salt/cloud_profile", record: :none, allow_playback_repeats: true) do
+        responses = described_class.build_cloud_cluster(count)
+        expect(responses.length).to eq(count)
+        expect(responses).to all(be_a(Net::HTTPOK))
+      end
+    end
+  end
 end
