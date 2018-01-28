@@ -78,7 +78,7 @@ pushd build/$packagename-$safe_branch/
     diff Gemfile.lock Gemfile.lock.orig
     exit -1
   fi
-  extracted_requires=$(ruby -rbundler -e 'Bundler.definition.specs_for([:default, :production]).any? { |s| puts "BuildRequires:  %{rubygem #{s.name} = #{s.version}}" }')
+  extracted_requires=$(ruby -rbundler -e 'Bundler.definition.specs_for([:default, :production]).any? { |s| puts "BuildRequires:  %{rubygem #{s.name} = #{s.version}}" unless s.name == "bundler" }')
   echo "get requirements from Gemfile.lock"
   IFS=$'\n' # do not split on spaces
   build_requires=""
