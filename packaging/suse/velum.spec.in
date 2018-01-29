@@ -75,16 +75,23 @@ cp %{_libdir}/ruby/gems/%{rb_ver}/cache/*.gem vendor/cache
 # install bundler
 gem install --no-rdoc --no-ri --install-dir vendor/bundle/ruby/%{rb_ver}/ vendor/cache/bundler-*.gem
 
-# deploy gems
 export NOKOGIRI_USE_SYSTEM_LIBRARIES=1
+
+# deploy gems
 bundle install --retry=3 --local --deployment --without development test
 
-VELUM_SECRETS_DIR=%{buildroot}%{velumdir}/tmp RAILS_ENV=production bundle exec rake assets:precompile
+VELUM_SECRETS_DIR=%{buildroot}%{velumdir}/tmp RAILS_ENV=production INCLUDE_ASSETS_GROUP=yes bundle exec rake assets:precompile
 # fix permissions of generated assets
 # this is necessary to make them linkable by fdupes later
 for ext in woff woff2 eot ttf svg; do
   find . -name "*.$ext" -exec chmod -R 755 {} \;
 done
+
+# deploy gems without assets
+bundle install --retry=3 --local --deployment --without development test assets
+
+# clean unused gems
+bundle clean
 
 rm -rf vendor/cache
 

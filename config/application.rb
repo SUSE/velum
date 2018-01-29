@@ -2,7 +2,12 @@ require_relative "boot"
 
 require "rails/all"
 
-Bundler.require(:default, Rails.env)
+bundler_groups = [:default, Rails.env]
+if ENV["INCLUDE_ASSETS_GROUP"] == "yes" || Rails.env.test? || Rails.env.development?
+  bundler_groups << :assets
+end
+
+Bundler.require(*bundler_groups)
 
 module Velum
   class Application < Rails::Application

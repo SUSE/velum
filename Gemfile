@@ -24,9 +24,11 @@ gem "net-ldap", require: "net/ldap"
 gem "openid_connect"
 gem "rake", "12.2.1"
 
-gem "sass-rails", "~> 5.0"
-gem "bootstrap-sass"
-gem "uglifier", ">= 1.3.0"
+group :assets do
+  gem "sass-rails", "~> 5.0"
+  gem "bootstrap-sass"
+  gem "uglifier", ">= 1.3.0"
+end
 
 group :development, :test do
   gem "rspec-rails"
