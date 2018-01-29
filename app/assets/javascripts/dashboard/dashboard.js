@@ -324,7 +324,7 @@ MinionPoller = {
       <tr> \
         <td class="status">' + statusHtml +  '</td>\
         <td><strong>' + minion.minion_id +  '</strong></td>\
-        <td>' + minion.fqdn +  '</td>\
+        <td class="minion-hostname">' + minion.fqdn +  '</td>\
         <td>' + masterHtml + minion.role + '</td>\
       </tr>';
   },
@@ -369,7 +369,7 @@ MinionPoller = {
     return '\
       <tr class="minion_' + minion.id + '"> \
         <td>' + minion.minion_id + '</td>\
-        <td>' + minion.fqdn + '</td>' +
+        <td class="minion-hostname">' + minion.fqdn + '</td>' +
         roleHtml +
       '</tr>';
   },
@@ -389,7 +389,7 @@ MinionPoller = {
       <tr> \
         <td>" + minionHtml +  "</td>\
         <td>" + minion.minion_id +  "</td>\
-        <td>" + minion.fqdn +  "</td>\
+        <td class=\"minion-hostname\">" + minion.fqdn +  "</td>\
       </tr>";
   }
 };
@@ -508,11 +508,38 @@ function healthCheckToReload() {
   });
 };
 
+function handleUnassignedErrors() {
+  if (State.addNodesClicked && !hasUniqueHostnames()) {
+    State.addNodesEnabled = false;
+    $('.unique-hostnames-alert').fadeIn(100);
+    $('.add-nodes-btn').prop('disabled', true);
+  } else {
+    State.addNodesEnabled = true;
+    $('.unique-hostnames-alert').fadeOut(100);
+    $('.add-nodes-btn').prop('disabled', false);
+  }
+}
+
+$('body').on('click', '.add-nodes-btn', function(e) {
+  State.addNodesClicked = true;
+
+  e.preventDefault();
+  handleUnassignedErrors();
+
+  if (State.addNodesEnabled) {
+    $('form').submit();
+  }
+});
+
 // enable/disable Add nodes button to assign nodes
 function toggleAddNodesButton() {
-  var selectedNodes = $("input[name='roles[worker][]']:checked").length;
+  var selectedNodesLength = $("input[name='roles[worker][]']:checked").length;
 
-  $('.add-nodes-btn').prop('disabled', selectedNodes === 0);
+  $('.add-nodes-btn').prop('disabled', selectedNodesLength === 0);
+
+  if (selectedNodesLength > 0) {
+    handleUnassignedErrors();
+  }
 };
 
 // unassigned nodes page
@@ -528,6 +555,26 @@ function selectedMastersLength() {
   return $('input[name="roles[master][]"]:checked').length;
 }
 
+function hasUniqueHostnames() {
+  var i = 0;
+  var $newHostnames = $('input[name="roles[worker][]"]:checked, input[name="roles[master][]"]:checked').closest('tr').find('.minion-hostname');
+  var newHostnames = $newHostnames.map(function (i, el) { return $(el).text() }).toArray() || [];
+  var currentHostnames = $('.new-nodes-container').data('current-hostnames') || [];
+  var hostnames = newHostnames.concat(currentHostnames);
+  var obj = {};
+
+  for (; i < hostnames.length; i++) {
+    var hostname = hostnames[i];
+
+    if (obj[hostname] === 0) {
+      return false;
+    }
+
+    obj[hostname] = 0;
+  }
+
+  return true;
+}
 
 function isBootstrappable() {
   var errors = [];
@@ -547,6 +594,11 @@ function isBootstrappable() {
     errors.push('The number of masters has to be an odd number');
   }
 
+  // We need unique hostnames
+  if (!hasUniqueHostnames()) {
+    errors.push("All nodes must have unique hostnames");
+  }
+
   State.bootstrapErrors = errors;
 
   return errors.length === 0;
@@ -558,7 +610,7 @@ function isSupportedConfiguration() {
   return (selectedWorkersLength() + selectedMastersLength()) >= 3;
 }
 
-// handle bootstra button title
+// handle bootstrap button title
 function handleBootstrapErrors() {
   var nextClicked = State.nextClicked;
   var title;

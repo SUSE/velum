@@ -63,6 +63,7 @@ class DashboardController < ApplicationController
   # GET /assign_nodes
   def unassigned_nodes
     @unassigned_minions = Minion.unassigned_role
+    @assigned_minions_hostnames = Minion.assigned_role.map(&:fqdn)
   end
 
   # POST /assign_nodes
