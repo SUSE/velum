@@ -72,9 +72,6 @@ __PATCHEXECS__
 install -d vendor/cache
 cp %{_libdir}/ruby/gems/%{rb_ver}/cache/*.gem vendor/cache
 
-# install bundler
-gem install --no-rdoc --no-ri --install-dir vendor/bundle/ruby/%{rb_ver}/ vendor/cache/bundler-*.gem
-
 export NOKOGIRI_USE_SYSTEM_LIBRARIES=1
 
 # deploy gems
@@ -92,6 +89,9 @@ bundle install --retry=3 --local --deployment --without development test assets
 
 # clean unused gems
 bundle clean
+
+# install bundler
+gem install --no-rdoc --no-ri --install-dir vendor/bundle/ruby/%{rb_ver}/ vendor/cache/bundler-*.gem
 
 rm -rf vendor/cache
 
