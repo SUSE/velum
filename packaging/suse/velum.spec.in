@@ -49,6 +49,7 @@ Obsoletes:      velum < %{version}
 BuildRequires:  nodejs
 
 %define rb_build_versions %{rb_default_ruby}
+BuildRequires:  ruby-common-rails
 BuildRequires:  %{rubydevel}
 BuildRequires:  %{rubygem gem2rpm}
 BuildRequires:  %{rubygem bundler} >= 1.3.0
@@ -77,9 +78,11 @@ This package has been built with commit __COMMIT__ from branch __BRANCH__ on dat
 
 %prep
 %setup -q -n velum-%{branch}
+%rails_save_gemfile
 __PATCHEXECS__
 
 %build
+%rails_regen_gemfile_lock
 
 install -d vendor/cache
 cp %{_libdir}/ruby/gems/%{rb_ver}/cache/*.gem vendor/cache
