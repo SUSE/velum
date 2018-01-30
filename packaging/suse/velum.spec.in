@@ -53,6 +53,18 @@ BuildRequires:  %{rubydevel}
 BuildRequires:  %{rubygem gem2rpm}
 BuildRequires:  %{rubygem bundler} >= 1.3.0
 
+# fixed gem dependent build requires
+BuildRequires: libxml2-devel libxslt-devel
+%if 0%{?suse_version} > 1500
+BuildRequires: libmariadb-devel
+Requires: mariadb-client
+%else
+BuildRequires: libmysqlclient-devel < 10.1
+Requires: libmysqlclient18 < 10.1
+%endif
+Recommends: mariadb
+BuildRequires: libffi-devel
+
 __RUBYGEMS_BUILD_REQUIRES__
 
 

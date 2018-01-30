@@ -1,0 +1,42 @@
+#!/usr/bin/ruby
+# rubocop:disable all
+# vim: set sw=2 sts=2 et tw=80 :
+require 'bundler'
+
+def expand_pessimistic(version)
+  splitted = version.to_s.split('.')
+  sub_version = splitted.slice(0,(splitted.length-1)).join('.')
+  ":#{sub_version} >= #{version}"
+end
+
+def rpmify(op, version)
+  case op
+    when '~>'
+      return expand_pessimistic(version)
+    when '>='
+      if version != Gem::Version.new(0)
+        return " #{op} #{version}"
+      end
+    when '!='
+      return " > #{version}"
+    when '='
+      return " #{op} #{version}"
+    else
+      STDERR.puts "Unknown operator '#{op}' called with version '#{version}'"
+      exit 1
+  end
+end
+#
+# TODO: have a commaldine option to specify those.
+# e.g. in mastodon you also want to skip the no_docker and heroku group
+#
+bad_groups = [:test, :development]
+bd=Bundler::Dsl.evaluate('Gemfile', 'Gemfile.lock', {})
+bd.dependencies.each do |dep|
+  next if (dep.groups - bad_groups).empty?
+  dep.requirement.requirements.each do |req|
+    req_str = rpmify(*req)
+    puts "BuildRequires:  %{rubygem #{dep.name}#{req_str}}"
+  end
+end
+# rubocop:enable all
