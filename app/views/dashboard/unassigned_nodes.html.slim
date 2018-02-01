@@ -6,6 +6,12 @@
   span
     | After choosing the nodes and clicking "Add nodes" all the selected nodes will be set to the worker role
 
+.alert.alert-danger.unique-hostnames-alert role="alert" hidden="true"
+  i.fa.fa-4x.pull-left aria-hidden="true"
+  span
+    strong Unable to add nodes:
+    |  All nodes must have unique hostnames
+
 h1 Unassigned Nodes
 
 .row
@@ -13,7 +19,7 @@ h1 Unassigned Nodes
     p#node-count #{@unassigned_minions.count} nodes found
 
 = form_tag(assign_nodes_url, method: "post")
-  .nodes-container.new-nodes-container data-url=authenticated_root_path
+  <div class="nodes-container new-nodes-container" data-url="#{authenticated_root_path}" data-current-hostnames='#{@assigned_minions_hostnames}'>
     table.table
       thead
         tr
@@ -30,13 +36,13 @@ h1 Unassigned Nodes
               = check_box_tag "roles[worker][]", m.id
             td
               | #{m.minion_id}
-            td
+            td.minion-hostname
               | #{m.fqdn}
-
     .clearfix.text-right.steps-container
       = link_to "Back", authenticated_root_path, class: "btn btn-default"
       | &nbsp;
       = submit_tag "Add nodes", class: "btn btn-primary add-nodes-btn", disabled: true
+  </div>
 
 = content_for :page_javascript do
   javascript:

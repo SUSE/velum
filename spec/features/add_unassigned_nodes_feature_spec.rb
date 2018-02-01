@@ -1,6 +1,6 @@
 require "rails_helper"
 
-# rubocop:disable RSpec/AnyInstance
+# rubocop:disable RSpec/AnyInstance, RSpec/ExampleLength
 describe "Add unassigned nodes" do
   let!(:user) { create(:user) }
   let!(:minions) do
@@ -36,6 +36,29 @@ describe "Add unassigned nodes" do
     expect(page).to have_content(minions[2].fqdn).and have_no_content(minions[3].fqdn)
   end
 
+  it "A user cannot add nodes with conflicting hostnames", js: true do
+    minion = Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion1.k8s.local")
+
+    # select duplicated node minion1.k8s.local
+    find("#roles_minion_#{minion.id}").click
+
+    click_button "Add nodes"
+    expect(page).to have_content("All nodes must have unique hostnames")
+    expect(page).to have_button(value: "Add nodes", disabled: true)
+  end
+
+  it "A user cannot add nodes with conflicting hostnames [2]", js: true do
+    minion = Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion2.k8s.local")
+
+    # select duplicated new nodes minion2.k8s.local
+    find("#roles_minion_#{minion.id}").click
+    find("#roles_minion_#{minions[minions.length - 2].id}").click
+
+    click_button "Add nodes"
+    expect(page).to have_content("All nodes must have unique hostnames")
+    expect(page).to have_button(value: "Add nodes", disabled: true)
+  end
+
   it "A user check all nodes at once to be added", js: true do
     # wait for all minions to be there
     expect(page).to have_content(minions[2].fqdn)
@@ -54,4 +77,4 @@ describe "Add unassigned nodes" do
     expect(page).to have_content("minion4.k8s.local")
   end
 end
-# rubocop:enable RSpec/AnyInstance
+# rubocop:enable RSpec/AnyInstance, RSpec/ExampleLength

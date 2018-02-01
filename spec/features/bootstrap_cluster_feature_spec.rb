@@ -175,6 +175,19 @@ describe "Bootstrap cluster feature" do
       expect(page).to have_content(minions[4].fqdn)
     end
 
+    it "A user cannot bootstrap nodes with conflicting hostnames", js: true do
+      duplicated = Minion.create! [{ minion_id: SecureRandom.hex, fqdn: "minion99.k8s.local" },
+                                   { minion_id: SecureRandom.hex, fqdn: "minion99.k8s.local" }]
+      # select nodes minion99.k8s.local
+      find(".minion_#{duplicated[0].id} .worker-btn").click
+      find(".minion_#{duplicated[1].id} .worker-btn").click
+
+      click_on_when_enabled "#set-roles"
+
+      expect(page).to have_content("All nodes must have unique hostnames")
+      expect(page).to have_button(value: "Next", disabled: true)
+    end
+
     it "A user cannot bootstrap an even multiple master configuration", js: true do
       # select master minion0.k8s.local
       find(".minion_#{minions[0].id} .master-btn").click
