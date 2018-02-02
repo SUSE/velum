@@ -37,19 +37,6 @@ year=$(date +%Y)
 # clean
 [ ! -d build ] || rm -rf build
 
-additional_native_build_requirements() {
-  if [ $1 == "nokogiri" ];then
-    echo "BuildRequires: libxml2-devel libxslt-devel\n"
-  elif [ $1 == "mysql2" ];then
-    # if Tumbleweed
-    echo "%if 0%{?suse_version} > 1500\nBuildRequires: libmariadb-devel\nRequires: mariadb-client\n%else\nBuildRequires: libmysqlclient-devel < 10.1\nRequires: libmysqlclient18 < 10.1\n%endif\nRecommends: mariadb\n"
-  elif [ $1 == "ethon" ];then
-    echo "BuildRequires: libcurl-devel\nRequires: libcurl4\n"
-  elif [ $1 == "ffi" ];then
-    echo "BuildRequires: libffi-devel\n"
-  fi
-}
-
 mkdir -p build/$packagename-$safe_branch
 cp -v ../../Gemfile* build/$packagename-$safe_branch
 cp -v patches/*.patch build/$packagename-$safe_branch
@@ -78,14 +65,15 @@ pushd build/$packagename-$safe_branch/
     diff Gemfile.lock Gemfile.lock.orig
     exit -1
   fi
-  extracted_requires=$(ruby -rbundler -e 'Bundler.definition.specs_for([:default, :production, :assets]).any? { |s| puts "BuildRequires:  %{rubygem #{s.name} = #{s.version}}" unless s.name == "bundler" }')
-  echo "get requirements from Gemfile.lock"
+
+  echo "get requirements from bundler"
+  extracted_requires=$(../../bundler-dumpdeps)
+
   IFS=$'\n' # do not split on spaces
   build_requires=""
   for build_require in $extracted_requires; do
-    gem_name=$(echo $build_require | cut -d" " -f4)
+    gem_name=$(echo $build_require | cut -d" " -f4 | sed 's/}//g' | sed 's/:.*//g')
     build_requires="$build_requires\n$build_require"
-    build_requires="$build_requires\n$(additional_native_build_requirements $gem_name)"
   done
 popd
 

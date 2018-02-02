@@ -1,0 +1,54 @@
+diff --git a/Gemfile b/Gemfile
+index cba1400..1d0c8d3 100644
+--- a/Gemfile
++++ b/Gemfile
+@@ -32,26 +32,26 @@ group :assets do
+   gem "uglifier", "~> 4.1"
+ end
+ 
+-group :development, :test do
+-  gem "rspec-rails"
+-  gem "rubocop", "~> 0.51", require: false
+-  gem "brakeman", require: false
+-  gem "database_cleaner"
+-  gem "pry"
+-  gem "pry-nav"
+-end
+-
+-group :test do
+-  gem "shoulda"
+-  gem "vcr"
+-  gem "webmock", require: false
+-  gem "simplecov", require: false
+-  gem "capybara", "~> 2.14.3"
+-  gem "poltergeist", "~> 1.15.0", require: false
+-  gem "json-schema"
+-  gem "timecop"
+-  gem "codeclimate-test-reporter", "~> 1.0.0", require: nil
+-  gem "factory_girl_rails"
+-  gem "ffaker"
+-  gem "rubocop-rspec"
+-end
++#group :development, :test do
++#  gem "rspec-rails"
++#  gem "rubocop", "~> 0.51", require: false
++#  gem "brakeman", require: false
++#  gem "database_cleaner"
++#  gem "pry"
++#  gem "pry-nav"
++#end
++#
++#group :test do
++#  gem "shoulda"
++#  gem "vcr"
++#  gem "webmock", require: false
++#  gem "simplecov", require: false
++#  gem "capybara", "~> 2.14.3"
++#  gem "poltergeist", "~> 1.15.0", require: false
++#  gem "json-schema"
++#  gem "timecop"
++#  gem "codeclimate-test-reporter", "~> 1.0.0", require: nil
++#  gem "factory_girl_rails"
++#  gem "ffaker"
++#  gem "rubocop-rspec"
++#end
