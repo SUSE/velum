@@ -29,7 +29,7 @@ ActiveRecord::Schema.define(version: 20180206150021) do
     t.datetime "updated_at"
   end
 
-  create_table "docker_registries", force: :cascade do |t|
+  create_table "registries", force: :cascade do |t|
     t.string   "url",        limit: 255
     t.string   "mirror",     limit: 255
     t.datetime "created_at"

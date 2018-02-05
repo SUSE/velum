@@ -1,5 +1,5 @@
-# model that represents a docker registry
-class DockerRegistry < ActiveRecord::Base
+# model that represents a registry
+class Registry < ActiveRecord::Base
   has_one :certificate_service, as: :service, dependent: :destroy
   has_one :certificate, through: :certificate_service
 
@@ -20,19 +20,19 @@ class DockerRegistry < ActiveRecord::Base
 
     private
 
-    # create or update DockerRegistry model
+    # create or update Registry model
     def configure_registry(registry)
       errors      = []
       url         = registry["url"]
       cert        = registry["certificate"]
       mirror      = registry["mirror"]
 
-      registry = DockerRegistry.find_or_create_by(url: url) do |r|
+      registry = Registry.find_or_create_by(url: url) do |r|
         r.mirror = mirror
       end
 
       unless registry.persisted?
-        errors << "Registry url #{url} doesn't match a docker registry pattern"
+        errors << "Registry url #{url} doesn't match a registry pattern"
         return errors
       end
 
@@ -56,8 +56,8 @@ class DockerRegistry < ActiveRecord::Base
       passed_registries = registries_params.collect do |r|
         r["url"]
       end
-      saved_registries = DockerRegistry.pluck(:url)
-      DockerRegistry.where(url: saved_registries - passed_registries).destroy_all
+      saved_registries = Registry.pluck(:url)
+      Registry.where(url: saved_registries - passed_registries).destroy_all
     end
   end
 end

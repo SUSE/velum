@@ -32,7 +32,7 @@ class SetupController < ApplicationController
     @services_cidr = Pillar.value(pillar: :services_cidr) || "172.24.0.0/16"
     @api_cluster_ip = Pillar.value(pillar: :api_cluster_ip) || "172.24.0.1"
     @dns_cluster_ip = Pillar.value(pillar: :dns_cluster_ip) || "172.24.0.2"
-    @suse_registry_mirror = DockerRegistry.find_or_initialize_by(mirror: SUSE_REGISTRY_URL)
+    @suse_registry_mirror = Registry.find_or_initialize_by(mirror: SUSE_REGISTRY_URL)
     @suse_registry_mirror_enabled = @suse_registry_mirror.persisted?
     @suse_registry_mirror_certificate_enabled = @suse_registry_mirror.certificate.present?
   end
@@ -42,7 +42,7 @@ class SetupController < ApplicationController
     res = Pillar.apply(settings_params,
                        required_pillars:    required_pillars,
                        unprotected_pillars: unprotected_pillars)
-    registry_errors = DockerRegistry.apply(suse_registry_mirror_params)
+    registry_errors = Registry.apply(suse_registry_mirror_params)
 
     if res.empty? && registry_errors.empty?
       redirect_to setup_worker_bootstrap_path

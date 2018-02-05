@@ -60,13 +60,13 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
     end
 
     before do
-      DockerRegistry.create(url: "https://example.com", certificate: certificate)
-      DockerRegistry.create(
+      Registry.create(url: "https://example.com", certificate: certificate)
+      Registry.create(
         url:         "http://mirror.local.lan",
         mirror:      "https://remote.registry.com",
         certificate: certificate
       )
-      DockerRegistry.create(url: "http://mirror2.local.lan", mirror: "https://remote.registry.com")
+      Registry.create(url: "http://mirror2.local.lan", mirror: "https://remote.registry.com")
     end
 
     it "has remote registries and respective mirrors" do

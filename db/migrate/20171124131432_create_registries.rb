@@ -1,6 +1,6 @@
-class CreateDockerRegistries < ActiveRecord::Migration
+class CreateRegistries < ActiveRecord::Migration
   def change
-    create_table :docker_registries do |t|
+    create_table :registries do |t|
       t.string :url, unique: true
       t.string :mirror
       t.timestamps

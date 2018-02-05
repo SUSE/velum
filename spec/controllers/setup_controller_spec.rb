@@ -296,7 +296,7 @@ RSpec.describe SetupController, type: :controller do
       it "doesn't store any related data" do
         put :configure, settings: no_registry_mirror_settings
 
-        expect(DockerRegistry.count).to eq(0)
+        expect(Registry.count).to eq(0)
         expect(Certificate.count).to eq(0)
       end
 
@@ -307,7 +307,7 @@ RSpec.describe SetupController, type: :controller do
         # the "disable the suse registry mirror certificate" setting must have precedence.
         put :configure, settings: registry_mirror_disabled_plus_leftovers
 
-        expect(DockerRegistry.count).to eq(0)
+        expect(Registry.count).to eq(0)
         expect(Certificate.count).to eq(0)
       end
     end
@@ -338,7 +338,7 @@ RSpec.describe SetupController, type: :controller do
       it "stores registry without certificate" do
         put :configure, settings: registry_mirror_enabled
 
-        registry = DockerRegistry.first
+        registry = Registry.first
         expect(registry.url).to eq("https://local.registry")
         expect(registry.certificate).to be_nil
       end
@@ -346,7 +346,7 @@ RSpec.describe SetupController, type: :controller do
       it "stores registry and associate with the certificate" do
         put :configure, settings: registry_mirror_enabled_plus_certificate
 
-        registry = DockerRegistry.first
+        registry = Registry.first
         expect(registry.url).to eq("https://local.registry")
         expect(registry.certificate.certificate).to eq("something")
       end
@@ -385,7 +385,7 @@ RSpec.describe SetupController, type: :controller do
         mirror      = "https://registry.suse.com"
         url         = "https://local.registry"
         certificate = Certificate.create(certificate: "something")
-        registry    = DockerRegistry.create(url: url, mirror: mirror)
+        registry    = Registry.create(url: url, mirror: mirror)
         CertificateService.create(service: registry, certificate: certificate)
         Pillar.apply(pillars, required_pillars: [:dashboard])
 
@@ -412,7 +412,7 @@ RSpec.describe SetupController, type: :controller do
       it "changes mirror url but keep the certificate" do
         put :configure, settings: registry_mirror_changed_plus_certificate
 
-        registry = DockerRegistry.first
+        registry = Registry.first
         expect(registry.url).to eq("https://local2.registry")
         expect(registry.certificate.certificate).to eq("something")
       end
@@ -424,7 +424,7 @@ RSpec.describe SetupController, type: :controller do
         # the "disable the suse registry mirror" setting must have precedence.
         put :configure, settings: registry_mirror_enabled_plus_certificate_leftover
 
-        registry = DockerRegistry.first
+        registry = Registry.first
         expect(registry.url).to eq("https://local.registry")
 
         # this must be set to nil, even though the value specied by the user

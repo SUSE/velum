@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe DockerRegistry, type: :model do
+describe Registry, type: :model do
   let(:settings_params) do
     [
       {
@@ -60,7 +60,7 @@ describe DockerRegistry, type: :model do
     context "when creating an invalid registry" do
       it "returns an error for url" do
         expect(described_class.apply(invalid_settings_params))
-          .to include(/doesn't match a docker registry pattern/)
+          .to include(/doesn't match a registry pattern/)
       end
 
       it "returns an error for certificate" do

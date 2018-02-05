@@ -24,17 +24,17 @@ class InternalApi::V1::PillarsController < InternalApiController
   end
 
   def registry_contents
-    registries = DockerRegistry.is_registry.map do |reg|
+    registries = Registry.is_registry.map do |reg|
       {
         url:  reg.url,
         cert: (reg.certificate.present? ? reg.certificate.certificate : nil)
       }
     end
-    registry_mirrors = DockerRegistry.is_mirror.group(:mirror).pluck(:mirror)
+    registry_mirrors = Registry.is_mirror.group(:mirror).pluck(:mirror)
     registry_mirrors.map! do |remote_registry_url|
       {
         url:     remote_registry_url,
-        mirrors: DockerRegistry.where(mirror: remote_registry_url).map do |reg|
+        mirrors: Registry.where(mirror: remote_registry_url).map do |reg|
           {
             url:  reg.url,
             cert: (reg.certificate.present? ? reg.certificate.certificate : nil)
