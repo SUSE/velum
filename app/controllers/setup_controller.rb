@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "velum/salt"
+require "velum/instance_type"
 
 # SetupController is responsible for everything related to the bootstrapping
 # process:
@@ -51,6 +52,38 @@ class SetupController < ApplicationController
 
   def worker_bootstrap
     @controller_node = Pillar.value pillar: :dashboard
+
+    return unless (cloud = Pillar.value(pillar: :cloud_framework))
+
+    @instance_types = Velum::InstanceType.for(cloud)
+    @cloud_cluster = CloudCluster.new(cloud_framework: cloud)
+    case cloud
+    when "ec2"
+      @cloud_cluster.instance_type = Pillar.value(
+        pillar: :cloud_worker_type
+      ) || @instance_types.first.key
+      @cloud_cluster.subnet_id = Pillar.value(
+        pillar: :cloud_worker_subnet
+      ) || "subnet-"
+      @cloud_cluster.security_group_id = Pillar.value(
+        pillar: :cloud_worker_security_group
+      ) || "sg-"
+    end
+    render "worker_bootstrap_#{cloud}".to_sym
+  end
+
+  def build_cloud_cluster
+    @cloud_cluster = CloudCluster.new(cloud_cluster_params)
+
+    if @cloud_cluster.save
+      Velum::Salt.build_cloud_cluster(@cloud_cluster.instance_count)
+      redirect_to setup_discovery_path,
+        notice: "Starting to build #{@cloud_cluster}..."
+    else
+      flash.keep
+      redirect_to setup_worker_bootstrap_path,
+        flash: { error: @cloud_cluster.errors.full_messages.to_sentence }
+    end
   end
 
   def set_roles
@@ -112,6 +145,21 @@ class SetupController < ApplicationController
       settings["suse_registry_mirror_cert"] = ""
     end
     Velum::LDAP.ldap_pillar_settings!(settings)
+  end
+
+  def cloud_cluster_params
+    cloud_cluster = params.require(:cloud_cluster).permit(
+      :instance_type,
+      :instance_type_custom,
+      :instance_count,
+      :vnet_id,
+      :subnet_id,
+      :security_group_id,
+      :publishsettings,
+      :media_link
+    )
+    cloud_cluster["cloud_framework"] = Pillar.value(pillar: :cloud_framework)
+    cloud_cluster
   end
 
   def update_nodes_params

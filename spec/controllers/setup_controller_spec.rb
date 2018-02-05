@@ -89,6 +89,104 @@ RSpec.describe SetupController, type: :controller do
       get :worker_bootstrap
       expect(assigns(:controller_node)).to eq("localhost")
     end
+
+    context "when in EC2 framework" do
+      before do
+        create(:ec2_pillar)
+        get :worker_bootstrap
+      end
+
+      it "assigns @instance_sizes" do
+        expect(assigns(:instance_types)).to all(be_a(Velum::InstanceType))
+      end
+
+      it "renders EC2 view" do
+        expect(response).to render_template(:worker_bootstrap_ec2)
+      end
+    end
+  end
+
+  describe "POST /setup/worker-boostrap via HTML in EC2" do
+    let(:instance_type) { "t2.xlarge" }
+    let(:instance_count) { 5 }
+    let(:subnet_id) { "subnet-9d4a7b6c" }
+    let(:security_group_id) { "sg-903004f8" }
+    let(:cloud_cluster_params) do
+      {
+        instance_type:     instance_type,
+        instance_count:    instance_count,
+        subnet_id:         subnet_id,
+        security_group_id: security_group_id
+      }
+    end
+
+    before do
+      sign_in user
+      create(:ec2_pillar)
+      Pillar.create pillar: "dashboard", value: "localhost"
+
+      allow(Velum::Salt).to receive(:build_cloud_cluster)
+    end
+
+    context "when saving succeeds" do
+      before do
+        ensure_pillar_refresh do
+          post :build_cloud_cluster, cloud_cluster: cloud_cluster_params
+        end
+      end
+
+      it "always uses the framework pillar" do
+        expect(assigns(:cloud_cluster).cloud_framework).to eq("ec2")
+      end
+
+      it "assigns the instance type" do
+        expect(assigns(:cloud_cluster).instance_type).to eq(instance_type)
+      end
+
+      it "assigns the quantity of workers" do
+        expect(assigns(:cloud_cluster).instance_count).to eq(instance_count)
+      end
+
+      it "assigns the EC2 subnet ID" do
+        expect(assigns(:cloud_cluster).subnet_id).to eq(subnet_id)
+      end
+
+      it "assigns the EC2 security group ID" do
+        expect(assigns(:cloud_cluster).security_group_id).to eq(security_group_id)
+      end
+
+      it "calls salt-cloud" do
+        expect(Velum::Salt).to have_received(:build_cloud_cluster).with(instance_count).once
+      end
+
+      it "uses a flash to provide confirmation" do
+        expect(flash[:notice]).to be_present
+      end
+    end
+
+    context "when saving fails" do
+      let(:error_message) { "Nope!" }
+      let(:mock_cloud_cluster) do
+        mock = CloudCluster.new(cloud_cluster_params)
+        allow(mock).to receive(:save!).and_raise(
+          ActiveRecord::ActiveRecordError.new(error_message)
+        )
+        mock
+      end
+
+      before do
+        allow(CloudCluster).to receive(:new).and_return(mock_cloud_cluster)
+        post :build_cloud_cluster, cloud_cluster: cloud_cluster_params
+      end
+
+      it "redirects back to bootstrap" do
+        expect(controller).to redirect_to(:setup_worker_bootstrap)
+      end
+
+      it "uses a flash to show error messages" do
+        expect(flash[:error]).to be_present
+      end
+    end
   end
 
   describe "POST /setup/discovery via HTML" do
