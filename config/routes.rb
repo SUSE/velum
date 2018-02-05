@@ -37,7 +37,8 @@ Rails.application.routes.draw do
   namespace :setup do
     get "/", action: :welcome
     match "/", action: :configure, via: [:put, :patch]
-    get :"worker-bootstrap"
+    get  "worker-bootstrap"
+    post :build_cloud_cluster
     get :discovery
     post :discovery, action: :set_roles
     get :bootstrap

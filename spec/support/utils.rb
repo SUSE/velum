@@ -25,7 +25,7 @@ module Utils
       "salt/refresh_pillar",
       allow_unused_http_interactions: false,
       allow_playback_repeats:         true,
-      record: :none
+      record:                         :none
     ) do
       yield
     end

@@ -23,4 +23,16 @@ module Helpers
   end
 end
 
+def click_instance_type_radio(instance_type)
+  page.execute_script('$("' + instance_type_radio_finder(instance_type) + '").click()')
+end
+
+def instance_type_radio_finder(instance_type)
+  [
+    "input[type='radio']",
+    "[name='cloud_cluster[instance_type]']",
+    "[value='#{instance_type.key}']"
+  ].join
+end
+
 RSpec.configure { |config| config.include Helpers, type: :feature }
