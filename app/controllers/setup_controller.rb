@@ -107,6 +107,12 @@ class SetupController < ApplicationController
       settings["no_proxy"] = ""
     end
 
+    settings["dex_client_secrets_kubernetes"] = \
+      Pillar.value(pillar: :dex_client_secrets_kubernetes) \
+      || SecureRandom.uuid
+    settings["dex_client_secrets_velum"] = Pillar.value(pillar: :dex_client_secrets_velum) \
+      || SecureRandom.uuid
+
     Velum::LDAP.ldap_pillar_settings!(settings)
   end
 
