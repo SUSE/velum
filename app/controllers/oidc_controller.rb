@@ -30,7 +30,11 @@ class OidcController < ApplicationController
   end
 
   def client_id
-    "caasp-cli"
+    "velum"
+  end
+
+  def client_secret
+    Pillar.value(pillar: :dex_client_secrets_velum)
   end
 
   def index
@@ -57,7 +61,8 @@ class OidcController < ApplicationController
     id_token.verify!(
       issuer:    issuer,
       client_id: client_id,
-      nonce:     stored_nonce
+      nonce:     stored_nonce,
+      audience:  "kubernetes"
     )
 
     email = id_token.raw_attributes["email"]
@@ -106,7 +111,14 @@ class OidcController < ApplicationController
       response_type: :code,
       nonce:         nonce,
       state:         nonce,
-      scope:         [:openid, :profile, :email, :offline_access, :groups].collect(&:to_s)
+      scope:         [
+        :openid,
+        :profile,
+        :email,
+        :offline_access,
+        :groups,
+        "audience:server:client_id:kubernetes"
+      ].collect(&:to_s)
     )
   end
 
@@ -120,7 +132,7 @@ class OidcController < ApplicationController
 
     @client ||= OpenIDConnect::Client.new(
       identifier:             client_id,
-      secret:                 "swac7qakes7AvucH8bRucucH",
+      secret:                 client_secret,
       scopes_supported:       config.scopes_supported,
       jwks_uri:               config.jwks_uri,
       authorization_endpoint: config.authorization_endpoint,
