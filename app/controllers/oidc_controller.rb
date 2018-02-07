@@ -62,21 +62,23 @@ class OidcController < ApplicationController
       nonce:     stored_nonce
     )
 
-    email = id_token.raw_attributes["email"]
-    client_id = access_token.client.identifier
-    client_secret = access_token.client.secret
-    idp_issuer_url = id_token.iss
-    refresh_token = access_token.refresh_token
+    @email = id_token.raw_attributes["email"]
+    @client_id = access_token.client.identifier
+    @client_secret = access_token.client.secret
+    @id_token = access_token.id_token
+    @idp_issuer_url = id_token.iss
+    @refresh_token = access_token.refresh_token
 
-    @redirect_target = oidc_kubeconfig_url email:          email,
-                                           client_id:      client_id,
-                                           client_secret:  client_secret,
-                                           id_token:       access_token.id_token,
-                                           idp_issuer_url: idp_issuer_url,
-                                           refresh_token:  refresh_token
+    lookup_config
+
+    @redirect_target = oidc_kubeconfig_url email:          @email,
+                                           client_id:      @client_id,
+                                           client_secret:  @client_secret,
+                                           id_token:       @id_token,
+                                           idp_issuer_url: @idp_issuer_url,
+                                           refresh_token:  @refresh_token
   rescue OpenIDConnect::ResponseObject::IdToken::InvalidNonce => e
-    redirect_to root_path,
-                alert: e.message
+    redirect_to root_path, alert: e.message
   end
 
   def kubeconfig
@@ -103,6 +105,8 @@ class OidcController < ApplicationController
 
   def lookup_config
     kubeconfig = Velum::Kubernetes.kubeconfig
+    # TODO: Allow cluster_name to be set in pillar during bootstrap
+    @cluster_name = "caasp"
     @apiserver_host = kubeconfig.host
     @ca_crt = kubeconfig.ca_crt
     @client_crt = kubeconfig.client_crt
