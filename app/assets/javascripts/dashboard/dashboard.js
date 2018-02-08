@@ -564,7 +564,7 @@ function hasUniqueHostnames() {
   var obj = {};
 
   for (; i < hostnames.length; i++) {
-    var hostname = hostnames[i];
+    var hostname = hostnames[i].toLowerCase();
 
     if (obj[hostname] === 0) {
       return false;
