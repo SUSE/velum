@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180206150021) do
+ActiveRecord::Schema.define(version: 20180221142221) do
 
   create_table "certificate_services", force: :cascade do |t|
     t.integer  "certificate_id", limit: 4
@@ -25,13 +25,6 @@ ActiveRecord::Schema.define(version: 20180206150021) do
 
   create_table "certificates", force: :cascade do |t|
     t.text     "certificate", limit: 65535
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "registries", force: :cascade do |t|
-    t.string   "url",        limit: 255
-    t.string   "mirror",     limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -78,6 +71,23 @@ ActiveRecord::Schema.define(version: 20180206150021) do
 
   add_index "pillars", ["minion_id"], name: "index_pillars_on_minion_id", using: :btree
   add_index "pillars", ["pillar"], name: "index_pillars_on_pillar", using: :btree
+
+  create_table "registries", force: :cascade do |t|
+    t.string   "name",       limit: 255
+    t.string   "url",        limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "registry_mirrors", force: :cascade do |t|
+    t.string   "name",        limit: 255
+    t.string   "url",         limit: 255
+    t.integer  "registry_id", limit: 4
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
+
+  add_index "registry_mirrors", ["registry_id"], name: "index_registry_mirrors_on_registry_id", using: :btree
 
   create_table "salt_events", force: :cascade do |t|
     t.string   "tag",          limit: 255,      null: false

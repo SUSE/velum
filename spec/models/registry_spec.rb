@@ -1,74 +1,60 @@
 require "rails_helper"
 
 describe Registry, type: :model do
+  let(:registry)    { create(:registry) }
+  let(:certificate) { create(:certificate) }
+
   let(:settings_params) do
-    [
-      {
-        "url"         => "http://some.reg.example.org:5000",
-        "certificate" => "CERT",
-        "mirror"      => nil
-      }
-    ]
+    {
+      "certificate" => certificate.certificate,
+      "name"        => "suse_testing_mirror",
+      "mirror_url"  => "https://local.registry"
+    }
   end
 
-  let(:invalid_settings_params) do
-    [
-      {
-        "url"         => "invalid-url",
-        "certificate" => "CERT",
-        "mirror"      => nil
-      }
-    ]
+  let(:invalid_settings_params)  { settings_params.dup.tap { |s| s["mirror_url"] = "baz" } }
+  let(:empty_cert_params)        { settings_params.dup.tap { |c| c["certificate"] = nil } }
+
+  before do
+    CertificateService.create(service: registry, certificate: certificate)
+    RegistryMirror.create(url: "https://local.registry") do |m|
+      m.name = "suse_testing_mirror"
+      m.registry_id = registry.id
+    end
+  end
+
+  after do
+    RegistryMirror.destroy_all
+    CertificateService.destroy_all
   end
 
   it { is_expected.to validate_presence_of(:url) }
   it { is_expected.to validate_uniqueness_of(:url) }
-  it { is_expected.to have_one(:certificate_service).dependent(:destroy) }
-  it { is_expected.to have_one(:certificate).through(:certificate_service) }
+  it { is_expected.to validate_presence_of(:name) }
+  it { is_expected.to validate_uniqueness_of(:name) }
 
-  # rubocop:disable RSpec/ExampleLength,RSpec/AnyInstance,RSpec/MultipleExpectations
-  describe "#apply" do
-    it "creates a certificate and a registry" do
-      params =  settings_params.first
-      expect(described_class.apply(settings_params)).to be_an Array
-      expect(described_class.find_by(url: params["url"]).url)
-        .to eq("http://some.reg.example.org:5000")
-      expect(Certificate.find_by(certificate: params["certificate"]).certificate)
-        .to eq("CERT")
+  # rubocop:disable RSpec/MultipleExpectations
+  describe "#configure_suse_registry" do
+    it "creates a mirror for the suse registry" do
+      expect(described_class.configure_suse_registry(settings_params)).to be_an Array
+      expect(RegistryMirror.find_by(url: settings_params["mirror_url"]).url)
+        .to eq("https://local.registry")
+      expect(Certificate.find_by(certificate: settings_params["certificate"]).certificate)
+        .to include("BEGIN CERTIFICATE")
     end
 
-    it "does not create entries when params are empty" do
-      expect(described_class.apply([])).to be_an Array
-      expect(described_class.all.empty?).to be true
-      expect(Certificate.all.empty?).to be true
-    end
-
-    it "removes old registries" do
-      described_class.apply(settings_params)
-      described_class.apply([])
-      expect(described_class.count).to eq 0
-    end
-
-    context "when deleting a registry" do
-      it "keeps the related certificate" do
-        described_class.apply(settings_params)
-        described_class.apply([])
-        expect(Certificate.count).to eq 1
-      end
+    it "removes old certificate services attached to a registry mirror" do
+      described_class.configure_suse_registry(settings_params)
+      described_class.configure_suse_registry(empty_cert_params)
+      expect(CertificateService.where(service_type: "RegistryMirror").count).to eq 0
     end
 
     context "when creating an invalid registry" do
       it "returns an error for url" do
-        expect(described_class.apply(invalid_settings_params))
+        expect(described_class.configure_suse_registry(invalid_settings_params))
           .to include(/doesn't match a registry pattern/)
-      end
-
-      it "returns an error for certificate" do
-        allow_any_instance_of(Certificate).to receive(:persisted?).and_return(false)
-        expect(described_class.apply(settings_params))
-          .to include("Failed to validate certificate")
       end
     end
   end
-  # rubocop:enable RSpec/ExampleLength,RSpec/AnyInstance,RSpec/MultipleExpectations
+  # rubocop:enable RSpec/MultipleExpectations
 end

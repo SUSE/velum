@@ -1,63 +1,56 @@
 # model that represents a registry
 class Registry < ActiveRecord::Base
+  has_many :registry_mirrors, dependent: :destroy
   has_one :certificate_service, as: :service, dependent: :destroy
   has_one :certificate, through: :certificate_service
 
+  validates :name, presence: true, uniqueness: true
   validates :url, presence: true, uniqueness: true, url: { schemes: ["https", "http"] }
 
-  scope :is_mirror, -> { where.not(mirror: nil) }
-  scope :is_registry, -> { where(mirror: nil) }
+  SUSE_REGISTRY_NAME = "SUSE".freeze
+  SUSE_REGISTRY_URL  = "https://registry.suse.com".freeze
 
   class << self
-    def apply(registries_params)
-      errors = []
-      registries_params.each do |registry|
-        errors += configure_registry(registry) if registry["url"].present?
+    # create or update suse Registry model
+    # rubocop:disable Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity,Metrics/AbcSize
+    def configure_suse_registry(suse_registry_mirror_params)
+      if suse_registry_mirror_params.blank? ||
+          suse_registry_mirror_params["mirror_url"].blank?
+        RegistryMirror.where(name: SUSE_REGISTRY_NAME).destroy_all
+        return []
       end
-      cleanup registries_params
-      errors
-    end
 
-    private
-
-    # create or update Registry model
-    def configure_registry(registry)
       errors      = []
-      url         = registry["url"]
-      cert        = registry["certificate"]
-      mirror      = registry["mirror"]
+      cert        = suse_registry_mirror_params["certificate"]
+      mirror_url  = suse_registry_mirror_params["mirror_url"]
+      name        = suse_registry_mirror_params["name"] || SUSE_REGISTRY_NAME
 
-      registry = Registry.find_or_create_by(url: url) do |r|
-        r.mirror = mirror
+      registry = Registry.where(name: SUSE_REGISTRY_NAME).first_or_initialize.tap do |r|
+        r.url = SUSE_REGISTRY_URL
+        r.save
       end
 
-      unless registry.persisted?
-        errors << "Registry url #{url} doesn't match a registry pattern"
+      suse_registry_mirror = RegistryMirror.where(name: name).first_or_initialize.tap do |m|
+        m.url = mirror_url
+        m.registry_id = registry.id
+        m.save
+      end
+
+      if suse_registry_mirror.errors.present? || !suse_registry_mirror.persisted?
+        errors << "Registry mirror url #{mirror_url} doesn't match a registry pattern"
         return errors
       end
 
       if cert.present?
         certificate = Certificate.find_or_create_by(certificate: cert.strip)
-        unless certificate.persisted?
-          errors << "Failed to validate certificate"
-          return errors
-        end
 
-        CertificateService.create(service: registry, certificate: certificate)
-      elsif registry.certificate.present?
-        registry.certificate_service.destroy
+        CertificateService.create(service: suse_registry_mirror, certificate: certificate)
+      elsif suse_registry_mirror.certificate.present?
+        suse_registry_mirror.certificate_service.destroy
       end
 
       errors
     end
-
-    # remove old registries from the db if they were deleted in the UI
-    def cleanup(registries_params)
-      passed_registries = registries_params.collect do |r|
-        r["url"]
-      end
-      saved_registries = Registry.pluck(:url)
-      Registry.where(url: saved_registries - passed_registries).destroy_all
-    end
+    # rubocop:enable Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity,Metrics/AbcSize
   end
 end

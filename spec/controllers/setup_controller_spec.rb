@@ -2,8 +2,10 @@ require "rails_helper"
 
 # rubocop:disable RSpec/AnyInstance
 RSpec.describe SetupController, type: :controller do
-  let(:user)   { create(:user)   }
-  let(:minion) { create(:minion) }
+  let(:user)        { create(:user)   }
+  let(:minion)      { create(:minion) }
+  let(:registry)    { create(:registry) }
+  let(:certificate) { create(:certificate) }
   let(:settings_params) do
     {
       dashboard:    "dashboard.example.com",
@@ -284,7 +286,7 @@ RSpec.describe SetupController, type: :controller do
         no_registry_mirror_settings.dup.tap do |s|
           s["suse_registry_mirror"] = {
             url:         "https://local.registry",
-            certificate: "something"
+            certificate: "some cert"
           }
         end
       end
@@ -296,7 +298,7 @@ RSpec.describe SetupController, type: :controller do
       it "doesn't store any related data" do
         put :configure, settings: no_registry_mirror_settings
 
-        expect(Registry.count).to eq(0)
+        expect(RegistryMirror.count).to eq(0)
         expect(Certificate.count).to eq(0)
       end
 
@@ -307,12 +309,14 @@ RSpec.describe SetupController, type: :controller do
         # the "disable the suse registry mirror certificate" setting must have precedence.
         put :configure, settings: registry_mirror_disabled_plus_leftovers
 
-        expect(Registry.count).to eq(0)
+        expect(RegistryMirror.count).to eq(0)
         expect(Certificate.count).to eq(0)
       end
     end
 
-    context "when suse registry mirror weren't previously configured" do
+    context "when suse registry mirror wasn't previously configured" do
+      let(:registry_mirror) { RegistryMirror.find_by(registry_id: registry.id) }
+
       let(:registry_mirror_enabled) do
         settings_params.dup.tap do |s|
           s["dashboard"]                                = "dashboard"
@@ -320,39 +324,45 @@ RSpec.describe SetupController, type: :controller do
           s["suse_registry_mirror_enabled"]             = "enable"
           s["suse_registry_mirror_certificate_enabled"] = "enable"
           s["suse_registry_mirror"] = {
-            url: "https://local.registry"
+            name: "suse_testing_mirror",
+            url:  "https://local.registry"
           }
         end
       end
 
       let(:registry_mirror_enabled_plus_certificate) do
         registry_mirror_enabled.dup.tap do |s|
-          s["suse_registry_mirror"]["certificate"] = "something"
+          s["suse_registry_mirror"]["certificate"] = certificate.certificate
         end
       end
 
       before do
         sign_in user
+        mirror = RegistryMirror.create(url: "https://local.registry") do |m|
+          m.name = "suse_testing_mirror"
+          m.registry_id = registry.id
+        end
+        CertificateService.create(service: mirror, certificate: certificate)
       end
 
       it "stores registry without certificate" do
         put :configure, settings: registry_mirror_enabled
 
-        registry = Registry.first
-        expect(registry.url).to eq("https://local.registry")
-        expect(registry.certificate).to be_nil
+        expect(registry_mirror.url).to eq("https://local.registry")
+        expect(registry_mirror.certificate).to be_nil
       end
 
       it "stores registry and associate with the certificate" do
         put :configure, settings: registry_mirror_enabled_plus_certificate
 
-        registry = Registry.first
-        expect(registry.url).to eq("https://local.registry")
-        expect(registry.certificate.certificate).to eq("something")
+        expect(registry_mirror.url).to eq("https://local.registry")
+        expect(registry_mirror.certificate.certificate).to include("BEGIN CERTIFICATE")
       end
     end
 
     context "when suse registry mirror was previously configured" do
+      let(:registry_mirror) { RegistryMirror.find_by(registry_id: registry.id) }
+
       let(:pillars) do
         {
           dashboard: "dashboard.example.com"
@@ -365,7 +375,8 @@ RSpec.describe SetupController, type: :controller do
           s["suse_registry_mirror_certificate_enabled"] = "disable"
           s["suse_registry_mirror"] = {
             url:         "https://local.registry",
-            certificate: "something"
+            certificate: certificate.certificate,
+            name:        "suse_testing_mirror"
           }
         end
       end
@@ -376,18 +387,19 @@ RSpec.describe SetupController, type: :controller do
           s["suse_registry_mirror_certificate_enabled"] = "enable"
           s["suse_registry_mirror"] = {
             url:         "https://local2.registry",
-            certificate: "something"
+            certificate: certificate.certificate,
+            name:        "suse_testing_mirror"
           }
         end
       end
 
       before do
-        mirror      = "https://registry.suse.com"
-        url         = "https://local.registry"
-        certificate = Certificate.create(certificate: "something")
-        registry    = Registry.create(url: url, mirror: mirror)
-        CertificateService.create(service: registry, certificate: certificate)
         Pillar.apply(pillars, required_pillars: [:dashboard])
+        mirror = RegistryMirror.create(url: "https://local.registry") do |m|
+          m.name = "suse_testing_mirror"
+          m.registry_id = registry.id
+        end
+        CertificateService.create(service: mirror, certificate: certificate)
 
         sign_in user
 
@@ -395,14 +407,10 @@ RSpec.describe SetupController, type: :controller do
       end
 
       it "assigns @suse_registry_mirror" do
-        registry = assigns(:suse_registry_mirror)
-
-        expect(registry.url).to eq("https://local.registry")
-        expect(registry.certificate.certificate).to eq("something")
-      end
-
-      it "assigns @suse_registry_mirror_certificate_enabled" do
-        expect(assigns(:suse_registry_mirror_certificate_enabled)).to eq(true)
+        registry_from_view = assigns(:suse_registry_mirror)
+        expect(registry_from_view.url).to eq("https://local.registry")
+        expect(CertificateService.find_by(service_id: registry_from_view.id)
+          .certificate.certificate).to include("BEGIN CERTIFICATE")
       end
 
       it "assigns @suse_registry_mirror_enabled" do
@@ -412,9 +420,8 @@ RSpec.describe SetupController, type: :controller do
       it "changes mirror url but keep the certificate" do
         put :configure, settings: registry_mirror_changed_plus_certificate
 
-        registry = Registry.first
-        expect(registry.url).to eq("https://local2.registry")
-        expect(registry.certificate.certificate).to eq("something")
+        expect(registry_mirror.url).to eq("https://local2.registry")
+        expect(registry_mirror.certificate.certificate).to include("BEGIN CERTIFICATE")
       end
 
       it "erases certificate field left by the user if field disabled" do
@@ -424,12 +431,10 @@ RSpec.describe SetupController, type: :controller do
         # the "disable the suse registry mirror" setting must have precedence.
         put :configure, settings: registry_mirror_enabled_plus_certificate_leftover
 
-        registry = Registry.first
-        expect(registry.url).to eq("https://local.registry")
-
         # this must be set to nil, even though the value specied by the user
         # was different
-        expect(registry.certificate).to be_nil
+        expect(registry_mirror.certificate).to be_nil
+        expect(CertificateService.find_by(service_id: registry_mirror.id)).to eq(nil)
       end
     end
 

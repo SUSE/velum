@@ -5,11 +5,14 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
 
   render_views
 
-  let(:certificate) { Certificate.create certificate: "certificate" }
+  let(:certificate) { create(:certificate) }
   let(:expected_flat_pillars_response) do
     {
       dashboard:  "dashboard.example.com",
-      registries: []
+      registries: [
+        url:  "https://registry.suse.com",
+        cert: nil
+      ]
     }
   end
 
@@ -21,6 +24,7 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
   describe "GET /pillar" do
     before do
       Pillar.create pillar: "dashboard", value: "dashboard.example.com"
+      create(:registry)
     end
 
     it "has the expected response status" do
@@ -39,15 +43,20 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
       {
         registries: [
           {
+            url:  "https://registry.suse.com",
+            cert: nil
+          },
+          {
             url:  "https://example.com",
-            cert: "certificate"
+            cert: nil
           },
           {
             url:     "https://remote.registry.com",
+            cert:    nil,
             mirrors: [
               {
-                url:  "http://mirror.local.lan",
-                cert: "certificate"
+                url:  "https://mirror.local.lan",
+                cert: certificate.certificate
               },
               {
                 url:  "http://mirror2.local.lan",
@@ -60,13 +69,18 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
     end
 
     before do
-      Registry.create(url: "https://example.com", certificate: certificate)
-      Registry.create(
-        url:         "http://mirror.local.lan",
-        mirror:      "https://remote.registry.com",
-        certificate: certificate
-      )
-      Registry.create(url: "http://mirror2.local.lan", mirror: "https://remote.registry.com")
+      create(:registry)
+      Registry.create(name: "example", url: "https://example.com")
+      registry = Registry.create(name: "remote", url: "https://remote.registry.com")
+      registry_mirror = RegistryMirror.create(url: "https://mirror.local.lan") do |m|
+        m.name = "suse_testing_mirror"
+        m.registry_id = registry.id
+      end
+      CertificateService.create(service: registry_mirror, certificate: certificate)
+      RegistryMirror.create(url: "http://mirror2.local.lan") do |m|
+        m.name = "suse_testing_mirror2"
+        m.registry_id = registry.id
+      end
     end
 
     it "has remote registries and respective mirrors" do

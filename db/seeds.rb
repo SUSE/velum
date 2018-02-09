@@ -8,15 +8,15 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 
 def seed_development
-  User.create email: "test@test.com", password: "password"
+  # nothing yet
 end
 
 def seed_production
-  # Nothing yet
+  # nothing yet
 end
 
 case Rails.env
-when "development", "test"
+when "test", "development"
   seed_development
 when "production"
   seed_production
