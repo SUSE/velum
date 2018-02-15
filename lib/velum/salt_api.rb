@@ -77,7 +77,14 @@ module Velum
           req.body = data.to_json if data.present?
         end
 
-        opts = { use_ssl: true, ca_file: "/etc/pki/ca.crt", ssl_version: :TLSv1, open_timeout: 2 }
+        opts = {
+          use_ssl:      true,
+          ca_file:      "/etc/pki/ca.crt",
+          ssl_version:  :TLSv1,
+          open_timeout: 2,
+          read_timeout: 30
+        }
+
         Net::HTTP.start(uri.hostname, uri.port, opts) { |http| http.request(req) }
       rescue *HTTPExceptions::EXCEPTIONS => e
         raise SaltConnectionException, e
