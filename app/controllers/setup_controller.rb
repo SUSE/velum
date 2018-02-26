@@ -9,14 +9,12 @@ require "velum/instance_type"
 class SetupController < ApplicationController
   include Discovery
 
-  SUSE_REGISTRY_URL = "https://registry.suse.com".freeze
-
   skip_before_action :redirect_to_setup
   before_action :redirect_to_dashboard
   before_action :check_empty_settings, only: :configure
   before_action :check_empty_roles, only: :set_roles
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
   def welcome
     @dashboard = Pillar.value(pillar: :dashboard) || request.host
     @tiller = Pillar.value(pillar: :tiller) == "true"
@@ -32,17 +30,19 @@ class SetupController < ApplicationController
     @services_cidr = Pillar.value(pillar: :services_cidr) || "172.24.0.0/16"
     @api_cluster_ip = Pillar.value(pillar: :api_cluster_ip) || "172.24.0.1"
     @dns_cluster_ip = Pillar.value(pillar: :dns_cluster_ip) || "172.24.0.2"
-    @suse_registry_mirror = DockerRegistry.find_or_initialize_by(mirror: SUSE_REGISTRY_URL)
+    @suse_registry_mirror = RegistryMirror.find_or_initialize_by(
+      registry_id: Registry.find_by(name: Registry::SUSE_REGISTRY_NAME).try(:id)
+    )
     @suse_registry_mirror_enabled = @suse_registry_mirror.persisted?
     @suse_registry_mirror_certificate_enabled = @suse_registry_mirror.certificate.present?
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
 
   def configure
     res = Pillar.apply(settings_params,
                        required_pillars:    required_pillars,
                        unprotected_pillars: unprotected_pillars)
-    registry_errors = DockerRegistry.apply(suse_registry_mirror_params)
+    registry_errors = Registry.configure_suse_registry(suse_registry_mirror_params)
 
     if res.empty? && registry_errors.empty?
       redirect_to setup_worker_bootstrap_path
@@ -162,10 +162,10 @@ class SetupController < ApplicationController
     end
 
     if params["settings"]["suse_registry_mirror_enabled"] == "enable"
-      parameters["mirror"] = SUSE_REGISTRY_URL
+      parameters["mirror_url"] = params["settings"]["suse_registry_mirror"]["url"]
     end
 
-    [parameters]
+    parameters
   end
 
   def cloud_cluster_params

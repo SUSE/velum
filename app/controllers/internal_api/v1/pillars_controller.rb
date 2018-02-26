@@ -24,25 +24,20 @@ class InternalApi::V1::PillarsController < InternalApiController
   end
 
   def registry_contents
-    registries = DockerRegistry.is_registry.map do |reg|
-      {
-        url:  reg.url,
-        cert: (reg.certificate.present? ? reg.certificate.certificate : nil)
-      }
+    registries = Registry.all.map do |reg|
+      registry = {}
+      registry[:url]  = reg.url
+      registry[:cert] = reg.certificate.try(:certificate)
+      reg.registry_mirrors.each do |mirror|
+        registry[:mirrors] ||= []
+        registry[:mirrors].push(
+          url:  mirror.url,
+          cert: mirror.certificate.try(:certificate)
+        )
+      end
+      registry
     end
-    registry_mirrors = DockerRegistry.is_mirror.group(:mirror).pluck(:mirror)
-    registry_mirrors.map! do |remote_registry_url|
-      {
-        url:     remote_registry_url,
-        mirrors: DockerRegistry.where(mirror: remote_registry_url).map do |reg|
-          {
-            url:  reg.url,
-            cert: (reg.certificate.present? ? reg.certificate.certificate : nil)
-          }
-        end
-      }
-    end
-    { registries: (registries + registry_mirrors) }
+    { registries: registries }
   end
 
   def cloud_framework_contents
