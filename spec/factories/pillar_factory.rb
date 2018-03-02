@@ -12,4 +12,8 @@ FactoryGirl.define do
     pillar { Pillar.all_pillars[:cloud_framework] }
     value  "ec2"
   end
+  factory :azure_pillar, parent: :pillar do
+    pillar { Pillar.all_pillars[:cloud_framework] }
+    value "azure"
+  end
 end
