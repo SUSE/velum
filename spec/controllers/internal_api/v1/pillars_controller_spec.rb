@@ -1,4 +1,5 @@
 require "rails_helper"
+require "securerandom"
 
 RSpec.describe InternalApi::V1::PillarsController, type: :controller do
   include ApiHelper
@@ -132,6 +133,96 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
         :pillar,
         pillar: "cloud:profiles:cluster_node:network_interfaces:SecurityGroupId",
         value:  security_group_id
+      )
+    end
+
+    it "has cloud configuration" do
+      get :show
+      expect(json).to eq(expected_response)
+    end
+  end
+
+  context "when in Azure framework" do
+    # provider pillars
+    let(:subscription_id) { SecureRandom.uuid }
+    let(:tenant_id) { SecureRandom.uuid }
+    let(:client_id) { SecureRandom.uuid }
+    let(:secret) { SecureRandom.hex(16) }
+    # profile pillars
+    let(:custom_instance_type) { "CustomInstanceSize_v2" }
+    let(:resource_group) { "azureresourcegroup" }
+    let(:subnet_id) { "azuresubnetname" }
+    let(:network_id) { "azurenetworkname" }
+
+    let(:expected_response) do
+      {
+        registries: [],
+        cloud:      {
+          framework: "azure",
+          providers: {
+            azure: {
+              subscription_id: subscription_id,
+              tenant:          tenant_id,
+              client_id:       client_id,
+              secret:          secret
+            }
+          },
+          profiles:  {
+            cluster_node: {
+              size:                   custom_instance_type,
+              resource_group:         resource_group,
+              network_resource_group: resource_group,
+              network:                network_id,
+              subnet:                 subnet_id
+            }
+          }
+        }
+      }
+    end
+
+    before do
+      create(:azure_pillar)
+      # provider pillars
+      create(
+        :pillar,
+        pillar: "cloud:providers:azure:subscription_id",
+        value:  subscription_id
+      )
+      create(
+        :pillar,
+        pillar: "cloud:providers:azure:tenant",
+        value:  tenant_id
+      )
+      create(
+        :pillar,
+        pillar: "cloud:providers:azure:client_id",
+        value:  client_id
+      )
+      create(
+        :pillar,
+        pillar: "cloud:providers:azure:secret",
+        value:  secret
+      )
+      # profile pillars
+      create(
+        :pillar,
+        pillar: "cloud:profiles:cluster_node:size",
+        value:  custom_instance_type
+      )
+      create(
+        :pillar,
+        pillar: "cloud:profiles:cluster_node:network_interfaces:SubnetId",
+        value:  subnet_id
+      )
+      create(
+        :pillar,
+        pillar: "cloud:profiles:cluster_node:network",
+        value:  network_id
+      )
+      create(
+        :pillar,
+        pillar: "cloud:profiles:cluster_node:resourcegroup",
+        value:  resource_group
       )
     end
 

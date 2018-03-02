@@ -57,12 +57,12 @@ class SetupController < ApplicationController
     return unless (cloud = Pillar.value(pillar: :cloud_framework))
 
     @instance_types = Velum::InstanceType.for(cloud)
-    @cloud_cluster = CloudCluster.new(cloud_framework: cloud)
+    @cloud_cluster = CloudCluster.new(
+      cloud_framework: cloud,
+      instance_type:   (Pillar.value(pillar: :cloud_worker_type) || @instance_types.first.key)
+    )
     case cloud
     when "ec2"
-      @cloud_cluster.instance_type = Pillar.value(
-        pillar: :cloud_worker_type
-      ) || @instance_types.first.key
       @cloud_cluster.subnet_id = Pillar.value(
         pillar: :cloud_worker_subnet
       ) || "subnet-"
@@ -170,14 +170,9 @@ class SetupController < ApplicationController
 
   def cloud_cluster_params
     cloud_cluster = params.require(:cloud_cluster).permit(
-      :instance_type,
-      :instance_type_custom,
-      :instance_count,
-      :vnet_id,
-      :subnet_id,
-      :security_group_id,
-      :publishsettings,
-      :media_link
+      :subscription_id, :tenant_id, :client_id, :secret,
+      :instance_type, :instance_type_custom, :instance_count,
+      :resource_group, :network_id, :subnet_id, :security_group_id
     )
     cloud_cluster["cloud_framework"] = Pillar.value(pillar: :cloud_framework)
     cloud_cluster

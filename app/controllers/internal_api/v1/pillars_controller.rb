@@ -44,6 +44,8 @@ class InternalApi::V1::PillarsController < InternalApiController
     case Pillar.value(pillar: :cloud_framework)
     when "ec2"
       ec2_cloud_contents
+    when "azure"
+      azure_cloud_contents
     else
       {}
     end
@@ -64,6 +66,31 @@ class InternalApi::V1::PillarsController < InternalApiController
                 SecurityGroupId:          Pillar.value(pillar: :cloud_worker_security_group)
               }
             ]
+          }
+        }
+      }
+    }
+  end
+
+  def azure_cloud_contents
+    {
+      cloud: {
+        framework: "azure",
+        providers: {
+          azure: {
+            subscription_id: Pillar.value(pillar: :azure_subscription_id),
+            tenant:          Pillar.value(pillar: :azure_tenant_id),
+            client_id:       Pillar.value(pillar: :azure_client_id),
+            secret:          Pillar.value(pillar: :azure_secret)
+          }
+        },
+        profiles:  {
+          cluster_node: {
+            size:                   Pillar.value(pillar: :cloud_worker_type),
+            resource_group:         Pillar.value(pillar: :cloud_worker_resourcegroup),
+            network_resource_group: Pillar.value(pillar: :cloud_worker_resourcegroup),
+            network:                Pillar.value(pillar: :cloud_worker_net),
+            subnet:                 Pillar.value(pillar: :cloud_worker_subnet)
           }
         }
       }
