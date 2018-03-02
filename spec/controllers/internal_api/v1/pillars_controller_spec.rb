@@ -135,7 +135,7 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
       )
     end
 
-    it "has remote registries and respective mirrors" do
+    it "has cloud configuration" do
       get :show
       expect(json).to eq(expected_response)
     end
