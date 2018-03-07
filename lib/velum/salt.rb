@@ -90,19 +90,25 @@ module Velum
 
     # Call the salt orchestration.
     def self.orchestrate
-      res = perform_request(endpoint: "/run", method: "post",
-                            data: { client: "runner_async",
-                                    fun:    "state.orchestrate",
-                                    mods:   "orch.kubernetes" })
-      [res, JSON.parse(res.body)]
+      run_async_orchestration orchestration: "kubernetes"
     end
 
     # Call the update orchestration
     def self.update_orchestration
+      run_async_orchestration orchestration: "update"
+    end
+
+    # Call the removal orchestration
+    def self.removal_orchestration(params:)
+      run_async_orchestration orchestration: "removal", params: params
+    end
+
+    def self.run_async_orchestration(orchestration:, params: nil)
       res = perform_request(endpoint: "/run", method: "post",
                             data: { client: "runner_async",
                                     fun:    "state.orchestrate",
-                                    mods:   "orch.update" })
+                                    mods:   "orch.#{orchestration}",
+                                    pillar: params })
       [res, JSON.parse(res.body)]
     end
 

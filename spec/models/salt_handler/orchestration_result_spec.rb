@@ -17,6 +17,22 @@ describe SaltHandler::OrchestrationResult do
                        data: event_data)
   end
 
+  let(:successful_removal_orchestration_result) do
+    event_data = {
+      "fun_args" => ["orch.removal", { "orchestration_jid" => "20170706104527757673" }],
+      "jid"      => "20170706104527757673",
+      "return"   => { "retcode" => 0 },
+      "success"  => true,
+      "_stamp"   => "2017-07-06T10:45:54.734096",
+      "fun"      => "runner.state.orchestrate",
+      "user"     => "root"
+    }.to_json
+
+    FactoryGirl.create(:salt_event,
+                       tag:  "salt/run/20170706104527757673/ret",
+                       data: event_data)
+  end
+
   let(:mid_successful_orchestration_result) do
     event_data = {
       "fun_args" => ["orch.kubernetes", { "orchestration_jid" => "20170706104527757673" }],
@@ -49,6 +65,22 @@ describe SaltHandler::OrchestrationResult do
                        data: event_data)
   end
 
+  let(:failed_removal_orchestration_result) do
+    event_data = {
+      "fun_args" => ["orch.removal", { "orchestration_jid" => "20170706104527757673" }],
+      "jid"      => "20170706104527757673",
+      "return"   => { "retcode" => 1 },
+      "success"  => false,
+      "_stamp"   => "2017-07-06T10:45:54.734096",
+      "fun"      => "runner.state.orchestrate",
+      "user"     => "root"
+    }.to_json
+
+    FactoryGirl.create(:salt_event,
+                       tag:  "salt/run/20170706104527757673/ret",
+                       data: event_data)
+  end
+
   describe "process_event" do
     let(:pending_minion) do
       FactoryGirl.create(:minion,
@@ -62,6 +94,13 @@ describe SaltHandler::OrchestrationResult do
                          minion_id: "1d0f874813f1fbd59bd5f2cdae5c4621",
                          fqdn:      "minion1.k8s.local",
                          highstate: :applied)
+    end
+
+    let(:pending_removal_minion) do
+      FactoryGirl.create(:minion,
+                         minion_id: "60cd82bd1af545c2b2b073badc0b483e",
+                         fqdn:      "minion2.k8s.local",
+                         highstate: :pending_removal)
     end
 
     before do
@@ -103,6 +142,30 @@ describe SaltHandler::OrchestrationResult do
       end
       it "does not affect applied minions" do
         expect { handler.process_event }.not_to change { Minion.applied.count }.from(1)
+      end
+    end
+
+    describe "with a successful removal orchestration" do
+      let(:handler) { described_class.new(successful_removal_orchestration_result) }
+
+      before do
+        pending_removal_minion
+      end
+
+      it "destroys the minion with pending_removal state" do
+        expect { handler.process_event }.to change { Minion.pending_removal.count }.from(1).to(0)
+      end
+    end
+
+    describe "with a failed removal orchestration" do
+      let(:handler) { described_class.new(failed_removal_orchestration_result) }
+
+      before do
+        pending_removal_minion
+      end
+
+      it "marks the minion with removal_failed state if it failed" do
+        expect { handler.process_event }.to change { Minion.removal_failed.count }.from(0).to(1)
       end
     end
   end

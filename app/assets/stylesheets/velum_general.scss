@@ -19,6 +19,11 @@ dl.side-by-side {
   }
 }
 
+a.disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
 .container {
   background-color: $velum-container-bg;
   min-height: 100%;

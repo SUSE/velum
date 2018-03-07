@@ -74,8 +74,11 @@ h1 Cluster Status
                 | Hostname
               th
                 | Role
+              th
+                | Actions
           tbody
 
 = render "dashboard/pending_nodes"
 = render "dashboard/update_admin_modal"
+= render "dashboard/warn_node_removal_modal"
 = render "dashboard/polling"

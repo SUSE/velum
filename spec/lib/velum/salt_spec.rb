@@ -52,6 +52,15 @@ describe Velum::Salt do
     end
   end
 
+  describe "removal orchestration" do
+    it "runs the removal orchestration in async mode" do
+      VCR.use_cassette("salt/removal_orchestrate_async", record: :none) do
+        _, hsh = described_class.removal_orchestration params: { target: "some-minion" }
+        expect(hsh["return"].count).to eq 1
+      end
+    end
+  end
+
   describe "update_status" do
     it "returns the update status of the given nodes" do
       VCR.use_cassette("salt/update_status", record: :none) do

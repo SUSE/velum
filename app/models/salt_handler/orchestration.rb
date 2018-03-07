@@ -2,7 +2,7 @@
 class SaltHandler::Orchestration
   attr_reader :salt_event
 
-  ORCHESTRATIONS = ["orch.kubernetes", "orch.update"].freeze
+  ORCHESTRATIONS = ["orch.kubernetes", "orch.update", "orch.removal"].freeze
 
   def self.tag_matcher
     raise "no tag matcher specified"

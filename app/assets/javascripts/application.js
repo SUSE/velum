@@ -15,12 +15,13 @@
 //= require bootstrap.min
 //= require bootstrap-slider.min
 //
+//= require ./polyfills
 //= require_tree ./settings
 //= require_tree ./dashboard
 //= require_tree ./setup
 //= require_tree ./users
 //= require_tree ./utils
 
-$('body').on('click', '[disabled]', function(e) {
+$('body').on('click', '[disabled], .disabled', function(e) {
   e.preventDefault();
 });

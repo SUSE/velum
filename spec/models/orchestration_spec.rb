@@ -4,6 +4,7 @@ describe Orchestration do
 
   let(:orchestration) { create(:orchestration) }
   let(:upgrade_orchestration) { create(:upgrade_orchestration) }
+  let(:removal_orchestration) { create(:removal_orchestration, params: { target: "some-minion" }) }
 
   context "when a bootstrap orchestration is ran" do
     before do
@@ -40,6 +41,27 @@ describe Orchestration do
       allow(Minion).to receive :mark_pending_update
       upgrade_orchestration.send :update_minions
       expect(Minion).to have_received :mark_pending_update
+    end
+  end
+
+  context "when a removal orchestration is ran" do
+    before do
+      allow(Velum::Salt).to receive(:removal_orchestration).and_return(
+        [nil, { "return" => [{ "jid" => "20170706104527757674" }] }]
+      )
+    end
+
+    it "spawns a new removal orchestration" do
+      expect { described_class.run kind: :removal, params: { target: "some-minion" } }.to(
+        change { described_class.removal.count }
+      )
+      expect(Velum::Salt).to have_received(:removal_orchestration).once
+    end
+
+    it "updates the targeted minion as pending_removal" do
+      allow(Minion).to receive(:mark_pending_removal).with(minion_ids: ["some-minion"])
+      removal_orchestration.send :update_minions
+      expect(Minion).to have_received(:mark_pending_removal).with(minion_ids: ["some-minion"])
     end
   end
 
@@ -87,6 +109,17 @@ describe Orchestration do
 
       it "is retryable" do
         expect(described_class).to be_retryable(kind: :bootstrap)
+      end
+    end
+
+    context "when the orchestration is a removal one" do
+      before do
+        FactoryGirl.create :orchestration,
+                           kind:   described_class.kinds[:removal]
+      end
+
+      it "is not retryable" do
+        expect(described_class).not_to be_retryable(kind: :removal)
       end
     end
   end

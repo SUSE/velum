@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180221142221) do
+ActiveRecord::Schema.define(version: 20180312112638) do
 
   create_table "certificate_services", force: :cascade do |t|
     t.integer  "certificate_id", limit: 4
@@ -51,7 +51,8 @@ ActiveRecord::Schema.define(version: 20180221142221) do
   create_table "orchestrations", force: :cascade do |t|
     t.string   "jid",         limit: 255
     t.integer  "kind",        limit: 4
-    t.integer  "status",      limit: 4,   default: 0
+    t.text     "params",      limit: 65535
+    t.integer  "status",      limit: 4,     default: 0
     t.datetime "started_at"
     t.datetime "finished_at"
     t.datetime "created_at"
