@@ -13,7 +13,7 @@ class Pillar < ApplicationRecord
     end
 
     def all_pillars
-      simple_pillars.merge(cloud_worker_pillars)
+      simple_pillars.merge(cloud_pillars)
     end
 
     def simple_pillars
@@ -52,14 +52,26 @@ class Pillar < ApplicationRecord
     end
 
     # rubocop:disable Layout/AlignHash
-    def cloud_worker_pillars
+    def cloud_pillars
       {
+        azure_subscription_id:
+          "cloud:providers:azure:subscription_id",
+        azure_tenant_id:
+          "cloud:providers:azure:tenant",
+        azure_client_id:
+          "cloud:providers:azure:client_id",
+        azure_secret:
+          "cloud:providers:azure:secret",
         cloud_worker_type:
           "cloud:profiles:cluster_node:size",
         cloud_worker_subnet:
           "cloud:profiles:cluster_node:network_interfaces:SubnetId",
         cloud_worker_security_group:
-          "cloud:profiles:cluster_node:network_interfaces:SecurityGroupId"
+          "cloud:profiles:cluster_node:network_interfaces:SecurityGroupId",
+        cloud_worker_net:
+          "cloud:profiles:cluster_node:network",
+        cloud_worker_resourcegroup:
+          "cloud:profiles:cluster_node:resourcegroup"
       }
     end
     # rubocop:enable Layout/AlignHash
