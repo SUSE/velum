@@ -1,10 +1,13 @@
 # Serve the pillar information
+# rubocop:disable Metrics/ClassLength
 class InternalApi::V1::PillarsController < InternalApiController
   def show
     ok content: pillar_contents.merge(
       registry_contents
     ).merge(
       cloud_framework_contents
+    ).merge(
+      cloud_provider_contents
     )
   end
 
@@ -46,6 +49,15 @@ class InternalApi::V1::PillarsController < InternalApiController
       ec2_cloud_contents
     when "azure"
       azure_cloud_contents
+    else
+      {}
+    end
+  end
+
+  def cloud_provider_contents
+    case Pillar.value(pillar: :cloud_provider)
+    when "openstack"
+      openstack_cloud_contents
     else
       {}
     end
@@ -96,4 +108,24 @@ class InternalApi::V1::PillarsController < InternalApiController
       }
     }
   end
+
+  def openstack_cloud_contents
+    {
+      cloud: {
+        openstack: {
+          auth_url:       Pillar.value(pillar: :cloud_openstack_auth_url),
+          username:       Pillar.value(pillar: :cloud_openstack_username),
+          password:       Pillar.value(pillar: :cloud_openstack_password),
+          domain:         Pillar.value(pillar: :cloud_openstack_domain),
+          project:        Pillar.value(pillar: :cloud_openstack_project),
+          region:         Pillar.value(pillar: :cloud_openstack_region),
+          floating:       Pillar.value(pillar: :cloud_openstack_floating),
+          subnet:         Pillar.value(pillar: :cloud_openstack_subnet),
+          bs_version:     Pillar.value(pillar: :cloud_openstack_bs_version),
+          lb_mon_retries: Pillar.value(pillar: :cloud_openstack_lb_mon_retries)
+        }
+      }
+    }
+  end
 end
+# rubocop:enable Metrics/ClassLength

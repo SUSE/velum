@@ -21,5 +21,21 @@ $(function() {
     }
   });
 
+  $(document).on('change', '.cloud-provider-select', function () {
+    var isOpenStack = $(this).val() === 'openstack';
+
+    $('.openstack-settings').toggleClass('hidden', !isOpenStack);
+  });
+
+  $(document).on('change', '.enable-cloud', function () {
+    var isOpenStack = $('.cloud-provider-select').val() === 'openstack';
+
+    $('.openstack-settings').toggleClass('hidden', !isOpenStack);
+  });
+
+  $(document).on('change', '.disable-cloud', function () {
+    $('.openstack-settings').addClass('hidden');
+  });
+
   new SUSERegistryMirrorPanel('.suse-mirror-panel-body');
 });

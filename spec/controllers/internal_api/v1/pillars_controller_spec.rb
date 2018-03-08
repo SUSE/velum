@@ -231,4 +231,42 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
       expect(json).to eq(expected_response)
     end
   end
+
+  context "with Openstack provider" do
+    let(:expected_response) do
+      {
+        registries: [],
+        cloud:      {
+          openstack: {
+            auth_url:       "http://keystone-test-host:5000/v3",
+            username:       "testuser",
+            password:       "pass",
+            domain:         "test",
+            project:        "prj",
+            region:         "rspec",
+            floating:       "9bc3e819-a6ca-648b-b5e3-c26c9e6c5e57",
+            subnet:         "4b64b38d-0b38-40d0-a69f-ade7299ef4ab",
+            bs_version:     "v2",
+            lb_mon_retries: "3"
+          }
+        }
+      }
+    end
+
+    before do
+      create(:openstack_pillar)
+      expected_response[:cloud][:openstack].each do |k, v|
+        create(
+          :pillar,
+          pillar: "cloud:openstack:#{k}",
+          value:  v
+        )
+      end
+    end
+
+    it "has cloud configuration" do
+      get :show
+      expect(json).to eq(expected_response)
+    end
+  end
 end

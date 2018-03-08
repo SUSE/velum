@@ -35,6 +35,20 @@ class SetupController < ApplicationController
     )
     @suse_registry_mirror_enabled = @suse_registry_mirror.persisted?
     @suse_registry_mirror_certificate_enabled = @suse_registry_mirror.certificate.present?
+
+    # cloud settings
+    @cloud_provider = Pillar.value(pillar: :cloud_provider)
+    @cloud_openstack_auth_url = Pillar.value(pillar: :cloud_openstack_auth_url)
+    @cloud_openstack_domain = Pillar.value(pillar: :cloud_openstack_domain)
+    @cloud_openstack_project = Pillar.value(pillar: :cloud_openstack_project)
+    @cloud_openstack_region = Pillar.value(pillar: :cloud_openstack_region)
+    @cloud_openstack_username = Pillar.value(pillar: :cloud_openstack_username)
+    @cloud_openstack_password = Pillar.value(pillar: :cloud_openstack_password)
+    @cloud_openstack_subnet = Pillar.value(pillar: :cloud_openstack_subnet)
+    @cloud_openstack_floating = Pillar.value(pillar: :cloud_openstack_floating)
+    @cloud_openstack_lb_mon_retries = Pillar.value(pillar: :cloud_openstack_lb_mon_retries) || "3"
+    @cloud_openstack_bs_version = Pillar.value(pillar: :cloud_openstack_bs_version) || "v2"
+    @cloud_enabled = @cloud_provider.present?
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
 
@@ -146,6 +160,14 @@ class SetupController < ApplicationController
     settings["dex_client_secrets_velum"] = Pillar.value(pillar: :dex_client_secrets_velum) \
       || SecureRandom.uuid
 
+    if params["settings"]["cloud_enabled"] == "disable"
+      settings["cloud_provider"] = nil
+
+      Pillar.cloud_pillars.each_key do |k|
+        settings[k.to_s] = nil if k.to_s.starts_with?("cloud_openstack")
+      end
+    end
+
     Velum::LDAP.ldap_pillar_settings!(settings)
   end
 
@@ -225,7 +247,8 @@ class SetupController < ApplicationController
         :proxy_systemwide,
         :http_proxy,
         :https_proxy,
-        :no_proxy
+        :no_proxy,
+        :cloud_provider
       ]
     when "do_bootstrap"
       []
