@@ -1,0 +1,42 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    // The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags
+    meta(name='description', content='')
+    meta(name='author', content='')
+    link(rel='icon', href='/favicon.ico')
+    title Velum
+    = csrf_meta_tags
+    = stylesheet_link_tag 'application', media: 'all'
+
+    - if Rails.env.test?
+      = stylesheet_link_tag 'test', media: 'all'
+
+  body class="#{yield :body_class}"
+    .container
+      = render partial: "shared/header"
+
+      .row
+        .settings-sidebar
+          = render partial: "settings/sidebar"
+        .col-xs-12.settings-content
+          .alerts-container.clearfix
+            = render partial: "shared/notifications"
+
+          = yield
+
+      footer.row
+        .col-xs-12
+          p.text-center
+            span
+              'SUSE&reg; CaaS Platform #{Rails.root.join("VERSION").read} | &copy; SUSE Linux #{Time.now.year}
+
+    = javascript_include_tag 'application'
+
+    - if Rails.env.test?
+      = javascript_include_tag 'test'
+
+    = yield :page_javascript

@@ -1,0 +1,32 @@
+h2 Mirrors
+
+= link_to "Add Mirror", new_settings_registry_mirror_path, class: "btn btn-primary add-entry-btn"
+
+- if @grouped_mirrors.present?
+  - @grouped_mirrors.each do |registry, mirrors|
+    - if mirrors.present?
+      section.panel.panel-default
+        .panel-heading
+          .panel-title
+            strong.h4 = registry.name
+        .panel-body
+          table.table
+            thead
+              tr
+                th width="30%" Name
+                th URL
+                th width="110"
+            tbody
+              - mirrors.each do |mirror|
+                tr class="mirror_#{mirror.id}"
+                  td
+                    = link_to mirror.name, settings_registry_mirror_path(mirror), class: "details-link"
+                  td
+                    = display_registry_url(mirror.url)
+                  td.actions
+                    = link_to edit_settings_registry_mirror_path(mirror), class: "btn btn-default edit-btn" do
+                      .fa.fa-pencil
+                    = link_to settings_registry_mirror_path(mirror), method: "delete", class: "btn btn-danger delete-btn", data: { confirm: "Are you sure?" } do
+                      .fa.fa-trash-o
+- else
+  p No mirrors found.

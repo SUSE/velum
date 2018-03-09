@@ -4,7 +4,9 @@ require "rails_helper"
 RSpec.describe SetupController, type: :controller do
   let(:user)        { create(:user)   }
   let(:minion)      { create(:minion) }
-  let(:registry)    { create(:registry) }
+  let(:registry)    do
+    create(:registry, name: Registry::SUSE_REGISTRY_NAME, url: Registry::SUSE_REGISTRY_URL)
+  end
   let(:certificate) { create(:certificate) }
   let(:settings_params) do
     {

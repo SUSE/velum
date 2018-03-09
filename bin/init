@@ -53,6 +53,7 @@ setup_database() {
       "DB_READY")
         echo "Database ready"
         bundle exec rake db:migrate
+        bundle exec rake db:seed
         break
         ;;
     esac

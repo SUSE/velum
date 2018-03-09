@@ -1,0 +1,73 @@
+$velum-header-bg:         #00243e;
+$velum-header-link-color: white;
+
+$velum-menu-item-border:        grey;
+$velum-menu-item-active-border: #00c081;
+
+$velum-navbar-toggle-color: white;
+
+.main-header {
+  background-color: $velum-header-bg;
+  margin-left: -$grid-gutter-width/2;
+  margin-right: -$grid-gutter-width/2;
+  padding-left: $grid-gutter-width/2;
+  padding-right: $grid-gutter-width/2;
+
+  .navbar-toggle {
+    border-color: $velum-navbar-toggle-color;
+    margin-right: 0;
+    margin-top: 13px;
+    margin-bottom: 13px;
+
+    .icon-bar {
+      background-color: $velum-navbar-toggle-color;
+    }
+  }
+
+  .navbar-brand {
+    margin-right: 20px;
+  }
+
+  .navbar-brand,
+  img {
+    width: 235.5px;
+    height: 60px;
+    padding: 0;
+  }
+
+  // Main menu (Home, Settings, etc)
+  .navbar-nav-menu {
+    > li {
+      &.active a {
+        border-bottom: 3px solid $velum-menu-item-active-border !important;
+      }
+
+      a {
+        color: $velum-header-link-color;
+
+        @media (min-width: 768px) {
+          padding-top: 20px;
+          padding-bottom: 17px;
+          margin-right: 5px;
+        }
+      }
+
+      a:hover,
+      a:focus {
+        border-bottom: 3px solid $velum-menu-item-border;
+      }
+    }
+  }
+
+  // Logout button
+  .btn-logout {
+    border: 1px solid #02AB74;
+    color: #00BF81;
+    margin-top: 12px;
+    padding: 6px 12px;
+
+    &:hover {
+      color: #ffffff;
+    }
+  }
+}

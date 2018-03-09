@@ -2,8 +2,8 @@ require "rails_helper"
 
 describe Orchestration do
 
-  let(:orchestration) { FactoryGirl.create :orchestration }
-  let(:upgrade_orchestration) { FactoryGirl.create :upgrade_orchestration }
+  let(:orchestration) { create(:orchestration) }
+  let(:upgrade_orchestration) { create(:upgrade_orchestration) }
 
   context "when a bootstrap orchestration is ran" do
     before do

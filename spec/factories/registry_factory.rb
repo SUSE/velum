@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :registry do
-    name "SUSE"
-    url "https://registry.suse.com"
+    sequence(:name) { |n| "registry#{n}" }
+    sequence(:url) { |n| "http://insecure#{n}.local.lan" }
   end
 end

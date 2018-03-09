@@ -1,0 +1,87 @@
+$sidebar-bg: #00243e;
+$sidebar-section-title: white;
+$sidebar-divider: #003258;
+$sidebar-item-highlight: #00c081;
+
+.settings-sidebar {
+  background-color: $sidebar-bg;
+  border-top: 1px solid $sidebar-divider;
+  height: 100%;
+  padding: 0;
+  position: fixed;
+  width: 195px;
+  z-index: 10;
+}
+.settings-sidebar-section {
+  .title {
+    color: $sidebar-section-title;
+    font-weight: bold;
+    margin: 8px 0;
+    padding: 16px;
+    text-transform: uppercase;
+  }
+
+  .list {
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .active a {
+    background-color: $sidebar-item-highlight;
+    border-radius: 0px 2px 2px 0px;
+    font-weight: bold
+  }
+
+  a {
+    color: white;
+    display: block;
+    margin: 0 16px 0 0;
+    overflow: hidden;
+    padding: 8px 0 8px 16px;
+    position: relative;
+    text-decoration: none;
+    text-overflow: ellipsis;
+
+    &:hover {
+      border-left: 3px solid $sidebar-item-highlight;
+      padding-left: 13px;
+    }
+  }
+}
+
+.settings-content {
+  padding-left: 195 + ($grid-gutter-width/2);
+
+  .actions .btn {
+    margin-right: 7px;
+
+    &.last-child {
+      margin-right: 0;
+    }
+  }
+
+  .add-entry-btn {
+    margin-bottom: 15px;
+  }
+
+  .form-actions {
+    .action {
+      margin-right: 7px;
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+}
+
+.settings-content-header {
+  .title,
+  .actions {
+    margin-top: 20px;
+  }
+
+  h2 {
+    margin-top: 0;
+  }
+}

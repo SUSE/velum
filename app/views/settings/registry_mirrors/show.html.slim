@@ -1,0 +1,28 @@
+header.settings-content-header.clearfix
+  .title.pull-left
+    h2 #{@registry_mirror.name} mirror details
+  .actions.pull-right
+    = link_to settings_registry_mirror_path(@registry_mirror), method: "delete", class: "btn btn-danger", data: { confirm: "Are you sure?" } do
+      | Delete
+    = link_to edit_settings_registry_mirror_path(@registry_mirror), class: "btn btn-primary" do
+      | Edit
+
+section.registry-details
+  .field
+    .details-label Registry
+    .details-value
+      - if suse_registry?(@registry_mirror.registry)
+       = @registry_mirror.registry.name
+      - else
+        = link_to @registry_mirror.registry.name, settings_registry_path(@registry_mirror.registry), class: "registry-link"
+
+  .field
+    .details-label URL
+    .details-value
+      = display_registry_url(@registry_mirror.url)
+
+  - if @registry_mirror.certificate.present?
+    .field
+      .details-label Certificate
+      .details-value
+        = @registry_mirror.certificate.certificate

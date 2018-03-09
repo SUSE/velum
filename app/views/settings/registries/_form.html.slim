@@ -1,0 +1,19 @@
+= form_for [:settings, @registry], html: { class: 'registry-form' } do |f|
+  .form-group class="#{error_class_for(@registry, :name)}"
+    = f.label :name
+    = f.text_field :name, class: "form-control", required: true
+    = error_messages_for(@registry, :name)
+  .form-group.form-group-url class="#{error_class_for(@registry, :url)}"
+    = f.label :url, "URL"
+    = f.text_field :url, class: "form-control url", required: true
+    = error_messages_for(@registry, :url)
+    span.help-block.invalid-format.hide This is not a valid URL. Please try something like https://registry.local
+    span.help-block.invalid-insecure.hide Security warning: You are using an insecure mirror address for a secure remote registry
+  .form-group.form-group-certificate class="#{'hide' unless url_secure?(@registry.url)}"
+    = f.label :certificate
+    p Use this option to provide the self-signed certificate used by the registry.
+    = f.text_area :certificate, class: "form-control", value: @cert.certificate
+
+  .form-actions.clearfix
+    = f.submit "Save", class: "btn btn-primary action"
+    = link_to "Cancel", settings_registry_mirrors_path, class: "btn btn-default action"

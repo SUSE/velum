@@ -1,0 +1,7 @@
+aside.settings-sidebar-section
+  h5.title Registries
+  ul.list
+    li class="#{active_class?(settings_registries_path?)}"
+      = link_to "Remote Registries", settings_registries_path
+    li class="#{active_class?(settings_registry_mirrors_path?)}"
+      = link_to "Mirrors", settings_registry_mirrors_path

@@ -1,7 +1,22 @@
-header.row
-  .col-xs-12
-    .page-header.col-xs-6
-        = link_to image_tag("logo.svg", class: "logo"), root_path
-    .col-xs-6
-      - if user_signed_in?
-      = link_to('Logout', destroy_user_session_path, class: "btn btn-logout pull-right", :method => :delete)
+header.main-header
+  .navbar-header
+    button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar"
+      span class="sr-only"
+        | Toggle navigation
+      span class="icon-bar"
+      span class="icon-bar"
+      span class="icon-bar"
+    = link_to root_path, class: "navbar-brand" do
+      = image_tag("logo.svg", class: "logo")
+
+  #navbar class="navbar-collapse collapse"
+    - if setup_done?
+      ul class="nav navbar-nav navbar-nav-menu"
+          li class="#{active_class?(root_path)}"
+            = link_to("Home", root_path, class: "")
+          li class="#{active_class?(settings_path?)}"
+            = link_to("Settings", settings_path, class: "")
+
+    ul class="nav navbar-nav navbar-right"
+      li
+        = link_to('Logout', destroy_user_session_path, class: "btn btn-logout", :method => :delete)
