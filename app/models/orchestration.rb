@@ -4,6 +4,7 @@ require "velum/salt_orchestration"
 # Orchestration represents a salt orchestration event
 class Orchestration < ApplicationRecord
   class OrchestrationAlreadyRan < StandardError; end
+  class OrchestrationOngoing < StandardError; end
 
   enum kind: [:bootstrap, :upgrade]
   enum status: [:in_progress, :succeeded, :failed]
@@ -26,7 +27,12 @@ class Orchestration < ApplicationRecord
   # rubocop:enable Rails/SkipsModelValidations
 
   def self.run(kind: :bootstrap)
+    raise OrchestrationOngoing unless runnable?
     Orchestration.create!(kind: kind).tap(&:run)
+  end
+
+  def self.runnable?
+    Orchestration.in_progress.empty?
   end
 
   def self.retryable?(kind: :bootstrap)
