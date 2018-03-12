@@ -12,7 +12,7 @@ def seed_development
 end
 
 def seed_production
-  Registry.where(name: "SUSE").find_or_initialize.tap do |r|
+  Registry.where(name: "SUSE").first_or_initialize.tap do |r|
     r.url = "https://registry.suse.com"
     r.save
   end
