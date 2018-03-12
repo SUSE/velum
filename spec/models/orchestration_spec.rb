@@ -72,6 +72,10 @@ describe Orchestration do
       it "is not retryable" do
         expect(described_class).not_to be_retryable(kind: :bootstrap)
       end
+
+      it "is not runnable" do
+        expect(described_class).not_to be_runnable
+      end
     end
 
     context "when the last orchestration was a failure" do
@@ -109,6 +113,10 @@ describe Orchestration do
 
       it "is not retryable" do
         expect(described_class).not_to be_retryable(kind: :upgrade)
+      end
+
+      it "is not runnable" do
+        expect(described_class).not_to be_runnable
       end
     end
 
