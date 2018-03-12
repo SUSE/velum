@@ -12,14 +12,31 @@
   color: $state-danger-text;
 }
 
-.alert-info a {
+.alert-success a {
   color: $state-danger-text;
 }
 
-.alert-success a {
-  color: $state-danger-text;
+
+.alert-with-btn {
+  > .left {
+    line-height: 34px;
+    float: left;
+  }
+
+  > .right {
+    float: right;
+  }
+}
+
+.alert-with-btn-sm {
+  @extend .alert-with-btn;
+
+  .left {
+    line-height: 30px;
+  }
 }
 
 .connection-failed-alert {
   display: none;
 }
+

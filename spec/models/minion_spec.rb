@@ -272,11 +272,30 @@ describe Minion do
                                               described_class.third.minion_id  => true]]
     end
 
-    context "when and update is needed" do
+    context "when an update is needed" do
       it "sets the highstate of the upgradable minions as pending" do
         expect { described_class.mark_pending_update }.to change {
           described_class.applied.count
         }.from(3).to(1)
+      end
+    end
+  end
+
+  describe "#mark_pending_bootstrap!" do
+    before do
+      minions
+      described_class.first.assign_role :master, remote: false
+      described_class.all[1..-1].each { |minion| minion.assign_role :worker, remote: false }
+      # rubocop:disable Rails/SkipsModelValidations
+      described_class.update_all highstate: described_class.highstates[:applied]
+      # rubocop:enable Rails/SkipsModelValidations
+    end
+
+    context "when a bootstrap is triggered" do
+      it "sets the highstate of all minions as pending" do
+        expect { described_class.mark_pending_bootstrap! }.to change {
+          described_class.pending.count
+        }.from(0).to(3)
       end
     end
   end

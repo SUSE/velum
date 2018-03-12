@@ -1,3 +1,5 @@
+= render 'settings/apply'
+
 h2 Mirrors
 
 = link_to "Add Mirror", new_settings_registry_mirror_path, class: "btn btn-primary add-entry-btn"
@@ -24,9 +26,9 @@ h2 Mirrors
                   td
                     = display_registry_url(mirror.url)
                   td.actions
-                    = link_to edit_settings_registry_mirror_path(mirror), class: "btn btn-default edit-btn" do
-                      .fa.fa-pencil
-                    = link_to settings_registry_mirror_path(mirror), method: "delete", class: "btn btn-danger delete-btn", data: { confirm: "Are you sure?" } do
-                      .fa.fa-trash-o
+                    = link_to edit_settings_registry_mirror_path(mirror), class: "btn btn-default icon-only edit-btn" do
+                      i.fa.fa-pencil
+                    = link_to settings_registry_mirror_path(mirror), method: "delete", class: "btn btn-danger icon-only delete-btn", data: { confirm: "Are you sure?" } do
+                      i.fa.fa-trash-o
 - else
   p No mirrors found.

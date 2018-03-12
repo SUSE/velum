@@ -1,3 +1,5 @@
+= render 'settings/apply'
+
 h2 Remote Registries
 
 = link_to "Add Remote Registry", new_settings_registry_path, class: "btn btn-primary add-entry-btn"
@@ -18,9 +20,9 @@ section
             td
               = display_registry_url(registry.url)
             td.actions
-              = link_to edit_settings_registry_path(registry), class: "btn btn-default edit-btn" do
-                .fa.fa-pencil
-              = link_to settings_registry_path(registry), method: "delete", class: "btn btn-danger delete-btn", data: { confirm: "Are you sure?" } do
-                .fa.fa-trash-o
+              = link_to edit_settings_registry_path(registry), class: "btn btn-default icon-only edit-btn" do
+                i.fa.fa-pencil
+              = link_to settings_registry_path(registry), method: "delete", class: "btn btn-danger icon-only delete-btn", data: { confirm: "Are you sure?" } do
+                i.fa.fa-trash-o
   - else
     | No registry found.
