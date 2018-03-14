@@ -108,6 +108,17 @@ RSpec.describe SetupController, type: :controller do
       end
     end
 
+    context "when in OpenStack framework" do
+      before do
+        create(:openstack_pillar)
+        get :worker_bootstrap
+      end
+
+      it "renders normal view" do
+        expect(response).to render_template(:worker_bootstrap)
+      end
+    end
+
     context "when in Azure framework" do
       before do
         create(:azure_pillar)
@@ -596,6 +607,54 @@ RSpec.describe SetupController, type: :controller do
         put :configure, settings: Hash[settings_params.map { |k, _| [k, ""] }]
         expect(flash[:alert]).to be_present
         expect(response.redirect_url).to eq setup_url
+      end
+    end
+
+    context "when cloud settings is enabled" do
+      let(:cloud_settings) do
+        settings_params.dup.tap do |s|
+          s["cloud_enabled"] = "enable"
+          s["cloud_provider"] = "openstack"
+          s["cloud_openstack_domain"] = "local.lan"
+        end
+      end
+
+      before do
+        sign_in user
+        put :configure, settings: cloud_settings
+      end
+
+      it "saves cloud provider pillar" do
+        expect(Pillar.value(pillar: :cloud_provider)).to eq("openstack")
+        expect(Pillar.value(pillar: :cloud_openstack_domain)).to eq("local.lan")
+      end
+
+      it "redirects to worker bootstrap page" do
+        expect(response.redirect_url).to eq setup_worker_bootstrap_url
+      end
+    end
+
+    context "when cloud settings is disabled" do
+      let(:cloud_settings) do
+        settings_params.dup.tap do |s|
+          s["cloud_enabled"] = "disable"
+          s["cloud_provider"] = "openstack"
+          s["cloud_openstack_domain"] = "local.lan"
+        end
+      end
+
+      before do
+        sign_in user
+        put :configure, settings: cloud_settings
+      end
+
+      it "redirects to worker bootstrap page" do
+        expect(response.redirect_url).to eq setup_worker_bootstrap_url
+      end
+
+      it "erases fields left by the user" do
+        expect(Pillar.value(pillar: :cloud_provider)).to be_nil
+        expect(Pillar.value(pillar: :cloud_openstack_domain)).to be_nil
       end
     end
   end

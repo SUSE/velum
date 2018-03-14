@@ -135,6 +135,7 @@ h1 Initial CaaS Platform Configuration
               | Entire node
 
   = render partial: 'setup/settings/mirror', locals: { form: f }
+  = render partial: 'setup/cloud/settings', locals: { f: f }
 
   .clearfix.steps-container
     = submit_tag "Next", class: "btn btn-primary pull-right"

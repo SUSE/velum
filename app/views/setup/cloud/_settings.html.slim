@@ -1,0 +1,19 @@
+.cloud-settings-wrapper
+  .cloud-settings-panel.panel.panel-default
+    .panel-heading.clearfix
+      h3.panel-title Cloud provider integration
+      .btn-group.btn-group-sm.btn-group-toggle.pull-right data-toggle="buttons"
+        = label_tag :cloud_toggle, nil, class: "enable-cloud btn btn-default #{'btn-primary active' if @cloud_enabled}", data: {toggle: "collapse", target: ".cloud-settings-panel-body"}
+          = f.radio_button :cloud_enabled, "enable", checked: @cloud_enabled
+          | Enable
+        = label_tag :cloud_toggle, nil, class: "disable-cloud btn btn-default #{'btn-primary active' unless @cloud_enabled}", data: {toggle: "collapse", target: ".cloud-settings-panel-body"}
+          = f.radio_button :cloud_enabled, "disable", checked: !@cloud_enabled
+          | Disable
+
+    .cloud-settings-panel-body.panel-collapse.collapse class="#{'in' if @cloud_enabled}"
+      .panel-body
+        .form-group.mirror-url-group
+          = f.label :url, "Choose the driver"
+          = f.select :cloud_provider, cloud_providers_options_for_select, { include_blank: true }, class: "form-control cloud-provider-select"
+
+        = render partial: 'setup/cloud/openstack_configuration', locals: { f: f }

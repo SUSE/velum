@@ -1,4 +1,5 @@
 # Pillar represents a pillar value on Salt.
+# rubocop:disable Metrics/ClassLength
 class Pillar < ApplicationRecord
   validates :pillar, presence: true
   validates :value, presence: true
@@ -45,7 +46,6 @@ class Pillar < ApplicationRecord
         ldap_admin_group_name:         "ldap:admin_group_name",
         ldap_tls_method:               "ldap:tls_method",
         ldap_mail_attribute:           "ldap:mail_attribute",
-        cloud_framework:               "cloud:framework",
         dex_client_secrets_kubernetes: "dex:client_secrets:kubernetes",
         dex_client_secrets_velum:      "dex:client_secrets:velum"
       }
@@ -62,6 +62,8 @@ class Pillar < ApplicationRecord
           "cloud:providers:azure:client_id",
         azure_secret:
           "cloud:providers:azure:secret",
+        cloud_framework:
+          "cloud:framework",
         cloud_worker_type:
           "cloud:profiles:cluster_node:size",
         cloud_worker_subnet:
@@ -71,7 +73,30 @@ class Pillar < ApplicationRecord
         cloud_worker_net:
           "cloud:profiles:cluster_node:network",
         cloud_worker_resourcegroup:
-          "cloud:profiles:cluster_node:resourcegroup"
+          "cloud:profiles:cluster_node:resourcegroup",
+        # CPI
+        cloud_provider:
+          "cloud:provider",
+        cloud_openstack_auth_url:
+          "cloud:openstack:auth_url",
+        cloud_openstack_domain:
+          "cloud:openstack:domain",
+        cloud_openstack_project:
+          "cloud:openstack:project",
+        cloud_openstack_region:
+          "cloud:openstack:region",
+        cloud_openstack_username:
+          "cloud:openstack:username",
+        cloud_openstack_password:
+          "cloud:openstack:password",
+        cloud_openstack_subnet:
+          "cloud:openstack:subnet",
+        cloud_openstack_floating:
+          "cloud:openstack:floating",
+        cloud_openstack_lb_mon_retries:
+          "cloud:openstack:lb_mon_retries",
+        cloud_openstack_bs_version:
+          "cloud:openstack:bs_version"
       }
     end
     # rubocop:enable Layout/AlignHash
@@ -109,3 +134,4 @@ class Pillar < ApplicationRecord
     end
   end
 end
+# rubocop:enable Metrics/ClassLength

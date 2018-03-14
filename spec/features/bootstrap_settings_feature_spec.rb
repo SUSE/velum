@@ -48,4 +48,27 @@ describe "Bootstrap settings feature" do
       expect(page).to have_css("#settings_suse_registry_mirror_certificate", visible: false)
     end
   end
+
+  context "CPI configuration", js: true do
+    it "shows panel settings" do
+      expect(page).to have_content("Cloud provider integration")
+    end
+
+    it "toggles settings when enabling/disabling it" do
+      find(".enable-cloud").click
+      expect(page).to have_css(".cloud-settings-panel-body.in")
+      expect(page).to have_content("Choose the driver")
+
+      find(".disable-cloud").click
+      expect(page).not_to have_content("Choose the driver")
+    end
+
+    it "shows custom settings for openstack" do
+      find(".enable-cloud").click
+      expect(page).to have_css(".cloud-settings-panel-body.in")
+
+      select "OpenStack", from: "settings_cloud_provider"
+      expect(page).to have_content("Keystone API URL")
+    end
+  end
 end
