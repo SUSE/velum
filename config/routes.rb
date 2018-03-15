@@ -54,6 +54,7 @@ Rails.application.routes.draw do
   namespace :settings do
     get "/", action: :index
     resources :registries
+    post :apply
     resources :registry_mirrors, path: :mirrors
   end
 end

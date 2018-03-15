@@ -106,6 +106,11 @@ class Minion < ApplicationRecord
                                            Minion.highstates[:failed]])
           .update_all highstate: Minion.highstates[:pending]
   end
+
+  # Forcefully updates all nodes to a pending highstate
+  def self.mark_pending_bootstrap!
+    Minion.assigned_role.update_all highstate: Minion.highstates[:pending]
+  end
   # rubocop:enable Rails/SkipsModelValidations
 
   # Returns the proxy for the salt minion

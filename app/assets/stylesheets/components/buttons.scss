@@ -7,6 +7,12 @@
   .fa {
     margin-right: 3px;
   }
+
+  &.icon-only {
+    .fa {
+      margin-right: 0;
+    }
+  }
 }
 
 .btn-group-toggle .btn {
