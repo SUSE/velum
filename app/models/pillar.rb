@@ -14,7 +14,7 @@ class Pillar < ApplicationRecord
     end
 
     def all_pillars
-      simple_pillars.merge(cloud_pillars)
+      simple_pillars.merge(cloud_pillars).merge(cpi_pillars)
     end
 
     def simple_pillars
@@ -47,7 +47,9 @@ class Pillar < ApplicationRecord
         ldap_tls_method:               "ldap:tls_method",
         ldap_mail_attribute:           "ldap:mail_attribute",
         dex_client_secrets_kubernetes: "dex:client_secrets:kubernetes",
-        dex_client_secrets_velum:      "dex:client_secrets:velum"
+        dex_client_secrets_velum:      "dex:client_secrets:velum",
+        cloud_framework:               "cloud:framework",
+        cloud_provider:                "cloud:provider"
       }
     end
 
@@ -62,8 +64,6 @@ class Pillar < ApplicationRecord
           "cloud:providers:azure:client_id",
         azure_secret:
           "cloud:providers:azure:secret",
-        cloud_framework:
-          "cloud:framework",
         cloud_worker_type:
           "cloud:profiles:cluster_node:size",
         cloud_worker_subnet:
@@ -73,10 +73,12 @@ class Pillar < ApplicationRecord
         cloud_worker_net:
           "cloud:profiles:cluster_node:network",
         cloud_worker_resourcegroup:
-          "cloud:profiles:cluster_node:resourcegroup",
-        # CPI
-        cloud_provider:
-          "cloud:provider",
+          "cloud:profiles:cluster_node:resourcegroup"
+      }
+    end
+
+    def cpi_pillars
+      {
         cloud_openstack_auth_url:
           "cloud:openstack:auth_url",
         cloud_openstack_domain:

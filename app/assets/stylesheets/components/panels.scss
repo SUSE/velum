@@ -4,6 +4,11 @@
 
 .panel-title {
   display: inline-block;
+
+  .fa,
+  .glyphicon {
+    vertical-align: middle;
+  }
 }
 
 .panel-heading {

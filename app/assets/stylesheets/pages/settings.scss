@@ -12,6 +12,7 @@ $sidebar-item-highlight: #00c081;
   width: 195px;
   z-index: 10;
 }
+
 .settings-sidebar-section {
   .title {
     color: $sidebar-section-title;
@@ -83,5 +84,12 @@ $sidebar-item-highlight: #00c081;
 
   h2 {
     margin-top: 0;
+  }
+}
+
+.cloud-settings-panel-body {
+  h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
   }
 }
