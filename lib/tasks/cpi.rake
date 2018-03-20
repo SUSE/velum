@@ -3,7 +3,7 @@
 namespace :cpi do
   desc "Import OpenStack Cloud Proivider options"
   task :openstack, [:config] => :environment do |_, args|
-    config_file = args[:config] || "/etc/caasp/openstack.conf"
+    config_file = args[:config] || "/etc/caasp/cpi/openstack.conf"
     unless File.exist?(config_file)
       puts "OpenStack Cloud Provider config file doesn't exist"
       exit(1)

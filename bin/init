@@ -61,6 +61,16 @@ setup_database() {
   set -e
 }
 
+setup_cpi() {
+  # Check if Cloud Provider config exists
+  CPI_CONFIG="/etc/caasp/cpi/openstack.conf"
+  if [ -f "${CPI_CONFIG}" ]; then
+    # Import Cloud Provider config
+    bundle exec rake cpi:openstack['${CPI_CONFIG}']
+  fi
+}
+
 setup_root_ca
 setup_database
+setup_cpi
 bundle exec "puma -C config/puma.rb"
