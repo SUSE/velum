@@ -64,6 +64,7 @@ GEM
     concurrent-ruby (1.0.4)
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
+    crass (1.0.3)
     database_cleaner (1.5.3)
     devise (4.2.0)
       bcrypt (~> 3.0)
@@ -123,7 +124,8 @@ GEM
       http (= 0.9.8)
       recursive-open-struct (= 1.0.0)
       rest-client
-    loofah (2.0.3)
+    loofah (2.2.1)
+      crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     mail (2.6.4)
       mime-types (>= 1.16, < 4)
