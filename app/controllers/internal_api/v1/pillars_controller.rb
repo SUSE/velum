@@ -112,6 +112,7 @@ class InternalApi::V1::PillarsController < InternalApiController
   def openstack_cloud_contents
     {
       cloud: {
+        provider:  "openstack",
         openstack: {
           auth_url:       Pillar.value(pillar: :cloud_openstack_auth_url),
           username:       Pillar.value(pillar: :cloud_openstack_username),

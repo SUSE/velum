@@ -237,6 +237,7 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
       {
         registries: [],
         cloud:      {
+          provider:  "openstack",
           openstack: {
             auth_url:       "http://keystone-test-host:5000/v3",
             username:       "testuser",
