@@ -48,7 +48,6 @@ class SetupController < ApplicationController
     @cloud_openstack_floating = Pillar.value(pillar: :cloud_openstack_floating)
     @cloud_openstack_lb_mon_retries = Pillar.value(pillar: :cloud_openstack_lb_mon_retries) || "3"
     @cloud_openstack_bs_version = Pillar.value(pillar: :cloud_openstack_bs_version) || "v2"
-    @cloud_enabled = @cloud_provider.present?
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
 
@@ -144,6 +143,7 @@ class SetupController < ApplicationController
 
   private
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
   def settings_params
     settings = params.require(:settings).permit(*Pillar.all_pillars.keys)
 
@@ -160,16 +160,20 @@ class SetupController < ApplicationController
     settings["dex_client_secrets_velum"] = Pillar.value(pillar: :dex_client_secrets_velum) \
       || SecureRandom.uuid
 
-    if params["settings"]["cloud_enabled"] == "disable"
+    if params["settings"]["cloud_provider"] == "disable"
       settings["cloud_provider"] = nil
+    end
 
-      Pillar.cloud_pillars.each_key do |k|
+    if params["settings"]["cloud_provider"] == "disable" ||
+        params["settings"]["cloud_provider"] != "openstack"
+      Pillar.cpi_pillars.each_key do |k|
         settings[k.to_s] = nil if k.to_s.starts_with?("cloud_openstack")
       end
     end
 
     Velum::LDAP.ldap_pillar_settings!(settings)
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
 
   def suse_registry_mirror_params
     if params["settings"]["suse_registry_mirror_enabled"].blank? ||
@@ -249,7 +253,7 @@ class SetupController < ApplicationController
         :https_proxy,
         :no_proxy,
         :cloud_provider
-      ]
+      ].concat(Pillar.cpi_pillars.keys)
     when "do_bootstrap"
       []
     end

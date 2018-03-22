@@ -613,7 +613,6 @@ RSpec.describe SetupController, type: :controller do
     context "when cloud settings is enabled" do
       let(:cloud_settings) do
         settings_params.dup.tap do |s|
-          s["cloud_enabled"] = "enable"
           s["cloud_provider"] = "openstack"
           s["cloud_openstack_domain"] = "local.lan"
         end
@@ -637,8 +636,7 @@ RSpec.describe SetupController, type: :controller do
     context "when cloud settings is disabled" do
       let(:cloud_settings) do
         settings_params.dup.tap do |s|
-          s["cloud_enabled"] = "disable"
-          s["cloud_provider"] = "openstack"
+          s["cloud_provider"] = "disable"
           s["cloud_openstack_domain"] = "local.lan"
         end
       end

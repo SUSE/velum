@@ -54,21 +54,37 @@ describe "Bootstrap settings feature" do
       expect(page).to have_content("Cloud provider integration")
     end
 
-    it "toggles settings when enabling/disabling it" do
-      find(".enable-cloud").click
+    it "shows custom settings for openstack" do
+      find(".enable-cpi").click
       expect(page).to have_css(".cloud-settings-panel-body.in")
-      expect(page).to have_content("Choose the driver")
-
-      find(".disable-cloud").click
-      expect(page).not_to have_content("Choose the driver")
+      expect(page).to have_content("Keystone API URL")
     end
 
-    it "shows custom settings for openstack" do
-      find(".enable-cloud").click
-      expect(page).to have_css(".cloud-settings-panel-body.in")
+    it "attaches openstack value when no cloud framework is set" do
+      expect(page).to have_css("input[value=openstack]")
+    end
 
-      select "OpenStack", from: "settings_cloud_provider"
-      expect(page).to have_content("Keystone API URL")
+    context "when cloud framework is set" do
+      it "attaches ec2 value when AWS" do
+        Pillar.create(pillar: "cloud:framework", value: "ec2")
+
+        visit setup_path
+        expect(page).to have_css("input[value=ec2]")
+      end
+
+      it "shows GCE option when gce" do
+        Pillar.create(pillar: "cloud:framework", value: "gce")
+
+        visit setup_path
+        expect(page).to have_css("input[value=gce]")
+      end
+
+      it "shows Azure option when azure" do
+        Pillar.create(pillar: "cloud:framework", value: "azure")
+
+        visit setup_path
+        expect(page).to have_css("input[value=azure]")
+      end
     end
   end
 end

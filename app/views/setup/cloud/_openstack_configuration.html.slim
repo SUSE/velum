@@ -1,4 +1,6 @@
-.openstack-settings class="#{'hidden' if @cloud_provider != 'openstack'}"
+.openstack-settings
+  h4 OpenStack Settings
+
   .form-group
     = f.label :cloud_openstack_auth_url, "Keystone API URL"
     = f.text_field :cloud_openstack_auth_url, value: @cloud_openstack_auth_url, class: "form-control"
