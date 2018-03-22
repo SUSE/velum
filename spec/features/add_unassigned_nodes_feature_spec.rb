@@ -1,7 +1,7 @@
 require "rails_helper"
 
 # rubocop:disable RSpec/AnyInstance, RSpec/ExampleLength
-describe "Add unassigned nodes" do
+describe "Add unassigned nodes", js: true do
   let!(:user) { create(:user) }
   let!(:minions) do
     Minion.create! [{ minion_id: SecureRandom.hex, fqdn: "minion0.k8s.local", role: "master" },
@@ -22,56 +22,67 @@ describe "Add unassigned nodes" do
     visit assign_nodes_path
   end
 
-  it "A user sees (new) link", js: true do
+  it "A user sees (new) link" do
     visit authenticated_root_path
 
     expect(page).to have_content("(new)")
   end
 
-  it "A user selects which nodes will be added", js: true do
+  it "A user selects which nodes will be added" do
     # select node minion3.k8s.local
-    find("#roles_minion_#{minions[2].id}").click
+    find(".minion_#{minions[2].id} .worker-btn").click
 
     click_button "Add nodes"
     expect(page).to have_content(minions[2].fqdn).and have_no_content(minions[3].fqdn)
   end
 
-  it "A user cannot add nodes with conflicting hostnames", js: true do
+  it "A user cannot add nodes with conflicting hostnames" do
     minion = Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion1.k8s.local")
 
     # select duplicated node minion1.k8s.local
-    find("#roles_minion_#{minion.id}").click
+    find(".minion_#{minion.id} .worker-btn").click
 
     click_button "Add nodes"
-    expect(page).to have_content("All nodes must have unique hostnames")
+    expect(page).to have_content("with conflicting hostnames")
     expect(page).to have_button(value: "Add nodes", disabled: true)
   end
 
-  it "A user cannot add nodes with conflicting hostnames [2]", js: true do
+  it "A user cannot add nodes with conflicting hostnames [2]" do
     minion = Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion2.k8s.local")
 
     # select duplicated new nodes minion2.k8s.local
-    find("#roles_minion_#{minion.id}").click
-    find("#roles_minion_#{minions[minions.length - 2].id}").click
+    find(".minion_#{minion.id} .worker-btn").click
+    find(".minion_#{minions[minions.length - 2].id} .worker-btn").click
 
     click_button "Add nodes"
-    expect(page).to have_content("All nodes must have unique hostnames")
+    expect(page).to have_content("with conflicting hostnames")
     expect(page).to have_button(value: "Add nodes", disabled: true)
   end
 
-  it "A user check all nodes at once to be added", js: true do
+  it "A user cannot add odd number of master nodes" do
+    minion = Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion2.k8s.local")
+
+    # select only one master node
+    find(".minion_#{minion.id} .master-btn").click
+
+    click_button "Add nodes"
+    expect(page).to have_content("The number of masters to be added has to be an even number")
+    expect(page).to have_button(value: "Add nodes", disabled: true)
+  end
+
+  it "A user check all nodes at once to be added" do
     # wait for all minions to be there
     expect(page).to have_content(minions[2].fqdn)
     expect(page).to have_content(minions[3].fqdn)
 
     # select all nodes
-    find(".check-all").click
+    find(".select-nodes-btn").click
 
     click_button "Add nodes"
     expect(page).to have_content(minions[2].fqdn).and have_content(minions[3].fqdn)
   end
 
-  it "shows the nodes as soon as they register", js: true do
+  it "shows the nodes as soon as they register" do
     expect(page).not_to have_content("minion4.k8s.local")
     Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion4.k8s.local")
     expect(page).to have_content("minion4.k8s.local")

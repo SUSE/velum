@@ -81,7 +81,7 @@ class DashboardController < ApplicationController
   private
 
   def update_nodes_params
-    params.require(:roles).permit(worker: [])
+    params.require(:roles).permit(worker: [], master: [])
   end
 
   def redirect_to_dashboard

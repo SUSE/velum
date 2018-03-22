@@ -4,45 +4,53 @@
       | &times;
   i.fa.fa-4x.pull-left aria-hidden="true"
   span
-    | After choosing the nodes and clicking "Add nodes" all the selected nodes will be set to the worker role
+    | After selecting the respective nodes' by choosing their roles and clicking on "Add nodes", all of them will be assigned and added to the cluster.
 
-.alert.alert-danger.unique-hostnames-alert role="alert" hidden="true"
+.alert.alert-danger.unassigned-alert role="alert" hidden="true"
   i.fa.fa-4x.pull-left aria-hidden="true"
   span
-    strong Unable to add nodes:
-    |  All nodes must have unique hostnames
+    p Unable to add nodes:
+
+    ul.list
 
 h1 Unassigned Nodes
 
-.row
-  .col-xs-12.discovery-control
-    p#node-count #{@unassigned_minions.count} nodes found
+.panel.panel-default.unassigned-nodes-panel class=('hide' unless any_minion?)
+  .panel-heading
+    h3.panel-title#node-count #{@unassigned_minions.count} nodes found
 
-= form_tag(assign_nodes_url, method: "post")
-  <div class="nodes-container new-nodes-container" data-url="#{authenticated_root_path}" data-current-hostnames='#{@assigned_minions_hostnames}'>
-    table.table
-      thead
-        tr
-          th width=10
-            = check_box_tag "all", "all", false, { class: "check-all" }
-          th
-            | Id
-          th
-            | Hostname
-      tbody
-        - @unassigned_minions.each do |m|
-          tr
-            td
-              = check_box_tag "roles[worker][]", m.id
-            td
-              | #{m.minion_id}
-            td.minion-hostname
-              | #{m.fqdn}
-    .clearfix.text-right.steps-container
-      = link_to "Back", authenticated_root_path, class: "btn btn-default"
-      | &nbsp;
-      = submit_tag "Add nodes", class: "btn btn-primary add-nodes-btn", disabled: true
-  </div>
+    button.btn.btn-sm.btn-default.pull-right.select-nodes-btn title="Select remaining nodes as worker"
+      i.fa.fa-check.fa-fw
+      | Select remaining nodes
+
+    button.btn.btn-sm.btn-default.pull-right.hidden.deselect-nodes-btn title="Deselect all the nodes"
+      i.fa.fa-times.fa-fw
+      | Deselect all nodes
+  .panel-body
+    = form_tag(assign_nodes_url, method: "post")
+      div class="nodes-container new-nodes-container" data-url=authenticated_root_path data-current-hostnames='#{@assigned_minions_hostnames}'
+        table.table
+          thead
+            tr
+              th
+                | ID
+              th
+                | Hostname
+              th width="235"
+                | Role
+          tbody
+            tr
+              td colspan=4
+                p.text-center
+                  i class="fa fa-spinner fa-pulse fa-3x fa-fw"
+                  span class="sr-only" Loading...
+
+        hr
+
+        .clearfix.text-right.steps-container
+          = link_to "Back", authenticated_root_path, class: "btn btn-default"
+          | &nbsp;
+          = submit_tag "Add nodes", class: "btn btn-primary add-nodes-btn", disabled: true
 
 = content_for :page_javascript do
   javascript:

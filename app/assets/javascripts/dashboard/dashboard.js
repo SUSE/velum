@@ -1,6 +1,7 @@
 State = {
   nextClicked: false,
   bootstrapErrors: [],
+  assignableErrors: [],
 },
 
 MinionPoller = {
@@ -375,22 +376,7 @@ MinionPoller = {
   },
 
   renderUnassigned: function(minion) {
-    var minionHtml;
-    var minionChecked = '';
-
-    if (MinionPoller.selectedNodes.indexOf(minion.id) != -1) {
-      minionChecked += 'checked';
-    }
-
-    minionHtml = '<input name="roles[worker][]" id="roles_minion_' + minion.id +
-      '" value="' + minion.id + '" type="checkbox" title="Select node for bootstrapping" ' + minionChecked + '>';
-
-    return "\
-      <tr> \
-        <td>" + minionHtml +  "</td>\
-        <td>" + minion.minion_id +  "</td>\
-        <td class=\"minion-hostname\">" + minion.fqdn +  "</td>\
-      </tr>";
+    return MinionPoller.renderDiscovery(minion);
   }
 };
 
@@ -508,15 +494,38 @@ function healthCheckToReload() {
   });
 };
 
+// begin unassigned
+function isAssignable() {
+  var errors = [];
+
+  // We need an odd number of masters
+  if (selectedMastersLength() % 2 !== 0) {
+    errors.push('The number of masters to be added has to be an even number in order to maintain the odd constraint number in the cluster');
+  }
+
+  // We need unique hostnames
+  if (!hasUniqueHostnames()) {
+    errors.push("There's a node in the cluster or selected with conflicting hostnames");
+  }
+
+  State.assignableErrors = errors;
+
+  return errors.length === 0;
+}
+
+function showNodesSelectionErrors(errors, container) {
+  var html = errors.map(function (e) { return '<li>' + e + '</li>' }).join('');
+  $(container + ' .list').html(html);
+  $(container).fadeIn(100);
+}
+
 function handleUnassignedErrors() {
-  if (State.addNodesClicked && !hasUniqueHostnames()) {
-    State.addNodesEnabled = false;
-    $('.unique-hostnames-alert').fadeIn(100);
+  if (State.addNodesClicked && !isAssignable()) {
+    showNodesSelectionErrors(State.assignableErrors, '.unassigned-alert')
     $('.add-nodes-btn').prop('disabled', true);
   } else {
-    State.addNodesEnabled = true;
-    $('.unique-hostnames-alert').fadeOut(100);
-    $('.add-nodes-btn').prop('disabled', false);
+    $('.unassigned-alert').fadeOut(100);
+    $('.add-nodes-btn').prop('disabled', $('input:checked').length === 0);
   }
 }
 
@@ -526,24 +535,14 @@ $('body').on('click', '.add-nodes-btn', function(e) {
   e.preventDefault();
   handleUnassignedErrors();
 
-  if (State.addNodesEnabled) {
+  if (isAssignable()) {
+    MinionPoller.stop();
     $('form').submit();
+  } else {
+    window.scrollTo(0, 0);
   }
 });
-
-// enable/disable Add nodes button to assign nodes
-function toggleAddNodesButton() {
-  var selectedNodesLength = $("input[name='roles[worker][]']:checked").length;
-
-  $('.add-nodes-btn').prop('disabled', selectedNodesLength === 0);
-
-  if (selectedNodesLength > 0) {
-    handleUnassignedErrors();
-  }
-};
-
-// unassigned nodes page
-$('body').on('change', '.new-nodes-container input[name="roles[worker][]"]', toggleAddNodesButton);
+// end unassigned
 
 // return number of selected nodes
 function selectedWorkersLength() {
@@ -612,14 +611,8 @@ function isSupportedConfiguration() {
 
 // handle bootstrap button title
 function handleBootstrapErrors() {
-  var nextClicked = State.nextClicked;
-  var title;
-
-  if (nextClicked && !isBootstrappable()) {
-    var errors = State.bootstrapErrors;
-    var listHtml = errors.map(function(e) { return '<li>' + e + '</li>' }).join('');
-    $('.discovery-bootstrap-alert .list').html(listHtml);
-    $('.discovery-bootstrap-alert').fadeIn(100);
+  if (State.nextClicked && !isBootstrappable()) {
+    showNodesSelectionErrors(State.bootstrapErrors, '.discovery-bootstrap-alert')
     $('#set-roles').prop('disabled', true);
   } else {
     $('.discovery-bootstrap-alert').fadeOut(100);
@@ -680,7 +673,7 @@ $('body').on('click', '.deselect-nodes-btn', function() {
   $('.select-nodes-btn').show();
   $(unusedSelector).click();
   handleBootstrapErrors();
-  toggleAddNodesButton();
+  handleUnassignedErrors();
 });
 
 // select remaining nodes as workers
@@ -692,7 +685,7 @@ $('body').on('click', '.select-nodes-btn', function() {
   $(workersSelector).click();
 
   handleBootstrapErrors();
-  toggleAddNodesButton();
+  handleUnassignedErrors();
 });
 
 // when checking/unchecking a node
@@ -749,4 +742,5 @@ $('body').on('click', '.role-btn-group .btn', function(e) {
 
   toggleMinimumNodesAlert();
   handleBootstrapErrors();
+  handleUnassignedErrors();
 });
