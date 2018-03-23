@@ -81,7 +81,13 @@ module Velum
         # :nocov:
         opts = case Rails.env
                when "production", "development"
-                 { use_ssl: true, ca_file: "/etc/pki/ca.crt", ssl_version: :TLSv1, open_timeout: 2 }
+                 {
+                   use_ssl:      true,
+                   ca_file:      "/etc/pki/ca.crt",
+                   ssl_version:  :TLSv1,
+                   open_timeout: 2,
+                   read_timeout: 45
+                 }
                else
                  { use_ssl: false, open_timeout: 2 }
         end
