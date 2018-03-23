@@ -1,0 +1,17 @@
+.modal.fade.warn-node-removal-modal aria-labelledby="modal-label" role="dialog" tabindex="-1"
+  .modal-dialog role="document"
+    .modal-content
+      .modal-header
+        button.close aria-label="Close" data-dismiss="modal" type="button"
+          span aria-hidden="true"
+            | &times;
+        h4#modal-label.modal-title
+          | Invalid cluster topology
+      .modal-body
+        p By removing the respective node you'll be breaking the following constraints that is needed to have a stable and supported topology:
+        ul.node-removal-constraints-list
+      .modal-footer
+        button.btn.btn-default data-dismiss="modal" type="button"
+          | Cancel
+        button.btn.btn-primary.remove-anyway type="button"
+          | Proceed anyway

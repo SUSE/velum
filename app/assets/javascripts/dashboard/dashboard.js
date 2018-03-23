@@ -1,7 +1,14 @@
+var UPDATED_NEEDED = 1;
+var UPDATE_FAILED = 2;
+var REBOOTING = 3;
+var PENDING_REMOVAL = 4;
+
 State = {
   nextClicked: false,
   bootstrapErrors: [],
   assignableErrors: [],
+  pendingRemovalMinionId: null,
+  hasPendingStateNode: false,
 },
 
 MinionPoller = {
@@ -26,6 +33,8 @@ MinionPoller = {
     switch (state) {
       case 'failed':
         return 3;
+      case 'removal_failed':
+        return 2;
       case 'pending':
         return 1;
       // applied, not_applied
@@ -50,8 +59,10 @@ MinionPoller = {
         var pendingRendered = "";
         var masterApplied = false;
         var updateAvailable = false;
-        var hasPendingStateNode = false;
         var updateAvailableNodeCount = 0;
+
+        // reset pending
+        State.hasPendingStateNode = false;
 
         // In discovery, the minions to be rendered are unassigned, while on the
         // dashboard we don't want to render unassigned minions but we still
@@ -111,6 +122,27 @@ MinionPoller = {
           MinionPoller.sortMinions(allMinions);
         }
 
+        State.minions = minions;
+
+        var pendingStateMinion = minions.find(function (minion) {
+          return minion.highstate == "pending";
+        });
+
+        State.hasPendingStateNode = !!pendingStateMinion;
+
+        // find if there's a node pending removal
+        // to set State.pendingRemovalMinionId
+        // and render minions properly
+        var pendingRemovalMinion = minions.find(function(minion) {
+          return minion.highstate == "pending_removal";
+        });
+
+        if (pendingRemovalMinion) {
+          State.pendingRemovalMinionId = pendingRemovalMinion.minion_id;
+        } else {
+          State.pendingRemovalMinionId = null;
+        }
+
         var renderMethod = 'render' + MinionPoller.renderMode;
         for (var i = 0; i < minions.length; i++) {
           rendered += MinionPoller[renderMethod].call(MinionPoller, minions[i]);
@@ -119,33 +151,30 @@ MinionPoller = {
             masterApplied = true;
           }
 
-          if (minions[i].highstate === "pending") {
-            hasPendingStateNode = true;
-          }
-
-          if (minions[i].update_status == 1 || minions[i].update_status == 3) {
+          if (minions[i].update_status == UPDATED_NEEDED || minions[i].update_status == REBOOTING) {
             updateAvailable = true;
             updateAvailableNodeCount++;
           }
         }
         $(".nodes-container tbody").html(rendered);
 
-        // `hasPendingStateNode` variable aux to determine if
+        // `State.hasPendingStateNode` variable aux to determine if
         // update is possible
-        updateAvailable = updateAvailable && !hasPendingStateNode;
+        updateAvailable = updateAvailable &&
+                          !State.hasPendingStateNode &&
+                          !State.pendingRemovalMinionId;
 
         // Build Pending Nodes display table
         if (pendingMinions.length) {
           for (i = 0; i < pendingMinions.length; i++) {
-            pendingRendered += MinionPoller.renderPendingNodes(pendingMinions[i], hasPendingStateNode);
+            pendingRendered += MinionPoller.renderPendingNodes(pendingMinions[i]);
           }
 
           $(".pending-nodes-container tbody").html(pendingRendered);
         }
 
         // Show / Hide the table depending the presence of pending nodes
-        var acceptLinks = $('.pending-nodes-container td > a');
-        $(".pending-nodes-container #accept-all").prop('disabled', acceptLinks.length === 0)
+        checkAcceptAllAvailability();
         $(".pending-nodes-container .has-content").toggleClass('hidden', pendingMinions.length === 0);
         $(".pending-nodes-container .empty-text").toggleClass('hidden', pendingMinions.length > 0);
 
@@ -153,7 +182,7 @@ MinionPoller = {
         $('.discovery-nodes-panel').toggleClass('hide', allMinions.length === 0);
         $('.discovery-empty-panel').toggleClass('hide', allMinions.length > 0);
 
-        MinionPoller.handleAdminUpdate(data.admin || {}, hasPendingStateNode);
+        MinionPoller.handleAdminUpdate(data.admin || {});
         MinionPoller.handleRetryableOrchestrations(data);
 
         handleBootstrapErrors();
@@ -176,8 +205,10 @@ MinionPoller = {
             var addNodesUrl = $('.unassigned-count').data('url');
             var unassignedCountText = unassignedMinions.length;
 
-            if (!hasPendingStateNode) {
-                unassignedCountText += ' <a href="' + addNodesUrl + '">(new)</a>';
+            if (!State.hasPendingStateNode &&
+                !State.pendingRemovalMinionId &&
+                unassignedMinions.length) {
+              unassignedCountText += ' <a href="' + addNodesUrl + '" class="assign-nodes-link">(new)</a>';
             }
 
             $('.unassigned-count').html(unassignedCountText);
@@ -204,10 +235,10 @@ MinionPoller = {
     });
   },
 
-  renderPendingNodes: function(pendingMinionId, hasPendingStateNode) {
+  renderPendingNodes: function(pendingMinionId) {
     var acceptHtml;
 
-    if (hasPendingStateNode) {
+    if (State.hasPendingStateNode || State.pendingRemovalMinionId) {
       acceptHtml = '';
     } else if (hasPendingAcceptance(pendingMinionId)) {
       acceptHtml = 'Acceptance in progress';
@@ -218,15 +249,17 @@ MinionPoller = {
     return '\
       <tr> \
         <td>' + pendingMinionId + '</td>\
-        <td>' + acceptHtml + '</td>\
+        <td class="pending-accept-link">' + acceptHtml + '</td>\
       </tr> \
     ';
   },
 
-  handleAdminUpdate: function(admin, hasPendingStateNode) {
+  handleAdminUpdate: function(admin) {
     var $notification = $('.admin-outdated-notification');
 
-    if (admin.update_status === undefined || hasPendingStateNode) {
+    if (admin.update_status === undefined ||
+        State.hasPendingStateNode ||
+        State.pendingRemovalMinionId) {
       return;
     }
 
@@ -272,11 +305,13 @@ MinionPoller = {
     var statusHtml;
     var checked;
     var masterHtml;
+    var actionsHtml;
 
     switch(minion.highstate) {
       case "not_applied":
         statusHtml = '<i class="fa fa-circle-o text-success fa-2x" aria-hidden="true"></i>';
         break;
+      case "pending_removal":
       case "pending":
         statusHtml = '\
           <span class="fa-stack" aria-hidden="true">\
@@ -287,6 +322,9 @@ MinionPoller = {
       case "failed":
         statusHtml = '<i class="fa fa-times-circle text-danger fa-2x" aria-hidden="true"></i>';
         MinionPoller.alertFailedBootstrap();
+        break;
+      case "removal_failed":
+        statusHtml = '<i class="fa fa-minus-circle text-danger fa-2x" aria-hidden="true"></i> Removal Failed';
         break;
       case "applied":
         statusHtml = '<i class="fa fa-check-circle-o text-success fa-2x" aria-hidden="true"></i>';
@@ -301,6 +339,7 @@ MinionPoller = {
 
     masterHtml = '<input name="roles[master][]" id="roles_master_' + minion.id +
       '" value="' + minion.id + '" type="checkbox" disabled="" ' + checked + '> ';
+
 
     switch(minion.update_status) {
       case 1:
@@ -321,12 +360,28 @@ MinionPoller = {
         break;
     }
 
+    if (State.pendingRemovalMinionId || State.hasPendingStateNode) {
+      actionsHtml = '<a href="#" class="disabled remove-node-link">Remove</a>';
+    } else {
+      actionsHtml = '<a href="#" class="remove-node-link" data-id="' + minion.minion_id + '" data-hostname="' + minion.fqdn + '">Remove</a>';
+    }
+
+    if (minion.minion_id === State.pendingRemovalMinionId) {
+      actionsHtml = '<a href="#" class="disabled remove-node-link" data-id="' + minion.minion_id + '">Pending removal</a>';
+    }
+
+    // do not show any action if only 1 master and 1 worker
+    if (isTheLast(minion, 'worker') || isTheLast(minion, 'master')) {
+      actionsHtml = '';
+    }
+
     return '\
       <tr> \
         <td class="status">' + statusHtml +  '</td>\
         <td><strong>' + minion.minion_id +  '</strong></td>\
         <td class="minion-hostname">' + minion.fqdn +  '</td>\
         <td>' + masterHtml + minion.role + '</td>\
+        <td>' + actionsHtml + '</td>\
       </tr>';
   },
 
@@ -380,6 +435,11 @@ MinionPoller = {
   }
 };
 
+function isTheLast(minion, role) {
+  return minion.role === role &&
+         State.minions.filter(function (m) { return m.role === role }).length === 1;
+}
+
 function hasPendingAcceptance(minionId) {
   return sessionStorage.getItem(minionId) === 'true';
 }
@@ -387,6 +447,10 @@ function hasPendingAcceptance(minionId) {
 function setPendingAcceptance(minionId) {
   sessionStorage.setItem(minionId, true);
   $('.pending-nodes-container a[data-minion-id="' + minionId + '"]').parent().text('Acceptance in progress');
+}
+
+function removePendingAcceptance(minionId) {
+  sessionStorage.removeItem(minionId);
 }
 
 function requestMinionApproval(selector) {
@@ -397,7 +461,7 @@ function requestMinionApproval(selector) {
   });
 }
 
-function checkAcceptAllAvaiability() {
+function checkAcceptAllAvailability() {
   var $acceptLinks = $('.pending-nodes-container td > a');
 
   $('#accept-all').prop('disabled', $acceptLinks.length === 0);
@@ -421,7 +485,7 @@ $('body').on('click', '.accept-minion', function(e) {
   e.preventDefault();
   setPendingAcceptance(minionId);
   requestMinionApproval(minionId);
-  checkAcceptAllAvaiability();
+  checkAcceptAllAvailability();
 });
 
 $('.update-admin-modal').on('hide.bs.modal', function(e) {
@@ -744,3 +808,121 @@ $('body').on('click', '.role-btn-group .btn', function(e) {
   handleBootstrapErrors();
   handleUnassignedErrors();
 });
+
+$('body').on('click', '.remove-node-link', function (e) {
+  var $this = $(this);
+  var id = $this.data('id');
+  var hostname = $this.data('hostname');
+
+  e.preventDefault();
+  removePendingAcceptance(id);
+
+  if ($this.hasClass('disabled')) {
+    return;
+  }
+
+  if (confirm('Are you sure you want to remove ' + hostname + '?')) {
+    if (canRemoveWithoutWarning(id)) {
+      requestNodeRemoval(id)
+        .done(disableOrchTriggers)
+        .fail(enableOrchTriggers)
+        .fail(notifyRemovalError);
+    } else {
+      showWarningRemovalModal(id);
+    }
+  }
+});
+
+$('body').on('click', '.remove-anyway', function (e) {
+  var id = $('.warn-node-removal-modal').data('minionId');
+
+  e.preventDefault();
+  closeWarningRemovalModal();
+  requestNodeRemoval(id)
+    .done(disableOrchTriggers)
+    .fail(enableOrchTriggers)
+    .fail(notifyRemovalError);
+});
+
+function showWarningRemovalModal(id) {
+  var itemsHtml = '';
+  var errors = State.removalErrors;
+
+  for (var i = 0; i < errors.length; i++) {
+    itemsHtml += '<li>' + errors[i] + '</li>';
+  }
+
+  $('.node-removal-constraints-list').html(itemsHtml);
+  $('.warn-node-removal-modal').modal('show');
+  $('.warn-node-removal-modal').data('minionId', id);
+}
+
+function closeWarningRemovalModal() {
+  $('.warn-node-removal-modal').modal('hide');
+  State.removalErrors = [];
+}
+
+function requestNodeRemoval(id) {
+  State.pendingRemovalMinionId = id;
+
+  return $.ajax({
+    url: '/minions/' + id,
+    method: 'DELETE',
+  });
+}
+
+function canRemoveWithoutWarning(id) {
+  var errors = [];
+  var newCluster = State.minions.filter(function(m) { return m.minion_id !== id });
+  var masters = newCluster.filter(function (m) { return m.role === 'master' });
+  var workers = newCluster.filter(function (m) { return m.role === 'worker' });
+
+  // We need at least one master
+  if (masters.length < 1) {
+    errors.push("You need at least one master");
+  }
+
+  // We need at least one worker
+  if (workers.length < 1) {
+    errors.push("You need at least one worker");
+  }
+
+  // We need an odd number of masters
+  if (masters.length % 2 !== 1) {
+    errors.push('The number of masters has to be an odd number');
+  }
+
+  State.removalErrors = errors;
+
+  return errors.length === 0;
+};
+
+function notifyRemovalError(a, b, c) {
+  var text;
+
+  if (a.responseText.indexOf('Orchestration') === 0) {
+    text = a.responseText;
+  } else {
+    text = 'An attempt to remove node ' + State.pendingRemovalMinionId + ' has failed.';
+  }
+
+  showAlert(text, 'alert', 'failed-remove-alert');
+};
+
+function enableOrchTriggers() {
+  $('.remove-node-link').text('Remove');
+  $('.remove-node-link').removeClass('disabled');
+  $('.assign-nodes-link').removeClass('disabled');
+  $('#update-all-nodes').removeClass('hidden');
+  $('.pending-accept-link').removeClass('hidden');
+  $('.admin-outdated-notification').removeClass('hidden');
+};
+
+function disableOrchTriggers() {
+  $('.remove-node-link[data-id=' + State.pendingRemovalMinionId + ']').text('Pending removal');
+  $('.remove-node-link').addClass('disabled');
+  $('.assign-nodes-link').addClass('disabled');
+  $('#update-all-nodes').addClass('hidden');
+  $('.pending-accept-link').addClass('hidden');
+  $('.admin-outdated-notification').addClass('hidden');
+}

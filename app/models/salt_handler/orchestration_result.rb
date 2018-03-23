@@ -14,7 +14,19 @@ class SaltHandler::OrchestrationResult < SaltHandler::Orchestration
     orchestration_succeeded = event_data["success"]
 
     update_orchestration orchestration_succeeded: orchestration_succeeded, event_data: event_data
-    update_minions orchestration_succeeded: orchestration_succeeded
+
+    case self.class.salt_fun_args_match(event_data)
+    when "orch.kubernetes", "orch.update"
+      update_minions orchestration_succeeded: orchestration_succeeded
+    when "orch.removal"
+      if orchestration_succeeded
+        Minion.pending_removal.destroy_all
+      else
+        # rubocop:disable SkipsModelValidations
+        Minion.pending_removal.update_all highstate: Minion.highstates[:removal_failed]
+        # rubocop:enable SkipsModelValidations
+      end
+    end
 
     true
   end

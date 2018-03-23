@@ -299,4 +299,18 @@ describe Minion do
       end
     end
   end
+
+  describe "#mark_pending_removal" do
+    before do
+      minions
+    end
+
+    context "when a minion is marked as pending removal" do
+      it "updates the minion to have pending_removal state" do
+        expect do
+          described_class.mark_pending_removal(minion_ids: [described_class.first.minion_id])
+        end.to change { described_class.pending_removal.count }.from(0).to(1)
+      end
+    end
+  end
 end

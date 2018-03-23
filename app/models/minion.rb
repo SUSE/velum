@@ -5,7 +5,7 @@ class Minion < ApplicationRecord
   scope :assigned_role, -> { where.not role: nil }
   scope :unassigned_role, -> { where role: nil }
 
-  enum highstate: [:not_applied, :pending, :failed, :applied]
+  enum highstate: [:not_applied, :pending, :failed, :applied, :pending_removal, :removal_failed]
   enum role: [:master, :worker]
   enum status: [:unknown, :update_needed, :update_failed, :rebooting]
 
@@ -110,6 +110,13 @@ class Minion < ApplicationRecord
   # Forcefully updates all nodes to a pending highstate
   def self.mark_pending_bootstrap!
     Minion.assigned_role.update_all highstate: Minion.highstates[:pending]
+  end
+  # rubocop:enable Rails/SkipsModelValidations
+
+  # rubocop:disable Rails/SkipsModelValidations
+  # Updates the provided `minion_ids` to be in `pending_removal` status
+  def self.mark_pending_removal(minion_ids: [])
+    Minion.where(minion_id: minion_ids).update_all highstate: Minion.highstates[:pending_removal]
   end
   # rubocop:enable Rails/SkipsModelValidations
 

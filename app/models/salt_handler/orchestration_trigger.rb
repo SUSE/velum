@@ -16,6 +16,8 @@ class SaltHandler::OrchestrationTrigger < SaltHandler::Orchestration
                     ::Orchestration.kinds[:bootstrap]
                   when "orch.update"
                     ::Orchestration.kinds[:upgrade]
+                  when "orch.removal"
+                    ::Orchestration.kinds[:removal]
       end
     end
     orchestration.started_at = Time.zone.parse event_data["_stamp"]
