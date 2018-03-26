@@ -1,24 +1,26 @@
 require "rails_helper"
 
 RSpec.describe SetupHelper, type: :helper do
-  describe "#cloud_provider_value" do
-    it "returns openstack by default" do
-      expect(cloud_provider_value).to eq("openstack")
+  describe "#cloud_framework_value" do
+    it "returns whatever value cloud:framework is set" do
+      p = Pillar.create(pillar: "cloud:framework", value: "ec2")
+      expect(cloud_framework_value).to eq("ec2")
+
+      p.value = "gce"
+      p.save
+      expect(cloud_framework_value).to eq("gce")
+    end
+  end
+
+  describe "#cloud_provider_options?" do
+    it "returns true if has advanced settings available (e.g. openstack)" do
+      Pillar.create(pillar: "cloud:framework", value: "openstack")
+      expect(cloud_provider_options?).to eq(true)
     end
 
-    it "returns ec2 options when cloud:framework is aws" do
-      Pillar.create(pillar: "cloud:framework", value: "ec2")
-      expect(cloud_provider_value).to eq("ec2")
-    end
-
-    it "returns gce options when cloud:framework is gce" do
+    it "returns false if no advanced settings available (e.g. gce)" do
       Pillar.create(pillar: "cloud:framework", value: "gce")
-      expect(cloud_provider_value).to eq("gce")
-    end
-
-    it "returns azure options when cloud:framework is azure" do
-      Pillar.create(pillar: "cloud:framework", value: "azure")
-      expect(cloud_provider_value).to eq("azure")
+      expect(cloud_provider_options?).to eq(false)
     end
   end
 end
