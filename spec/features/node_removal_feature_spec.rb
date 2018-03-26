@@ -55,7 +55,7 @@ describe "feature: node removal", js: true do
       master_selector = ".remove-node-link[data-id='#{minions[0].minion_id}']"
 
       find(master_selector).click
-      expect(page).to have_content("Invalid cluster topology")
+      expect(page).to have_content("Unsupported cluster topology")
     end
 
     it "proceeds with removal even after warning" do
