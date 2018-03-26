@@ -82,7 +82,7 @@ module Velum
           ca_file:      "/etc/pki/ca.crt",
           ssl_version:  :TLSv1,
           open_timeout: 2,
-          read_timeout: 30
+          read_timeout: 45
         }
 
         Net::HTTP.start(uri.hostname, uri.port, opts) { |http| http.request(req) }
