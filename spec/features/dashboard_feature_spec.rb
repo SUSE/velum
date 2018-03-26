@@ -131,6 +131,28 @@ describe "Dashboard" do
 
       expect(page).not_to have_content("(new)")
     end
+
+    context "when unsupported configuration" do
+      before do
+        Minion.destroy_all
+      end
+      it "shows alert if nodes is less than 3", js: true do
+        Minion.create! [{ minion_id: SecureRandom.hex, fqdn: "minion0.k8s.local", role: "master" },
+                        { minion_id: SecureRandom.hex, fqdn: "minion1.k8s.local", role: "worker" }]
+
+        visit authenticated_root_path
+        expect(page).to have_content("requires a minimum of three nodes")
+      end
+
+      it "shows alert if masters number is even", js: true do
+        Minion.create! [{ minion_id: SecureRandom.hex, fqdn: "minion0.k8s.local", role: "master" },
+                        { minion_id: SecureRandom.hex, fqdn: "minion1.k8s.local", role: "master" },
+                        { minion_id: SecureRandom.hex, fqdn: "minion2.k8s.local", role: "worker" }]
+
+        visit authenticated_root_path
+        expect(page).to have_content("requires an odd number of masters")
+      end
+    end
   end
 end
 # rubocop:enable RSpec/ExampleLength
