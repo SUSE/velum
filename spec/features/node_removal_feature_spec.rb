@@ -22,7 +22,7 @@ describe "feature: node removal", js: true do
     setup_stubbed_update_status!(stubbed: stubbed)
     setup_stubbed_pending_minions!(stubbed: [minions[3].minion_id])
 
-    allow(Velum::Salt).to receive(:removal_orchestration)
+    allow(Orchestration).to receive(:run).and_return(true)
 
     visit authenticated_root_path
   end
@@ -38,11 +38,19 @@ describe "feature: node removal", js: true do
     expect(page).not_to have_link("Remove")
   end
 
-  context "with successful orchestration" do
-    before do
-      allow(Orchestration).to receive(:run).and_return(true)
-    end
+  it "does not show warning modal when removing worker and # masters is even" do
+    # removed one master to put cluster in unsupported configuration
+    minions[0].destroy
 
+    visit authenticated_root_path
+    worker_selector = ".remove-node-link[data-id='#{minions[3].minion_id}']"
+
+    find(worker_selector).click
+    expect(page).to have_css(worker_selector, text: "Pending removal")
+    expect(page).not_to have_content("Invalid cluster topology")
+  end
+
+  context "with successful orchestration" do
     it "changes 'Remove' link to 'Pending removal' on specific row" do
       worker_selector = ".remove-node-link[data-id='#{minions[3].minion_id}']"
 
