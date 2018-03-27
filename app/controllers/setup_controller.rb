@@ -48,6 +48,9 @@ class SetupController < ApplicationController
     @cloud_openstack_floating = Pillar.value(pillar: :cloud_openstack_floating)
     @cloud_openstack_lb_mon_retries = Pillar.value(pillar: :cloud_openstack_lb_mon_retries) || "3"
     @cloud_openstack_bs_version = Pillar.value(pillar: :cloud_openstack_bs_version) || "v2"
+
+    # container runtime setting
+    @cri = Pillar.value(pillar: :container_runtime) || "docker"
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
 

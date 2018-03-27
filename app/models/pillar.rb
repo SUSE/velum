@@ -50,7 +50,8 @@ class Pillar < ApplicationRecord
         dex_client_secrets_velum:      "dex:client_secrets:velum",
         cloud_framework:               "cloud:framework",
         cloud_provider:                "cloud:provider",
-        kubernetes_feature_gates:      "kubernetes:feature_gates"
+        kubernetes_feature_gates:      "kubernetes:feature_gates",
+        container_runtime:             "cri:name"
       }
     end
 

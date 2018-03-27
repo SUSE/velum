@@ -21,5 +21,10 @@ $(function() {
     }
   });
 
+  $(document).on('click', '.runtime-btn-group .btn', function() {
+    $('.docker-desc, .crio-desc').collapse('hide');
+    $($(this).data('element')).collapse('show');
+  });
+
   new SUSERegistryMirrorPanel('.suse-mirror-panel-body');
 });
