@@ -3,17 +3,30 @@ require "velum/salt_minion"
 # Minion represents the minions that have been registered in this application.
 class Minion < ApplicationRecord
   scope :assigned_role, -> { where.not role: nil }
+  scope :cluster_role, -> { where role: [Minion.roles[:master], Minion.roles[:worker]] }
   scope :unassigned_role, -> { where role: nil }
+  scope :needs_update, -> { where "tx_update_reboot_needed = true or tx_update_failed = true" }
 
   enum highstate: [:not_applied, :pending, :failed, :applied, :pending_removal, :removal_failed]
-  enum role: [:master, :worker]
-  enum status: [:unknown, :update_needed, :update_failed, :rebooting]
+  enum role: [:master, :worker, :admin]
 
   validates :minion_id, presence: true, uniqueness: true
   validates :fqdn, presence: true
 
-  # NOTE: this should be moved into a proper DB column as we do for highstates.
-  attr_accessor :update_status
+  # Update all minions grains
+  def self.update_grains
+    # rubocop:disable Lint/HandleExceptions
+    Minion.all.find_each do |minion|
+      begin
+        minion_grains = minion.salt.info
+        minion.tx_update_reboot_needed = minion_grains["tx_update_reboot_needed"] || false
+        minion.tx_update_failed = minion_grains["tx_update_failed"] || false
+        minion.save
+      rescue StandardError
+      end
+    end
+    # rubocop:enable Lint/HandleExceptions
+  end
 
   # Example:
   #   Minion.assign_roles(
@@ -53,19 +66,6 @@ class Minion < ApplicationRecord
     Minion.where id: (roles.key?(role) ? roles[role].map(&:to_i) : [])
   end
 
-  # Returns the update status for the given minion ID. The needed and the
-  # failed arguments are the results as given by salt, with the form of an array
-  # of hashes.
-  def self.computed_status(id, needed, failed)
-    if failed.first && failed.first[id].present?
-      Minion.statuses[:update_failed]
-    elsif needed.first && needed.first[id].present?
-      Minion.statuses[:update_needed]
-    else
-      Minion.statuses[:unknown]
-    end
-  end
-
   # rubocop:disable SkipsModelValidations
   # Assigns a role to this minion locally in the database, and send that role
   # to salt subsystem if remote is true.
@@ -87,29 +87,26 @@ class Minion < ApplicationRecord
   end
   # rubocop:enable SkipsModelValidations
 
+  # rubocop:disable Rails/SkipsModelValidations
   # Updates all nodes with a grain of `tx_update_reboot_needed: True` with a
   # highstate = pending, and persists it to the database
   def self.mark_pending_update
-    needed, failed = ::Velum::Salt.update_status(targets: "*", cached: true)
-    minions = Minion.assigned_role
-    minions.each do |minion|
-      if Minion.computed_status(minion.minion_id, needed, failed) == Minion.statuses[:update_needed]
-        Minion.find_by(minion_id: minion.minion_id).update(highstate: Minion.highstates[:pending])
-      end
-    end
+    Minion.cluster_role.where(tx_update_reboot_needed: true)
+          .update_all highstate: Minion.highstates[:pending]
   end
+  # rubocop:enable SkipsModelValidations
 
   # rubocop:disable Rails/SkipsModelValidations
   # Updates all nodes in `not_applied` or `failed` highstate to a pending highstate
   def self.mark_pending_bootstrap
-    Minion.assigned_role.where(highstate: [Minion.highstates[:not_applied],
-                                           Minion.highstates[:failed]])
+    Minion.cluster_role.where(highstate: [Minion.highstates[:not_applied],
+                                          Minion.highstates[:failed]])
           .update_all highstate: Minion.highstates[:pending]
   end
 
   # Forcefully updates all nodes to a pending highstate
   def self.mark_pending_bootstrap!
-    Minion.assigned_role.update_all highstate: Minion.highstates[:pending]
+    Minion.cluster_role.update_all highstate: Minion.highstates[:pending]
   end
   # rubocop:enable Rails/SkipsModelValidations
 

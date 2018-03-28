@@ -81,11 +81,12 @@ h1 Cluster Status
                 | Hostname
               th
                 | Role
-              th
+              th width="170"
                 | Actions
           tbody
 
 = render "dashboard/pending_nodes"
-= render "dashboard/update_admin_modal"
-= render "dashboard/warn_node_removal_modal"
+= render "dashboard/modals/update_admin_modal"
+= render "dashboard/modals/warn_node_removal_modal"
+= render "dashboard/modals/warn_node_force_removal_modal"
 = render "dashboard/polling"

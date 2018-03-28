@@ -13,40 +13,36 @@ RSpec.describe UpdatesController, type: :controller do
 
   describe "reboot admin node" do
     it "returns a json response" do
-      stubbed = [[{ "admin" => "" }], [{ "admin" => "" }]]
-      setup_stubbed_update_status!(stubbed: stubbed)
-
       post :create
       expect(response.content_type).to eq "application/json"
     end
 
     it "does nothing if no update was needed" do
-      stubbed = [[{ "admin" => "" }], [{ "admin" => "" }]]
-      setup_stubbed_update_status!(stubbed: stubbed)
-
       post :create
       json = JSON.parse(response.body)
-      expect(json["status"]).to eq Minion.statuses[:unknown]
+      expect(json["status"]).to eq "unknown"
     end
 
     # rubocop:disable RSpec/ExampleLength
     it "allows the node to reboot if an update is needed" do
-      stubbed = [[{ "admin" => true }], [{ "admin" => "" }]]
-      setup_stubbed_update_status!(stubbed: stubbed)
-
+      # rubocop:disable Rails/SkipsModelValidations
+      Minion.where(minion_id: "admin").update_all(tx_update_reboot_needed: true,
+                                                  tx_update_failed:        false)
+      # rubocop:enable Rails/SkipsModelValidations
       post :create
       json = JSON.parse(response.body)
-      expect(json["status"]).to eq Minion.statuses[:rebooting]
+      expect(json["status"]).to eq "rebooting"
       expect(::Velum::Salt).to have_received(:call).once
     end
 
     it "allows the node to reboot if a previous update failed" do
-      stubbed = [[{ "admin" => "" }], [{ "admin" => true }]]
-      setup_stubbed_update_status!(stubbed: stubbed)
-
+      # rubocop:disable Rails/SkipsModelValidations
+      Minion.where(minion_id: "admin").update_all(tx_update_reboot_needed: false,
+                                                  tx_update_failed:        true)
+      # rubocop:enable Rails/SkipsModelValidations
       post :create
       json = JSON.parse(response.body)
-      expect(json["status"]).to eq Minion.statuses[:rebooting]
+      expect(json["status"]).to eq "rebooting"
       expect(::Velum::Salt).to have_received(:call).once
     end
     # rubocop:enable RSpec/ExampleLength

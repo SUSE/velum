@@ -11,9 +11,9 @@ describe "Dashboard" do
   describe "Downloading kubeconfig" do
     before do
       login_as user, scope: :user
+
       Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion0.k8s.local", role: "master")
       Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion1.k8s.local", role: "worker")
-      setup_stubbed_update_status!
       setup_stubbed_pending_minions!
       visit authenticated_root_path
     end
@@ -42,7 +42,6 @@ describe "Dashboard" do
 
     before do
       login_as user, scope: :user
-      setup_stubbed_update_status!
       setup_stubbed_pending_minions!
       # rubocop:disable Rails/SkipsModelValidations
       Minion.update_all(highstate: Minion.highstates[:applied])
@@ -55,8 +54,7 @@ describe "Dashboard" do
       expect(page).not_to have_content("update all nodes")
 
       # minion[1].highstate == :applied
-      stubbed = [[{ minions[1].minion_id => true }], [{ minions[1].minion_id => "" }]]
-      setup_stubbed_update_status!(stubbed: stubbed)
+      minions[1].update(tx_update_reboot_needed: true, tx_update_failed: false)
 
       expect(page).to have_content("update all nodes")
     end
@@ -64,17 +62,16 @@ describe "Dashboard" do
     it "A user see the update link if update is available (retryable)", js: true do
       expect(page).not_to have_content("update all nodes")
 
-      minions[1].update(highstate: Minion.highstates[:failed])
-      stubbed = [[{ minions[1].minion_id => true }], [{ minions[1].minion_id => "" }]]
-      setup_stubbed_update_status!(stubbed: stubbed)
+      minions[1].update(highstate:               Minion.highstates[:failed],
+                        tx_update_reboot_needed: true,
+                        tx_update_failed:        false)
 
       expect(page).to have_content("update all nodes")
     end
 
     it "A user doesn't see link if there's a pending state", js: true do
       # update is available and all minions has applied state
-      stubbed = [[{ minions[1].minion_id => true }], [{ minions[1].minion_id => "" }]]
-      setup_stubbed_update_status!(stubbed: stubbed)
+      minions[1].update(tx_update_reboot_needed: true, tx_update_failed: false)
 
       expect(page).to have_content("update all nodes")
 
@@ -87,11 +84,11 @@ describe "Dashboard" do
 
     it "A user doesn't see link if there's a admin update available", js: true do
       # admin node update and node are available and all minions has applied state
-      stubbed = [
-        [{ "admin" => true, minions[1].minion_id => true }],
-        [{ "admin" => "", minions[1].minion_id => "" }]
-      ]
-      setup_stubbed_update_status!(stubbed: stubbed)
+      # rubocop:disable Rails/SkipsModelValidations
+      Minion.where(minion_id: "admin").update_all(tx_update_reboot_needed: true,
+                                                  tx_update_failed:        false)
+      # rubocop:enable Rails/SkipsModelValidations
+      minions[1].update(tx_update_reboot_needed: true, tx_update_failed: false)
 
       expect(page).to have_content("Admin node is running outdated software")
       expect(page).not_to have_content("update all nodes")
@@ -99,8 +96,10 @@ describe "Dashboard" do
 
     it "A user doesn't see notification if there's a pending highstate node", js: true do
       # admin node update is available
-      stubbed = [[{ "admin" => true }], [{ "admin" => "" }]]
-      setup_stubbed_update_status!(stubbed: stubbed)
+      # rubocop:disable Rails/SkipsModelValidations
+      Minion.where(minion_id: "admin").update_all(tx_update_reboot_needed: true,
+                                                  tx_update_failed:        false)
+      # rubocop:enable Rails/SkipsModelValidations
 
       # one of the minions is pending (bootstrapping or update in progress)
       minions[1].update(highstate: Minion.highstates[:pending])
@@ -134,7 +133,7 @@ describe "Dashboard" do
 
     context "when unsupported configuration" do
       before do
-        Minion.destroy_all
+        Minion.where.not(minion_id: "admin").destroy_all
       end
       it "shows alert if nodes is less than 3", js: true do
         Minion.create! [{ minion_id: SecureRandom.hex, fqdn: "minion0.k8s.local", role: "master" },

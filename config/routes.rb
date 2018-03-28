@@ -45,7 +45,9 @@ Rails.application.routes.draw do
     post :bootstrap, action: :do_bootstrap
   end
 
-  resources :minions, only: :destroy
+  resources :minions, only: :destroy do
+    delete :force, action: :force_destroy, on: :member
+  end
 
   namespace :internal_api, path: "internal-api" do
     namespace :v1 do

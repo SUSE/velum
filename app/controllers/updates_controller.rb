@@ -12,17 +12,13 @@ class UpdatesController < ApplicationController
       arg:     "systemctl reboot"
     )
 
-    render json: { status: Minion.statuses[:rebooting] }
+    render json: { status: "rebooting" }
   end
 
   protected
 
   def admin_needs_update
-    needed, failed = ::Velum::Salt.update_status(targets: "*", cached: true)
-    status = Minion.computed_status("admin", needed, failed)
-
-    return if [Minion.statuses[:update_needed], Minion.statuses[:update_failed]].include? status
-
-    render json: { status: Minion.statuses[:unknown] }
+    render json: { status: "unknown" } if Minion.where(role: Minion.roles[:admin])
+                                                .needs_update.count.zero?
   end
 end

@@ -18,4 +18,11 @@ FactoryGirl.define do
       orchestration.class.skip_callback :create, :after, :update_minions
     end
   end
+  factory :force_removal_orchestration, parent: :orchestration do
+    kind "force_removal"
+
+    after(:build) do |orchestration|
+      orchestration.class.skip_callback :create, :after, :update_minions
+    end
+  end
 end

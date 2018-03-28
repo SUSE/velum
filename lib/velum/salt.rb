@@ -20,21 +20,6 @@ module Velum
       [res, JSON.parse(res.body)]
     end
 
-    # Returns the update status of the different minions.
-    def self.update_status(targets: "*", cached: false)
-      expiration = cached ? 1.second : 30.seconds
-
-      needed = Rails.cache.fetch("update_status", expires_in: expiration) do
-        _, res = Salt.call(action: "grains.get", arg: "tx_update_reboot_needed", targets: targets)
-        res
-      end
-      failed = Rails.cache.fetch("update_status_failed", expires_in: expiration) do
-        _, res = Salt.call(action: "grains.get", arg: "tx_update_failed", targets: targets)
-        res
-      end
-      [needed["return"], failed["return"]]
-    end
-
     # Trigger salt-cloud to construct a cluster
     def self.build_cloud_cluster(count)
       instance_names = (1..count).collect { "caasp-node-" + SecureRandom.hex(4) }
@@ -101,6 +86,11 @@ module Velum
     # Call the removal orchestration
     def self.removal_orchestration(params:)
       run_async_orchestration orchestration: "removal", params: params
+    end
+
+    # Call the force removal orchestration
+    def self.force_removal_orchestration(params:)
+      run_async_orchestration orchestration: "force-removal", params: params
     end
 
     def self.run_async_orchestration(orchestration:, params: nil)

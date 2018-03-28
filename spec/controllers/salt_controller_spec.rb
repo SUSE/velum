@@ -1,20 +1,16 @@
 require "rails_helper"
 
 RSpec.describe SaltController, type: :controller do
-  let(:user)                 { create(:user) }
-  let(:master_minion)        { create(:master_minion) }
-  let(:worker_minion)        { create(:worker_minion) }
-  let(:stubbed) do
-    [
-      [{ "admin" => "",   master_minion.minion_id => true, worker_minion.minion_id => true }],
-      [{ "admin" => true, master_minion.minion_id => true, worker_minion.minion_id => ""   }]
-    ]
+  let(:user) { create(:user) }
+  let(:master_minion) do
+    create :master_minion, tx_update_reboot_needed: true, tx_update_failed: true
+  end
+  let(:worker_minion) do
+    create :worker_minion, tx_update_reboot_needed: true, tx_update_failed: false
   end
 
   before do
     sign_in user
-
-    setup_stubbed_update_status!(stubbed: stubbed)
   end
 
   describe "POST /update" do

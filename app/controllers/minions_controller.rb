@@ -10,6 +10,14 @@ class MinionsController < ApplicationController
            status: :unprocessable_entity
   end
 
+  def force_destroy
+    Orchestration.run kind: :force_removal, params: { target: @minion.minion_id }
+    render nothing: true, status: :no_content
+  rescue Orchestration::OrchestrationOngoing
+    render text:   "Orchestration currently ongoing. Please wait for it to finish.",
+           status: :unprocessable_entity
+  end
+
   private
 
   def fetch_minion
