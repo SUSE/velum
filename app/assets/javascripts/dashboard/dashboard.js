@@ -887,6 +887,11 @@ function canRemoveWithoutWarning(id) {
     errors.push("You need at least one worker");
   }
 
+  // We need at least three nodes
+  if (masters.length + workers.length < 3) {
+    errors.push("Minimum of three nodes");
+  }
+
   // We need an odd number of masters
   if (masters.length % 2 !== 1) {
     errors.push('The number of masters has to be an odd number');
