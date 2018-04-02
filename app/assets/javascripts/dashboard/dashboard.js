@@ -186,6 +186,7 @@ MinionPoller = {
         MinionPoller.handleRetryableOrchestrations(data);
 
         handleBootstrapErrors();
+        handleUnsupportedClusterConfiguration();
 
         // show/hide "update all nodes" link
         var hasAdminNodeUpdate = data.admin.update_status === 1 || data.admin.update_status === 2;
@@ -930,4 +931,22 @@ function disableOrchTriggers() {
   $('#update-all-nodes').addClass('hidden');
   $('.pending-accept-link').addClass('hidden');
   $('.admin-outdated-notification').addClass('hidden');
+}
+
+function handleUnsupportedClusterConfiguration() {
+  var masters = State.minions.filter(function (m) { return m.role === 'master' });
+  var workers = State.minions.filter(function (m) { return m.role === 'worker' });
+  var $alert = $('.unsupported-alert');
+
+  // We need at least three nodes
+  if (masters.length + workers.length < 3) {
+    $alert.find('.reason').text('a minimum of three nodes');
+    $alert.fadeIn(100);
+  } else if (masters.length % 2 === 0) {
+    // We need an odd number of masters
+    $alert.find('.reason').text('an odd number of masters nodes');
+    $alert.fadeIn(100);
+  } else {
+    $alert.fadeOut(500);
+  }
 }
