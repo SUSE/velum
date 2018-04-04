@@ -56,7 +56,7 @@ RSpec/MultipleExpectations:
     - spec/features/**/*
 
 AllCops:
-  TargetRubyVersion: 2.1.9
+  TargetRubyVersion: 2.1
   TargetRailsVersion: 4.2
 
   DisplayCopNames: true
