@@ -1,10 +1,21 @@
 require "rails_helper"
 
 describe SaltHandler::OrchestrationResult do
+  let(:orchestration) do
+    FactoryGirl.create(:orchestration,
+                       jid: "20170706104527757673")
+  end
+
+  let(:removal_orchestration) do
+    FactoryGirl.create(:removal_orchestration,
+                       jid:    "20170706104527757673",
+                       params: { target: pending_removal_minion.minion_id })
+  end
+
   let(:successful_orchestration_result) do
     event_data = {
-      "fun_args" => ["orch.kubernetes", { "orchestration_jid" => "20170706104527757673" }],
-      "jid"      => "20170706104527757673",
+      "fun_args" => ["orch.kubernetes", { "orchestration_jid" => orchestration.jid }],
+      "jid"      => orchestration.jid,
       "return"   => { "retcode" => 0 },
       "success"  => true,
       "_stamp"   => "2017-07-06T10:45:54.734096",
@@ -13,14 +24,19 @@ describe SaltHandler::OrchestrationResult do
     }.to_json
 
     FactoryGirl.create(:salt_event,
-                       tag:  "salt/run/20170706104527757673/ret",
+                       tag:  "salt/run/#{orchestration.jid}/ret",
                        data: event_data)
+  end
+
+  let(:removal_params) do
+    { "pillar"            => { "target" => removal_orchestration.params["target"] },
+      "orchestration_jid" => removal_orchestration.jid }
   end
 
   let(:successful_removal_orchestration_result) do
     event_data = {
-      "fun_args" => ["orch.removal", { "orchestration_jid" => "20170706104527757673" }],
-      "jid"      => "20170706104527757673",
+      "fun_args" => ["orch.removal", removal_params],
+      "jid"      => removal_orchestration.jid,
       "return"   => { "retcode" => 0 },
       "success"  => true,
       "_stamp"   => "2017-07-06T10:45:54.734096",
@@ -29,14 +45,14 @@ describe SaltHandler::OrchestrationResult do
     }.to_json
 
     FactoryGirl.create(:salt_event,
-                       tag:  "salt/run/20170706104527757673/ret",
+                       tag:  "salt/run/#{removal_orchestration.jid}/ret",
                        data: event_data)
   end
 
   let(:mid_successful_orchestration_result) do
     event_data = {
-      "fun_args" => ["orch.kubernetes", { "orchestration_jid" => "20170706104527757673" }],
-      "jid"      => "20170706104527757673",
+      "fun_args" => ["orch.kubernetes", { "orchestration_jid" => orchestration.jid }],
+      "jid"      => orchestration.jid,
       "return"   => { "retcode" => 1 },
       "success"  => true,
       "_stamp"   => "2017-07-06T10:45:54.734096",
@@ -45,14 +61,14 @@ describe SaltHandler::OrchestrationResult do
     }.to_json
 
     FactoryGirl.create(:salt_event,
-                       tag:  "salt/run/20170706104527757673/ret",
+                       tag:  "salt/run/#{orchestration.jid}/ret",
                        data: event_data)
   end
 
   let(:failed_orchestration_result) do
     event_data = {
-      "fun_args" => ["orch.kubernetes", { "orchestration_jid" => "20170706104527757673" }],
-      "jid"      => "20170706104527757673",
+      "fun_args" => ["orch.kubernetes", { "orchestration_jid" => orchestration.jid }],
+      "jid"      => orchestration.jid,
       "return"   => { "retcode" => 1 },
       "success"  => false,
       "_stamp"   => "2017-07-06T10:45:54.734096",
@@ -61,14 +77,14 @@ describe SaltHandler::OrchestrationResult do
     }.to_json
 
     FactoryGirl.create(:salt_event,
-                       tag:  "salt/run/20170706104527757673/ret",
+                       tag:  "salt/run/#{orchestration.jid}/ret",
                        data: event_data)
   end
 
   let(:failed_removal_orchestration_result) do
     event_data = {
-      "fun_args" => ["orch.removal", { "orchestration_jid" => "20170706104527757673" }],
-      "jid"      => "20170706104527757673",
+      "fun_args" => ["orch.removal", removal_params],
+      "jid"      => removal_orchestration.jid,
       "return"   => { "retcode" => 1 },
       "success"  => false,
       "_stamp"   => "2017-07-06T10:45:54.734096",
@@ -77,7 +93,7 @@ describe SaltHandler::OrchestrationResult do
     }.to_json
 
     FactoryGirl.create(:salt_event,
-                       tag:  "salt/run/20170706104527757673/ret",
+                       tag:  "salt/run/#{removal_orchestration.jid}/ret",
                        data: event_data)
   end
 
@@ -106,8 +122,6 @@ describe SaltHandler::OrchestrationResult do
     before do
       pending_minion
       applied_minion
-      FactoryGirl.create(:orchestration,
-                         jid: "20170706104527757673")
     end
 
     describe "with a successful orchestration result" do
@@ -149,7 +163,9 @@ describe SaltHandler::OrchestrationResult do
       let(:handler) { described_class.new(successful_removal_orchestration_result) }
 
       before do
-        pending_removal_minion
+        FactoryGirl.create(:removal_orchestration,
+                           jid:    "20170706104527757673",
+                           params: { target: pending_removal_minion.minion_id })
       end
 
       it "destroys the minion with pending_removal state" do
@@ -161,7 +177,9 @@ describe SaltHandler::OrchestrationResult do
       let(:handler) { described_class.new(failed_removal_orchestration_result) }
 
       before do
-        pending_removal_minion
+        FactoryGirl.create(:removal_orchestration,
+                           jid:    "20170706104527757673",
+                           params: { target: pending_removal_minion.minion_id })
       end
 
       it "marks the minion with removal_failed state if it failed" do

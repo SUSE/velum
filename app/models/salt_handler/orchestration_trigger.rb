@@ -19,10 +19,12 @@ class SaltHandler::OrchestrationTrigger < SaltHandler::Orchestration
                   when "orch.removal"
                     ::Orchestration.kinds[:removal]
       end
+      orch.params = (
+        event_data["fun_args"].find { |k| k.respond_to?(:key?) && k.key?("pillar") } || {}
+      )["pillar"]
     end
     orchestration.started_at = Time.zone.parse event_data["_stamp"]
     orchestration.save
-
     true
   end
 end

@@ -19,11 +19,15 @@ class SaltHandler::OrchestrationResult < SaltHandler::Orchestration
     when "orch.kubernetes", "orch.update"
       update_minions orchestration_succeeded: orchestration_succeeded
     when "orch.removal"
+      # Since this orchestration is parametrized is more correct to only update the minions that
+      # are specified in the orchestration parameters.
       if orchestration_succeeded
-        Minion.pending_removal.destroy_all
+        Minion.pending_removal.where(minion_id: (orchestration.params || {})["target"]).destroy_all
       else
         # rubocop:disable SkipsModelValidations
-        Minion.pending_removal.update_all highstate: Minion.highstates[:removal_failed]
+        Minion.pending_removal.where(minion_id: (orchestration.params || {})["target"]).update_all(
+          highstate: Minion.highstates[:removal_failed]
+        )
         # rubocop:enable SkipsModelValidations
       end
     end
@@ -33,9 +37,13 @@ class SaltHandler::OrchestrationResult < SaltHandler::Orchestration
 
   private
 
-  def update_orchestration(orchestration_succeeded:, event_data:)
+  def orchestration
     jid, = @salt_event.tag.match(self.class.tag_matcher).captures
-    ::Orchestration.find_by(jid: jid).tap do |orchestration|
+    ::Orchestration.find_by jid: jid
+  end
+
+  def update_orchestration(orchestration_succeeded:, event_data:)
+    orchestration.tap do |orchestration|
       orchestration.status = if orchestration_succeeded
         ::Orchestration.statuses[:succeeded]
       else
