@@ -151,7 +151,8 @@ class SetupController < ApplicationController
     cloud_cluster = params.require(:cloud_cluster).permit(
       :subscription_id, :tenant_id, :client_id, :secret,
       :instance_type, :instance_type_custom, :instance_count,
-      :resource_group, :network_id, :subnet_id, :security_group_id
+      :resource_group, :storage_account,
+      :network_id, :subnet_id, :security_group_id
     )
     cloud_cluster["cloud_framework"] = Pillar.value(pillar: :cloud_framework)
     cloud_cluster

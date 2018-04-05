@@ -92,7 +92,9 @@ class Pillar < ApplicationRecord
         cloud_worker_subnet_azure:
           "cloud:profiles:cluster_node:subnet",
         cloud_worker_security_group:
-          "cloud:profiles:cluster_node:network_interfaces:0:SecurityGroupId"
+          "cloud:profiles:cluster_node:network_interfaces:0:SecurityGroupId",
+        cloud_storage_account:
+          "cloud:profiles:cluster_node:storage_account"
       }
     end
     # rubocop:enable Layout/AlignHash

@@ -7,7 +7,7 @@ class CloudCluster
     :instance_count, :instance_type, :instance_type_custom, :subnet_id,
     :security_group_id, # EC2 profile
     :subscription_id, :tenant_id, :client_id, :secret, # Azure provider
-    :resource_group, :network_id # Azure profile
+    :storage_account, :resource_group, :network_id # Azure profile
 
   def initialize(*args)
     super
@@ -44,6 +44,7 @@ class CloudCluster
     persist_to_pillar!(:azure_secret, @secret)
     # cloud.profile pillars
     persist_to_pillar!(:cloud_worker_type, @instance_type)
+    persist_to_pillar!(:cloud_storage_account, @storage_account)
     persist_to_pillar!(:cloud_worker_resourcegroup, @resource_group)
     persist_to_pillar!(:cloud_worker_netgroup, @resource_group)
     persist_to_pillar!(:cloud_worker_net, @network_id)
