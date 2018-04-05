@@ -31,7 +31,12 @@ h1
         .form-group
           label for="cloud_cluster_secret" Client Secret
           = form.password_field :secret, class: "form-control"
-
+    .panel-footer
+      h4 Tip
+      p
+        ' Questions about services principals? Check out the
+        = link_to("Azure documentation", "https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal")
+        ' .
 
   = render "instance_type_panel",
     form: form,
