@@ -12,6 +12,7 @@ describe CloudCluster do
   let(:subnet_id) { "subnet-9d4a7b6c" }
   let(:security_group_id) { "sg-903004f8" }
   let(:instance_count) { 5 }
+  let(:storage_account) { "azurestorageaccount" }
 
   it "can implicitly represent a custom instance type" do
     cluster = described_class.new(instance_type_custom: custom_instance_type)
@@ -144,7 +145,8 @@ describe CloudCluster do
         instance_type:   custom_instance_type,
         resource_group:  resource_group,
         network_id:      network_id,
-        subnet_id:       subnet_id
+        subnet_id:       subnet_id,
+        storage_account: storage_account
       )
     end
 
@@ -174,6 +176,13 @@ describe CloudCluster do
         expect(cluster.save).to be(true)
       end
       expect(Pillar.value(pillar: :azure_secret)).to eq(secret)
+    end
+
+    it "stores storage account as :cloud_storage_account Pillar and refreshes" do
+      ensure_pillar_refresh do
+        expect(cluster.save).to be(true)
+      end
+      expect(Pillar.value(pillar: :cloud_storage_account)).to eq(storage_account)
     end
 
     it "stores instance type as :cloud_worker_type Pillar and refreshes" do

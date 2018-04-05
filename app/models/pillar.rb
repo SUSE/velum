@@ -64,6 +64,8 @@ class Pillar < ApplicationRecord
           "cloud:providers:azure:client_id",
         azure_secret:
           "cloud:providers:azure:secret",
+        cloud_storage_account:
+          "cloud:profiles:cluster_node:storage_account",
         cloud_worker_type:
           "cloud:profiles:cluster_node:size",
         cloud_worker_subnet:

@@ -99,6 +99,7 @@ class InternalApi::V1::PillarsController < InternalApiController
         profiles:  {
           cluster_node: {
             size:                   Pillar.value(pillar: :cloud_worker_type),
+            storage_account:        Pillar.value(pillar: :cloud_storage_account),
             resource_group:         Pillar.value(pillar: :cloud_worker_resourcegroup),
             network_resource_group: Pillar.value(pillar: :cloud_worker_resourcegroup),
             network:                Pillar.value(pillar: :cloud_worker_net),
