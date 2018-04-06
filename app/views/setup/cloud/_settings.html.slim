@@ -1,18 +1,19 @@
-.cloud-settings-wrapper
-  .cloud-settings-panel.panel.panel-default
-    .panel-heading.clearfix
-      h3.panel-title
-        | Cloud provider integration
-        | &nbsp;
-        i class='glyphicon glyphicon-info-sign' title="If running on a supported cloud provider, this enables Kubernetes' integration features, such as load-balancing and persistent storage."
-      .btn-group.btn-group-sm.btn-group-toggle.pull-right data-toggle="buttons"
-        = label_tag :cloud_provider, nil, class: "enable-cpi btn btn-default #{'btn-primary active' if @cloud_provider}", data: {toggle: "collapse", target: ".cloud-settings-panel-body"}
-          = f.radio_button :cloud_provider, cloud_provider_value, checked: @cloud_provider.present?
-          | Enable
-        = label_tag :cloud_provider, nil, class: "disable-cpi btn btn-default #{'btn-primary active'    unless @cloud_provider}", data: {toggle: "collapse", target: ".cloud-settings-panel-body"}
-          = f.radio_button :cloud_provider, "disable", checked: @cloud_provider.blank?
-          | Disable
+- if cloud_framework_value
+  .cloud-settings-wrapper
+    .cloud-settings-panel.panel.panel-default
+      .panel-heading.clearfix
+        h3.panel-title
+          | Cloud provider integration
+          | &nbsp;
+          i class='glyphicon glyphicon-info-sign' title="If running on a supported cloud provider, this enables Kubernetes' integration features, such as load-balancing and persistent storage."
+        .btn-group.btn-group-sm.btn-group-toggle.pull-right data-toggle="buttons"
+          = label_tag :cloud_provider, nil, class: "enable-cpi btn btn-default #{'btn-primary active' if @cloud_provider}", data: {toggle: "collapse", target: ".cloud-settings-panel-body"}
+            = f.radio_button :cloud_provider, cloud_framework_value, checked: @cloud_provider.present?
+            | Enable
+          = label_tag :cloud_provider, nil, class: "disable-cpi btn btn-default #{'btn-primary active'    unless @cloud_provider}", data: {toggle: "collapse", target: ".cloud-settings-panel-body"}
+            = f.radio_button :cloud_provider, "disable", checked: @cloud_provider.blank?
+            | Disable
 
-    .cloud-settings-panel-body.panel-collapse.collapse class="#{'in' if @cloud_provider.present?} #{'hidden' if cloud_provider_value != 'openstack'}"
-      .panel-body
-        = render partial: 'setup/cloud/openstack_configuration', locals: { f: f }
+      .cloud-settings-panel-body.panel-collapse.collapse class="#{'in' if @cloud_provider.present?} #{'hidden' unless cloud_provider_options?}"
+        .panel-body
+          = render partial: 'setup/cloud/openstack_configuration', locals: { f: f }
