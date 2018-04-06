@@ -874,6 +874,7 @@ function requestNodeRemoval(id) {
 
 function canRemoveWithoutWarning(id) {
   var errors = [];
+  var minion = State.minions.find(function (m) { return m.minion_id === id });
   var newCluster = State.minions.filter(function(m) { return m.minion_id !== id });
   var masters = newCluster.filter(function (m) { return m.role === 'master' });
   var workers = newCluster.filter(function (m) { return m.role === 'worker' });
@@ -894,7 +895,7 @@ function canRemoveWithoutWarning(id) {
   }
 
   // We need an odd number of masters
-  if (masters.length % 2 !== 1) {
+  if (minion.role === 'master' && masters.length % 2 !== 1) {
     errors.push('The number of masters has to be an odd number');
   }
 
