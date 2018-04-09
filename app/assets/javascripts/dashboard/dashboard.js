@@ -116,6 +116,7 @@ MinionPoller = {
           minions = allMinions;
           break;
         case "Unassigned":
+          State.assignedMinions = minions;
           minions = unassignedMinions;
           break;
         default:
@@ -562,10 +563,12 @@ function healthCheckToReload() {
 // begin unassigned
 function isAssignable() {
   var errors = [];
+  var masters = State.assignedMinions.filter(function (m) { return m.role === 'master' });
 
   // We need an odd number of masters
-  if (selectedMastersLength() % 2 !== 0) {
-    errors.push('The number of masters to be added has to be an even number in order to maintain the odd constraint number in the cluster');
+  if (selectedMastersLength() > 0 &&
+      (masters.length + selectedMastersLength()) % 2 === 0) {
+    errors.push('The number of masters to be added needs to maintain the odd constraint number in the cluster');
   }
 
   // We need unique hostnames

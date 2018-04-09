@@ -59,14 +59,29 @@ describe "Add unassigned nodes", js: true do
     expect(page).to have_button(value: "Add nodes", disabled: true)
   end
 
-  it "A user cannot add odd number of master nodes" do
+  it "cannot add a number (even) of master nodes that breaks the odd constraint" do
     minion = Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion2.k8s.local")
 
     # select only one master node
     find(".minion_#{minion.id} .master-btn").click
 
     click_button "Add nodes"
-    expect(page).to have_content("The number of masters to be added has to be an even number")
+    expect(page).to have_content("The number of masters to be added needs to maintain")
+    expect(page).to have_button(value: "Add nodes", disabled: true)
+  end
+
+  it "cannot add a number (odd) of master nodes that breaks the odd constraint" do
+    minion = Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion2.k8s.local")
+    minion2 = Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion3.k8s.local")
+    minion3 = Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion4.k8s.local")
+
+    # select only one master node
+    find(".minion_#{minion.id} .master-btn").click
+    find(".minion_#{minion2.id} .master-btn").click
+    find(".minion_#{minion3.id} .master-btn").click
+
+    click_button "Add nodes"
+    expect(page).to have_content("The number of masters to be added needs to maintain")
     expect(page).to have_button(value: "Add nodes", disabled: true)
   end
 
