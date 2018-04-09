@@ -226,6 +226,7 @@ RSpec.describe SetupController, type: :controller do
     let(:client_id) { SecureRandom.uuid }
     let(:secret) { SecureRandom.hex(16) }
     let(:resource_group) { "azureresourcegroup" }
+    let(:storage_account) { "azurestorageaccount" }
     let(:subnet_id) { "azuresubnetname" }
     let(:network_id) { "azurenetworkname" }
     let(:cloud_cluster_params) do
@@ -238,7 +239,8 @@ RSpec.describe SetupController, type: :controller do
         instance_count:  instance_count,
         resource_group:  resource_group,
         network_id:      network_id,
-        subnet_id:       subnet_id
+        subnet_id:       subnet_id,
+        storage_account: storage_account
       }
     end
 
@@ -284,6 +286,10 @@ RSpec.describe SetupController, type: :controller do
 
       it "assigns the Azure resource group" do
         expect(assigns(:cloud_cluster).resource_group).to eq(resource_group)
+      end
+
+      it "assigns the Azure storage account" do
+        expect(assigns(:cloud_cluster).storage_account).to eq(storage_account)
       end
 
       it "assigns the Azure network id" do

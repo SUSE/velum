@@ -153,6 +153,7 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
     let(:resource_group) { "azureresourcegroup" }
     let(:subnet_id) { "azuresubnetname" }
     let(:network_id) { "azurenetworkname" }
+    let(:storage_account) { "azurestorageaccount" }
 
     let(:expected_response) do
       {
@@ -170,6 +171,7 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
           profiles:  {
             cluster_node: {
               size:                   custom_instance_type,
+              storage_account:        storage_account,
               resource_group:         resource_group,
               network_resource_group: resource_group,
               network:                network_id,
@@ -223,6 +225,11 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
         :pillar,
         pillar: "cloud:profiles:cluster_node:resourcegroup",
         value:  resource_group
+      )
+      create(
+        :pillar,
+        pillar: "cloud:profiles:cluster_node:storage_account",
+        value:  storage_account
       )
     end
 
