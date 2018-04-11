@@ -51,7 +51,7 @@ class Pillar < ApplicationRecord
         cloud_framework:               "cloud:framework",
         cloud_provider:                "cloud:provider",
         kubernetes_feature_gates:      "kubernetes:feature_gates",
-        container_runtime:             "cri:name"
+        container_runtime:             "cri:chosen"
       }
     end
 
