@@ -1,5 +1,7 @@
 # rubocop:disable Metrics/BlockLength
 
+require "yaml"
+
 namespace :velum do
   desc "Create a user"
   task :create_user, [:email, :password] => :environment do |_, args|
@@ -21,6 +23,27 @@ namespace :velum do
     rescue ActiveRecord::RecordInvalid => e
       puts "Pillar '#{args["pillar"]}' could not be created: "
       puts e.message
+    end
+  end
+
+  desc "Import Pillar Seeds"
+  task import_pillar_seeds: :environment do
+    if !Dir.exist?("/etc/caasp/pillar-seeds/")
+      puts "Pillar seeds directory does not exist"
+    else
+      Dir.foreach("/etc/caasp/pillar-seeds/") do |config_file|
+        next if [".", ".."].include? config_file
+        puts "Importing seeds from #{config_file}"
+
+        seeds = YAML.load_file("/etc/caasp/pillar-seeds/#{config_file}")
+        seeds.each do |seed|
+          puts "Importing seed: #{seed["pillar"]}"
+
+          Pillar.find_or_create_by!(pillar: seed["pillar"]) do |p|
+            p.value = seed["value"]
+          end
+        end
+      end
     end
   end
 

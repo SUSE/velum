@@ -61,6 +61,11 @@ setup_database() {
   set -e
 }
 
+setup_pillar_seeds() {
+  # Import pillar seeds
+  bundle exec rake velum:import_pillar_seeds
+}
+
 setup_cpi() {
   # Check if Cloud Provider config exists
   CPI_CONFIG="/etc/caasp/cpi/openstack.conf"
@@ -72,5 +77,6 @@ setup_cpi() {
 
 setup_root_ca
 setup_database
+setup_pillar_seeds
 setup_cpi
 bundle exec "puma -C config/puma.rb"
