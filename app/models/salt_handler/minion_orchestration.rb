@@ -18,7 +18,12 @@ class SaltHandler::MinionOrchestration
     fun_args = parsed_event_data["fun_args"]
 
     orchestrations.each do |o|
-      return true if fun_args.first == o || fun_args.first["mods"] == o
+      # rubocop:disable Lint/HandleExceptions
+      begin
+        return true if fun_args.first == o || fun_args.first["mods"] == o
+      rescue StandardError
+      end
+      # rubocop:enable Lint/HandleExceptions
     end
 
     false
