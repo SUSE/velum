@@ -18,7 +18,12 @@ class SaltHandler::Orchestration
     fun_args = event_data["fun_args"]
 
     ORCHESTRATIONS.each do |o|
-      return o if [fun_args.first, fun_args.first["mods"]].include? o
+      # rubocop:disable Lint/HandleExceptions
+      begin
+        return o if [fun_args.first, fun_args.first["mods"]].include? o
+      rescue StandardError
+      end
+      # rubocop:enable Lint/HandleExceptions
     end
 
     nil
