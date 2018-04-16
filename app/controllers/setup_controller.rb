@@ -64,10 +64,12 @@ class SetupController < ApplicationController
     end
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def worker_bootstrap
     @controller_node = Pillar.value pillar: :dashboard
 
-    return unless (cloud = Pillar.value(pillar: :cloud_framework))
+    cloud = Pillar.value(pillar: :cloud_framework) || ""
+    return if cloud.empty? || cloud == "openstack"
 
     @instance_types = Velum::InstanceType.for(cloud)
     @cloud_cluster = CloudCluster.new(
@@ -85,6 +87,7 @@ class SetupController < ApplicationController
     end
     render "worker_bootstrap_#{cloud}".to_sym
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def build_cloud_cluster
     @cloud_cluster = CloudCluster.new(cloud_cluster_params)
