@@ -11,9 +11,63 @@ class User < ApplicationRecord
 
   devise(*enabled_devise_modules)
 
+  before_create :encrypt_password
   before_create :create_ldap_user
 
-  protected
+  def after_ldap_authentication
+    return true if encrypted_password.present?
+    encrypted_password = BCrypt::Password.create current_password, cost: 11
+    # rubocop:disable Rails/SkipsModelValidations
+    update_column :encrypted_password, encrypted_password
+    # rubocop:enable Rails/SkipsModelValidations
+    ldap.modify(dn:         user_dn,
+                operations: [
+                  [:replace, :userPassword, "{CRYPT}#{encrypted_password}"]
+                ])
+  end
+
+  private
+
+  def ldap
+    @ldap ||= ldap_connection
+  end
+
+  def ldap_config
+    @ldap_config ||= Velum::LDAP.ldap_config
+  end
+
+  def current_password
+    filter = Net::LDAP::Filter.eq(ldap_config["attribute"], email)
+    ldap.search(base: ldap_config["base"], filter: filter).first.userPassword.first
+  end
+
+  def ldap_connection
+    conn_params = {
+      host: ldap_config["host"],
+      port: ldap_config["port"],
+      auth: {
+        method:   :simple,
+        username: ldap_config["admin_user"],
+        password: ldap_config["admin_password"]
+      }
+    }
+
+    Velum::LDAP.configure_ldap_tls!(ldap_config, conn_params)
+
+    Net::LDAP.new(**conn_params)
+  end
+
+  def uid
+    email[0, email.index("@")]
+  end
+
+  def user_dn
+    "uid=#{uid},#{ldap_config["base"]}"
+  end
+
+  def encrypt_password
+    self.encrypted_password = BCrypt::Password.create password, cost: 11
+  end
 
   # rubocop:disable AbcSize,CyclomaticComplexity,MethodLength,PerceivedComplexity
   def create_ldap_user
@@ -28,24 +82,6 @@ class User < ApplicationRecord
     # check to see if this is because the LDAP auth succeeded, or if we're coming from registration
     # we do this by performing an LDAP search for the new user. If it fails, we need to create the
     # user in LDAP
-    ldap_config = Velum::LDAP.ldap_config
-
-    conn_params = {
-      host: ldap_config["host"],
-      port: ldap_config["port"],
-      auth: {
-        method:   :simple,
-        username: ldap_config["admin_user"],
-        password: ldap_config["admin_password"]
-      }
-    }
-
-    Velum::LDAP.configure_ldap_tls!(ldap_config, conn_params)
-
-    ldap = Net::LDAP.new(**conn_params)
-
-    uid = email[0, email.index("@")]
-    user_dn = "uid=#{uid},#{ldap_config["base"]}"
 
     # first, look for the People org unit
     treebase = ldap_config["base"]
@@ -138,7 +174,9 @@ class User < ApplicationRecord
       cn:           "A User",
       objectclass:  ["person", "inetOrgPerson"],
       uid:          uid,
-      userPassword: (password.blank? ? "{CRYPT}#{encrypted_password}" : password),
+      # We need to make the distinction between test and not test, as on travis, the slapd instance
+      # fails to login us if the password is crypted.
+      userPassword: (Rails.env.test? ? password : "{CRYPT}#{encrypted_password}"),
       givenName:    "A",
       sn:           "User",
       mail:         email
