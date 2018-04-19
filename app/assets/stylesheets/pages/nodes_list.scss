@@ -155,3 +155,19 @@
 #retry-cluster-bootstrap, #retry-cluster-upgrade {
   margin-right: 10px;
 }
+
+.actions-column {
+  &.removal-failed {
+    .force-remove-node-link {
+      display: block;
+    }
+
+    .remove-node-link {
+      display: none;
+    }
+  }
+
+  .force-remove-node-link {
+    display: none;
+  }
+}

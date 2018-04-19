@@ -4,11 +4,13 @@ require "rails_helper"
 describe "feature: node force removal", js: true do
   let!(:user) { create(:user) }
   let!(:minions) do
-    Minion.create! [{ minion_id: SecureRandom.hex, fqdn: "minion0.k8s.local", role: "master" },
+    Minion.create! [{ minion_id: SecureRandom.hex, fqdn: "minion0.k8s.local", role: "master",
+                      highstate: Minion.highstates[:removal_failed] },
                     { minion_id: SecureRandom.hex, fqdn: "minion1.k8s.local", role: "master" },
                     { minion_id: SecureRandom.hex, fqdn: "minion2.k8s.local", role: "master",
                       tx_update_reboot_needed: true },
-                    { minion_id: SecureRandom.hex, fqdn: "minion3.k8s.local", role: "worker" },
+                    { minion_id: SecureRandom.hex, fqdn: "minion3.k8s.local", role: "worker",
+                      highstate: Minion.highstates[:removal_failed] },
                     { minion_id: SecureRandom.hex, fqdn: "minion4.k8s.local", role: "worker" },
                     { minion_id: SecureRandom.hex, fqdn: "minion5.k8s.local" }]
   end
@@ -23,8 +25,8 @@ describe "feature: node force removal", js: true do
     visit authenticated_root_path
   end
 
-  it "shows 'Force remove' link for each node" do
-    expect(page).to have_link("Force remove", count: Minion.cluster_role.count)
+  it "shows 'Force remove' link for each removal failed node" do
+    expect(page).to have_link("Force remove", count: 2)
   end
 
   it "hides 'Force remove' link if only 1 master and 1 worker" do
@@ -79,10 +81,12 @@ describe "feature: node force removal", js: true do
 
       # remove other nodes
       expect(page).to have_css(".force-remove-node-link.disabled",
-        count: Minion.cluster_role.count - 1)
+        count: 2)
+      expect(page).to have_css(".remove-node-link.disabled",
+        count: 2)
 
       # assign nodes
-      expect(page).to have_css(".assign-nodes-link.disabled")
+      expect(page).not_to have_link("(new)")
 
       # update all nodes
       expect(page).to have_css("#update-all-nodes.hidden", visible: false)
@@ -108,7 +112,7 @@ describe "feature: node force removal", js: true do
       expect(page).not_to have_css(".force-remove-node-link.disabled")
 
       # assign nodes
-      expect(page).not_to have_css(".assign-nodes-link.disabled")
+      expect(page).to have_link("(new)")
 
       # update all nodes
       expect(page).not_to have_css("#update-all-nodes.hidden", visible: false)

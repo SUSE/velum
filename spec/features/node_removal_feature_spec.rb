@@ -88,7 +88,7 @@ describe "feature: node removal", js: true do
       expect(page).to have_css(".remove-node-link.disabled", count: Minion.cluster_role.count - 1)
 
       # assign nodes
-      expect(page).to have_css(".assign-nodes-link.disabled")
+      expect(page).not_to have_link("(new)")
 
       # update all nodes
       expect(page).to have_css("#update-all-nodes.hidden", visible: false)
@@ -113,7 +113,7 @@ describe "feature: node removal", js: true do
       expect(page).not_to have_css(".remove-node-link.disabled")
 
       # assign nodes
-      expect(page).not_to have_css(".assign-nodes-link.disabled")
+      expect(page).to have_link("(new)")
 
       # update all nodes
       expect(page).not_to have_css("#update-all-nodes.hidden", visible: false)
@@ -172,6 +172,7 @@ describe "feature: node removal", js: true do
       find(worker_link).click
       minions[1].update!(highstate: "removal_failed")
       expect(page).to have_content("Removal Failed")
+      expect(page).to have_link("Force remove")
     end
 
     it "shows that attempt failed if en exception happens during request" do
