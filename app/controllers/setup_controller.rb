@@ -64,7 +64,7 @@ class SetupController < ApplicationController
     end
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def worker_bootstrap
     @controller_node = Pillar.value pillar: :dashboard
 
@@ -87,7 +87,7 @@ class SetupController < ApplicationController
     end
     render "worker_bootstrap_#{cloud}".to_sym
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def build_cloud_cluster
     @cloud_cluster = CloudCluster.new(cloud_cluster_params)
@@ -104,9 +104,9 @@ class SetupController < ApplicationController
   end
 
   def set_roles
-    # rubocop:disable Rails/SkipsModelValidations:
+    # rubocop:disable Rails/SkipsModelValidations
     Minion.cluster_role.update_all role: nil
-    # rubocop:enable Rails/SkipsModelValidations:
+    # rubocop:enable Rails/SkipsModelValidations
     assigned = Minion.assign_roles roles: update_nodes_params, remote: false
     if assigned.values.include?(false)
       redirect_to setup_discovery_path,
