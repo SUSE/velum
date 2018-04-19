@@ -41,6 +41,14 @@ RSpec.configure do |config|
     )
   end
 
+  config.before do
+    Minion.find_or_create_by(minion_id: "admin") do |minion|
+      minion.fqdn = "admin"
+      minion.role = :admin
+      minion.highstate = :applied
+    end
+  end
+
   config.before :all do
     ENV["VELUM_SALT_HOST"] ||= "127.0.0.1"
     ENV["VELUM_SALT_PORT"] ||= "8000"

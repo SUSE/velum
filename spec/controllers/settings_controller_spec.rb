@@ -19,7 +19,7 @@ RSpec.describe SettingsController, type: :controller do
     it "marks bootstrap as pending" do
       allow(Orchestration).to receive(:run).and_return(true)
       post :apply
-      expect(Minion.pending.count).to eq(Minion.count)
+      expect(Minion.pending.count).to eq(Minion.cluster_role.count)
     end
 
     it "doesn't allow multiple orchestrations" do

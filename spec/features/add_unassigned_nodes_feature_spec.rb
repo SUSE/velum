@@ -13,7 +13,6 @@ describe "Add unassigned nodes", js: true do
   before do
     setup_done
     login_as user, scope: :user
-    setup_stubbed_update_status!
     setup_stubbed_pending_minions!
 
     allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).and_return(true)

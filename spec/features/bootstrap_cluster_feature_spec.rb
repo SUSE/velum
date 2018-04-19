@@ -6,7 +6,6 @@ describe "Bootstrap cluster feature" do
 
   before do
     login_as user, scope: :user
-    setup_stubbed_update_status!
     setup_stubbed_pending_minions!
     visit setup_discovery_path
   end

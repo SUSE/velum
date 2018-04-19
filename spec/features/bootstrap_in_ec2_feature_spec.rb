@@ -9,7 +9,6 @@ describe "Feature: Bootstrap a cluster in EC2" do
   before do
     login_as user, scope: :user
     create(:ec2_pillar)
-    setup_stubbed_update_status!
     visit setup_worker_bootstrap_path
   end
 

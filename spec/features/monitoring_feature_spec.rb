@@ -7,7 +7,6 @@ describe "Monitoring feature" do
     setup_done
     login_as user, scope: :user
     Minion.create!(minion_id: SecureRandom.hex, fqdn: "minion0.k8s.local", role: "master")
-    setup_stubbed_update_status!
     setup_stubbed_pending_minions!
     visit authenticated_root_path
   end
@@ -15,7 +14,7 @@ describe "Monitoring feature" do
   it "updates the status of the minions automatically", js: true do
     # We poll every 5 seconds so the default Capybara wait time might not be enough
     expect(page).to have_selector(".nodes-container tbody tr i.fa.fa-circle-o")
-    Minion.first.update!(highstate: "pending")
+    Minion.second.update!(highstate: "pending")
     expect(page).to have_selector(".nodes-container tbody tr i.fa.fa-refresh")
   end
 

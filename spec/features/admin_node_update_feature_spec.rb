@@ -11,8 +11,6 @@ describe "Manage nodes updates feature" do
   end
 
   it "Admin node has no update available", js: true do
-    setup_stubbed_update_status!(stubbed: [["admin" => ""], ["admin" => ""]])
-
     visit authenticated_root_path
 
     expect(page).not_to have_content("Update admin node")
@@ -20,8 +18,10 @@ describe "Manage nodes updates feature" do
 
   context "when the admin node has an update available" do
     before do
-      setup_stubbed_update_status!(stubbed: [["admin" => true], ["admin" => ""]])
-
+      # rubocop:disable Rails/SkipsModelValidations
+      Minion.where(minion_id: "admin").update_all(tx_update_reboot_needed: true,
+                                                  tx_update_failed:        false)
+      # rubocop:enable Rails/SkipsModelValidations
       visit authenticated_root_path
     end
 
@@ -61,8 +61,10 @@ describe "Manage nodes updates feature" do
   end
 
   it "Admin node has an update available (failed to update)", js: true do
-    setup_stubbed_update_status!(stubbed: [["admin" => ""], ["admin" => true]])
-
+    # rubocop:disable Rails/SkipsModelValidations
+    Minion.where(minion_id: "admin").update_all(tx_update_reboot_needed: false,
+                                                tx_update_failed:        true)
+    # rubocop:enable Rails/SkipsModelValidations
     visit authenticated_root_path
 
     expect(page).to have_content("Admin node is running outdated software (failed to update)")

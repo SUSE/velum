@@ -61,13 +61,11 @@ describe Velum::Salt do
     end
   end
 
-  describe "update_status" do
-    it "returns the update status of the given nodes" do
-      VCR.use_cassette("salt/update_status", record: :none) do
-        needed, failed = described_class.update_status
-        # In the VCR both values were set to true, so we can check this in a
-        # single 'expect' statement.
-        expect(needed.first["admin"] && failed.first["admin"]).to be_truthy
+  describe "force removal orchestration" do
+    it "runs the force removal orchestration in async mode" do
+      VCR.use_cassette("salt/force_removal_orchestrate_async", record: :none) do
+        _, hsh = described_class.force_removal_orchestration params: { target: "some-minion" }
+        expect(hsh["return"].count).to eq 1
       end
     end
   end

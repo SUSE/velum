@@ -105,7 +105,7 @@ class SetupController < ApplicationController
 
   def set_roles
     # rubocop:disable Rails/SkipsModelValidations:
-    Minion.update_all role: nil
+    Minion.cluster_role.update_all role: nil
     # rubocop:enable Rails/SkipsModelValidations:
     assigned = Minion.assign_roles roles: update_nodes_params, remote: false
     if assigned.values.include?(false)

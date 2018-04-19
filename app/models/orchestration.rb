@@ -6,7 +6,7 @@ class Orchestration < ApplicationRecord
   class OrchestrationAlreadyRan < StandardError; end
   class OrchestrationOngoing < StandardError; end
 
-  enum kind: [:bootstrap, :upgrade, :removal]
+  enum kind: [:bootstrap, :upgrade, :removal, :force_removal]
   enum status: [:in_progress, :succeeded, :failed]
 
   serialize :params, JSON
@@ -24,6 +24,8 @@ class Orchestration < ApplicationRecord
                Velum::Salt.update_orchestration
              when "removal"
                Velum::Salt.removal_orchestration(params: params)
+             when "force_removal"
+               Velum::Salt.force_removal_orchestration(params: params)
     end
     update_column :jid, job["return"].first["jid"]
     true
@@ -45,7 +47,7 @@ class Orchestration < ApplicationRecord
       Orchestration.bootstrap.last.try(:status) == "failed"
     when :upgrade
       Orchestration.upgrade.last.try(:status) == "failed"
-    when :removal
+    when :removal, :force_removal
       false
     end
   end
@@ -63,7 +65,7 @@ class Orchestration < ApplicationRecord
       Minion.mark_pending_bootstrap
     when "upgrade"
       Minion.mark_pending_update
-    when "removal"
+    when "removal", "force_removal"
       Minion.mark_pending_removal minion_ids: [params["target"]]
     end
   end

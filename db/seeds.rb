@@ -7,8 +7,16 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
+def find_or_create_admin_node
+  Minion.find_or_create_by(minion_id: "admin") do |minion|
+    minion.fqdn = "admin"
+    minion.role = :admin
+    minion.highstate = :applied
+  end
+end
+
 def seed_development
-  # nothing yet
+  find_or_create_admin_node
 end
 
 def seed_production
@@ -16,10 +24,11 @@ def seed_production
     r.url = "https://registry.suse.com"
     r.save
   end
+  find_or_create_admin_node
 end
 
 case Rails.env
-when "test", "development"
+when "development"
   seed_development
 when "production"
   seed_production

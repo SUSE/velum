@@ -5,6 +5,9 @@ describe Orchestration do
   let(:orchestration) { create(:orchestration) }
   let(:upgrade_orchestration) { create(:upgrade_orchestration) }
   let(:removal_orchestration) { create(:removal_orchestration, params: { target: "some-minion" }) }
+  let(:force_removal_orchestration) do
+    create(:force_removal_orchestration, params: { target: "some-minion" })
+  end
 
   context "when a bootstrap orchestration is ran" do
     before do
@@ -61,6 +64,27 @@ describe Orchestration do
     it "updates the targeted minion as pending_removal" do
       allow(Minion).to receive(:mark_pending_removal).with(minion_ids: ["some-minion"])
       removal_orchestration.send :update_minions
+      expect(Minion).to have_received(:mark_pending_removal).with(minion_ids: ["some-minion"])
+    end
+  end
+
+  context "when a force removal orchestration is ran" do
+    before do
+      allow(Velum::Salt).to receive(:force_removal_orchestration).and_return(
+        [nil, { "return" => [{ "jid" => "20170706104527757674" }] }]
+      )
+    end
+
+    it "spawns a new force removal orchestration" do
+      expect { described_class.run kind: :force_removal, params: { target: "some-minion" } }.to(
+        change { described_class.force_removal.count }
+      )
+      expect(Velum::Salt).to have_received(:force_removal_orchestration).once
+    end
+
+    it "updates the targeted minion as pending_removal" do
+      allow(Minion).to receive(:mark_pending_removal).with(minion_ids: ["some-minion"])
+      force_removal_orchestration.send :update_minions
       expect(Minion).to have_received(:mark_pending_removal).with(minion_ids: ["some-minion"])
     end
   end

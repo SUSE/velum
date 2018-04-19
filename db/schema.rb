@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180312112638) do
+ActiveRecord::Schema.define(version: 20180406080400) do
 
   create_table "certificate_services", force: :cascade do |t|
     t.integer  "certificate_id", limit: 4
@@ -37,10 +37,12 @@ ActiveRecord::Schema.define(version: 20180312112638) do
   add_index "jids", ["jid"], name: "jid", unique: true, using: :btree
 
   create_table "minions", force: :cascade do |t|
-    t.string   "minion_id",  limit: 255
-    t.string   "fqdn",       limit: 255
-    t.integer  "role",       limit: 4
-    t.integer  "highstate",  limit: 4,   default: 0
+    t.string   "minion_id",               limit: 255
+    t.string   "fqdn",                    limit: 255
+    t.integer  "role",                    limit: 4
+    t.integer  "highstate",               limit: 4,   default: 0
+    t.boolean  "tx_update_reboot_needed",             default: false
+    t.boolean  "tx_update_failed",                    default: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -47,18 +47,6 @@ namespace :velum do
     end
   end
 
-  desc "Migrate database users to LDAP"
-  task migrate_users: :environment do
-    User.where.not(encrypted_password: [nil, ""]).each do |user|
-      begin
-        user.send :create_ldap_user
-        puts "#{user.email} has been binded to LDAP (or is already bound)"
-      rescue StandardError => e
-        puts "Could not bind #{user.email} to LDAP. Reason: #{e}"
-      end
-    end
-  end
-
   def validate_args(args, expected_keys)
     if args.count != expected_keys.length
       puts [
