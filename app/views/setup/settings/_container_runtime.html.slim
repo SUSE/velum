@@ -1,0 +1,36 @@
+.panel.panel-default
+  .panel-heading
+    h3.panel-title
+      | Container runtime
+      | &nbsp;
+      i class='glyphicon glyphicon-info-sign' title="Software that Kubernetes uses to manage the containers."
+  .panel-body
+    p The choice of container runtime is completely transparent to end-users of the
+      cluster. Neither Kubernetes manifests nor container images need to be changed.
+
+    .form-group
+      = f.label :cri, "Choose the runtime"
+      br
+        .btn-group.btn-group-toggle.runtime-btn-group data-toggle="buttons"
+          = label_tag :container_runtime, nil, class: "docker btn btn-default #{'btn-primary active' if @cri == "docker"}", data: { element: '.docker-desc' }
+            = f.radio_button :container_runtime, "docker", checked: @cri == "docker"
+            | Docker open source engine
+          = label_tag :container_runtime, nil, class: "crio btn btn-default #{'btn-primary active' if @cri == "crio"}", data: { element: '.crio-desc' }
+            = f.radio_button :container_runtime, "crio", checked: @cri == "crio"
+            | cri-o
+
+      .docker-desc.collapse class="#{'in' if @cri == "docker"}"
+        | <em>Docker open source engine</em> (<strong>default</strong>) is a production-ready runtime, fully supported by SUSE.
+
+      .crio-desc.collapse class="#{'in' if @cri == "crio"}"
+        p <em>cri-o</em> is a lightweight container runtime designed and optimised for
+          Kubernetes. Based on Open Container Initiative standards, it can pull from any
+          compliant registry and can run any OCI-compliant container.
+
+        .alert.alert-warning role="alert"
+          span NOTE: cri-o is a <em>technology feature preview</em>. SUSE welcomes your
+               feedback on cri-o. As a preview, cri-o is <strong>not supported</strong>.
+               Previews may be functionally incomplete, unstable or in other ways not suitable
+               for production use. They are mainly included to give customers a chance to test
+               new technologies within an enterprise environment.
+
