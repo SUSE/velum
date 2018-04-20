@@ -303,6 +303,7 @@ MinionPoller = {
     var checked;
     var masterHtml;
     var actionsHtml;
+    var removalFailedClass = '';
 
     switch(minion.highstate) {
       case "not_applied":
@@ -321,6 +322,7 @@ MinionPoller = {
         MinionPoller.alertFailedBootstrap();
         break;
       case "removal_failed":
+        removalFailedClass = 'removal-failed';
         statusHtml = '<i class="fa fa-minus-circle text-danger fa-2x" aria-hidden="true"></i> Removal Failed';
         break;
       case "applied":
@@ -355,9 +357,9 @@ MinionPoller = {
     }
 
     if (State.pendingRemovalMinionId || State.hasPendingStateNode) {
-      actionsHtml = '<a href="#" class="disabled remove-node-link">Remove</a> | <a href="#" class="disabled force-remove-node-link">Force remove</a>';
+      actionsHtml = '<a href="#" class="disabled remove-node-link">Remove</a><a href="#" class="disabled force-remove-node-link">Force remove</a>';
     } else {
-      actionsHtml = '<a href="#" class="remove-node-link">Remove</a> | <a href="#" class="force-remove-node-link">Force remove</a>';
+      actionsHtml = '<a href="#" class="remove-node-link">Remove</a><a href="#" class="force-remove-node-link">Force remove</a>';
     }
 
     if (minion.minion_id === State.pendingRemovalMinionId) {
@@ -375,7 +377,7 @@ MinionPoller = {
         <td><strong>' + minion.minion_id +  '</strong></td>\
         <td class="minion-hostname">' + minion.fqdn +  '</td>\
         <td>' + masterHtml + minion.role + '</td>\
-        <td class="actions-column" data-id="' + minion.minion_id + '" data-hostname="' + minion.fqdn + '">' + actionsHtml + '</td>\
+        <td class="actions-column ' + removalFailedClass + '" data-id="' + minion.minion_id + '" data-hostname="' + minion.fqdn + '">' + actionsHtml + '</td>\
       </tr>';
   },
 
@@ -911,7 +913,7 @@ function notifyRemovalError(a, b, c) {
 };
 
 function enableOrchTriggers() {
-  $('.actions-column[data-id=' + State.pendingRemovalMinionId + ']').html('<a href="#" class="remove-node-link">Remove</a> | <a href="#" class="remove-node-link">Force remove</a>');
+  $('.actions-column[data-id=' + State.pendingRemovalMinionId + ']').html('<a href="#" class="remove-node-link">Remove</a><a href="#" class="remove-node-link">Force remove</a>');
   $('.remove-node-link').removeClass('disabled');
   $('.force-remove-node-link').removeClass('disabled');
   $('.assign-nodes-link').removeClass('disabled');
