@@ -1,0 +1,56 @@
+.panel.panel-default
+  .panel-heading
+    h3.panel-title Instance Type
+  .panel-body.instance-type-selector
+    .row
+      .col-md-8.instance-types
+        .form-group
+          - @instance_types.each do |instance_type|
+              label.instance-type
+                = form.radio_button :instance_type, instance_type.key
+                .instance-type-box
+                  = instance_type.category.name
+                  br
+                  small = instance_type.key
+                .definition
+                  h2 = instance_type.category.name
+                  h3 = instance_type.key
+                  p
+                    = instance_type.category.description
+                  p
+                    - instance_type.category.features.each do |feature|
+                      '
+                      span.label.label-default = feature
+
+                  dl
+                    dt vCPUs
+                    dd.vcpu-count(data-vcpus="#{instance_type.vcpu_count}")
+                      = pluralize(instance_type.vcpu_count, 'core')
+                    dt RAM
+                    dd.ram-size(data-bytes="#{instance_type.ram_bytes}"
+                                data-si="#{instance_type.ram_si_units}")
+                    - instance_type.details.each do |key, value|
+                      dt
+                        = key
+                      dd
+                        = value
+          label.instance-type
+            = form.radio_button :instance_type, 'CUSTOM'
+            .instance-type-box.double
+              ' Other types&hellip;
+              br
+              br
+              small = form.text_field :instance_type_custom, class: "form-control", style: "display: none;"
+            .definition
+              p
+                ' You may specify a preferred instance type with a minimum of
+                '  are 2 vCPUs and 8GB of RAM; 4 vCPUs are recommended.
+
+
+      .col-md-4.instance-type-description
+  .panel-footer
+    h4 Tip
+    p
+      ' Not sure which type of instance to use? Check the
+      = link_to "Instance Types", list_url
+      '  list.

@@ -44,39 +44,60 @@ class Pillar < ApplicationRecord
       Pillar.find_by(pillar: all_pillars[pillar]).try(:value)
     end
 
+    # rubocop:disable Layout/AlignHash
     def all_pillars
       {
-        dashboard:                 "dashboard",
-        dashboard_external_fqdn:   "dashboard_external_fqdn",
-        apiserver:                 "api:server:external_fqdn",
-        cluster_cidr:              "cluster_cidr",
-        cluster_cidr_min:          "cluster_cidr_min",
-        cluster_cidr_max:          "cluster_cidr_max",
-        cluster_cidr_len:          "cluster_cidr_len",
-        services_cidr:             "services_cidr",
-        api_cluster_ip:            "api:cluster_ip",
-        dns_cluster_ip:            "dns:cluster_ip",
-        proxy_systemwide:          "proxy:systemwide",
-        http_proxy:                "proxy:http",
-        https_proxy:               "proxy:https",
-        no_proxy:                  "proxy:no_proxy",
-        tiller:                    "addons:tiller",
-        ldap_host:                 "ldap:host",
-        ldap_port:                 "ldap:port",
-        ldap_bind_dn:              "ldap:bind_dn",
-        ldap_bind_pw:              "ldap:bind_pw",
-        ldap_domain:               "ldap:domain",
-        ldap_group_dn:             "ldap:group_dn",
-        ldap_people_dn:            "ldap:people_dn",
-        ldap_base_dn:              "ldap:base_dn",
-        ldap_admin_group_dn:       "ldap:admin_group_dn",
-        ldap_admin_group_name:     "ldap:admin_group_name",
-        ldap_tls_method:           "ldap:tls_method",
-        ldap_mail_attribute:       "ldap:mail_attribute",
-        suse_registry_mirror_url:  "suse_registry_mirror:url",
-        suse_registry_mirror_cert: "suse_registry_mirror:cert"
+        dashboard:                  "dashboard",
+        dashboard_external_fqdn:    "dashboard_external_fqdn",
+        apiserver:                  "api:server:external_fqdn",
+        cluster_cidr:               "cluster_cidr",
+        cluster_cidr_min:           "cluster_cidr_min",
+        cluster_cidr_max:           "cluster_cidr_max",
+        cluster_cidr_len:           "cluster_cidr_len",
+        services_cidr:              "services_cidr",
+        api_cluster_ip:             "api:cluster_ip",
+        dns_cluster_ip:             "dns:cluster_ip",
+        proxy_systemwide:           "proxy:systemwide",
+        http_proxy:                 "proxy:http",
+        https_proxy:                "proxy:https",
+        no_proxy:                   "proxy:no_proxy",
+        tiller:                     "addons:tiller",
+        ldap_host:                  "ldap:host",
+        ldap_port:                  "ldap:port",
+        ldap_bind_dn:               "ldap:bind_dn",
+        ldap_bind_pw:               "ldap:bind_pw",
+        ldap_domain:                "ldap:domain",
+        ldap_group_dn:              "ldap:group_dn",
+        ldap_people_dn:             "ldap:people_dn",
+        ldap_base_dn:               "ldap:base_dn",
+        ldap_admin_group_dn:        "ldap:admin_group_dn",
+        ldap_admin_group_name:      "ldap:admin_group_name",
+        ldap_tls_method:            "ldap:tls_method",
+        ldap_mail_attribute:        "ldap:mail_attribute",
+        suse_registry_mirror_url:   "suse_registry_mirror:url",
+        suse_registry_mirror_cert:  "suse_registry_mirror:cert",
+        cloud_framework:            "cloud:framework",
+        cloud_worker_type:          "cloud:profiles:cluster_node:size",
+        azure_subscription_id:      "cloud:providers:azure:subscription_id",
+        azure_tenant_id:            "cloud:providers:azure:tenant",
+        azure_client_id:            "cloud:providers:azure:client_id",
+        azure_secret:               "cloud:providers:azure:secret",
+        cloud_worker_net:           "cloud:profiles:cluster_node:network",
+        cloud_worker_resourcegroup:
+          "cloud:profiles:cluster_node:resource_group",
+        cloud_worker_netgroup:
+          "cloud:profiles:cluster_node:network_resource_group",
+        cloud_worker_subnet_aws:
+          "cloud:profiles:cluster_node:network_interfaces:0:SubnetId",
+        cloud_worker_subnet_azure:
+          "cloud:profiles:cluster_node:subnet",
+        cloud_worker_security_group:
+          "cloud:profiles:cluster_node:network_interfaces:0:SecurityGroupId",
+        cloud_storage_account:
+          "cloud:profiles:cluster_node:storage_account"
       }
     end
+    # rubocop:enable Layout/AlignHash
 
     # Apply the given pillars into the database. It returns an array with the
     # encountered errors.

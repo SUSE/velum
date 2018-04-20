@@ -1,0 +1,73 @@
+= content_for :body_class, "worker_bootstrap"
+
+h1
+  ' Bootstrap your CaaS Platform
+  small in Microsoft Azure
+
+
+= form_for @cloud_cluster, url: setup_build_cloud_cluster_path do |form|
+  = form.hidden_field :cloud_framework
+  p
+    ' In order to complete the installation, it is necessary to bootstrap a few
+    ' additional nodes, those will be the Kubernetes Master and Workers.
+
+  .panel.panel-default
+    .panel-heading
+      h3.panel-title Service Principal Authentication
+    .panel-body
+      .col-lg-3.col-md-6
+        .form-group
+          label for="cloud_cluster_subscription_id" Subscription ID
+          = form.text_field :subscription_id, class: "form-control"
+      .col-lg-3.col-md-6
+        .form-group
+          label for="cloud_cluster_tenant_id" Tenant ID
+          = form.text_field :tenant_id, class: "form-control"
+      .col-lg-3.col-md-6
+        .form-group
+          label for="cloud_cluster_client_id" Application ID
+          = form.text_field :client_id, class: "form-control"
+      .col-lg-3.col-md-6
+        .form-group
+          label for="cloud_cluster_secret" Client Secret
+          = form.password_field :secret, class: "form-control"
+    .panel-footer
+      h4 Tip
+      p
+        ' Questions about services principals? Check out the
+        = link_to("Azure documentation", "https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal")
+        ' .
+
+  = render "instance_type_panel",
+    form: form,
+    list_url: "https://docs.microsoft.com/en-us/azure/virtual-machines/linux/sizes/"
+
+  = render "cluster_size_panel", form: form
+
+  .panel.panel-default
+    .panel-heading
+      h3.panel-title Resource Scopes
+    .panel-body
+      .col-lg-3.col-md-6
+        .form-group
+          label for="cloud_cluster_resource_group" Resource Group
+          = form.text_field :resource_group, class: "form-control"
+      .col-lg-3.col-md-6
+        .form-group
+          label for="cloud_cluster_storage_account" Storage Account
+          = form.text_field :storage_account, class: "form-control"
+      .col-lg-3.col-md-6
+        .form-group
+          label for="cloud_cluster_network_id" Network
+          = form.text_field :network_id, class: "form-control"
+      .col-lg-3.col-md-6
+        .form-group
+          label for="cloud_cluster_subnet_id" Subnet
+          = form.text_field :subnet_id, class: "form-control"
+
+  .clearfix.text-right.steps-container
+    = link_to "Back", setup_path, class: "btn btn-danger"
+    = form.submit "Next", class: "btn btn-primary"
+
+- content_for :page_javascript do
+  = javascript_include_tag 'cloud/bootstrap', defer: true
