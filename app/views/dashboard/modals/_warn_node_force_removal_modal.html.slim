@@ -8,10 +8,16 @@
         h4#modal-label.modal-title
           | Forced node removal
       .modal-body
-        p You are about to force remove a node from the cluster. This means that... (more info here)
-        p Only proceed with this operation if you really know what you are doing.
+        p You are about to forcibly remove a node from the cluster. This action cannot be reversed. 
+        p Any data on this node will be lost and the machine must be re-installed before it can be
+        p added back. 
+        p
+        p The operation will perform some basic tasks to maintain the coherence of the cluster, but
+        p it may not function normally afterwards.
+        p
+        p Only proceed with this operation if you are certain it is essential to do so.
       .modal-footer
         button.btn.btn-default data-dismiss="modal" type="button"
           | Cancel
         button.btn.btn-primary.force-remove-anyway type="button"
-          | Proceed anyway
+          | Proceed with forcible removal
