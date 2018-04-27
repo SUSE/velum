@@ -39,7 +39,7 @@ Note that the development environment already sets all these values for you.
 
 ## Development
 
-You can start a Velum development environment by following the instructions in [caasp-devenv](https://github.com/kubic-project/caasp-devenv).
+You can start a Velum development environment by following the instructions in [caasp-devenv](https://github.com/kubic-project/automation#caasp-devenv).
 
 ## Licensing
 
