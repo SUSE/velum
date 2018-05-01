@@ -101,7 +101,267 @@ http_interactions:
         06:57:34 GMT; Path=/
     body:
       encoding: UTF-8
-      string: '{"return": [{"jid": "20180205205734878026", "minions": ["admin"]}]}'
+      string: '{"return": [{"jid": "20180501142133027777", "minions": ["admin"]}]}'
+    http_version:
+  recorded_at: Mon, 05 Feb 2018 20:57:34 GMT
+- request:
+    method: post
+    uri: https://127.0.0.1:8000/
+    body:
+      encoding: UTF-8
+      string: '{"client":"local_async","tgt":"admin","fun":"cloud.profile","arg":["cluster_node","caasp-node-d43efb76"]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Auth-Token:
+      - 507fef45a35e7038c9a1cdb754acfc7539aac4a2
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '67'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Cache-Control:
+      - private
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Mon, 05 Feb 2018 20:57:34 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=507fef45a35e7038c9a1cdb754acfc7539aac4a2; expires=Tue, 06 Feb 2018
+        06:57:34 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"jid": "20180501142133027836", "minions": ["admin"]}]}'
+    http_version:
+  recorded_at: Mon, 05 Feb 2018 20:57:34 GMT
+- request:
+    method: post
+    uri: https://127.0.0.1:8000/
+    body:
+      encoding: UTF-8
+      string: '{"client":"local_async","tgt":"admin","fun":"cloud.profile","arg":["cluster_node","caasp-node-d43efb76"]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Auth-Token:
+      - 507fef45a35e7038c9a1cdb754acfc7539aac4a2
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '67'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Cache-Control:
+      - private
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Mon, 05 Feb 2018 20:57:34 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=507fef45a35e7038c9a1cdb754acfc7539aac4a2; expires=Tue, 06 Feb 2018
+        06:57:34 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"jid": "20180501142133027856", "minions": ["admin"]}]}'
+    http_version:
+  recorded_at: Mon, 05 Feb 2018 20:57:34 GMT
+- request:
+    method: post
+    uri: https://127.0.0.1:8000/
+    body:
+      encoding: UTF-8
+      string: '{"client":"local_async","tgt":"admin","fun":"cloud.profile","arg":["cluster_node","caasp-node-d43efb76"]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Auth-Token:
+      - 507fef45a35e7038c9a1cdb754acfc7539aac4a2
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '67'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Cache-Control:
+      - private
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Mon, 05 Feb 2018 20:57:34 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=507fef45a35e7038c9a1cdb754acfc7539aac4a2; expires=Tue, 06 Feb 2018
+        06:57:34 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"jid": "20180501142133027871", "minions": ["admin"]}]}'
+    http_version:
+  recorded_at: Mon, 05 Feb 2018 20:57:34 GMT
+- request:
+    method: post
+    uri: https://127.0.0.1:8000/
+    body:
+      encoding: UTF-8
+      string: '{"client":"local_async","tgt":"admin","fun":"cloud.profile","arg":["cluster_node","caasp-node-d43efb76"]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Auth-Token:
+      - 507fef45a35e7038c9a1cdb754acfc7539aac4a2
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '67'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Cache-Control:
+      - private
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Mon, 05 Feb 2018 20:57:34 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=507fef45a35e7038c9a1cdb754acfc7539aac4a2; expires=Tue, 06 Feb 2018
+        06:57:34 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"jid": "20180501142133027885", "minions": ["admin"]}]}'
+    http_version:
+  recorded_at: Mon, 05 Feb 2018 20:57:34 GMT
+- request:
+    method: post
+    uri: https://127.0.0.1:8000/
+    body:
+      encoding: UTF-8
+      string: '{"client":"local_async","tgt":"admin","fun":"cloud.profile","arg":["cluster_node","caasp-node-d43efb76"]}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Auth-Token:
+      - 507fef45a35e7038c9a1cdb754acfc7539aac4a2
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '67'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Cache-Control:
+      - private
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Mon, 05 Feb 2018 20:57:34 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Type:
+      - application/json
+      Set-Cookie:
+      - session_id=507fef45a35e7038c9a1cdb754acfc7539aac4a2; expires=Tue, 06 Feb 2018
+        06:57:34 GMT; Path=/
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"jid": "20180501142133027976", "minions": ["admin"]}]}'
     http_version:
   recorded_at: Mon, 05 Feb 2018 20:57:34 GMT
 recorded_with: VCR 3.0.3
