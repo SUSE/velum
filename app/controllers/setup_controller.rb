@@ -76,7 +76,7 @@ class SetupController < ApplicationController
     @cloud_cluster = CloudCluster.new(cloud_cluster_params)
 
     if @cloud_cluster.save
-      Velum::Salt.build_cloud_cluster(@cloud_cluster.instance_count)
+      @cloud_cluster.build!
       redirect_to setup_discovery_path,
         notice: "Starting to build #{@cloud_cluster}..."
     else
