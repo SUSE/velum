@@ -59,6 +59,8 @@ MinionPoller = {
         var unassignedMinions = data.unassigned_minions || [];
         var allMinions = minions.concat(unassignedMinions);
         var pendingMinions = data.pending_minions || [];
+        var pendingCloudJobs = data.pending_cloud_jobs || 0;
+        var cloudJobsFailed = data.cloud_jobs_failed || 0;
 
         // for the dashboard, if we rely on radio, the first time this comes
         // it won't detect that there's a master, so we need to rely on the data
@@ -97,6 +99,34 @@ MinionPoller = {
             MinionPoller.selectedMasters = $.grep(minions, isMaster).map(minionId);
           }
           MinionPoller.initialized = true;
+        }
+
+        // handle public cloud bootstrapping alerts
+        if (pendingCloudJobs > 0) {
+            $('#discovery-pending-cloud-jobs-count').text(pendingCloudJobs);
+            if (pendingCloudJobs == 1) {
+                $('#discovery-pending-cloud-jobs span.singular').removeClass('hidden');
+                $('#discovery-pending-cloud-jobs span.plural').addClass('hidden');
+            } else {
+                $('#discovery-pending-cloud-jobs span.plural').removeClass('hidden');
+                $('#discovery-pending-cloud-jobs span.singular').addClass('hidden');
+            }
+            $('#discovery-pending-cloud-jobs').removeClass('hidden');
+        } else {
+            $('#discovery-pending-cloud-jobs').addClass('hidden');
+        }
+        if (cloudJobsFailed > 0) {
+            $('#discovery-cloud-job-errors-count').text(cloudJobsFailed);
+            if (cloudJobsFailed == 1) {
+                $('#discovery-bootstrap-alert span.singular').removeClass('hidden');
+                $('#discovery-bootstrap-alert span.plural').addClass('hidden');
+            } else {
+                $('#discovery-bootstrap-alert span.plural').removeClass('hidden');
+                $('#discovery-bootstrap-alert span.singular').addClass('hidden');
+            }
+            $('#discovery-bootstrap-alert').removeClass('hidden');
+        } else {
+            $('#discovery-bootstrap-alert').addClass('hidden');
         }
 
         switch (MinionPoller.renderMode) {
