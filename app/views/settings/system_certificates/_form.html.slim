@@ -1,0 +1,13 @@
+= form_for [:settings, @system_certificate], html: { class: "system-certificate-form"} do |f|
+  .form-group class="#{error_class_for(@system_certificate, :name)}"
+    = f.label :name
+    = f.text_field :name, class: "form-control", value: @system_certificate.name, required: true
+    = error_messages_for(@system_certificate, :name)
+  .form-group.form-group-certificate
+    = f.label :certificate
+    p Paste the self-signed certificate to be added to the system certificate store here.
+    = f.text_area :certificate, class: "form-control", value: @cert.certificate, required: true
+
+  .form-actions.clearfix
+    = f.submit "Save", class: "btn btn-primary action"
+    = link_to "Cancel", settings_system_certificates_path, class: "btn btn-default action"
