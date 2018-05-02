@@ -142,6 +142,12 @@ ActiveRecord::Schema.define(version: 20180508070232) do
   add_index "salt_returns", ["id"], name: "id", using: :btree
   add_index "salt_returns", ["jid"], name: "jid", using: :btree
 
+  create_table "system_certificates", force: :cascade do |t|
+    t.string   "name",       limit: 255
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at"
     t.datetime "updated_at"

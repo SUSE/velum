@@ -9,12 +9,13 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
   let(:certificate) { create(:certificate) }
   let(:expected_flat_pillars_response) do
     {
-      dashboard:  "dashboard.example.com",
-      registries: [
+      system_certificates: [],
+      dashboard:           "dashboard.example.com",
+      registries:          [
         url:  Registry::SUSE_REGISTRY_URL,
         cert: nil
       ],
-      kubelet:    {
+      kubelet:             {
         :"compute-resources" => {},
         :"eviction-hard"     => ""
       }
@@ -46,7 +47,8 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
   context "when contains registries" do
     let(:expected_registries_response) do
       {
-        registries: [
+        system_certificates: [],
+        registries:          [
           {
             url:  Registry::SUSE_REGISTRY_URL,
             cert: nil
@@ -70,7 +72,7 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
             ]
           }
         ],
-        kubelet:    {
+        kubelet:             {
           :"compute-resources" => {},
           :"eviction-hard"     => ""
         }
@@ -104,9 +106,9 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
 
     let(:expected_response) do
       {
-        registries: [
-        ],
-        kubelet:    {
+        system_certificates: [],
+        registries:          [],
+        kubelet:             {
           :"compute-resources" => {
             kube: {
               cpu: kube_reservation.cpu,
@@ -132,12 +134,13 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
 
     let(:expected_response) do
       {
-        registries: [],
-        kubelet:    {
+        registries:          [],
+        system_certificates: [],
+        kubelet:             {
           :"compute-resources" => {},
           :"eviction-hard"     => ""
         },
-        cloud:      {
+        cloud:               {
           framework: "ec2",
           profiles:  {
             cluster_node: {
@@ -196,12 +199,13 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
 
     let(:expected_response) do
       {
-        registries: [],
-        kubelet:    {
+        system_certificates: [],
+        registries:          [],
+        kubelet:             {
           :"compute-resources" => {},
           :"eviction-hard"     => ""
         },
-        cloud:      {
+        cloud:               {
           framework: "azure",
           providers: {
             azure: {
@@ -285,12 +289,13 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
   context "with Openstack provider" do
     let(:expected_response) do
       {
-        registries: [],
-        kubelet:    {
+        system_certificates: [],
+        registries:          [],
+        kubelet:             {
           :"compute-resources" => {},
           :"eviction-hard"     => ""
         },
-        cloud:      {
+        cloud:               {
           provider:  "openstack",
           openstack: {
             auth_url:       "http://keystone-test-host:5000/v3",
@@ -320,6 +325,33 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
     end
 
     it "has cloud configuration" do
+      get :show
+      expect(json).to eq(expected_response)
+    end
+  end
+
+  context "with system certificates" do
+    let(:expected_response) do
+      {
+        registries:          [],
+        system_certificates: [
+          name: "sca1",
+          cert: "cert"
+        ],
+        kubelet:             {
+          :"compute-resources" => {},
+          :"eviction-hard"     => ""
+        }
+      }
+    end
+
+    before do
+      certificate = Certificate.create(certificate: "cert")
+      system_certificate = SystemCertificate.create(name: "sca1")
+      CertificateService.create(service: system_certificate, certificate: certificate)
+    end
+
+    it "has system certificates" do
       get :show
       expect(json).to eq(expected_response)
     end
