@@ -7,17 +7,15 @@ module Discovery
 
   # Responds with either an HTML or JSON version of the available minions.
   def discovery
-    @assigned_minions   = assigned_with_status
-    @unassigned_minions = Minion.unassigned_role
-    pending_minions     = ::Velum::Salt.pending_minions
-
     respond_to do |format|
       format.html
       format.json do
         hsh = {
-          assigned_minions:   @assigned_minions,
-          unassigned_minions: @unassigned_minions,
-          pending_minions:    pending_minions,
+          assigned_minions:   assigned_with_status,
+          unassigned_minions: Minion.unassigned_role,
+          pending_minions:    ::Velum::Salt.pending_minions,
+          pending_cloud_jobs: SaltJob.all_open.count,
+          cloud_jobs_failed:  SaltJob.failed.count,
           admin:              admin_status
         }
         render json: hsh, methods: [:update_status]

@@ -3,6 +3,7 @@ class SaltJob < ActiveRecord::Base
   validates :jid, uniqueness: true
 
   scope :all_open, -> { where(retcode: nil) }
+  scope :failed, -> { where.not(retcode: [nil, 0]) }
   scope :jids, -> { pluck(:jid) }
 
   def complete!(retcode = 0, master_trace: nil, minion_trace: nil)
