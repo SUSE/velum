@@ -36,7 +36,9 @@ h1 Select nodes and roles
       i.fa.fa-times.fa-fw
       | Deselect all nodes
   .panel-body
-    p After choosing the master and clicking "Next" all the other selected nodes will be set to the worker role.
+    p
+      | Please choose an odd number of <em>Master</em> nodes, then click "Select remaining nodes"
+      |  to assign the remaining nodes to the <em>Worker</em> role.
 
     = form_tag(setup_discovery_path, method: "post")
       .nodes-container data-url=setup_discovery_path
