@@ -62,4 +62,9 @@ $(function() {
 
   // kick things off
   $('input[name="cloud_cluster[instance_type]"][checked="checked"]').click();
+
+  // only submit once
+  $('form#new_cloud_cluster').submit(function(){
+      $(this).find('input[type=submit]').prop('disabled', true);
+  });
 });
