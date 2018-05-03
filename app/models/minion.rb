@@ -15,17 +15,18 @@ class Minion < ApplicationRecord
 
   # Update all minions grains
   def self.update_grains
-    # rubocop:disable Lint/HandleExceptions
+    # rubocop:disable Lint/HandleExceptions, SkipsModelValidations
     Minion.all.find_each do |minion|
       begin
         minion_grains = minion.salt.info
-        minion.tx_update_reboot_needed = minion_grains["tx_update_reboot_needed"] || false
-        minion.tx_update_failed = minion_grains["tx_update_failed"] || false
-        minion.save
+        tx_update_reboot_needed = minion_grains["tx_update_reboot_needed"] || false
+        tx_update_failed = minion_grains["tx_update_failed"] || false
+        minion.update_columns tx_update_reboot_needed: tx_update_reboot_needed,
+                              tx_update_failed:        tx_update_failed
       rescue StandardError
       end
     end
-    # rubocop:enable Lint/HandleExceptions
+    # rubocop:enable Lint/HandleExceptions, SkipsModelValidations
   end
 
   # Example:
