@@ -47,7 +47,7 @@ describe "feature: node force removal", js: true do
 
       expect(page).to have_css(worker_selector, text: "Force remove")
       find(worker_link).click
-      click_on "Proceed anyway"
+      click_on "Proceed with forcible removal"
       expect(page).to have_css(worker_selector, text: "Pending removal")
     end
 
@@ -64,9 +64,9 @@ describe "feature: node force removal", js: true do
       master_link = "#{master_selector} .force-remove-node-link"
 
       find(master_link).click
-      expect(page).to have_content("Proceed anyway")
+      expect(page).to have_content("Proceed with forcible removal")
 
-      click_on "Proceed anyway"
+      click_on "Proceed with forcible removal"
       expect(page).to have_css(master_selector, text: "Pending removal")
     end
 
@@ -75,7 +75,7 @@ describe "feature: node force removal", js: true do
       worker_link = "#{worker_selector} .force-remove-node-link"
 
       find(worker_link).click
-      click_on "Proceed anyway"
+      click_on "Proceed with forcible removal"
       minions[1].update!(highstate: "pending_removal")
       expect(page).to have_css(worker_selector, text: "Pending removal")
 
@@ -100,7 +100,7 @@ describe "feature: node force removal", js: true do
       worker_link = "#{worker_selector} .force-remove-node-link"
 
       find(worker_link).click
-      click_on "Proceed anyway"
+      click_on "Proceed with forcible removal"
       minions[1].update!(highstate: "pending_removal")
       expect(page).to have_css(worker_selector, text: "Pending removal")
 
@@ -128,7 +128,7 @@ describe "feature: node force removal", js: true do
       worker_link = "#{worker_selector} .force-remove-node-link"
 
       find(worker_link).click
-      click_on "Proceed anyway"
+      click_on "Proceed with forcible removal"
       minions[1].update!(highstate: "pending_removal")
       expect(page).to have_css(worker_selector, text: "Pending removal")
 
@@ -158,7 +158,7 @@ describe "feature: node force removal", js: true do
 
       expect(page).to have_css(worker_selector, text: "Force remove")
       find(worker_link).click
-      click_on "Proceed anyway"
+      click_on "Proceed with forcible removal"
       expect(page).to have_content("Orchestration currently ongoing. Please wait for it to finish.")
     end
   end
@@ -171,7 +171,7 @@ describe "feature: node force removal", js: true do
 
       expect(page).to have_css(worker_selector, text: "Force remove")
       find(worker_link).click
-      click_on "Proceed anyway"
+      click_on "Proceed with forcible removal"
       minions[1].update!(highstate: "removal_failed")
       expect(page).to have_content("Removal Failed")
     end
@@ -185,7 +185,7 @@ describe "feature: node force removal", js: true do
 
       expect(page).to have_css(worker_selector, text: "Force remove")
       find(worker_link).click
-      click_on "Proceed anyway"
+      click_on "Proceed with forcible removal"
       expect(page).to have_content("An attempt to remove node #{minions[3].minion_id} has failed")
     end
   end
