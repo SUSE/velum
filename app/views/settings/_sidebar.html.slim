@@ -5,3 +5,7 @@ aside.settings-sidebar-section
       = link_to "Remote Registries", settings_registries_path
     li class="#{active_class?(settings_registry_mirrors_path?)}"
       = link_to "Mirrors", settings_registry_mirrors_path
+  h5.title Kubernetes
+  ul.list
+    li class="#{active_class?(settings_kubelet_compute_resources_reservations_path?)}"
+      = link_to "Compute Resources Reservations", settings_kubelet_compute_resources_reservations_path
