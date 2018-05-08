@@ -1,0 +1,34 @@
+.form-group
+  = f.label :cpu, "CPU"
+  = f.text_field "#{reservation.component}_cpu", value: reservation.cpu, class: 'form-control', 'aria-describedby' => "#{reservation.component}_cpu_help"
+  small.form-text.text-muted id="#{reservation.component}_cpu_help"
+    | The amount of CPU units to reserve, as a decimal number or in "millicores" (e.g. 
+    code 100m
+    |  , 
+    code 0.1
+    | ). Leave empty for no CPU reservation.
+
+.form-group
+  = f.label :memory, "Memory"
+  = f.text_field "#{reservation.component}_memory", value: reservation.memory, class: "form-control", 'aria-describedby' => "#{reservation.component}_memory_help"
+  small.form-text.text-muted id="#{reservation.component}_memory_help"
+    | The amount of memory to reserve, measured in bytes (e.g. 
+    code 1024
+    |  , 
+    code 1G
+    |  , 
+    code 1Gi
+    | ). Leave empty for no memory reservation.
+
+.form-group
+  = f.label :storage, "Ephemeral storage"
+  = f.text_field "#{reservation.component}_ephemeral_storage", value: reservation.ephemeral_storage, class: 'form-control', 'aria-describedby' => "#{reservation.component}_ephemeral_storage_help"
+  small.form-text.text-muted id="#{reservation.component}_ephemeral_storage_help"
+    | The amount of ephemeral storage to reserve, measured in bytes (e.g. 
+    code 1024
+    |  , 
+    code 1G
+    |  , 
+    code 1Gi
+    | ). Leave empty for no ephemeral storage reservation.
+
