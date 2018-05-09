@@ -1,3 +1,25 @@
+.alert.alert-info#discovery-pending-cloud-jobs.hidden role="alert"
+  i.fa.fa-4x.pull-left aria-hidden="true"
+  span
+    | Deployment of
+    span#discovery-pending-cloud-jobs-count<>
+    | more
+    span.singular.hidden<> node is
+    span.plural.hidden<> nodes are
+    | pending...
+
+.alert.alert-danger#discovery-bootstrap-alert.hidden role="alert"
+  i.fa.fa-4x.pull-left aria-hidden="true"
+  span
+    span#discovery-cloud-job-errors-count<>
+    | node
+    span.singular.hidden<> deployment
+    span.plural.hidden<> deployments
+    | failed. Please check
+    code<>
+      | /var/log/salt/minion
+    | for details.
+
 .alert.alert-warning.discovery-minimum-nodes-alert role="alert" hidden="true"
   i.fa.fa-4x.pull-left aria-hidden="true"
   span

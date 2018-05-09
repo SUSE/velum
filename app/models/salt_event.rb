@@ -12,7 +12,8 @@ class SaltEvent < ApplicationRecord
     SaltHandler::MinionStart,
     SaltHandler::MinionHighstate,
     SaltHandler::OrchestrationTrigger,
-    SaltHandler::OrchestrationResult
+    SaltHandler::OrchestrationResult,
+    SaltHandler::CloudBootstrap
   ].freeze
 
   scope :not_processed, -> { where(processed_at: nil) }

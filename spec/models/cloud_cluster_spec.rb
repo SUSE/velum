@@ -218,4 +218,50 @@ describe CloudCluster do
       expect(cluster.to_s).to match(substring)
     end
   end
+
+  context "when building" do
+    let(:cluster) do
+      described_class.new(
+        instance_type:     custom_instance_type,
+        instance_count:    instance_count,
+        resource_group:    resource_group,
+        network_id:        network_id,
+        subnet_id:         subnet_id,
+        security_group_id: security_group_id
+      )
+    end
+    let(:error_message) { "[\"Nope!\"]" }
+
+    it "captures jobs" do
+      VCR.use_cassette("salt/cloud_profile", record: :none, allow_playback_repeats: true) do
+        cluster.save!
+        cluster.build!
+        expect(SaltJob.all_open.count).to eq(instance_count)
+      end
+    end
+
+    it "captures errors" do
+      VCR.use_cassette("salt/login_500", record: :none, allow_playback_repeats: true) do
+        cluster.save!
+        cluster.build!
+        expect(cluster.errors[:base]).to include(error_message)
+      end
+    end
+
+    context "with prior failed jobs" do
+      let(:failures) { 3 }
+
+      before do
+        failures.times { FactoryGirl.create(:salt_job_failed) }
+      end
+
+      it "clears failed jobs when (re)starting" do
+        VCR.use_cassette("salt/cloud_profile", record: :none, allow_playback_repeats: true) do
+          cluster.save!
+          cluster.build!
+          expect(SaltJob.failed.count).to be_zero
+        end
+      end
+    end
+  end
 end
