@@ -1,6 +1,6 @@
 # Settings::SystemCertificatesController is responsible to manage requests
 # related to system wide certificates.
-class Settings::SystemCertificatesController < SettingsController
+class Settings::SystemCertificatesController < Settings::BaseCertificateController
   before_action :set_system_certificate, except: [:index, :new, :create]
 
   def index
@@ -27,32 +27,20 @@ class Settings::SystemCertificatesController < SettingsController
     render action: :new, status: :unprocessable_entity
   end
 
-  def edit
-    @cert = @system_certificate.certificate || Certificate.new
-  end
-
   def destroy
     @system_certificate.destroy
     redirect_to settings_system_certificates_path,
                 notice: "System certificate was successfully removed."
   end
 
-  def update
-    @cert = @system_certificate.certificate || Certificate.new(certificate: certificate_param)
+  protected
 
-    ActiveRecord::Base.transaction do
-      @system_certificate.update_attributes!(system_certificate_params.except(:certificate))
+  def certificate_holder
+    @system_certificate
+  end
 
-      if certificate_param.present?
-        create_or_update_certificate!
-      elsif @system_certificate.certificate.present?
-        @system_certificate.certificate.destroy!
-      end
-    end
-    redirect_to [:settings, @system_certificate],
-                notice: "System certificate was successfully updated."
-  rescue ActiveRecord::RecordInvalid
-    render action: edit, status: :unprocessable_entity
+  def certificate_holder_update_params
+    system_certificate_params.except(:certificate)
   end
 
   private
@@ -68,14 +56,5 @@ class Settings::SystemCertificatesController < SettingsController
 
   def system_certificate_params
     params.require(:system_certificate).permit(:name, :certificate)
-  end
-
-  def create_or_update_certificate!
-    if @cert.new_record?
-      @cert.save!
-      CertificateService.create!(service: @system_certificate, certificate: @cert)
-    else
-      @cert.update_attributes!(certificate: certificate_param)
-    end
   end
 end
