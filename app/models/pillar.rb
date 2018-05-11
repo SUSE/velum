@@ -2,7 +2,7 @@
 # rubocop:disable Metrics/ClassLength
 class Pillar < ApplicationRecord
   validates :pillar, presence: true
-  validates :value, presence: true
+  validates :value, presence: true, format: { with: /\A[\S]+(?: \S+)*\z/ }
 
   scope :global, -> { where minion_id: nil }
 
@@ -114,10 +114,8 @@ class Pillar < ApplicationRecord
 
       Pillar.all_pillars.each do |key, pillar_key|
         next if !unprotected_pillars.include?(key) && pillars[key].blank?
-        err = set_pillar key: key, pillar_key: pillar_key, value: pillars[key],
-                         required_pillars: required_pillars, errors: errors
-        next if err.empty?
-        errors << err.first
+        errors = set_pillar key: key, pillar_key: pillar_key, value: pillars[key],
+                            required_pillars: required_pillars, errors: errors
       end
 
       errors
