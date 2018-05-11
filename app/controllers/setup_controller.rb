@@ -55,6 +55,19 @@ class SetupController < ApplicationController
 
     # container runtime setting
     @cri = Pillar.value(pillar: :container_runtime) || "docker"
+
+    # allow adding system certificate: required if a user uses CPI with a
+    # self-signed certificate
+    @system_certificate = if session[:system_certificate_name].present?
+      SystemCertificate.find_by(name: session[:system_certificate_name])
+    else
+      SystemCertificate.new
+    end
+    @cert = if @system_certificate.certificate.present?
+      @system_certificate.certificate
+    else
+      Certificate.new
+    end
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
 
@@ -64,10 +77,12 @@ class SetupController < ApplicationController
                        unprotected_pillars: unprotected_pillars)
     registry_errors = Registry.configure_suse_registry(suse_registry_mirror_params)
 
-    if res.empty? && registry_errors.empty?
+    certificate_errors = create_system_certificate
+
+    if [res, registry_errors, certificate_errors].all?(&:empty?)
       redirect_to setup_worker_bootstrap_path
     else
-      redirect_to setup_path, alert: res + registry_errors
+      redirect_to setup_path, alert: res + registry_errors + certificate_errors
     end
   end
 
@@ -155,7 +170,9 @@ class SetupController < ApplicationController
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
   def settings_params
-    settings = params.require(:settings).permit(*Pillar.all_pillars.keys)
+    settings = params.require(:settings)
+                     .permit(*Pillar.all_pillars.keys,
+                             system_certificate: [:name, :certificate])
 
     if params["settings"]["enable_proxy"] == "disable"
       settings["proxy_systemwide"] = "false"
@@ -219,6 +236,10 @@ class SetupController < ApplicationController
     params.require(:roles)
   end
 
+  def system_certificate_params
+    settings_params[:system_certificate]
+  end
+
   def proxy_enabled
     (@http_proxy.present? && @https_proxy.present? && @no_proxy.present?) ||
       @proxy_systemwide == "true"
@@ -268,6 +289,21 @@ class SetupController < ApplicationController
     when "do_bootstrap"
       []
     end
+  end
+
+  # Create a new SystemCertificate and remember the name.
+  #
+  # @return [String] A list of errors while attempting to create the
+  #                  certificate and related objects
+  def create_system_certificate
+    return [] if system_certificate_params.blank? ||
+        system_certificate_params.values.all?(&:blank?)
+    errors = SystemCertificate.create_system_certificate(system_certificate_params)
+    if errors.empty? &&
+        SystemCertificate.exists?(name: system_certificate_params[:name])
+      session[:system_certificate_name] = system_certificate_params[:name]
+    end
+    errors
   end
 end
 # rubocop:enable Metrics/ClassLength
