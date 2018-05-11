@@ -1,6 +1,6 @@
 # Settings::RegistryMirrorsController is responsibe to manage all the requests
 # related to the registry mirrors feature
-class Settings::RegistryMirrorsController < SettingsController
+class Settings::RegistryMirrorsController < Settings::BaseCertificateController
   before_action :set_registry_mirror, except: [:index, :new, :create]
 
   def index
@@ -31,32 +31,19 @@ class Settings::RegistryMirrorsController < SettingsController
     render action: :new, status: :unprocessable_entity
   end
 
-  def edit
-    @cert = @registry_mirror.certificate || Certificate.new
-  end
-
-  def update
-    @cert = @registry_mirror.certificate || Certificate.new(certificate: certificate_param)
-
-    ActiveRecord::Base.transaction do
-      registry_mirror_update_params = registry_mirror_params.except(:certificate, :registry_id)
-      @registry_mirror.update_attributes!(registry_mirror_update_params)
-
-      if certificate_param.present?
-        create_or_update_certificate!
-      elsif @registry_mirror.certificate.present?
-        @registry_mirror.certificate.destroy!
-      end
-    end
-
-    redirect_to [:settings, @registry_mirror], notice: "Mirror was successfully updated."
-  rescue ActiveRecord::RecordInvalid
-    render action: :edit, status: :unprocessable_entity
-  end
-
   def destroy
     @registry_mirror.destroy
     redirect_to settings_registry_mirrors_path, notice: "Mirror was successfully removed."
+  end
+
+  protected
+
+  def certificate_holder
+    @registry_mirror
+  end
+
+  def certificate_holder_update_params
+    registry_mirror_params.except(:certificate, :registry_id)
   end
 
   private
@@ -71,14 +58,5 @@ class Settings::RegistryMirrorsController < SettingsController
 
   def registry_mirror_params
     params.require(:registry_mirror).permit(:name, :url, :certificate, :registry_id)
-  end
-
-  def create_or_update_certificate!
-    if @cert.new_record?
-      @cert.save!
-      CertificateService.create!(service: @registry_mirror, certificate: @cert)
-    else
-      @cert.update_attributes!(certificate: certificate_param)
-    end
   end
 end
