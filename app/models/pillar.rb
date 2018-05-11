@@ -114,8 +114,10 @@ class Pillar < ApplicationRecord
 
       Pillar.all_pillars.each do |key, pillar_key|
         next if !unprotected_pillars.include?(key) && pillars[key].blank?
-        set_pillar key: key, pillar_key: pillar_key, value: pillars[key],
-                   required_pillars: required_pillars, errors: errors
+        err = set_pillar key: key, pillar_key: pillar_key, value: pillars[key],
+                         required_pillars: required_pillars, errors: errors
+        next if err.empty?
+        errors << err.first
       end
 
       errors
@@ -137,6 +139,7 @@ class Pillar < ApplicationRecord
           errors << "'#{key}' could not be saved#{exp}."
         end
       end
+      errors
     end
   end
 end
