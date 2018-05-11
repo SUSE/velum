@@ -22,7 +22,8 @@ class ApplicationController < ActionController::Base
 
   # setup means the setup phase was completed
   def setup_done?
-    Pillar.exists? pillar: Pillar.all_pillars[:apiserver]
+    Pillar.exists?(pillar: [Pillar.all_pillars[:apiserver],
+                            Pillar.all_pillars[:dashboard_external_fqdn]])
   end
 
   def accessible_hosts
