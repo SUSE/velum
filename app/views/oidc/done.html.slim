@@ -1,4 +1,8 @@
-h1 Download your kubeconfig file
+h1 Authenticate with Kubernetes
+
+p= link_to "You can return to the dashboard once you have prepared your kubeconfig file", root_path
+
+h2 Option 1: Download your kubeconfig file
 
 p
   | You will see a download dialog that will allow you to download your kubeconfig file. Please,
@@ -9,10 +13,38 @@ p
   |  like <strong>KUBECONFIG=~/Downloads/kubeconfig kubectl get nodes</strong>.
 
 p
-  | You can also save it to your home in `~/.kube/config`, `kubectl` will automatically read this
-  |  file without the need to specify the <strong>KUBECONFIG</strong> environment variable.
+  | Alternatively, you can also save it to your home in `~/.kube/config`, `kubectl` will automatically
+  | read this file without the need to specify the <strong>KUBECONFIG</strong> environment variable.
 
-p= link_to "You can navigate to the dashboard now, once you have downloaded your kubeconfig file", root_path
+p= link_to "Click here if the download has not started automatically.", @redirect_target
+
+h2 Option 2: Manually configure kubeconfig file
+
+p
+  | You can manually configure a client by running these commands:
+
+pre
+  | # Create a file containing the Kubernetes API CA Certificate
+    echo "#{Base64.strict_encode64 @ca_crt}" \
+      | base64 -d > ~/.kube/#{@cluster_name}-ca.crt
+
+    # Create the Cluster entry in the ~/.kube/config file
+    kubectl config set-cluster #{@cluster_name} \
+      --server=https://#{@apiserver_host}:6443 \
+      --certificate-authority=$(readlink -f ~/.kube/#{@cluster_name}-ca.crt)
+
+    # Create the User entry in the ~/.kube/config file
+    kubectl config set-credentials "#{@email}" \
+      --auth-provider=oidc \
+      --auth-provider-arg=client-id="#{@client_id}" \
+      --auth-provider-arg=client-secret="#{@client_secret}" \
+      --auth-provider-arg=id-token="#{@id_token}" \
+      --auth-provider-arg=refresh-token="#{@refresh_token}" \
+      --auth-provider-arg=idp-issuer-url="#{@idp_issuer_url}"
+
+    # Create and use the cluster context
+    kubectl config set-context "#{@cluster_name}-#{@email}" --cluster #{@cluster_name} --user="#{@email}"
+    kubectl config use-context "#{@cluster_name}-#{@email}"
 
 = content_for :page_javascript do
   javascript:
