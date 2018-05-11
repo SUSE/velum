@@ -54,6 +54,18 @@ class CloudCluster
     Velum::Salt.call(action: "saltutil.refresh_pillar")
   end
 
+  def build!
+    SaltJob.failed.destroy_all
+    return unless (responses = Velum::Salt.build_cloud_cluster(@instance_count))
+    responses.each do |response|
+      if response.code.to_i == 500
+        errors.add(:base, response.body)
+      else
+        SaltJob.create(jid: JSON.parse(response.body)["return"].first["jid"])
+      end
+    end
+  end
+
   def save
     save!
     return true

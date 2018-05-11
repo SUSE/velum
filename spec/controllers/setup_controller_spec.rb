@@ -596,6 +596,25 @@ RSpec.describe SetupController, type: :controller do
       get :discovery
       expect(response.status).to eq 200
     end
+
+    describe "as JSON" do
+      let(:pending) { 3 }
+      let(:failed) { 1 }
+
+      before do
+        pending.times { FactoryGirl.create(:salt_job) }
+        failed.times { FactoryGirl.create(:salt_job_failed) }
+        get :discovery, format: :json
+      end
+
+      it "includes a count of incomplete cloud jobs" do
+        expect(JSON.parse(response.body)["pending_cloud_jobs"]).to eq(pending)
+      end
+
+      it "includes a count of failed cloud jobs" do
+        expect(JSON.parse(response.body)["cloud_jobs_failed"]).to eq(failed)
+      end
+    end
   end
 
   describe "POST /setup/bootstrap" do

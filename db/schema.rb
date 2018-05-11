@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180118103201) do
+ActiveRecord::Schema.define(version: 20180427014552) do
 
   create_table "jids", id: false, force: :cascade do |t|
     t.string "jid",  limit: 255,      null: false
@@ -56,6 +56,17 @@ ActiveRecord::Schema.define(version: 20180118103201) do
   add_index "salt_events", ["processed_at"], name: "index_salt_events_on_processed_at", using: :btree
   add_index "salt_events", ["tag"], name: "tag", using: :btree
   add_index "salt_events", ["worker_id", "taken_at"], name: "index_salt_events_on_worker_id_and_taken_at", using: :btree
+
+  create_table "salt_jobs", force: :cascade do |t|
+    t.string   "jid",          limit: 255
+    t.integer  "retcode",      limit: 4
+    t.text     "master_trace", limit: 65535
+    t.text     "minion_trace", limit: 65535
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+  end
+
+  add_index "salt_jobs", ["jid"], name: "index_salt_jobs_on_jid", using: :btree
 
   create_table "salt_returns", id: false, force: :cascade do |t|
     t.string   "fun",        limit: 50,       null: false

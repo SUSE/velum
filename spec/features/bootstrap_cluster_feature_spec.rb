@@ -22,9 +22,22 @@ feature "Bootstrap cluster feature" do
                       { minion_id: SecureRandom.hex, fqdn: "minion4.k8s.local" }]
     end
 
+    let(:pending) { 5 }
+    let(:failed) { 2 }
+
     before do
+      pending.times { FactoryGirl.create(:salt_job) }
+      failed.times { FactoryGirl.create(:salt_job_failed) }
       allow_any_instance_of(Velum::SaltMinion).to receive(:assign_role).and_return(true)
       allow(Velum::Salt).to receive(:orchestrate)
+    end
+
+    it "Includes a count of pending cloud jobs", js: true do
+      expect(page).to have_content("Deployment of #{pending} more nodes are pending...")
+    end
+
+    it "Includes a notice of failed cloud jobs", js: true do
+      expect(page).to have_content("#{failed} node deployments failed.")
     end
 
     scenario "A user sees warning modal when trying to bootstrap 2 nodes", js: true do
