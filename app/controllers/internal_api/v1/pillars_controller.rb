@@ -8,6 +8,8 @@ class InternalApi::V1::PillarsController < InternalApiController
       cloud_framework_contents
     ).merge(
       cloud_provider_contents
+    ).merge(
+      kubelet_contents
     )
   end
 
@@ -126,6 +128,26 @@ class InternalApi::V1::PillarsController < InternalApiController
           bs_version:     Pillar.value(pillar: :cloud_openstack_bs_version),
           lb_mon_retries: Pillar.value(pillar: :cloud_openstack_lb_mon_retries)
         }
+      }
+    }
+  end
+
+  def kubelet_contents
+    reservations = {}
+    KubeletComputeResourcesReservation.all.each do |r|
+      reservations[r.component] = {
+        cpu: r.cpu,
+        memory: r.memory,
+        "ephemeral-storage" => r.ephemeral_storage
+      }
+    end
+
+    eviction_hard = Pillar.find_or_initialize_by(pillar: "kubelet:eviction-hard")
+
+    {
+      kubelet: {
+        "compute-resources" => reservations,
+        "eviction-hard"     => eviction_hard.value || ""
       }
     }
   end

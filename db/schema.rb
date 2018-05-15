@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180427014552) do
+ActiveRecord::Schema.define(version: 20180508070232) do
 
   create_table "certificate_services", force: :cascade do |t|
     t.integer  "certificate_id", limit: 4
@@ -35,6 +35,17 @@ ActiveRecord::Schema.define(version: 20180427014552) do
   end
 
   add_index "jids", ["jid"], name: "jid", unique: true, using: :btree
+
+  create_table "kubelet_compute_resources_reservations", force: :cascade do |t|
+    t.string   "component",         limit: 255,              null: false
+    t.string   "cpu",               limit: 255, default: ""
+    t.string   "memory",            limit: 255, default: ""
+    t.string   "ephemeral_storage", limit: 255, default: ""
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "kubelet_compute_resources_reservations", ["component"], name: "index_kubelet_compute_resources_reservations_on_component", unique: true, using: :btree
 
   create_table "minions", force: :cascade do |t|
     t.string   "minion_id",               limit: 255

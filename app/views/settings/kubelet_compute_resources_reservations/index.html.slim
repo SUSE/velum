@@ -1,0 +1,96 @@
+= render 'settings/apply'
+
+- unless @kube_reservations.errors.empty?
+  .alert.alert-danger role='alert'
+    p Error saving reservations for Kubernetes core services:
+    ul
+      - @kube_reservations.errors.messages.map{|k, errs| "#{k}: #{errs.join(',')}"}.each do |msg|
+        li= msg
+
+
+- unless @system_reservations.errors.empty?
+  .alert.alert-danger role='alert'
+    p Error saving reservations for Host system services:
+    ul
+      - @system_reservations.errors.messages.map{|k, errs| "#{k}: #{errs.join(',')}"}.each do |msg|
+        li= msg
+
+- unless @eviction_hard.errors.empty?
+  .alert.alert-danger role='alert'
+    p Error saving eviction hard policies:
+    ul
+      - @eviction_hard.errors.messages.map{|k, errs| "#{k}: #{errs.join(',')}"}.each do |msg|
+        li= msg
+
+.alert.alert-warning role='alert'
+  p Warning: Entering invalid values for any of the following settings will cause
+    the nodes to enter into a broken state.
+
+h2 Compute resources reservations
+
+p Every node of the Kubernetes cluster has a kubelet instance running. By default,
+  the kubelet process will try to use all available resources on each node. This
+  behaviour can lead to resource starvation for critical system services as well
+  as for Kubernetes' own components.
+
+p To prevent this, it is possible to instruct kubelet to reserve a certain
+  amount of resources for the host system and for Kubernetes core services on each node.
+  The Kubernetes scheduler takes these limits into account by when deciding
+  on which node to schedule a certain pod.
+
+= form_for :kubelet_compute_resources_reservations, url: settings_kubelet_compute_resources_reservations_path, method: :post do |f|
+  .panel.panel-default
+
+    .panel-heading
+      h3.panel-title Kubernetes core services
+    .panel-body
+      p This category include processes such as:
+      ul
+        li kubernetes API server
+        li kubernetes controller manager
+        li kubernetes scheduler
+        li kubelet
+        li kube-proxy
+        li Container runtime: Docker daemon, containerd, CRI-O or runc
+
+      = render 'resources', f: f, reservation: @kube_reservations
+
+  .panel.panel-default
+    .panel-heading
+      h3.panel-title Host system services
+    .panel-body
+      p This category include processes such as:
+      ul
+        li Regular system services (eg: sshd, cron, journald,...)
+        li As-yet non-containerized services (eg: etcd)
+
+      = render 'resources', f: f, reservation: @system_reservations
+
+  .panel.panel-default
+    .panel-heading
+      h3.panel-title Eviction threshold
+    .panel-body
+      p If nodes run out of memory, the Out-Of-Memory (OOM) killer will
+        relieve the memory pressure by forcibly killing those containers which are using the most resources
+        and with the lowest quality of service until the system can resume proper behaviour.
+      p Note that nodes undergoing the memory reclamation process can become temporarily
+        unreachable.
+      p To reduce or avoid the risk of this occurring, it is possible to instruct kubelet
+         to start evicting pods as soon as the utilization of some resources
+         (e.g. memory or disk) approaches a critical level.
+
+      .form-group
+        = f.label :eviction_hard, "Hard eviction"
+        = f.text_field :eviction_hard, value: @eviction_hard.value, class: "form-control", 'aria-describedby' => 'eviction_hard_help'
+        small.form-text.text-muted#eviction_hard_help
+          | Eviction policy rules to apply (eg: 
+          code memory.available<10%
+          |  , 
+          code memory.available<100M
+          |  , 
+          code memory.available<500Mi,nodefs.available<10%
+          | ). Leave empty for no hard eviction policy.
+
+
+  .clearfix.text-right.steps-container
+    = submit_tag "Save", id: "save", class: "btn btn-primary pull-right"

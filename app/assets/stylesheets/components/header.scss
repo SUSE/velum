@@ -12,6 +12,9 @@ $velum-navbar-toggle-color: white;
   margin-right: -$grid-gutter-width/2;
   padding-left: $grid-gutter-width/2;
   padding-right: $grid-gutter-width/2;
+  position: fixed;
+  width: inherit;
+  z-index: 99;
 
   .navbar-toggle {
     border-color: $velum-navbar-toggle-color;
