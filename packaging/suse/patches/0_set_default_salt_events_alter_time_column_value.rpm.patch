@@ -1,5 +1,5 @@
 diff --git a/db/schema.rb b/db/schema.rb
-index b8392cd..6061543 100644
+index 6551801..9045f5f 100644
 --- a/db/schema.rb
 +++ b/db/schema.rb
 @@ -95,7 +95,7 @@ ActiveRecord::Schema.define(version: 20180427014552) do
@@ -11,12 +11,12 @@ index b8392cd..6061543 100644
      t.string   "master_id",    limit: 255,      null: false
      t.datetime "taken_at"
      t.datetime "processed_at"
-@@ -113,7 +113,7 @@ ActiveRecord::Schema.define(version: 20180427014552) do
+@@ -124,7 +124,7 @@ ActiveRecord::Schema.define(version: 20180427014552) do
      t.string   "id",         limit: 255,      null: false
      t.string   "success",    limit: 10,       null: false
      t.text     "full_ret",   limit: 16777215, null: false
 -    t.datetime "alter_time",                  null: false
 +    t.column   "alter_time", "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
    end
-
+ 
    add_index "salt_returns", ["fun"], name: "fun", using: :btree
