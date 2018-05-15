@@ -49,6 +49,10 @@ class SetupController < ApplicationController
     @cloud_openstack_lb_mon_retries = Pillar.value(pillar: :cloud_openstack_lb_mon_retries) || "3"
     @cloud_openstack_bs_version = Pillar.value(pillar: :cloud_openstack_bs_version) || "v2"
 
+    # flannel settings
+    @flannel_backend = Pillar.value(pillar: :flannel_backend) || "vxlan"
+    @flannel_port = Pillar.value(pillar: :flannel_port) || "8472"
+
     # container runtime setting
     @cri = Pillar.value(pillar: :container_runtime) || "docker"
   end
