@@ -13,7 +13,11 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
       registries: [
         url:  Registry::SUSE_REGISTRY_URL,
         cert: nil
-      ]
+      ],
+      kubelet:    {
+        :"compute-resources" => {},
+        :"eviction-hard"     => ""
+      }
     }
   end
 
@@ -65,7 +69,11 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
               }
             ]
           }
-        ]
+        ],
+        kubelet:    {
+          :"compute-resources" => {},
+          :"eviction-hard"     => ""
+        }
       }
     end
 
@@ -90,6 +98,33 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
     end
   end
 
+  context "when contains kubelet resources" do
+
+    let!(:kube_reservation) { create(:kube_resouces_reservation) }
+
+    let(:expected_response) do
+      {
+        registries: [
+        ],
+        kubelet:    {
+          :"compute-resources" => {
+            kube: {
+              cpu: kube_reservation.cpu,
+              memory: kube_reservation.memory,
+              :"ephemeral-storage" => kube_reservation.ephemeral_storage
+            }
+          },
+          :"eviction-hard"     => ""
+        }
+      }
+    end
+
+    it "has remote registries and respective mirrors" do
+      get :show
+      expect(json).to match expected_response
+    end
+  end
+
   context "when in EC2 framework" do
     let(:custom_instance_type) { "custom-instance-type" }
     let(:subnet_id) { "subnet-9d4a7b6c" }
@@ -98,6 +133,10 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
     let(:expected_response) do
       {
         registries: [],
+        kubelet:    {
+          :"compute-resources" => {},
+          :"eviction-hard"     => ""
+        },
         cloud:      {
           framework: "ec2",
           profiles:  {
@@ -158,6 +197,10 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
     let(:expected_response) do
       {
         registries: [],
+        kubelet:    {
+          :"compute-resources" => {},
+          :"eviction-hard"     => ""
+        },
         cloud:      {
           framework: "azure",
           providers: {
@@ -243,6 +286,10 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
     let(:expected_response) do
       {
         registries: [],
+        kubelet:    {
+          :"compute-resources" => {},
+          :"eviction-hard"     => ""
+        },
         cloud:      {
           provider:  "openstack",
           openstack: {

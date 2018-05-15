@@ -18,7 +18,7 @@ html(lang='en')
   body class="#{yield :body_class}"
     .container
       = render :partial => "shared/header"
-      .row
+      .row.content-wrapper
         .col-xs-12.alerts-container
           = render :partial => "shared/notifications"
       .row
