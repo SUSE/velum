@@ -70,6 +70,24 @@ h1 Initial CaaS Platform Configuration
 
         hr
 
+        .form-group
+          = f.label :flannel_backend, "Flannel backend"
+          = f.select :flannel_backend, options_for_select([["VXLAN", "vxlan"], ["UDP", "udp"]], @flannel_backend), {}, {class: "form-control", 'aria-describedby' => "flannel_backend_help"}
+          small.form-text.text-muted#flannel_backend_help
+            | The backend used by Flannel to encapsulate network traffic. VXLAN is the recommended choice.
+
+        .form-group
+          = f.label :flannel_port, "Flannel port"
+          = f.text_field :flannel_port, value: @flannel_port, class: "form-control", required: true, 'aria-describedby' => "flannel_port_help"
+          small.form-text.text-muted#flannel_port_help
+            | The port used by Flannel to encapsulate network traffic. 
+            code 8472
+            |  is the recommended port for the VXLAN backend. 
+            code 8285
+            |  is the recommended port for the UDP backend.
+
+        hr
+
         p The Service Network is used internally within Kubernetes for pod to service communications. Each Kubernetes service will be allocated an IP from this range, this IP will be independant of any single master or worker. This network range will not be accessible from outside the cluster, however, conflicts with preexisting address ranges used elsewhere should be avoided.
 
         .form-group

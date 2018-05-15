@@ -26,6 +26,8 @@ class Pillar < ApplicationRecord
         cluster_cidr_min:              "cluster_cidr_min",
         cluster_cidr_max:              "cluster_cidr_max",
         cluster_cidr_len:              "cluster_cidr_len",
+        flannel_backend:               "flannel:backend",
+        flannel_port:                  "flannel:port",
         services_cidr:                 "services_cidr",
         api_cluster_ip:                "api:cluster_ip",
         dns_cluster_ip:                "dns:cluster_ip",
