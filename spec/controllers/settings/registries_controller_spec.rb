@@ -43,8 +43,8 @@ RSpec.describe Settings::RegistriesController, type: :controller do
       get :new
     end
 
-    it "assigns a new Registry to @registry" do
-      expect(assigns(:registry)).to be_a_new(Registry)
+    it "assigns a new Registry to @certificate_holder" do
+      expect(assigns(:certificate_holder)).to be_a_new(Registry)
     end
 
     it "assigns a new Certificate to @cert" do

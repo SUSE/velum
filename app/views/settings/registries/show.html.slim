@@ -1,29 +1,29 @@
 header.settings-content-header.clearfix
   .title.pull-left
-    h2 #{@registry.name} registry details
+    h2 #{@certificate_holder.name} registry details
   .actions.pull-right
-    = link_to settings_registry_path(@registry), method: "delete", class: "btn btn-danger", data: { confirm: "Are you sure?" } do
+    = link_to settings_registry_path(@certificate_holder), method: "delete", class: "btn btn-danger", data: { confirm: "Are you sure?" } do
       | Delete
-    = link_to edit_settings_registry_path(@registry), class: "btn btn-primary" do
+    = link_to edit_settings_registry_path(@certificate_holder), class: "btn btn-primary" do
       | Edit
 
 section.settings-details
   .field
     .details-label URL
     .details-value
-      = display_registry_url(@registry.url)
+      = display_registry_url(@certificate_holder.url)
 
-  - if @registry.certificate.present?
+  - if @certificate_holder.certificate.present?
     .field
       .details-label Certificate
       .details-value
-        = @registry.certificate.certificate
+        = @certificate_holder.certificate.certificate
 
 h3 Mirrors
 
-= link_to "Add Mirror", new_settings_registry_mirror_path(registry_id: @registry.id), class: "btn btn-primary add-entry-btn"
+= link_to "Add Mirror", new_settings_registry_mirror_path(registry_id: @certificate_holder.id), class: "btn btn-primary add-entry-btn"
 
-- if @registry.registry_mirrors.any?
+- if @certificate_holder.registry_mirrors.any?
   table.table
     thead
       tr
@@ -31,7 +31,7 @@ h3 Mirrors
         th URL
         th width="110"
     tbody
-      - @registry.registry_mirrors.each do |mirror|
+      - @certificate_holder.registry_mirrors.each do |mirror|
         tr class="mirror_#{mirror.id}"
           td
             = link_to mirror.name, settings_registry_mirror_path(mirror)
