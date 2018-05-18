@@ -60,7 +60,8 @@ Rails.application.routes.draw do
     resources :registries
     post :apply
     resources :registry_mirrors, path: :mirrors
-    resources :kubelet_compute_resources_reservations
+    resources :kubelet_compute_resources_reservations, only: [:index, :create]
+    resources :auditing, only: [:index, :create]
   end
 end
 # rubocop:enable Metrics/BlockLength
