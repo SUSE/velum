@@ -8,8 +8,14 @@
     = f.label :cloud_openstack_domain, "Domain name"
     = f.text_field :cloud_openstack_domain, value: @cloud_openstack_domain, class: "form-control"
   .form-group
+    = f.label :cloud_openstack_domain_id, "Domain ID"
+    = f.text_field :cloud_openstack_domain_id, value: @cloud_openstack_domain_id, class: "form-control"
+  .form-group
     = f.label :cloud_openstack_project, "Project name"
     = f.text_field :cloud_openstack_project, value: @cloud_openstack_project, class: "form-control"
+  .form-group
+    = f.label :cloud_openstack_project_id, "Project ID"
+    = f.text_field :cloud_openstack_project_id, value: @cloud_openstack_project_id, class: "form-control"
   .form-group
     = f.label :cloud_openstack_region, "Region name"
     = f.text_field :cloud_openstack_region, value: @cloud_openstack_region, class: "form-control"
