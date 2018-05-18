@@ -2,7 +2,7 @@
 # rubocop:disable Metrics/ClassLength
 class Pillar < ApplicationRecord
   validates :pillar, presence: true
-  validates :value, presence: true, format: { with: /\A[\S]+(?: \S+)*\z/ }
+  validates :value, presence: true
 
   scope :global, -> { where minion_id: nil }
 
@@ -53,7 +53,12 @@ class Pillar < ApplicationRecord
         cloud_framework:               "cloud:framework",
         cloud_provider:                "cloud:provider",
         kubernetes_feature_gates:      "kubernetes:feature_gates",
-        container_runtime:             "cri:chosen"
+        container_runtime:             "cri:chosen",
+        api_audit_log_enabled:         "api:audit:log:enabled",
+        api_audit_log_maxsize:         "api:audit:log:maxsize",
+        api_audit_log_maxage:          "api:audit:log:maxage",
+        api_audit_log_maxbackup:       "api:audit:log:maxbackup",
+        api_audit_log_policy:          "api:audit:log:policy"
       }
     end
 
@@ -127,12 +132,13 @@ class Pillar < ApplicationRecord
 
     def set_pillar(key:, pillar_key:, value:, required_pillars:, errors:)
       optional_pillars = Pillar.all_pillars.keys - required_pillars
+      value_ = value.to_s.strip
       # The following pillar keys can be blank, delete them if they are.
-      if optional_pillars.include?(key) && value.blank?
+      if optional_pillars.include?(key) && value_.blank?
         Pillar.destroy_all pillar: pillar_key
       else
         pillar = Pillar.find_or_initialize_by(pillar: pillar_key).tap do |pillar_|
-          pillar_.value = value
+          pillar_.value = value_
         end
         unless pillar.save
           exp = pillar.errors.empty? ? "" : ": #{pillar.errors.messages[:value].first}"
