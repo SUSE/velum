@@ -1,20 +1,20 @@
 header.settings-content-header.clearfix
   .title.pull-left
-    h2 #{@system_certificate.name} certificate details
+    h2 #{@certificate_holder.name} certificate details
   .actions.pull-right
-    = link_to settings_system_certificate_path(@system_certificate), method: "delete", class: "btn btn-danger", data: { confirm: "Are you sure?" } do
+    = link_to settings_system_certificate_path(@certificate_holder), method: "delete", class: "btn btn-danger", data: { confirm: "Are you sure?" } do
       | Delete
-    = link_to edit_settings_system_certificate_path(@system_certificate), class: "btn btn-primary" do
+    = link_to edit_settings_system_certificate_path(@certificate_holder), class: "btn btn-primary" do
       | Edit
 
 section.settings-details
   .field
     .details-label Name
     .details-value
-      = @system_certificate.name
+      = @certificate_holder.name
 
-  - if @system_certificate.certificate.present?
+  - if @certificate_holder.certificate.present?
     .field
       .details-label Certificate
       .details-value
-        = @system_certificate.certificate.certificate
+        = @certificate_holder.certificate.certificate

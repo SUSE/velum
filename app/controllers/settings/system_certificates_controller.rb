@@ -1,42 +1,29 @@
 # Settings::SystemCertificatesController is responsible to manage requests
 # related to system wide certificates.
 class Settings::SystemCertificatesController < Settings::BaseCertificateController
-  before_action :set_system_certificate, except: [:index, :new, :create]
-
   def index
     @system_certificates = SystemCertificate.all
   end
 
   def new
-    @system_certificate = SystemCertificate.new
+    @certificate_holder = certificate_holder_type.new
     @cert = Certificate.new
   end
 
-  def create
-    @system_certificate = SystemCertificate.new(system_certificate_params.except(:certificate))
-    @cert = Certificate.find_or_initialize_by(certificate: certificate_param)
-
-    ActiveRecord::Base.transaction do
-      @system_certificate.save!
-      create_or_update_certificate! if certificate_param.present?
-    end
-
-    redirect_to [:settings, @system_certificate],
-                notice: "System certificate successfully created."
-  rescue ActiveRecord::RecordInvalid
-    render action: :new, status: :unprocessable_entity
-  end
-
   def destroy
-    @system_certificate.destroy
+    @certificate_holder.destroy
     redirect_to settings_system_certificates_path,
                 notice: "System certificate was successfully removed."
   end
 
   protected
 
-  def certificate_holder
-    @system_certificate
+  def certificate_holder_type
+    SystemCertificate
+  end
+
+  def certificate_holder_params
+    system_certificate_params
   end
 
   def certificate_holder_update_params
@@ -44,10 +31,6 @@ class Settings::SystemCertificatesController < Settings::BaseCertificateControll
   end
 
   private
-
-  def set_system_certificate
-    @system_certificate = SystemCertificate.find(params[:id])
-  end
 
   def certificate_param
     system_certificate_params[:certificate].strip if

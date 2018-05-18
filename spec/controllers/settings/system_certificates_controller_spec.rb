@@ -25,8 +25,8 @@ RSpec.describe Settings::SystemCertificatesController, type: :controller do
       get :new
     end
 
-    it "assigns a new system certificate to @system_certificate" do
-      expect(assigns(:system_certificate)).to be_a_new(SystemCertificate)
+    it "assigns a new system certificate to @certificate_holder" do
+      expect(assigns(:certificate_holder)).to be_a_new(SystemCertificate)
     end
 
     it "assigns a new certificate to @cert" do
@@ -60,8 +60,8 @@ RSpec.describe Settings::SystemCertificatesController, type: :controller do
         get :edit, id: system_certificate_with_cert.id
       end
 
-      it "assigns system_certificate to @system_certificate" do
-        expect(assigns(:system_certificate)).not_to be_a_new(SystemCertificate)
+      it "assigns system_certificate to @certificate_holder" do
+        expect(assigns(:certificate_holder)).not_to be_a_new(SystemCertificate)
       end
 
       it "assigns the existing certificate to @cert" do
