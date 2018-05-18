@@ -52,9 +52,9 @@ h1 Cluster Status
     .panel-heading
       h3.panel-title Nodes
 
-      = link_to kubectl_config_path, id: "download-kubeconfig", class: "btn btn-sm btn-default pull-right", disabled: true do
+      = link_to kubeconfig_path, id: "download-kubeconfig", class: "btn btn-sm btn-default pull-right", disabled: true do
         i.fa.fa-download.fa-fw
-        | kubectl config
+        | kubeconfig
 
       = link_to orchestrations_bootstrap_path, method: :post, id: "retry-cluster-bootstrap", class: "hidden btn btn-sm btn-primary pull-right" do
         i.fa.fa-refresh.fa-fw

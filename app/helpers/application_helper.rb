@@ -15,6 +15,15 @@ module ApplicationHelper
     Pillar.exists? pillar: Pillar.all_pillars[:apiserver]
   end
 
+  def can_download_kubeconfig?
+    masters_applied_count = Minion.where(role:      Minion.roles[:master],
+                                         highstate: Minion.highstates[:applied]).count
+    masters_count = Minion.where(role: Minion.roles[:master]).count
+    masters_applied = masters_count == masters_applied_count
+
+    setup_done? && masters_applied
+  end
+
   def active_class?(path_or_bool)
     case path_or_bool
     when String

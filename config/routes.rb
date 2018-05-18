@@ -20,7 +20,8 @@ Rails.application.routes.draw do
   end
 
   get "/autoyast", to: "dashboard#autoyast"
-  get "/kubectl-config", to: "oidc#index"
+  get "/kubectl-config", to: redirect("/kubeconfig") # deprecated
+  get "/kubeconfig", to: "oidc#index"
   get "/_health", to: "health#index"
   post "/update", to: "salt#update"
   post "/accept-minion", to: "salt#accept_minion"
