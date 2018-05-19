@@ -1,0 +1,62 @@
+= render 'settings/apply'
+
+.alert.alert-warning role='alert'
+  p Warning: Entering invalid values for any of the following settings will cause
+    the nodes to enter into a broken state.
+
+h2 Auditing
+
+p Enable Kubernetes auditing feature to keep track of the activities that
+  affected the cluster.
+
+= form_for :audit, url: settings_auditing_index_path, method: :post do |f|
+  .panel.panel-default
+
+    .panel-heading
+      h3.panel-title Log backend
+    .panel-body
+      p
+        | All the audit events will be logged to the
+        code
+          | /var/log/kube-apiserver/audit.log
+        | file on the Kubernetes master node(s).
+      p From there the user can use a data collector software like fluentd or
+        logstash to collect and distribute the events.
+
+      .form-group
+        = f.label :enabled, "Enable auditing"
+        br
+          .btn-group.btn-group-toggle.enable-auditing-btn-group data-toggle="buttons"
+            = label_tag :enabled, nil, class: "btn btn-default #{'btn-primary active' if @audit_enabled == "true"}"
+              = f.radio_button :enabled, "true", checked: @audit_enabled == "true"
+              | Enabled
+            = label_tag :enabled, nil, class: "btn btn-default #{'btn-primary active' if @audit_enabled == "false"}"
+              = f.radio_button :enabled, "false", checked: @audit_enabled == "false"
+              | Disabled
+
+      .form-group
+        = f.label :maxsize, "Max size"
+        = f.text_field :maxsize, value: @maxsize, class: "form-control", 'aria-describedby' => 'maxsize_help'
+        small.form-text.text-muted#maxsize_help
+          | Maximum size in megabytes of the audit log file before it gets rotated
+
+      .form-group
+        = f.label :maxage, "Max age"
+        = f.text_field :maxage, value: @maxage, class: "form-control", 'aria-describedby' => 'maxage_help'
+        small.form-text.text-muted#maxage_help
+          | Maximum number of days to retain old audit log files
+
+      .form-group
+        = f.label :maxbackup, "Max backup"
+        = f.text_field :maxbackup, value: @maxbackup, class: "form-control", 'aria-describedby' => 'maxbackup_help'
+        small.form-text.text-muted#maxbackup_help
+          | Maximum number of audit log files to retain
+
+      .form-group
+        = f.label :policy, "Policy"
+        = f.text_area :policy, class: "form-control", value: @policy, 'aria-describedby' => 'policy_help', rows: 20
+        small.form-text.text-muted#policy_help
+          | The YAML file defining the auditing policy rules
+
+  .clearfix.text-right.steps-container
+    = submit_tag "Save", id: "save", class: "btn btn-primary pull-right"
