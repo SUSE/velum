@@ -181,6 +181,9 @@ MinionPoller = {
             updateAvailable = true;
             updateAvailableNodeCount++;
           }
+
+          // removes node from the pending acceptance state in the browser
+          removePendingAcceptance(minions[i].minion_id);
         }
         $(".nodes-container tbody").html(rendered);
 
@@ -479,11 +482,32 @@ function removePendingAcceptance(minionId) {
   sessionStorage.removeItem(minionId);
 }
 
-function requestMinionApproval(selector) {
+function requestMinionApproval(selector, minionIds) {
+  var $alert = $('.failed-acceptance-alert');
+  var error = 'Failed to accept all nodes. Please try again.';
+
+  // normalize input
+  if (!Array.isArray(minionIds)) {
+    error = 'Failed to accept ' + minionIds + ' node. Please try again.';
+    minionIds = [minionIds];
+  }
+
+  // set pending acceptance
+  $.each(minionIds, function(_, id) {
+    setPendingAcceptance(id);
+  });
+
+  $alert.remove();
   $.ajax({
     url: '/accept-minion.json',
     method: 'POST',
     data: { minion_id: selector }
+  }).error(function () {
+    $alert.remove();
+    showAlert(error, 'alert', 'failed-acceptance-alert');
+    $.each(minionIds, function (_, id) {
+      removePendingAcceptance(id);
+    });
   });
 }
 
@@ -499,18 +523,18 @@ $('body').on('click', '#accept-all', function(e) {
 
   e.preventDefault();
   $btn.prop('disabled', true);
-  $acceptLinks.each(function(_, el) {
-    setPendingAcceptance(el.dataset.minionId);
+  var minionIds = $.map($acceptLinks, function(el) {
+    return el.dataset.minionId;
   });
-  requestMinionApproval('*');
+
+  requestMinionApproval('*', minionIds);
 });
 
 $('body').on('click', '.accept-minion', function(e) {
   var minionId = $(this).data('minionId');
 
   e.preventDefault();
-  setPendingAcceptance(minionId);
-  requestMinionApproval(minionId);
+  requestMinionApproval(minionId, minionId);
   checkAcceptAllAvailability();
 });
 
