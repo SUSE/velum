@@ -12,6 +12,11 @@
         | Don't have an account?
         a.btn.btn-default[href="/users/sign_up"]
           | Create an account
+    - if can_download_kubeconfig?
+      p
+        | Do you need the kubeconfig file?
+        = link_to kubeconfig_path, id: "download-kubeconfig", class: "btn btn-default" do
+          | Download kubeconfig
   .col-sm-4.col-sm-offset-1
     h2.Raleway-font
       | Log In
