@@ -108,6 +108,26 @@ describe "Bootstrap cluster feature" do
       expect(page).to have_content("Accept Node")
     end
 
+    it "removes node from pending acceptance state if accepted", js: true do
+      setup_stubbed_pending_minions!(stubbed: [minions[3].minion_id])
+      allow(::Velum::Salt).to receive(:accept_minion)
+
+      visit setup_discovery_path
+
+      expect(page).to have_content("Accept Node")
+      click_on("Accept Node")
+
+      expect(page).to have_content("Acceptance in progress")
+      is_pending = evaluate_script("hasPendingAcceptance('#{minions[3].minion_id}')")
+      expect(is_pending).to be true
+
+      setup_stubbed_pending_minions!
+
+      expect(page).not_to have_content("Acceptance in progress")
+      is_pending = evaluate_script("hasPendingAcceptance('#{minions[3].minion_id}')")
+      expect(is_pending).to be false
+    end
+
     it "A user selects a subset of nodes to be bootstrapped", js: true do
       # select master minion0.k8s.local
       find(".minion_#{minions[0].id} .master-btn").click
