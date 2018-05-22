@@ -1,0 +1,14 @@
+.panel.panel-default
+  .panel-heading.clearfix
+    h3.panel-title
+      | System wide certificate
+    .pull-right
+      = label_tag :certificate_settings_toggle, nil, class: "btn btn-default btn-sm js-toggle-overlay-settings-btn", data: {toggle: "collapse", target: "#certificate-settings-panel"}
+        | Show
+
+  #certificate-settings-panel.panel-collapse.collapse
+    .panel-body
+
+      p When you require a self-signed certificate, you can add it here, so it will be distributed to your cluster.
+
+      = render partial: 'settings/system_certificates/fields', locals: { f: f, required: false }

@@ -1,23 +1,23 @@
-= form_for [:settings, @registry_mirror], html: { class: "mirror-form" } do |f|
+= form_for [:settings, @certificate_holder], html: { class: "mirror-form" } do |f|
   .form-group
     = f.label :registry_id, "Mirror of"
     .row
       .col-xs-4
-        = f.select :registry_id, registries_options_for_select, { include_blank: true }, class: "form-control registry-select", required: true, disabled: !@registry_mirror.new_record?
-      - if @registry_mirror.new_record?
+        = f.select :registry_id, registries_options_for_select, { include_blank: true }, class: "form-control registry-select", required: true, disabled: !@certificate_holder.new_record?
+      - if @certificate_holder.new_record?
         .col-xs-8
           = link_to "Create new registry", new_settings_registry_path, class: "btn btn-primary add-entry-btn hide"
-  .form-group class="#{error_class_for(@registry_mirror, :name)}"
+  .form-group class="#{error_class_for(@certificate_holder, :name)}"
     = f.label :name
     = f.text_field :name, class: "form-control", required: true
-    = error_messages_for(@registry_mirror, :name)
-  .form-group.form-group-url class="#{error_class_for(@registry_mirror, :url)}"
+    = error_messages_for(@certificate_holder, :name)
+  .form-group.form-group-url class="#{error_class_for(@certificate_holder, :url)}"
     = f.label :url, "URL"
     = f.text_field :url, class: "form-control url", required: true
-    = error_messages_for(@registry_mirror, :url)
+    = error_messages_for(@certificate_holder, :url)
     span.help-block.invalid-format.hide This is not a valid URL. Please try something like https://registry.local
     span.help-block.invalid-insecure.hide Security warning: You are using an insecure mirror address for a secure remote registry
-  .form-group.form-group-certificate class="#{'hide' unless url_secure?(@registry_mirror.url)}"
+  .form-group.form-group-certificate class="#{'hide' unless url_secure?(@certificate_holder.url)}"
     = f.label :certificate
     p Use this option to provide the self-signed certificate used by the mirror.
     = f.text_area :certificate, class: "form-control", value: @cert.certificate

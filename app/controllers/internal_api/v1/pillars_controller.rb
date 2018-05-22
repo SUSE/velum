@@ -10,6 +10,8 @@ class InternalApi::V1::PillarsController < InternalApiController
       cloud_provider_contents
     ).merge(
       kubelet_contents
+    ).merge(
+      system_certificate_contents
     )
   end
 
@@ -43,6 +45,17 @@ class InternalApi::V1::PillarsController < InternalApiController
       registry
     end
     { registries: registries }
+  end
+
+  def system_certificate_contents
+    {
+      system_certificates: SystemCertificate.all.map do |cert|
+        {
+          name: cert.name,
+          cert: cert.certificate.try(:certificate)
+        }
+      end
+    }
   end
 
   def cloud_framework_contents

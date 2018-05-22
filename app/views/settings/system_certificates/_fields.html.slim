@@ -1,0 +1,12 @@
+/ This partial is for usage in other forms that should allow the user to create
+/ system certificates, while not using the default system-certificate resource
+= f.fields_for :system_certificate do |certificate_fields|
+  .form-group class="#{error_class_for(@system_certificate, :name)}"
+  = certificate_fields.label :name
+  = certificate_fields.text_field :name, class: "form-control", value: @system_certificate.name, required: required
+  = error_messages_for(@system_certificate, :name)
+
+  .form-group.form-group-certificate
+  = certificate_fields.label :certificate
+  p Paste the self-signed certificate to be added to the system certificate store here.
+  = certificate_fields.text_area :certificate, class: "form-control", value: @cert.certificate, required: required

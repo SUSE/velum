@@ -1,28 +1,28 @@
 header.settings-content-header.clearfix
   .title.pull-left
-    h2 #{@registry_mirror.name} mirror details
+    h2 #{@certificate_holder.name} mirror details
   .actions.pull-right
-    = link_to settings_registry_mirror_path(@registry_mirror), method: "delete", class: "btn btn-danger", data: { confirm: "Are you sure?" } do
+    = link_to settings_registry_mirror_path(@certificate_holder), method: "delete", class: "btn btn-danger", data: { confirm: "Are you sure?" } do
       | Delete
-    = link_to edit_settings_registry_mirror_path(@registry_mirror), class: "btn btn-primary" do
+    = link_to edit_settings_registry_mirror_path(@certificate_holder), class: "btn btn-primary" do
       | Edit
 
-section.registry-details
+section.settings-details
   .field
     .details-label Registry
     .details-value
-      - if suse_registry?(@registry_mirror.registry)
-       = @registry_mirror.registry.name
+      - if suse_registry?(@certificate_holder.registry)
+       = @certificate_holder.registry.name
       - else
-        = link_to @registry_mirror.registry.name, settings_registry_path(@registry_mirror.registry), class: "registry-link"
+        = link_to @certificate_holder.registry.name, settings_registry_path(@certificate_holder.registry), class: "registry-link"
 
   .field
     .details-label URL
     .details-value
-      = display_registry_url(@registry_mirror.url)
+      = display_registry_url(@certificate_holder.url)
 
-  - if @registry_mirror.certificate.present?
+  - if @certificate_holder.certificate.present?
     .field
       .details-label Certificate
       .details-value
-        = @registry_mirror.certificate.certificate
+        = @certificate_holder.certificate.certificate

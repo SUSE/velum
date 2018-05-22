@@ -1,0 +1,23 @@
+= render 'settings/apply'
+
+h2 System wide certificates
+
+= link_to "Add system wide certificate", new_settings_system_certificate_path, class: "btn btn-primary add-entry-btn"
+
+- if @system_certificates.present?
+    section
+      table.table
+        thead
+          tr
+            th Name
+            th width="110"
+        tbody
+          - @system_certificates.each do |cert|
+            tr class="system-certificate_#{cert.id}"
+              td
+                = link_to cert.name, settings_system_certificate_path(cert)
+              td.actions
+                = link_to edit_settings_system_certificate_path(cert), class: "btn btn-default icon-only edit-btn" do
+                  i.fa.fa-pencil
+                = link_to settings_system_certificate_path(cert), method: "delete", class: "btn btn-danger icon-only delete-btn", data: { confirm: "Are you sure?" } do
+                  i.fa.fa-trash-o
