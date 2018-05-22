@@ -56,7 +56,8 @@ BuildRequires:  %{rubygem bundler} >= 1.3.0
 
 # fixed gem dependent build requires
 BuildRequires: libxml2-devel libxslt-devel
-%if 0%{?suse_version} > 1500
+# if openSUSE Tumbleweed or SLE_15
+%if 0%{?suse_version} > 1500 || 0%{?sle_version} == 150000
 BuildRequires: libmariadb-devel
 Requires: mariadb-client
 %else
