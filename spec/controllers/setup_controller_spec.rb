@@ -65,6 +65,25 @@ RSpec.describe SetupController, type: :controller do
       end
     end
 
+    context "when a certificate was previously configured" do
+      let(:certificate_settings) do
+        settings_params.dup.tap do |s|
+          s["system_certificate"] = { name:        "sca1",
+                                      certificate: "cert" }
+        end
+      end
+
+      before do
+        sign_in user
+        put :configure, settings: certificate_settings
+        get :welcome
+      end
+
+      it "remembers the created certificate" do
+        expect(assigns(:system_certificate)).to eq(SystemCertificate.find_by(name: "sca1"))
+      end
+    end
+
     context "with HTML rendering" do
       before do
         sign_in user
@@ -659,6 +678,44 @@ RSpec.describe SetupController, type: :controller do
       it "erases fields left by the user" do
         expect(Pillar.value(pillar: :cloud_provider)).to be_nil
         expect(Pillar.value(pillar: :cloud_openstack_domain)).to be_nil
+      end
+    end
+
+    context "when user enters a certificate" do
+      let(:certificate_settings) do
+        settings_params.dup.tap do |s|
+          s["system_certificate"] = { name:        "sca1",
+                                      certificate: "cert" }
+        end
+      end
+
+      before do
+        sign_in user
+      end
+
+      it "creates a new system certificate" do
+        put :configure, settings: certificate_settings
+        system_certificate = SystemCertificate.find_by(name: "sca1")
+        expect(system_certificate.name).to eq("sca1")
+        expect(system_certificate.certificate.certificate).to eq("cert")
+      end
+    end
+
+    context "when user enters an invalid certificate" do
+      let(:certificate_settings) do
+        settings_params.dup.tap do |s|
+          s["system_certificate"] = { name:        "",
+                                      certificate: "cert" }
+        end
+      end
+
+      before do
+        sign_in user
+      end
+
+      it "redirects to the setup page" do
+        response = put :configure, settings: certificate_settings
+        expect(response).to redirect_to(setup_path)
       end
     end
   end

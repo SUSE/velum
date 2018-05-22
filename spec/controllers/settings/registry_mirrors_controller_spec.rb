@@ -20,9 +20,9 @@ RSpec.describe Settings::RegistryMirrorsController, type: :controller do
   end
 
   describe "GET #new" do
-    it "assigns a new RegistryMirror to @registry_mirror" do
+    it "assigns a new RegistryMirror to @certificate_holder" do
       get :new
-      expect(assigns(:registry_mirror)).to be_a(RegistryMirror)
+      expect(assigns(:certificate_holder)).to be_a(RegistryMirror)
       expect(assigns(:cert)).to be_a(Certificate)
     end
 
