@@ -17,7 +17,9 @@ namespace :cpi do
       when /^[\[#]/ then              puts "Skipping the line"
       when "auth-url" then            cfg["cloud:openstack:auth_url"] = value
       when "domain-name" then         cfg["cloud:openstack:domain_name"] = value
+      when "domain-id" then           cfg["cloud:openstack:domain_id"] = value
       when "tenant-name" then         cfg["cloud:openstack:tenant_name"] = value
+      when "tenant-id" then           cfg["cloud:openstack:tenant_id"] = value
       when "region" then              cfg["cloud:openstack:region"] = value
       when "username" then            cfg["cloud:openstack:username"] = value
       when "password" then            cfg["cloud:openstack:password"] = value
