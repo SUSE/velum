@@ -501,8 +501,9 @@ function requestMinionApproval(selector, minionIds) {
   $.ajax({
     url: '/accept-minion.json',
     method: 'POST',
-    data: { minion_id: selector }
-  }).error(function () {
+    data: { minion_id: selector },
+    dataType: 'text'
+  }).fail(function () {
     $alert.remove();
     showAlert(error, 'alert', 'failed-acceptance-alert');
     $.each(minionIds, function (_, id) {
