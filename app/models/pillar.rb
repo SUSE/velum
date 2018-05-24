@@ -96,8 +96,12 @@ class Pillar < ApplicationRecord
           "cloud:openstack:auth_url",
         cloud_openstack_domain:
           "cloud:openstack:domain",
+        cloud_openstack_domain_id:
+          "cloud:openstack:domain_id",
         cloud_openstack_project:
           "cloud:openstack:project",
+        cloud_openstack_project_id:
+          "cloud:openstack:project_id",
         cloud_openstack_region:
           "cloud:openstack:region",
         cloud_openstack_username:
