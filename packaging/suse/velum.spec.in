@@ -36,14 +36,9 @@ Group:          System/Management
 %define velumdir /srv/velum
 
 Requires:       ruby >= 2.1
-%if 0%{?suse_version} >= 1210
-BuildRequires: systemd-rpm-macros
-%endif
 BuildRequires:  fdupes
 BuildRequires:  gcc-c++
 BuildRequires:  ruby-macros >= 5
-%{?systemd_requires}
-Provides:       velum = %{version}
 Obsoletes:      velum < %{version}
 # javascript engine to build assets
 BuildRequires:  nodejs
