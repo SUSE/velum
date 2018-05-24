@@ -26,7 +26,7 @@
     = f.label :cloud_openstack_password, "Password"
     = f.password_field :cloud_openstack_password, value: @cloud_openstack_password, class: "form-control"
   .form-group
-    = f.label :cloud_openstack_subnet, "Subnet UUID for the CaaS Platform private network"
+    = f.label :cloud_openstack_subnet, "Subnet UUID for the #{product_name} private network"
     = f.text_field :cloud_openstack_subnet, value: @cloud_openstack_subnet, class: "form-control"
   .form-group
     = f.label :cloud_openstack_floating, "Floating network UUID"

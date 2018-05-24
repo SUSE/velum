@@ -1,11 +1,9 @@
 .row
   .col-sm-6
     h1.Raleway-font
-      | SUSE
-      br
-      small CaaS Platform
+      = product_name
     .margins-updown
-      p SUSE CaaS Platform allows you to provision, manage, and scale container-based applications.
+      p #{product_name} allows you to provision, manage, and scale container-based applications.
       p It automates your tedious management tasks allowing you to focus on development and writing apps to meet business goals.
     p
       - if User.count.zero?

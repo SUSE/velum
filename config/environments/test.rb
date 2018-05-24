@@ -44,4 +44,8 @@ Rails.application.configure do
 
   # Precompile additional assets.
   config.assets.precompile += ["test.js", "test.css"]
+
+  # Read the product config
+  config.x.product.name = Rails.root.join("PRODUCT").read
+  config.x.product.version = Rails.root.join("VERSION").read
 end

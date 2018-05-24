@@ -77,4 +77,8 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  # Read the product config
+  config.x.product.name = Rails.root.join("PRODUCT").read
+  config.x.product.version = Rails.root.join("VERSION").read
 end
