@@ -115,6 +115,10 @@ for folder in log tmp; do
   mkdir %{buildroot}%{velumdir}/$folder
 done
 
+%if 0%{?suse_version} >= 1500
+  rm %{buildroot}%{velumdir}/LICENSE
+%endif
+
 %fdupes -s %{buildroot}/%{velumdir}
 
 %files
@@ -122,6 +126,11 @@ done
 %{velumdir}
 %exclude %{velumdir}/spec
 %doc %{velumdir}/README.md
+
+%if 0%{?suse_version} < 1500
 %doc %{velumdir}/LICENSE
+%else
+%license LICENSE
+%endif
 
 %changelog
