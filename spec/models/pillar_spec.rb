@@ -49,6 +49,90 @@ describe Pillar do
         end
       end
     end
+  end
 
+  describe "EvictionValidator" do
+    subject { Pillar.find_or_initialize_by(pillar: "kubelet:eviction-hard") }
+
+    it "is not valid if there is no comparator" do
+      subject.value = "10%"
+      subject.validate
+
+      expect(subject.errors[:value].first).to eq EvictionValidator::INVALID_SYNTAX
+    end
+
+    context "memory" do
+      it "is not valid if there is no method specified" do
+        subject.value = "memory<10%"
+        subject.validate
+
+        expect(subject.errors[:value].first).to eq "`memory` requires something like `memory.available`"
+      end
+
+      it "is not valid if the given method is unknown" do
+        subject.value = "memory.IAMERROR<10%"
+        subject.validate
+
+        expect(subject.errors[:value].first).to eq "unknown `memory.IAMERROR` option"
+      end
+    end
+
+    # NOTE: 'imagefs' follows the same case as 'nodefs'
+    context "nodefs" do
+      it "is not valid if there is no method specified" do
+        subject.value = "nodefs<10%"
+        subject.validate
+
+        expect(subject.errors[:value].first).to eq "`nodefs` requires something like `nodefs.available`"
+      end
+
+      it "is not valid if the given method is unknown" do
+        subject.value = "nodefs.IAMERROR<10%"
+        subject.validate
+
+        expect(subject.errors[:value].first).to eq "unknown `nodefs.IAMERROR` option"
+      end
+
+      it "is valid for `available` and for `inodesFree`" do
+        %w[available inodesFree].each do |m|
+          subject.value = "nodefs.#{m}<10%"
+          expect(subject).to be_valid
+        end
+      end
+    end
+
+    context "right value" do
+      it "accepts percentages" do
+        subject.value = "memory.available<10%"
+        expect(subject).to be_valid
+      end
+
+      it "accepts percentages with dots in it" do
+        subject.value = "memory.available<10.55%"
+        expect(subject).to be_valid
+      end
+
+      it "accepts lone numbers" do
+        subject.value = "memory.available<10"
+        expect(subject).to be_valid
+      end
+
+      it "accepts lone numbers with dots in it" do
+        subject.value = "memory.available<10.0"
+        expect(subject).to be_valid
+      end
+
+      it "accepts valid suffixes" do
+        %w[E P T G M K Ei Pi Ti Gi Mi Ki].each do |suffix|
+          subject.value = "memory.available<1024#{suffix}"
+          expect(subject).to be_valid
+        end
+      end
+
+      it "accepts exponential numbers" do
+        subject.value = "memory.available<10e6M"
+        expect(subject).to be_valid
+      end
+    end
   end
 end
