@@ -7,11 +7,11 @@ h1 Initial CaaS Platform Configuration
       h3.panel-title Generic settings
     .panel-body
       .form-group
-        = f.label :dashboard, "Internal Dashboard FQDN/IP"
+        = f.label :dashboard, "Internal Dashboard Location"
         .input-group
           = f.text_field :dashboard, value: @dashboard, class: "form-control", required: true
           span class="input-group-addon"
-            a data-toggle="tooltip" data-placement="left" title="Fully qualified domain name or IP used to reach Velum within the internal network. The external fqdn will have to be provided in a later step."
+            a data-toggle="tooltip" data-placement="left" title="Internal location of the dashboard - this must be resolvable by the worker nodes: it can either be a short name, the fully qualified domain name (FQDN) or an ip address depending on your networking setup. The external fqdn will have to be provided in a later step."
               i class='glyphicon glyphicon-info-sign'
 
   .panel.panel-default
