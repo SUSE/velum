@@ -1,8 +1,6 @@
 # KubeletComputeResourcesReservation represents the pillar values
 # used to configure kubelet resource reservations.
 class KubeletComputeResourcesReservation < ApplicationRecord
-  BYTES_REGEX = /\A(\d+(e\d+)?([EPTGMK]i?)?)?\z/
-
   validates :component, inclusion: {
     in: %w[kube system], message: "%<value>s is not a valid component"
   }
@@ -11,10 +9,10 @@ class KubeletComputeResourcesReservation < ApplicationRecord
   }
 
   validates :memory, format: {
-    with: BYTES_REGEX, message: "%<value>s format invalid"
+    with: ::EvictionValidator::BYTES_REGEXP, message: "%<value>s format invalid"
   }
 
   validates :ephemeral_storage, format: {
-    with: BYTES_REGEX, message: "%<value>s format invalid"
+    with: ::EvictionValidator::BYTES_REGEXP, message: "%<value>s format invalid"
   }
 end

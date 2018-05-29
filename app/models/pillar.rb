@@ -2,7 +2,7 @@
 # rubocop:disable Metrics/ClassLength
 class Pillar < ApplicationRecord
   validates :pillar, presence: true
-  validates :value, presence: true
+  validates :value, presence: true, eviction: true
 
   scope :global, -> { where minion_id: nil }
 
