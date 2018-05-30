@@ -1,7 +1,6 @@
 require "rails_helper"
 
 describe KubeletComputeResourcesReservation, type: :model do
-
   it { is_expected.not_to validate_presence_of(:cpu) }
   it { is_expected.not_to validate_presence_of(:memory) }
   it { is_expected.not_to validate_presence_of(:ephemeral_storage) }
