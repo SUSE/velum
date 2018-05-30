@@ -1,9 +1,8 @@
-# frozen_string_literal: true
-
 # Evictionvalidator checks the syntax for hard eviction policies. Some valid
 # policies would be: "memory.available<10Mi" or "nodefs.inodesFree<10.6%".
 class EvictionValidator < ActiveModel::EachValidator
-  INVALID_SYNTAX =  "value for `kubelet:eviction-hard` has to follow a syntax like 'memory.available<10%'"
+  INVALID_SYNTAX = "`kubelet:eviction-hard` has to follow a syntax like " \
+                   "'memory.available<10%'".freeze
 
   NUMBER_REGEXP      = /(\d+(\.\d+)?(e\d+)?)/
   NUM_OR_PERC_REGEXP = /\A#{NUMBER_REGEXP}%?\z/

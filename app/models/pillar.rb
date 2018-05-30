@@ -8,6 +8,12 @@ class Pillar < ApplicationRecord
 
   PROTECTED_PILLARS = [:dashboard, :apiserver, :dashboard_external_fqdn].freeze
 
+  # update_or_remove! updates the current pillar with the given value. That
+  # being said, if the given value is blank, then it will destroy this pillar.
+  def update_or_remove!(val)
+    val.blank? ? destroy : update_attributes!(value: val)
+  end
+
   class << self
     def value(pillar:)
       Pillar.find_by(pillar: all_pillars[pillar]).try(:value)
