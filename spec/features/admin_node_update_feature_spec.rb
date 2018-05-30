@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe "Manage nodes updates feature" do
+describe "Manage nodes updates feature", js: true do
   let!(:user) { create(:user) }
 
   before do
@@ -10,7 +10,7 @@ describe "Manage nodes updates feature" do
     setup_stubbed_pending_minions!
   end
 
-  it "Admin node has no update available", js: true do
+  it "Admin node has no update available" do
     visit authenticated_root_path
 
     expect(page).not_to have_content("Update admin node")
@@ -25,14 +25,11 @@ describe "Manage nodes updates feature" do
       visit authenticated_root_path
     end
 
-    it "Admin node has an update available", js: true do
+    it "Admin node has an update available" do
       expect(page).to have_content("Admin node is running outdated software")
     end
 
-    it "User clicks on admin 'Update admin node'", js: true do
-      expect(page).not_to have_content("Reboot to update")
-
-      # clicks on "Update admin node"
+    it "User clicks on admin 'Update admin node'" do
       find(".update-admin-btn").click
 
       expect(page).to have_content("The admin node needs to reboot "\
@@ -41,10 +38,9 @@ describe "Manage nodes updates feature" do
     end
 
     # rubocop:disable RSpec/ExampleLength
-    it "User clicks on 'Reboot to update'", js: true do
+    it "User clicks on 'Reboot to update'" do
       allow(::Velum::Salt).to receive(:call).and_return(true)
 
-      # clicks on "Update admin node"
       find(".update-admin-btn").click
 
       # wait modal to appear
@@ -60,13 +56,25 @@ describe "Manage nodes updates feature" do
     # rubocop:enable RSpec/ExampleLength
   end
 
-  it "Admin node has an update available (failed to update)", js: true do
+  it "shows admin update failed message" do
     # rubocop:disable Rails/SkipsModelValidations
     Minion.where(minion_id: "admin").update_all(tx_update_reboot_needed: false,
                                                 tx_update_failed:        true)
     # rubocop:enable Rails/SkipsModelValidations
     visit authenticated_root_path
 
-    expect(page).to have_content("Admin node is running outdated software (failed to update)")
+    expect(page).to have_content("An error occurred during the admin node update process")
+    expect(page).not_to have_content("UPDATE ADMIN NODE")
+  end
+
+  it "shows admin update failed message and update button" do
+    # rubocop:disable Rails/SkipsModelValidations
+    Minion.where(minion_id: "admin").update_all(tx_update_reboot_needed: true,
+                                                tx_update_failed:        true)
+    # rubocop:enable Rails/SkipsModelValidations
+    visit authenticated_root_path
+
+    expect(page).to have_content("An error occurred during the admin node update process")
+    expect(page).to have_content("UPDATE ADMIN NODE")
   end
 end
