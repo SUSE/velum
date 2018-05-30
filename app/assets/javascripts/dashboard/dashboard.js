@@ -288,23 +288,25 @@ MinionPoller = {
   handleAdminUpdate: function(admin) {
     var $notification = $('.admin-outdated-notification');
 
-    if (State.hasPendingStateNode ||
-        State.pendingRemovalMinionId) {
+    if (State.hasPendingStateNode || State.pendingRemovalMinionId) {
       State.updateAdminNode = false;
       return;
     }
 
+    var updateFlag = admin.tx_update_reboot_needed || admin.tx_update_failed;
+
+    State.updateAdminNode = updateFlag;
+    $notification.toggleClass('hidden', !updateFlag);
+
+    $notification.removeClass('admin-outdated-notification--reboot');
+    $notification.removeClass('admin-outdated-notification--failed');
+
     if (admin.tx_update_reboot_needed) {
-      State.updateAdminNode = true;
-      $notification.removeClass('hidden');
-      $notification.removeClass('admin-outdated-notification--failed');
-    } else if (admin.tx_update_failed) {
-      State.updateAdminNode = true;
-      $notification.removeClass('hidden');
+      $notification.addClass('admin-outdated-notification--reboot');
+    }
+
+    if (admin.tx_update_failed) {
       $notification.addClass('admin-outdated-notification--failed');
-    } else {
-      State.updateAdminNode = false;
-      $notification.addClass('hidden');
     }
   },
 
