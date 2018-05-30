@@ -47,4 +47,8 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
+  # Read the product config
+  config.x.product.name = Rails.root.join("PRODUCT").read
+  config.x.product.version = Rails.root.join("VERSION").read
 end

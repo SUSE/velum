@@ -4,17 +4,17 @@
 |--------|--------------|
 | [![Build Status](https://travis-ci.org/kubic-project/velum.svg?branch=master)](https://travis-ci.org/kubic-project/velum) | [![Code Climate](https://codeclimate.com/github/kubic-project/velum/badges/gpa.svg)](https://codeclimate.com/github/kubic-project/velum) [![Test Coverage](https://codeclimate.com/github/kubic-project/velum/badges/coverage.svg)](https://codeclimate.com/github/kubic-project/velum/coverage) |
 
-Velum is a dashboard that manages your SUSE CaaS Platform cluster. With Velum, you will
+Velum is a dashboard that manages your Kubic/SUSE CaaS Platform cluster. With Velum, you will
 be able to:
 
 - Bootstrap a Kubernetes cluster with a simple click.
 - Manage your Kubernetes cluster: adding and removing nodes from your cluster,
   monitoring faulty nodes, etc.
-- Setup an update policy that suits your needs. SUSE CaaS Platform already provides a
+- Setup an update policy that suits your needs. Kubic/SUSE CaaS Platform already provides a
   transparent and sensible procedure for updates that guarantees no downtime,
   but with Velum you will be able to further tune this.
 
-The architecture of CaaS Platform uses [Salt](https://saltstack.com/) quite heavily,
+The architecture of Kubic/CaaS Platform uses [Salt](https://saltstack.com/) quite heavily,
 and worker nodes are supposed to run as
 [Salt minions](https://docs.saltstack.com/en/latest/ref/cli/salt-minion.html). These
 Salt minions should then register to Velum, which acts as a Salt master. As an

@@ -45,4 +45,12 @@ module ApplicationHelper
       end
     end
   end
+
+  def product_name
+    Rails.configuration.x.product.name
+  end
+
+  def product_version
+    Rails.configuration.x.product.version
+  end
 end

@@ -19,7 +19,7 @@ class DashboardController < ApplicationController
   before_action :redirect_to_dashboard, only: :unassigned_nodes
 
   # Return the autoyast XML profile to bootstrap other worker nodes. They will read this response in
-  # order to start an unattended installation of CaaSP.
+  # order to start an unattended cluster installation.
   #
   # It will return the content of the autoyast profile along with a 200 HTTP response code if the
   # operation was successfull, or a 503 HTTP response code (service unavailable) if there was any
