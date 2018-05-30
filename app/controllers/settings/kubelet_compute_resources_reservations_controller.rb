@@ -18,27 +18,18 @@ class Settings::KubeletComputeResourcesReservationsController < SettingsControll
     @system_reservations = KubeletComputeResourcesReservation.find_or_initialize_by(
       component: "system"
     )
-
-    @kube_reservations.update_attributes(kube_reservation_params)
-    @system_reservations.update_attributes(system_reservation_params)
     @eviction_hard = Pillar.find_or_initialize_by(pillar: "kubelet:eviction-hard")
 
     ActiveRecord::Base.transaction do
-      @kube_reservations.save!
-      @system_reservations.save!
-
-      if eviction_hard_param.blank?
-        @eviction_hard.destroy
-        @eviction_hard = Pillar.find_or_initialize_by(pillar: "kubelet:eviction-hard")
-      else
-        @eviction_hard.value = eviction_hard_param
-        @eviction_hard.save!
-      end
+      @kube_reservations.update_attributes!(kube_reservation_params)
+      @system_reservations.update_attributes!(system_reservation_params)
+      @eviction_hard.update_or_remove!(eviction_hard_param)
     end
 
     redirect_to settings_kubelet_compute_resources_reservations_path,
       notice: "kubelet resource reservations successfully saved."
-  rescue ActiveRecord::RecordInvalid
+  rescue ActiveRecord::RecordInvalid => e
+    Rails.logger.tagged(:kubelet_compute_resources_reservation) { Rails.logger.error e.message }
     render action: :index, status: :unprocessable_entity
   end
 
