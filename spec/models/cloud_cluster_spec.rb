@@ -27,6 +27,35 @@ describe CloudCluster do
     expect(cluster.instance_type).to be(custom_instance_type)
   end
 
+  it "has a constant for minimum cluster size" do
+    expect(described_class).to be_const_defined(:MIN_CLUSTER_SIZE)
+  end
+
+  it "has a constant for maximum cluster size" do
+    expect(described_class).to be_const_defined(:MAX_CLUSTER_SIZE)
+  end
+
+  it "represents the current cluster size" do
+    expect(described_class.new.current_cluster_size).to eq(0)
+
+    3.times { create(:salt_job) }
+    expect(described_class.new.current_cluster_size).to eq(3)
+  end
+
+  it "calculates the minimum number of nodes required for a cluster" do
+    expect(described_class.new.min_nodes_required).to eq(described_class::MIN_CLUSTER_SIZE)
+
+    described_class::MIN_CLUSTER_SIZE.times { create(:salt_job) }
+    expect(described_class.new.min_nodes_required).to eq(0)
+  end
+
+  it "calculates maximum cluster growth" do
+    expect(described_class.new.max_nodes_allowed).to eq(described_class::MAX_CLUSTER_SIZE)
+
+    50.times { create(:salt_job) }
+    expect(described_class.new.max_nodes_allowed).to eq(described_class::MAX_CLUSTER_SIZE - 50)
+  end
+
   context "when represented as a string" do
     let(:cluster) do
       described_class.new(
