@@ -3,10 +3,13 @@
     = f.label :name
     = f.text_field :name, class: "form-control", value: @certificate_holder.name, required: true
     = error_messages_for(@certificate_holder, :name)
-  .form-group.form-group-certificate
+  .form-group.form-group-certificate class="#{error_class_for(@cert, :certificate) if @cert.present?}"
     = f.label :certificate
-    p Paste the self-signed certificate to be added to the system certificate store here.
-    = f.text_area :certificate, class: "form-control", value: @cert.certificate, required: true
+    p Upload the certificate to be added to the system-certificate store here
+    = f.file_field :certificate, class: "form-control", required: @cert.present?
+    - if @cert.present?
+      = error_messages_for(@cert, :certificate)
+      = f.text_area :current_cert, class: "form-control", value: @cert.certificate, rows: 7, readonly: "readonly"
 
   .form-actions.clearfix
     = f.submit "Save", class: "btn btn-primary action"

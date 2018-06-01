@@ -24,6 +24,10 @@ module SettingsHelper
     request.fullpath.starts_with?(settings_system_certificates_path)
   end
 
+  def settings_dex_connector_ldaps_path?
+    request.fullpath.starts_with?(settings_dex_connector_ldaps_path)
+  end
+
   def registries_options_for_select
     registries = Registry.suse + Registry.displayable
     registries_for_options = registries.collect { |r| [r.name, r.id] }

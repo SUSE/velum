@@ -15,9 +15,9 @@ ActiveRecord::Migration.maintain_test_schema!
 Dir[Rails.root.join("spec", "support", "**", "*.rb")].each { |f| require f }
 
 RSpec.configure do |config|
+  config.fixture_path = File.expand_path("../fixtures/", __FILE__)
   # If we want Capybara + DatabaseCleaner + Poltergeist to work correctly, we
   # have to just set this to false.
-  config.fixture_path = File.expand_path("../fixtures/", __FILE__)
   config.use_transactional_fixtures = false
 
   config.include JsonSpecHelper, type: :controller
@@ -38,4 +38,27 @@ def file_fixture(fixture_name)
     msg = "the directory '#{file_fixture_path}' does not contain a file named '#{fixture_name}'"
     raise ArgumentError, msg
   end
+end
+
+# Creates a new temporary file in the fixture directory.
+#
+# @param content [String] The content of the new file in string format
+#
+# @return The TempFile instance of the temporary file fixture
+def to_file_fixture(content)
+  file_fixture_path = RSpec.configuration.fixture_path
+  Tempfile.open("test_fixture", file_fixture_path) do |file|
+    file.write(content)
+    file.close
+    file
+  end
+end
+
+# Returns a filename of a temporary file created in the fixture directory.
+#
+# @param content [String] The content of the new file in string format
+#
+# @return The filename of the new fixture created
+def to_file_fixture_name(content)
+  File.basename(to_file_fixture(content))
 end

@@ -13,6 +13,11 @@ $sidebar-item-highlight: #00c081;
   z-index: 10;
 }
 
+//used to make elements hidden
+.settings-hidden {
+  display: none
+}
+
 .settings-sidebar-section {
   .title {
     color: $sidebar-section-title;
@@ -92,4 +97,16 @@ $sidebar-item-highlight: #00c081;
     margin-top: 0;
     margin-bottom: 15px;
   }
+}
+
+.ldap-conn-message-default {
+  color: black;
+}
+
+.ldap-conn-message-invalid {
+  color: $brand-danger;
+}
+
+.ldap-conn-message-valid {
+  color: $brand-success;
 }

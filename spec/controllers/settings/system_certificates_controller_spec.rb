@@ -4,6 +4,13 @@ RSpec.describe Settings::SystemCertificatesController, type: :controller do
   let(:user) { create(:user) }
   let(:admin_cert_text) { file_fixture("admin.crt").read.strip }
   let(:pem_cert) { create(:certificate) }
+  let(:pem_cert_text) { pem_cert.certificate.strip }
+  let(:pem_cert_file) do
+    fixture_file_upload(to_file_fixture_name(pem_cert.certificate), "application/x-x509-user-cert")
+  end
+  let(:empty_file) do
+    fixture_file_upload(to_file_fixture_name(""), "text/plain")
+  end
 
   before do
     setup_done
@@ -80,16 +87,28 @@ RSpec.describe Settings::SystemCertificatesController, type: :controller do
   describe "POST #create" do
     it "can not save system certificate without name" do
       expect do
-        post :create, system_certificate: { name: "", certificate: admin_cert_text }
+        post :create, system_certificate: { name: "", certificate: pem_cert_file }
       end.not_to change(SystemCertificate, :count)
       expect(response).to have_http_status(:unprocessable_entity)
     end
 
-    it "saves the system certificate in the database" do
-      post :create, system_certificate: { name: "sca1", certificate: admin_cert_text }
-      system_certificate = SystemCertificate.find_by(name: "sca1")
-      expect(system_certificate.name).to eq("sca1")
-      expect(system_certificate.certificate.certificate).to eq(admin_cert_text)
+    it "uses a provided certificate file if present" do
+      post :create, system_certificate: { name: "sca2", certificate: pem_cert_file }
+      system_certificate = SystemCertificate.find_by(name: "sca2")
+      expect(system_certificate.name).to eq("sca2")
+      expect(system_certificate.certificate.certificate).to eq(pem_cert_text)
+    end
+
+    it "disallows empty certificate files" do
+      post :create, system_certificate: { name: "sca2", certificate: empty_file }
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+
+    it "remembers current certificate" do
+      post :create, system_certificate: { name: "sca2", current_cert: pem_cert.certificate }
+      system_certificate = SystemCertificate.find_by(name: "sca2")
+      expect(system_certificate.name).to eq("sca2")
+      expect(system_certificate.certificate.certificate).to eq(pem_cert_text)
     end
   end
 
@@ -108,10 +127,10 @@ RSpec.describe Settings::SystemCertificatesController, type: :controller do
     end
 
     it "updates a system certificate's certificate" do
-      system_certificate_params = { certificate: pem_cert.certificate }
+      system_certificate_params = { certificate: pem_cert_file }
       put :update, id: system_certificate.id, system_certificate: system_certificate_params
       certificate = SystemCertificate.find(system_certificate.id).certificate
-      expect(certificate.certificate.strip).to eq(pem_cert.certificate.strip)
+      expect(certificate.certificate).to eq(pem_cert_text)
     end
   end
 

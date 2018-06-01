@@ -1,3 +1,5 @@
+require "velum/dex/ldap"
+
 # Serve the pillar information
 # rubocop:disable Metrics/ClassLength
 class InternalApi::V1::PillarsController < InternalApiController
@@ -12,6 +14,8 @@ class InternalApi::V1::PillarsController < InternalApiController
       kubelet_contents
     ).merge(
       system_certificate_contents
+    ).deep_merge(
+      dex_connectors_as_pillar
     )
   end
 
@@ -165,6 +169,12 @@ class InternalApi::V1::PillarsController < InternalApiController
         "eviction-hard"     => eviction_hard.value || ""
       }
     }
+  end
+
+  def dex_connectors_as_pillar
+    connectors = []
+    connectors.concat(Velum::Dex.ldap_connectors_as_pillar)
+    { dex: { connectors: connectors } }
   end
 end
 # rubocop:enable Metrics/ClassLength
