@@ -18,6 +18,9 @@ class DashboardController < ApplicationController
 
   before_action :redirect_to_dashboard, only: :unassigned_nodes
 
+  DEFAULT_KEYBOARD_LAYOUT = "english-us".freeze
+  YAST_KEYBOARD_KEY = "YAST_KEYBOARD".freeze
+
   # Return the autoyast XML profile to bootstrap other worker nodes. They will read this response in
   # order to start an unattended installation of CaaSP.
   #
@@ -48,6 +51,7 @@ class DashboardController < ApplicationController
       ssh_key_file = "/var/lib/misc/ssh-public-key/id_rsa.pub"
       # rubocop:disable Style/RescueModifier
       @ssh_public_key = File.read(ssh_key_file) rescue nil
+      @keyboard_layout = read_keyboard_layout
       # rubocop:enable Style/RescueModifier
 
       # proxy related settings
@@ -58,6 +62,20 @@ class DashboardController < ApplicationController
 
       render "autoyast.xml.erb", layout: false, content_type: "text/xml"
     end
+  end
+
+  # Read the keyboard layout set by Yast during installation.
+  #
+  # @return [String] the keyboard set from Yast, or 'english-us' as
+  # default
+  def read_keyboard_layout(keyboard_config_file: "/var/lib/misc/keyboard")
+    return DEFAULT_KEYBOARD_LAYOUT unless File.file?(keyboard_config_file)
+    yast_layout = File.readlines(keyboard_config_file).select do |line|
+      line =~ /^#{YAST_KEYBOARD_KEY}=/
+    end.first
+    return DEFAULT_KEYBOARD_LAYOUT unless yast_layout
+    layout, _char_map = yast_layout.split("=")[1].delete('"').split(",")
+    layout ? layout : DEFAULT_KEYBOARD_LAYOUT
   end
 
   # GET /assign_nodes
