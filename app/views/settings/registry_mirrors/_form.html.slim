@@ -3,7 +3,7 @@
     = f.label :registry_id, "Mirror of"
     .row
       .col-xs-4
-        = f.select :registry_id, registries_options_for_select, { include_blank: true }, class: "form-control registry-select", required: true, disabled: !@certificate_holder.new_record?
+        = f.select :registry_id, registries_options_for_select, { prompt: "Select a registry" }, class: "form-control registry-select", required: true, disabled: !@certificate_holder.new_record?
       - if @certificate_holder.new_record?
         .col-xs-8
           = link_to "Create new registry", new_settings_registry_path, class: "btn btn-primary add-entry-btn hide"
