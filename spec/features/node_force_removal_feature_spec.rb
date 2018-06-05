@@ -29,13 +29,6 @@ describe "feature: node force removal", js: true do
     expect(page).to have_link("Force remove", count: 2)
   end
 
-  it "hides 'Force remove' link if only 1 master and 1 worker" do
-    Minion.destroy([minions[1].id, minions[2].id, minions[3].id])
-
-    visit authenticated_root_path
-    expect(page).not_to have_link("Force remove")
-  end
-
   context "with successful orchestration" do
     before do
       allow(Orchestration).to receive(:run).and_return(true)
@@ -83,7 +76,7 @@ describe "feature: node force removal", js: true do
       expect(page).to have_css(".force-remove-node-link.disabled",
         count: 2)
       expect(page).to have_css(".remove-node-link.disabled",
-        count: 2)
+        count: 1)
 
       # assign nodes
       expect(page).not_to have_link("(new)")

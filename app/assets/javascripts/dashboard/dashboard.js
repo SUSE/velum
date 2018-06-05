@@ -467,8 +467,14 @@ MinionPoller = {
 };
 
 function isTheLast(minion, role) {
+  var remainingValid = State.minions.filter(function (m) {
+    return m.role === role &&
+           m.highstate !== 'removal_failed';
+  });
+
   return minion.role === role &&
-         State.minions.filter(function (m) { return m.role === role }).length === 1;
+         remainingValid.length === 1 &&
+         !(minion.highstate === 'removal_failed');
 }
 
 function hasPendingAcceptance(minionId) {
