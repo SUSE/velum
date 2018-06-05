@@ -9,12 +9,27 @@ class CloudCluster
     :subscription_id, :tenant_id, :client_id, :secret, # Azure provider
     :storage_account, :resource_group, :network_id # Azure profile
 
+  MIN_CLUSTER_SIZE = 3
+  MAX_CLUSTER_SIZE = 250
+
   def initialize(*args)
     super
     if @instance_type.blank? || @instance_type == "CUSTOM"
       @instance_type = instance_type_custom
     end
     @instance_count = @instance_count.to_i
+  end
+
+  def current_cluster_size
+    SaltJob.all_open.count + Minion.where.not(role: :admin).count
+  end
+
+  def min_nodes_required
+    [0, MIN_CLUSTER_SIZE - current_cluster_size].max
+  end
+
+  def max_nodes_allowed
+    MAX_CLUSTER_SIZE - current_cluster_size
   end
 
   # attributes that will be described via to_s as a scoping description
@@ -54,7 +69,10 @@ class CloudCluster
 
   def build!
     SaltJob.failed.destroy_all
+
+    return if @instance_count.zero?
     return unless (responses = Velum::Salt.build_cloud_cluster(@instance_count))
+
     responses.each do |response|
       if response.code.to_i == 500
         errors.add(:base, response.body)
