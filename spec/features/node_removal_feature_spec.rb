@@ -27,6 +27,13 @@ describe "feature: node removal", js: true do
     expect(page).to have_link("Remove", count: Minion.cluster_role.count)
   end
 
+  it "hides 'Remove' link if 2 remaining and 1 is failed" do
+    [minions[1], minions[2], minions[3]].each { |m| m.update(highstate: :removal_failed) }
+
+    visit authenticated_root_path
+    expect(page).not_to have_link("Remove")
+  end
+
   it "hides 'Remove' link if only 1 master and 1 worker" do
     Minion.destroy([minions[1].id, minions[2].id, minions[3].id])
 
