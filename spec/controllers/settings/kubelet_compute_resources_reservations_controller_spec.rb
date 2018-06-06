@@ -55,6 +55,37 @@ RSpec.describe Settings::KubeletComputeResourcesReservationsController, type: :c
   end
 
   describe "POST #create" do
+    let(:kube_cpu) { "100m" }
+    let(:kube_memory) { "100M" }
+    let(:kube_ephemeral_storage) { "1G" }
+
+    let(:system_cpu) { "200m" }
+    let(:system_memory) { "200M" }
+    let(:system_ephemeral_storage) { "2G" }
+
+    let(:eviction_policy) { "10%" }
+
+    context "when a validation error happens" do
+      let(:params) do
+        {
+          kube_cpu:                 kube_cpu,
+          kube_memory:              kube_memory,
+          kube_ephemeral_storage:   kube_ephemeral_storage,
+          system_cpu:               system_cpu,
+          system_memory:            system_memory,
+          system_ephemeral_storage: system_ephemeral_storage,
+          eviction_hard:            eviction_policy
+        }
+      end
+
+      it "rolls back and sends a 422" do
+        post :create, kubelet_compute_resources_reservations: params
+
+        expect(response).to have_http_status(422)
+        expect(KubeletComputeResourcesReservation).not_to be_any
+      end
+    end
+
     context "when no pre-existing reservations are in place" do
       let(:kube_cpu) { "100m" }
       let(:kube_memory) { "100M" }
@@ -112,11 +143,20 @@ RSpec.describe Settings::KubeletComputeResourcesReservationsController, type: :c
         ).save
       end
 
-      it "removes the eviction policy when an empty value is given" do
-        post :create, kubelet_compute_resources_reservations: {
-          eviction_hard: ""
+      let(:params) do
+        {
+          kube_cpu:                 kube_cpu,
+          kube_memory:              kube_memory,
+          kube_ephemeral_storage:   kube_ephemeral_storage,
+          system_cpu:               system_cpu,
+          system_memory:            system_memory,
+          system_ephemeral_storage: system_ephemeral_storage,
+          eviction_hard:            ""
         }
+      end
 
+      it "removes the eviction policy when an empty value is given" do
+        post :create, kubelet_compute_resources_reservations: params
         expect(Pillar.find_by(pillar: "kubelet:eviction-hard")).to be_nil
       end
     end

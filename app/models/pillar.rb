@@ -2,11 +2,17 @@
 # rubocop:disable Metrics/ClassLength
 class Pillar < ApplicationRecord
   validates :pillar, presence: true
-  validates :value, presence: true
+  validates :value, presence: true, eviction: true
 
   scope :global, -> { where minion_id: nil }
 
   PROTECTED_PILLARS = [:dashboard, :apiserver, :dashboard_external_fqdn].freeze
+
+  # update_or_remove! updates the current pillar with the given value. That
+  # being said, if the given value is blank, then it will destroy this pillar.
+  def update_or_remove!(val)
+    val.blank? ? destroy : update_attributes!(value: val)
+  end
 
   class << self
     def value(pillar:)
