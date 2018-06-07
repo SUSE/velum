@@ -14,7 +14,7 @@ html
       .container
         .row
           .col-md-12
-            = image_tag "logo.svg", class: "logo"
+            = image_tag "branding/logo.svg", class: "logo"
         .row
           .col-xs-12
             = render :partial => "shared/notifications"
@@ -29,5 +29,5 @@ html
             .copyright
               | #{product_name} #{product_version} | &copy; SUSE Linux #{Time.now.year}
           .col-sm-3
-            = image_tag "logo-footer.png", class: "suse-logo-footer pull-right"
+            = image_tag "branding/logo-footer.png", class: "suse-logo-footer pull-right"
       .bottom-line
