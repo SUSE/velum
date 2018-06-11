@@ -33,6 +33,7 @@ class Pillar < ApplicationRecord
         cluster_cidr_max:              "cluster_cidr_max",
         cluster_cidr_len:              "cluster_cidr_len",
         cni_plugin:                    "cni:plugin",
+        flannel_backend:               "flannel:backend",
         cilium_image:                  "cilium:image",
         services_cidr:                 "services_cidr",
         api_cluster_ip:                "api:cluster_ip",
