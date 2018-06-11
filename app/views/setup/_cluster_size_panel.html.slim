@@ -3,14 +3,18 @@
     h3.panel-title Cluster size
   .panel-body.cluster-size-selector
     .col-md-8
-      label for="cloud_cluster_instance_count" Number of instances
-      = form.text_field :instance_count, data: {slider_min: 3, slider_value: 5, slider_max: 50, slider_scale: "logarithmic", slider_tooltip: "always", slider_tooltip_position: "bottom", slider_ticks: [3, 5, 10, 20, 50], slider_ticks_snap_bounds: 0.5}, class: 'h3'
+      label for="cloud_cluster_instance_count"
+      	| Number of instances
+      	- if @cloud_cluster.current_cluster_size > 0
+      	  |  to add (current size: #{ pluralize(@cloud_cluster.current_cluster_size, 'node') })
+      = form.text_field :instance_count, data: @cloud_cluster.slider_data, class: 'h3'
     .col-md-2.text-right.cluster-cpu-count
       label Total vCPUs
       label.h3#cluster-cpu-count = 0
     .col-md-2.text-right.cluster-ram-size
       label Total RAM
       label.h3#cluster-ram-size data-bytes=0 = 0
-  .panel-footer
-    h4 Tip
-    p At least three nodes are required for a reliable cluster.
+  - if @cloud_cluster.min_nodes_required > 0
+    .panel-footer
+      h4 Tip
+      p At least three nodes are required for a reliable cluster.

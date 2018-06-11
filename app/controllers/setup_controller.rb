@@ -56,9 +56,11 @@ class SetupController < ApplicationController
     return unless (cloud = Pillar.value(pillar: :cloud_framework))
 
     @instance_types = Velum::InstanceType.for(cloud)
-    @cloud_cluster = CloudCluster.new(
-      cloud_framework: cloud,
-      instance_type:   (Pillar.value(pillar: :cloud_worker_type) || @instance_types.first.key)
+    @cloud_cluster = ClusterSizeSliderDecorator.new(
+      CloudCluster.new(
+        cloud_framework: cloud,
+        instance_type:   (Pillar.value(pillar: :cloud_worker_type) || @instance_types.first.key)
+      )
     )
     case cloud
     when "ec2"
