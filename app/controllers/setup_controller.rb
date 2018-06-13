@@ -223,6 +223,7 @@ class SetupController < ApplicationController
 
   def cloud_cluster_params
     cloud_cluster = params.require(:cloud_cluster).permit(
+      :cloud_framework,
       :subscription_id, :tenant_id, :client_id, :secret,
       :instance_type, :instance_type_custom, :instance_count,
       :resource_group, :storage_account,

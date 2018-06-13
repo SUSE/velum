@@ -248,6 +248,44 @@ describe CloudCluster do
     end
   end
 
+  context "when framework is GCE" do
+    let(:framework) { "gce" }
+    let(:cluster) do
+      described_class.new(
+        cloud_framework: framework,
+        instance_type:   custom_instance_type,
+        network_id:      network_id,
+        subnet_id:       subnet_id
+      )
+    end
+
+    it "stores instance type as :cloud_worker_type Pillar and refreshes" do
+      ensure_pillar_refresh do
+        expect(cluster.save).to be(true)
+      end
+      expect(Pillar.value(pillar: :cloud_worker_type)).to eq(custom_instance_type)
+    end
+
+    it "stores network name as :cloud_worker_net Pillar and refreshes" do
+      ensure_pillar_refresh do
+        expect(cluster.save).to be(true)
+      end
+      expect(Pillar.value(pillar: :cloud_worker_net)).to eq(network_id)
+    end
+
+    it "stores subnet name as :cloud_worker_subnetwork Pillar and refreshes" do
+      ensure_pillar_refresh do
+        expect(cluster.save).to be(true)
+      end
+      expect(Pillar.value(pillar: :cloud_worker_subnet)).to eq(subnet_id)
+    end
+
+    it "describes the framework in string representation" do
+      substring = "in GCE"
+      expect(cluster.to_s).to match(substring)
+    end
+  end
+
   context "when building" do
     let(:cluster) do
       described_class.new(

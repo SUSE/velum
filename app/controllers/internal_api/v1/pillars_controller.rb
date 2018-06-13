@@ -64,6 +64,8 @@ class InternalApi::V1::PillarsController < InternalApiController
       ec2_cloud_contents
     when "azure"
       azure_cloud_contents
+    when "gce"
+      gce_cloud_contents
     else
       {}
     end
@@ -119,6 +121,21 @@ class InternalApi::V1::PillarsController < InternalApiController
             network_resource_group: Pillar.value(pillar: :cloud_worker_resourcegroup),
             network:                Pillar.value(pillar: :cloud_worker_net),
             subnet:                 Pillar.value(pillar: :cloud_worker_subnet)
+          }
+        }
+      }
+    }
+  end
+
+  def gce_cloud_contents
+    {
+      cloud: {
+        framework: "gce",
+        profiles:  {
+          cluster_node: {
+            size:       Pillar.value(pillar: :cloud_worker_type),
+            network:    Pillar.value(pillar: :cloud_worker_net),
+            subnetwork: Pillar.value(pillar: :cloud_worker_subnet)
           }
         }
       }
