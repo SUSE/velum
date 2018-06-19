@@ -2,12 +2,21 @@
 # related to the kubernetes auditing feature.
 class Settings::AdmissionWebhookController < SettingsController
   def index
+    @form = AdmissionWebhookForm.new
     set_instance_variables
   end
 
   def create
-    @errors = Pillar.apply admission_webhook_params
-    if @errors.empty?
+    @form = AdmissionWebhookForm.new(admission_webhook_params)
+
+    if @form.valid?
+      @errors = Pillar.apply(
+        admission_webhook_pillars,
+        unprotected_pillars: admission_webhook_pillars.keys
+      )
+    end
+
+    if @form.valid? && @errors.empty?
       redirect_to settings_admission_webhook_index_path,
         notice: "Admission webhook settings successfully saved."
     else
@@ -19,38 +28,36 @@ class Settings::AdmissionWebhookController < SettingsController
   private
 
   def set_instance_variables
-    @admission_webhook_enabled = Pillar.value(pillar: :api_admission_webhook_enabled) || "false"
-    @cert = Pillar.value(pillar: :api_admission_webhook_cert)
+    @admission_webhook_enabled = @form.enabled == "true" ||
+      Pillar.value(pillar: :api_admission_webhook_enabled) == "true"
+    @certificate = Pillar.value(pillar: :api_admission_webhook_cert)
     @key = Pillar.value(pillar: :api_admission_webhook_key)
+    @errors ||= []
   end
 
   def admission_webhook_params
-    ret = {}
-    sanitized_params = params.require(
+    params.require(
       :admission_webhook
     ).permit(
       :enabled,
-      :cert,
-      :key,
+      :cert_file,
+      :key_file,
       :current_cert,
-      :current_key,
+      :current_key
     )
+  end
 
+  def admission_webhook_pillars
     ret = {
-      api_admission_webhook_enabled: sanitized_params["enabled"]
+      api_admission_webhook_enabled: @form.enabled,
+      api_admission_webhook_cert:    nil,
+      api_admission_webhook_key:     nil
     }
 
-    ret[:api_admission_webhook_cert] = if sanitized_params.include?("cert")
-      sanitized_params["cert"].read
-    else
-      sanitized_params["current_cert"]
-    end
+    return ret if @form.enabled == "false"
 
-    ret[:api_admission_webhook_key] = if sanitized_params.include?("key")
-      sanitized_params["key"].read
-    else
-      sanitized_params["current_key"]
-    end
+    ret[:api_admission_webhook_cert] = @form.certificate || @form.current_cert
+    ret[:api_admission_webhook_key] = @form.key || @form.current_key
 
     ret
   end

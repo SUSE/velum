@@ -4,17 +4,26 @@
   p Warning: Entering invalid values for any of the following settings will cause
     the nodes to enter into a broken state.
 
+- if @errors.present?
+  .alert.alert-danger.unassigned-alert role="alert"
+    i.fa.fa-4x.pull-left aria-hidden="true"
+    span
+      p An unexpected error happened:
+
+      ul.list
+        - @errors.each do |e|
+          li= e
+
 h2 Admission Webhook
 
 p
   | Enable Kubernetes ValidatingAdmissionWebhook admission controller. Once enabled
-  | it is possible to configure the admission controller by creating
+  |  it is possible to configure the admission controller by creating
   code ValidatingWebhookConfiguration
   | objects.
 
-= form_for :admission_webhook, url: settings_admission_webhook_index_path, method: :post do |f|
+= form_for :admission_webhook, url: settings_admission_webhook_index_path, method: :post, html: { id: "admission-webhook-form" } do |f|
   .panel.panel-default
-
     .panel-heading
       h3.panel-title Kubernetes proxy client certificate
     .panel-body
@@ -24,7 +33,7 @@ p
       p
         strong Note well:
         |  all the webhook endpoints must be secured using TLS
-        |  otherwise Kubernetes will refuse to interact with them. Use the 
+        |  otherwise Kubernetes will refuse to interact with them. Use the&nbsp;
         = link_to "System wide certificates", settings_system_certificates_path
         |  page to add the self-signed certificates used by your webhook endpoints.
 
@@ -32,28 +41,37 @@ p
         = f.label :enabled, "Enable admission webhook"
         br
           .btn-group.btn-group-toggle.enable-admission-webhook-btn-group data-toggle="buttons"
-            = label_tag :enabled, nil, class: "btn btn-default #{'btn-primary active' if @admission_webhook_enabled == "true"}"
-              = f.radio_button :enabled, "true", checked: @admission_webhook_enabled == "true"
-              | Enabled
-            = label_tag :enabled, nil, class: "btn btn-default #{'btn-primary active' if @admission_webhook_enabled== "false"}"
-              = f.radio_button :enabled, "false", checked: @admission_webhook_enabled == "false"
-              | Disabled
+            = label_tag :enabled, nil, class: "enable btn btn-default #{'btn-primary active' if @admission_webhook_enabled}", data: { toggle: "collapse", target: "#file-fields" }
+              = f.radio_button :enabled, "true", checked: @admission_webhook_enabled
+              | Enable
+            = label_tag :enabled, nil, class: "disable btn btn-default #{'btn-primary active' if !@admission_webhook_enabled}", data: { toggle: "collapse", target: "#file-fields" }
+              = f.radio_button :enabled, "false", checked: !@admission_webhook_enabled
+              | Disable
 
-      .form-group
-        = f.label :cert, "Certificate"
-        = f.text_area :current_cert, class: "form-control", value: @cert, readonly: 'readonly'
-        = f.file_field :cert, class: "form-control", 'aria-describedby' => 'cert_help'
-        small.form-text.text-muted#cert_help
-          | Client certificate used to prove the identity of the kube-apiserver
-          |  when connecting to the webhook endpoints.
+      #file-fields.collapse class="#{'in' if @admission_webhook_enabled}"
+        .form-group
+          = f.label :cert_file, "Certificate", required: true
+          = f.file_field :cert_file, required: @certificate.blank?
+          small.form-text.text-muted#cert_help
+            | Client certificate used to prove the identity of the kube-apiserver
+            |  when connecting to the webhook endpoints.
+          div class="#{error_class_for(@form, :certificate)}"
+            = error_messages_for(@form, :certificate)
+          - if @certificate.present?
+            = f.text_area :current_cert, class: "form-control", value: @certificate, rows: 7, readonly: 'readonly'
 
-      .form-group
-        = f.label :key, "Key"
-        = f.text_area :current_key, class: "form-control", value: @key, readonly: 'readonly'
-        = f.file_field :key, class: "form-control", 'aria-describedby' => 'key_help'
-        small.form-text.text-muted#key_help
-          | Private key for the client certificate used to prove the identity of
-          |  kube-apiserver when it must call out during a request.
+        .form-group
+          = f.label :key_file, "Key", required: true
+          = f.file_field :key_file, required: @key.blank?
+          small.form-text.text-muted#key_help
+            | Private key for the client certificate used to prove the identity of
+            |  kube-apiserver when it must call out during a request.
+          div class="#{error_class_for(@form, :key)}"
+            = error_messages_for(@form, :key)
+          - if @key.present?
+            = f.text_area :current_key, class: "form-control", value: @key, rows: 7, readonly: 'readonly'
 
   .clearfix.text-right.steps-container
     = submit_tag "Save", id: "save", class: "btn btn-primary pull-right"
+
+= render "settings/admission_webhook/warn_disable_modal"

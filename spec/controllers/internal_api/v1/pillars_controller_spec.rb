@@ -107,9 +107,7 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
   end
 
   context "when contains kubelet resources" do
-
     let!(:kube_reservation) { create(:kube_resouces_reservation) }
-
     let(:expected_response) do
       {
         system_certificates: [],
@@ -133,6 +131,42 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
     it "has remote registries and respective mirrors" do
       get :show
       expect(json).to match expected_response
+    end
+  end
+
+  context "when contains kube master contents" do
+    let!(:kube_master_pillars) do
+      {
+        api_admission_webhook_enabled: "true",
+        api_admission_webhook_cert:    "cert",
+        api_admission_webhook_key:     "key"
+      }
+    end
+    let!(:expected_kube_master_pillars) do
+      {
+        enabled: "true",
+        cert:    "cert",
+        key:     "key"
+      }
+    end
+
+    it "returns empty pillars if no node specified" do
+      get :show
+      expect(json[:api]).to be_nil
+    end
+
+    it "returns empty pillars if not a master node" do
+      worker = create(:minion, role: Minion.roles[:worker])
+      get :show, minion_id: worker.minion_id
+      expect(json[:api]).to be_nil
+    end
+
+    it "returns pillars if proper master node" do
+      master = create(:minion, role: Minion.roles[:master])
+      Pillar.apply(kube_master_pillars, unprotected_pillars: kube_master_pillars.keys)
+
+      get :show, minion_id: master.minion_id
+      expect(json[:api][:admission_webhook]).to eq(expected_kube_master_pillars)
     end
   end
 

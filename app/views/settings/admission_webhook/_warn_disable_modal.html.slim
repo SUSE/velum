@@ -1,0 +1,16 @@
+.modal.fade.warn-disable-admission-webhooks-modal aria-labelledby="modal-label" role="dialog" tabindex="-1"
+  .modal-dialog role="document"
+    .modal-content
+      .modal-header
+        button.close aria-label="Close" data-dismiss="modal" type="button"
+          span aria-hidden="true"
+            | &times;
+        h4#modal-label.modal-title
+          | Please confirm
+      .modal-body
+        p By disabling this feature any data that was previously stored through the certificate and key fields are going to be erased.
+      .modal-footer
+        button.btn.btn-default data-dismiss="modal" type="button"
+          | Cancel
+        button.btn.btn-primary.disable-anyway type="button"
+          | Proceed anyway
