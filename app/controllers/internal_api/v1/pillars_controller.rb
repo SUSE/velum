@@ -4,7 +4,7 @@ require "velum/dex/ldap"
 # rubocop:disable Metrics/ClassLength
 class InternalApi::V1::PillarsController < InternalApiController
   def show
-    ok content: pillar_contents.merge(
+    ok content: pillar_contents(Pillar.simple_pillars).merge(
       registry_contents
     ).merge(
       cloud_framework_contents
@@ -16,14 +16,16 @@ class InternalApi::V1::PillarsController < InternalApiController
       system_certificate_contents
     ).deep_merge(
       dex_connectors_as_pillar
+    ).merge(
+      kube_master_contents
     )
   end
 
   private
 
-  def pillar_contents
+  def pillar_contents(pillars)
     pillar_struct = {}.tap do |h|
-      Pillar.simple_pillars.each do |k, v|
+      pillars.each do |k, v|
         h[v] = Pillar.value(pillar: k.to_sym) unless Pillar.value(pillar: k.to_sym).nil?
       end
     end
@@ -193,6 +195,15 @@ class InternalApi::V1::PillarsController < InternalApiController
     connectors = []
     connectors.concat(Velum::Dex.ldap_connectors_as_pillar)
     { dex: { connectors: connectors } }
+  end
+
+  def kube_master_contents
+    if Minion.master.where(minion_id: params["minion_id"]).empty?
+      # either the minion_id was not specified of this isn't a master node
+      {}
+    else
+      pillar_contents(Pillar.kube_master_pillars)
+    end
   end
 end
 # rubocop:enable Metrics/ClassLength

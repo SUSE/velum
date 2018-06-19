@@ -20,7 +20,10 @@ class Pillar < ApplicationRecord
     end
 
     def all_pillars
-      simple_pillars.merge(cloud_pillars).merge(cpi_pillars)
+      simple_pillars.
+        merge(cloud_pillars).
+        merge(cpi_pillars).
+        merge(kube_master_pillars)
     end
 
     def simple_pillars
@@ -70,7 +73,15 @@ class Pillar < ApplicationRecord
         components_controller_manager_args: "components:controller-manager:args",
         components_scheduler_args:          "components:scheduler:args",
         components_kubelet_args:            "components:kubelet:args",
-        components_proxy_args:              "components:proxy:args"
+        components_proxy_args:              "components:proxy:args",
+      }
+    end
+
+    def kube_master_pillars
+      {
+        api_admission_webhook_enabled: "api:admission_webhook:enabled",
+        api_admission_webhook_cert:    "api:admission_webhook:cert",
+        api_admission_webhook_key:     "api:admission_webhook:key",
       }
     end
 

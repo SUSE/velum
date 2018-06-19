@@ -1,0 +1,59 @@
+= render 'settings/apply'
+
+.alert.alert-warning role='alert'
+  p Warning: Entering invalid values for any of the following settings will cause
+    the nodes to enter into a broken state.
+
+h2 Admission Webhook
+
+p
+  | Enable Kubernetes ValidatingAdmissionWebhook admission controller. Once enabled
+  | it is possible to configure the admission controller by creating
+  code ValidatingWebhookConfiguration
+  | objects.
+
+= form_for :admission_webhook, url: settings_admission_webhook_index_path, method: :post do |f|
+  .panel.panel-default
+
+    .panel-heading
+      h3.panel-title Kubernetes proxy client certificate
+    .panel-body
+      p Kubernetes will reach out to the webhook endpoints using this client
+        certificate. This is needed in case the webhook endpoint performs
+        mutual TLS authentication.
+      p
+        strong Note well:
+        |  all the webhook endpoints must be secured using TLS
+        |  otherwise Kubernetes will refuse to interact with them. Use the 
+        = link_to "System wide certificates", settings_system_certificates_path
+        |  page to add the self-signed certificates used by your webhook endpoints.
+
+      .form-group
+        = f.label :enabled, "Enable admission webhook"
+        br
+          .btn-group.btn-group-toggle.enable-admission-webhook-btn-group data-toggle="buttons"
+            = label_tag :enabled, nil, class: "btn btn-default #{'btn-primary active' if @admission_webhook_enabled == "true"}"
+              = f.radio_button :enabled, "true", checked: @admission_webhook_enabled == "true"
+              | Enabled
+            = label_tag :enabled, nil, class: "btn btn-default #{'btn-primary active' if @admission_webhook_enabled== "false"}"
+              = f.radio_button :enabled, "false", checked: @admission_webhook_enabled == "false"
+              | Disabled
+
+      .form-group
+        = f.label :cert, "Certificate"
+        = f.text_area :current_cert, class: "form-control", value: @cert, readonly: 'readonly'
+        = f.file_field :cert, class: "form-control", 'aria-describedby' => 'cert_help'
+        small.form-text.text-muted#cert_help
+          | Client certificate used to prove the identity of the kube-apiserver
+          |  when connecting to the webhook endpoints.
+
+      .form-group
+        = f.label :key, "Key"
+        = f.text_area :current_key, class: "form-control", value: @key, readonly: 'readonly'
+        = f.file_field :key, class: "form-control", 'aria-describedby' => 'key_help'
+        small.form-text.text-muted#key_help
+          | Private key for the client certificate used to prove the identity of
+          |  kube-apiserver when it must call out during a request.
+
+  .clearfix.text-right.steps-container
+    = submit_tag "Save", id: "save", class: "btn btn-primary pull-right"

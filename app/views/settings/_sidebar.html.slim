@@ -13,7 +13,9 @@ aside.settings-sidebar-section
       = link_to "LDAP Connectors", settings_dex_connector_ldaps_path
   h5.title Kubernetes
   ul.list
-    li class="#{active_class?(settings_kubelet_compute_resources_reservations_path?)}"
-      = link_to "Compute Resources Reservations", settings_kubelet_compute_resources_reservations_path
+    li class="#{active_class?(settings_admission_webhook_path?)}"
+      = link_to "Admission Webhook", settings_admission_webhook_index_path
     li class="#{active_class?(settings_auditing_index_path?)}"
       = link_to "Auditing", settings_auditing_index_path
+    li class="#{active_class?(settings_kubelet_compute_resources_reservations_path?)}"
+      = link_to "Compute Resources Reservations", settings_kubelet_compute_resources_reservations_path
