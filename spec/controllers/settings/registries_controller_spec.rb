@@ -4,6 +4,13 @@ RSpec.describe Settings::RegistriesController, type: :controller do
   let(:user) { create(:user) }
   let(:admin_cert_text) { file_fixture("admin.crt").read.strip }
   let(:pem_cert) { create(:certificate) }
+  let(:pem_cert_text) { pem_cert.certificate.strip }
+  let(:pem_cert_file) do
+    fixture_file_upload(to_fixture_file(pem_cert.certificate), "application/x-x509-user-cert")
+  end
+  let(:empty_file) do
+    fixture_file_upload(to_fixture_file(""), "text/plain")
+  end
 
   before do
     setup_done
@@ -113,16 +120,15 @@ RSpec.describe Settings::RegistriesController, type: :controller do
 
     context "with certificate" do
       it "saves the new registry in the database" do
-        post :create, registry: { name: "r1", url: "http://local.lan",
-                                  certificate: admin_cert_text }
+        post :create, registry: { name: "r1", url: "http://local.lan", certificate: pem_cert_file }
         registry = Registry.find_by(name: "r1")
         expect(registry.name).to eq("r1")
-        expect(registry.certificate.certificate).to eq(admin_cert_text)
+        expect(registry.certificate.certificate).to eq(pem_cert_text)
       end
 
       it "does not save in db and return unprocessable entity status when invalid" do
         expect do
-          post :create, registry: { name: "", url: "invalid", certificate: admin_cert_text }
+          post :create, registry: { name: "", url: "invalid", certificate: pem_cert_file }
         end.not_to change(Registry, :count)
         expect(response).to have_http_status(:unprocessable_entity)
       end
@@ -145,9 +151,9 @@ RSpec.describe Settings::RegistriesController, type: :controller do
     end
 
     it "creates a new certificate" do
-      registry_params = { name: registry.name, url: registry.url, certificate: admin_cert_text }
+      registry_params = { name: registry.name, url: registry.url, certificate: pem_cert_file }
       put :update, id: registry.id, registry: registry_params
-      expect(registry.certificate.certificate).to eq(admin_cert_text)
+      expect(registry.certificate.certificate).to eq(pem_cert_text)
     end
 
     # rubocop:disable RSpec/ExampleLength
@@ -155,12 +161,11 @@ RSpec.describe Settings::RegistriesController, type: :controller do
       registry_params = {
         name:        registry_with_cert.name,
         url:         registry_with_cert.url,
-        certificate: pem_cert.certificate
+        certificate: pem_cert_file
       }
 
       put :update, id: registry_with_cert.id, registry: registry_params
-      expect(registry_with_cert.reload.certificate.certificate.strip)
-        .to eq(pem_cert.certificate.strip)
+      expect(registry_with_cert.reload.certificate.certificate) .to eq(pem_cert_text)
     end
     # rubocop:enable RSpec/ExampleLength
 

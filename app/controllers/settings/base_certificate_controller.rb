@@ -25,17 +25,18 @@ class Settings::BaseCertificateController < SettingsController
   def new
     @certificate_holder = certificate_holder_type.new
     @cert = Certificate.new
+    @passed_cert = nil
   end
 
   def create
     @certificate_holder = certificate_holder_type.new(
-      certificate_holder_params.except(:certificate)
+      certificate_holder_params.except(:certificate, :current_cert)
     )
-    @cert = Certificate.find_or_initialize_by(certificate: certificate_param)
+    @cert = passed_certificate
 
     ActiveRecord::Base.transaction do
       @certificate_holder.save!
-      create_or_update_certificate! if certificate_param.present?
+      create_or_update_certificate! if passed_certificate.present?
     end
 
     redirect_to [:settings, @certificate_holder],
@@ -49,12 +50,12 @@ class Settings::BaseCertificateController < SettingsController
   end
 
   def update
-    @cert = @certificate_holder.certificate || Certificate.new(certificate: certificate_param)
+    @cert = @certificate_holder.certificate || passed_certificate
 
     ActiveRecord::Base.transaction do
       @certificate_holder.update_attributes!(certificate_holder_update_params)
 
-      if certificate_param.present?
+      if passed_certificate.present?
         create_or_update_certificate!
       elsif @certificate_holder.certificate.present?
         @certificate_holder.certificate.destroy!
@@ -95,12 +96,27 @@ class Settings::BaseCertificateController < SettingsController
           "#{self.class.name}#certificate_holder_update_params is an abstract method."
   end
 
+  def passed_certificate
+    # Storing the cert in the variable is required, as uploaded files (in RSpec
+    # tests at least) will not be available for multiple calls:
+    #
+    # > passed_certificate.present? => true
+    #
+    # > passed_certificate.present?  => false
+    @passed_cert ||= if certificate_holder_params[:certificate].present? ||
+        certificate_holder_params[:current_cert].present?
+      Certificate.find_or_initialize_by(
+        certificate: Certificate.get_certificate_text(certificate_holder_params)
+      )
+    end
+  end
+
   def create_or_update_certificate!
     if @cert.new_record?
       @cert.save!
       CertificateService.create!(service: certificate_holder, certificate: @cert)
     else
-      @cert.update_attributes!(certificate: certificate_param)
+      @cert.update_attributes!(certificate: passed_certificate.certificate)
     end
   end
 

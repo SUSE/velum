@@ -15,7 +15,7 @@ class SystemCertificate < ActiveRecord::Base
     def create_system_certificate(system_certificate_params)
       return [] if system_certificate_params.blank?
       cert_name = system_certificate_params[:name]
-      cert = system_certificate_params[:certificate]
+      cert = Certificate.get_certificate_text(system_certificate_params)
       ActiveRecord::Base.transaction do
         system_certificate = SystemCertificate.find_or_initialize_by(name: cert_name)
         system_certificate.save! if system_certificate.new_record?
