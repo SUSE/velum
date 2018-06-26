@@ -30,4 +30,10 @@ describe "Monitoring feature" do
     expect(page).not_to have_content("minion1.k8s.local")
   end
   # rubocop:enable RSpec/ExampleLength
+
+  it "shows the node as offline", js: true do
+    Minion.last.update!(online: false)
+
+    expect(page).to have_css(".fa-circle.text-danger")
+  end
 end

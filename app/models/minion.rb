@@ -19,9 +19,14 @@ class Minion < ApplicationRecord
     Minion.all.find_each do |minion|
       begin
         minion_grains = minion.salt.info
+        online = minion_grains.present?
+        # update minion early as minion_grains can't be accessed
+        minion.update_columns online: false && next unless online
+
         tx_update_reboot_needed = minion_grains["tx_update_reboot_needed"] || false
         tx_update_failed = minion_grains["tx_update_failed"] || false
-        minion.update_columns tx_update_reboot_needed: tx_update_reboot_needed,
+        minion.update_columns online:                  online,
+                              tx_update_reboot_needed: tx_update_reboot_needed,
                               tx_update_failed:        tx_update_failed
       rescue StandardError
       end
