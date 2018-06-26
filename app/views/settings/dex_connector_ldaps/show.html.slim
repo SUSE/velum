@@ -1,0 +1,100 @@
+= render 'settings/apply'
+
+header.settings-content-header.clearfix
+  .title.pull-left
+    h2 #{@certificate_holder.name} details
+  .actions.pull-right
+    = link_to settings_dex_connector_ldap_path(@certificate_holder), method: "delete", class: "btn btn-danger", data: { confirm: "Are you sure?" } do
+      | Delete
+    = link_to edit_settings_dex_connector_ldap_path(@certificate_holder), class: "btn btn-primary" do
+      | Edit
+
+section.settings-details
+  .field
+    .details-label Name
+    .details-value
+      = @certificate_holder.name
+
+  h4 Server
+  .field
+    .details-label Host
+    .details-value
+      = @certificate_holder.host
+  .field
+    .details-label Port
+    .details-value
+      = @certificate_holder.port
+  .field
+    .details-label StartTLS
+    .details-value
+      = @certificate_holder.start_tls
+
+  - if @certificate_holder.certificate.present?
+    .field
+      .details-label Certificate
+      .details-value
+        = @certificate_holder.certificate.certificate
+
+  h4 Authentication
+  .field
+    .details-label Anonymous
+    .details-value
+      = @certificate_holder.bind_anon
+  .field
+    .details-label DN
+    .details-value
+      = @certificate_holder.bind_dn
+
+  h4 User Search
+  .field
+    .details-label Username Prompt
+    .details-value
+      = @certificate_holder.username_prompt
+  .field
+    .details-label Base DN
+    .details-value
+      = @certificate_holder.user_base_dn
+  .field
+    .details-label Filter
+    .details-value
+      = @certificate_holder.user_filter
+  h4 User Attribute Map
+  .field
+    .details-label Username
+    .details-value
+      = @certificate_holder.user_attr_username
+  .field
+    .details-label ID
+    .details-value
+      = @certificate_holder.user_attr_id
+  .field
+    .details-label Email
+    .details-value
+      = @certificate_holder.user_attr_email
+  .field
+    .details-label Name
+    .details-value
+      = @certificate_holder.user_attr_name
+
+  h4 Group Search
+  .field
+    .details-label Base DN
+    .details-value
+      = @certificate_holder.group_base_dn
+  .field
+    .details-label Filter
+    .details-value
+      = @certificate_holder.group_filter
+  h4 Group Attribute Map
+  .field
+    .details-label User
+    .details-value
+      = @certificate_holder.group_attr_user
+  .field
+    .details-label Group
+    .details-value
+      = @certificate_holder.group_attr_group
+  .field
+    .details-label Name
+    .details-value
+      = @certificate_holder.group_attr_name

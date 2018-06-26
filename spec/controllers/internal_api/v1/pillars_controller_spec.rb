@@ -388,7 +388,7 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
       bind:            {
         anonymous: false,
         dn:        "cn=admin,dc=ldap_host_#{num},dc=com",
-        pw:        nil
+        pw:        "pass"
       },
       username_prompt: "Username",
       user:            {
