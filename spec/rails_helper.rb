@@ -15,6 +15,7 @@ ActiveRecord::Migration.maintain_test_schema!
 Dir[Rails.root.join("spec", "support", "**", "*.rb")].each { |f| require f }
 
 RSpec.configure do |config|
+  config.fixture_path = File.expand_path("../fixtures/", __FILE__)
   # If we want Capybara + DatabaseCleaner + Poltergeist to work correctly, we
   # have to just set this to false.
   config.fixture_path = File.expand_path("../fixtures/", __FILE__)
