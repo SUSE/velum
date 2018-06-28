@@ -8,6 +8,7 @@ describe "Feature: Registries settings", js: true do
   let!(:registry3) { create(:registry) }
   let!(:mirror) { create(:registry_mirror, registry: registry) }
   let!(:mirror2) { create(:registry_mirror, registry: registry) }
+  let(:admin_cert_text) { file_fixture("admin.crt").read.strip }
 
   before do
     setup_done
@@ -73,11 +74,11 @@ describe "Feature: Registries settings", js: true do
     it "allows an user to create a registry (w/ certificate)" do
       fill_in "Name", with: "Registry"
       fill_in "URL", with: "https://google.com"
-      fill_in "Certificate", with: "Certificate"
+      fill_in "Certificate", with: admin_cert_text
       click_button("Save")
 
       last_registry = Registry.last
-      expect(page).to have_content("Certificate")
+      expect(page).to have_content(admin_cert_text)
       expect(page).to have_content("Registry was successfully created.")
       expect(page).to have_current_path(settings_registry_path(last_registry))
     end

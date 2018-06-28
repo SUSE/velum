@@ -69,7 +69,7 @@ RSpec.describe SetupController, type: :controller do
       let(:certificate_settings) do
         settings_params.dup.tap do |s|
           s["system_certificate"] = { name:        "sca1",
-                                      certificate: "cert" }
+                                      certificate: certificate.certificate }
         end
       end
 
@@ -685,7 +685,7 @@ RSpec.describe SetupController, type: :controller do
       let(:certificate_settings) do
         settings_params.dup.tap do |s|
           s["system_certificate"] = { name:        "sca1",
-                                      certificate: "cert" }
+                                      certificate: certificate.certificate }
         end
       end
 
@@ -697,7 +697,7 @@ RSpec.describe SetupController, type: :controller do
         put :configure, settings: certificate_settings
         system_certificate = SystemCertificate.find_by(name: "sca1")
         expect(system_certificate.name).to eq("sca1")
-        expect(system_certificate.certificate.certificate).to eq("cert")
+        expect(system_certificate.certificate.certificate).to eq(certificate.certificate)
       end
     end
 

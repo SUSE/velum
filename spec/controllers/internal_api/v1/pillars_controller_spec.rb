@@ -338,7 +338,7 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
         registries:          [],
         system_certificates: [
           name: "sca1",
-          cert: "cert"
+          cert: certificate.certificate
         ],
         kubelet:             {
           :"compute-resources" => {},
@@ -348,7 +348,6 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
     end
 
     before do
-      certificate = Certificate.create(certificate: "cert")
       system_certificate = SystemCertificate.create(name: "sca1")
       CertificateService.create(service: system_certificate, certificate: certificate)
     end
