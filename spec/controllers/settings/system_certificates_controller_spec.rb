@@ -2,6 +2,8 @@ require "rails_helper"
 
 RSpec.describe Settings::SystemCertificatesController, type: :controller do
   let(:user) { create(:user) }
+  let(:admin_cert_text) { file_fixture("admin.crt").read.strip }
+  let(:pem_cert) { create(:certificate) }
 
   before do
     setup_done
@@ -35,7 +37,7 @@ RSpec.describe Settings::SystemCertificatesController, type: :controller do
   end
 
   describe "GET #edit" do
-    let!(:certificate) { create(:certificate, certificate: "Cert") }
+    let!(:certificate) { create(:certificate, certificate: admin_cert_text) }
     let!(:system_certificate) { create(:system_certificate) }
     let!(:system_certificate_with_cert) { create(:system_certificate) }
 
@@ -78,31 +80,38 @@ RSpec.describe Settings::SystemCertificatesController, type: :controller do
   describe "POST #create" do
     it "can not save system certificate without name" do
       expect do
-        post :create, system_certificate: { name: "", certificate: "cert" }
+        post :create, system_certificate: { name: "", certificate: admin_cert_text }
       end.not_to change(SystemCertificate, :count)
       expect(response).to have_http_status(:unprocessable_entity)
     end
 
     it "saves the system certificate in the database" do
-      post :create, system_certificate: { name: "sca1", certificate: "cert" }
+      post :create, system_certificate: { name: "sca1", certificate: admin_cert_text }
       system_certificate = SystemCertificate.find_by(name: "sca1")
       expect(system_certificate.name).to eq("sca1")
-      expect(system_certificate.certificate.certificate).to eq("cert")
+      expect(system_certificate.certificate.certificate).to eq(admin_cert_text)
     end
   end
 
   describe "PATCH #update" do
-    let!(:certificate) { create(:certificate, certificate: "C1") }
+    let!(:certificate) { create(:certificate, certificate: admin_cert_text) }
     let!(:system_certificate) { create(:system_certificate) }
 
     before do
       CertificateService.create!(service: system_certificate, certificate: certificate)
     end
 
-    it "updates a system certificate" do
+    it "updates a system certificate's name" do
       system_certificate_params = { name: "new name" }
       put :update, id: system_certificate.id, system_certificate: system_certificate_params
       expect(SystemCertificate.find(system_certificate.id).name).to eq("new name")
+    end
+
+    it "updates a system certificate's certificate" do
+      system_certificate_params = { certificate: pem_cert.certificate }
+      put :update, id: system_certificate.id, system_certificate: system_certificate_params
+      certificate = SystemCertificate.find(system_certificate.id).certificate
+      expect(certificate.certificate.strip).to eq(pem_cert.certificate.strip)
     end
   end
 

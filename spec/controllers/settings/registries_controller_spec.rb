@@ -2,6 +2,8 @@ require "rails_helper"
 
 RSpec.describe Settings::RegistriesController, type: :controller do
   let(:user) { create(:user) }
+  let(:admin_cert_text) { file_fixture("admin.crt").read.strip }
+  let(:pem_cert) { create(:certificate) }
 
   before do
     setup_done
@@ -53,7 +55,7 @@ RSpec.describe Settings::RegistriesController, type: :controller do
   end
 
   describe "GET #edit" do
-    let!(:certificate) { create(:certificate, certificate: "Cert") }
+    let!(:certificate) { create(:certificate, certificate: admin_cert_text) }
     let!(:registry) { create(:registry) }
     let!(:registry_with_cert) { create(:registry) }
 
@@ -111,15 +113,16 @@ RSpec.describe Settings::RegistriesController, type: :controller do
 
     context "with certificate" do
       it "saves the new registry in the database" do
-        post :create, registry: { name: "r1", url: "http://local.lan", certificate: "cert" }
+        post :create, registry: { name: "r1", url: "http://local.lan",
+                                  certificate: admin_cert_text }
         registry = Registry.find_by(name: "r1")
         expect(registry.name).to eq("r1")
-        expect(registry.certificate.certificate).to eq("cert")
+        expect(registry.certificate.certificate).to eq(admin_cert_text)
       end
 
       it "does not save in db and return unprocessable entity status when invalid" do
         expect do
-          post :create, registry: { name: "", url: "invalid", certificate: "cert" }
+          post :create, registry: { name: "", url: "invalid", certificate: admin_cert_text }
         end.not_to change(Registry, :count)
         expect(response).to have_http_status(:unprocessable_entity)
       end
@@ -127,7 +130,7 @@ RSpec.describe Settings::RegistriesController, type: :controller do
   end
 
   describe "PATCH #update" do
-    let!(:certificate) { create(:certificate, certificate: "C1") }
+    let!(:certificate) { create(:certificate, certificate: admin_cert_text) }
     let!(:registry) { create(:registry) }
     let!(:registry_with_cert) { create(:registry) }
 
@@ -142,9 +145,9 @@ RSpec.describe Settings::RegistriesController, type: :controller do
     end
 
     it "creates a new certificate" do
-      registry_params = { name: registry.name, url: registry.url, certificate: "cert" }
+      registry_params = { name: registry.name, url: registry.url, certificate: admin_cert_text }
       put :update, id: registry.id, registry: registry_params
-      expect(registry.certificate.certificate).to eq("cert")
+      expect(registry.certificate.certificate).to eq(admin_cert_text)
     end
 
     # rubocop:disable RSpec/ExampleLength
@@ -152,11 +155,12 @@ RSpec.describe Settings::RegistriesController, type: :controller do
       registry_params = {
         name:        registry_with_cert.name,
         url:         registry_with_cert.url,
-        certificate: "cert"
+        certificate: pem_cert.certificate
       }
 
       put :update, id: registry_with_cert.id, registry: registry_params
-      expect(registry_with_cert.reload.certificate.certificate).to eq("cert")
+      expect(registry_with_cert.reload.certificate.certificate.strip)
+        .to eq(pem_cert.certificate.strip)
     end
     # rubocop:enable RSpec/ExampleLength
 
