@@ -42,6 +42,7 @@ BuildRequires:  ruby-macros >= 5
 Obsoletes:      velum < %{version}
 # javascript engine to build assets
 BuildRequires:  nodejs
+BuildRequires:  velum-branding
 
 %define rb_build_versions %{rb_default_ruby}
 BuildRequires:  ruby-common-rails
@@ -87,6 +88,9 @@ export NOKOGIRI_USE_SYSTEM_LIBRARIES=1
 
 # deploy gems
 bundle install --retry=3 --local --deployment --without development test
+
+# copy over the images from velum-branding
+cp -R %{_datadir}/velum/images/* app/assets/images/branding/
 
 VELUM_SECRETS_DIR=%{buildroot}%{velumdir}/tmp RAILS_ENV=production INCLUDE_ASSETS_GROUP=yes bundle exec rake assets:precompile
 # fix permissions of generated assets
