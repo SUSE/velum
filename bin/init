@@ -39,6 +39,7 @@ setup_database() {
             echo "Error at setup time"
             exit 1
         fi
+        bundle exec rake db:migrate
         ;;
       "DB_READY")
         echo "Database ready"
