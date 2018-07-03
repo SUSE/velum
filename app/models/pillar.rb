@@ -125,7 +125,9 @@ class Pillar < ApplicationRecord
         cloud_openstack_lb_mon_retries:
           "cloud:openstack:lb_mon_retries",
         cloud_openstack_bs_version:
-          "cloud:openstack:bs_version"
+          "cloud:openstack:bs_version",
+        cloud_openstack_ignore_vol_az:
+          "cloud:openstack:ignore_vol_az"
       }
     end
     # rubocop:enable Layout/AlignHash
