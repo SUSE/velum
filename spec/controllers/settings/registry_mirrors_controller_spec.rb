@@ -3,6 +3,8 @@ require "rails_helper"
 # rubocop:disable RSpec/ExampleLength
 RSpec.describe Settings::RegistryMirrorsController, type: :controller do
   let(:user) { create(:user) }
+  let(:admin_cert_text) { file_fixture("admin.crt").read.strip }
+  let(:pem_cert) { create(:certificate) }
 
   before do
     setup_done
@@ -33,7 +35,7 @@ RSpec.describe Settings::RegistryMirrorsController, type: :controller do
   end
 
   describe "GET #edit" do
-    let!(:certificate) { create(:certificate, certificate: "Cert") }
+    let!(:certificate) { create(:certificate, certificate: admin_cert_text) }
     let!(:registry_mirror) { create(:registry_mirror) }
     let!(:registry_mirror_with_cert) { create(:registry_mirror) }
 
@@ -80,7 +82,7 @@ RSpec.describe Settings::RegistryMirrorsController, type: :controller do
         registry_mirror_params = {
           name:        "r1",
           url:         "http://local.lan",
-          certificate: "cert",
+          certificate: admin_cert_text,
           registry_id: registry.id
         }
 
@@ -103,21 +105,21 @@ RSpec.describe Settings::RegistryMirrorsController, type: :controller do
         registry_mirror_params = {
           name:        "r1",
           url:         "http://local.lan",
-          certificate: "cert",
+          certificate: admin_cert_text,
           registry_id: registry.id
         }
 
         post :create, registry_mirror: registry_mirror_params
         registry_mirror = RegistryMirror.find_by(name: "r1")
         expect(registry_mirror.name).to eq("r1")
-        expect(registry_mirror.certificate.certificate).to eq("cert")
+        expect(registry_mirror.certificate.certificate).to eq(admin_cert_text)
       end
 
       it "does not save in db and return unprocessable entity status when invalid" do
         registry_mirror_params = {
           name:        "r1",
           url:         "invalid",
-          certificate: "cert",
+          certificate: admin_cert_text,
           registry_id: registry.id
         }
 
@@ -130,7 +132,7 @@ RSpec.describe Settings::RegistryMirrorsController, type: :controller do
   end
 
   describe "PATCH #update" do
-    let!(:certificate) { create(:certificate, certificate: "Cert") }
+    let!(:certificate) { create(:certificate, certificate: admin_cert_text) }
     let!(:registry_mirror) { create(:registry_mirror) }
     let!(:registry_mirror_with_cert) { create(:registry_mirror) }
 
@@ -148,22 +150,23 @@ RSpec.describe Settings::RegistryMirrorsController, type: :controller do
       registry_mirror_params = {
         name:        registry_mirror.name,
         url:         registry_mirror.url,
-        certificate: "C2"
+        certificate: pem_cert.certificate
       }
 
       put :update, id: registry_mirror.id, registry_mirror: registry_mirror_params
-      expect(registry_mirror.certificate.certificate).to eq("C2")
+      expect(registry_mirror.certificate.certificate.strip).to eq(pem_cert.certificate.strip)
     end
 
     it "updates a certificate" do
       registry_mirror_params = {
         name:        registry_mirror_with_cert.name,
         url:         registry_mirror_with_cert.url,
-        certificate: "C4"
+        certificate: pem_cert.certificate
       }
 
       put :update, id: registry_mirror_with_cert.id, registry_mirror: registry_mirror_params
-      expect(registry_mirror_with_cert.reload.certificate.certificate).to eq("C4")
+      expect(registry_mirror_with_cert.reload.certificate.certificate.strip)
+        .to eq(pem_cert.certificate.strip)
     end
 
     it "drops a certificate" do
