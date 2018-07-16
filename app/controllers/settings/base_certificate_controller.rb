@@ -114,10 +114,10 @@ class Settings::BaseCertificateController < SettingsController
   def create_or_update_certificate!
     if @cert.new_record?
       @cert.save!
-      CertificateService.create!(service: certificate_holder, certificate: @cert)
     else
-      @cert.update_attributes!(certificate: passed_certificate.certificate)
+      @cert.update_attributes!(certificate: @passed_cert.certificate)
     end
+    CertificateService.create(service: certificate_holder, certificate: @cert)
   end
 
   def set_certificate_holder
