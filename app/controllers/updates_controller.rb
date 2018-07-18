@@ -7,7 +7,7 @@ class UpdatesController < ApplicationController
   # Reboot the admin node.
   def create
     # rubocop:disable SkipsModelValidations
-    Minion.admin.update_all highstate: Minion.highstates[:applied]
+    Minion.admin.update_all highstate: Minion.highstates[:applied], tx_update_reboot_needed: false
     # rubocop:enable SkipsModelValidations
     ::Velum::Salt.call(
       action:  "cmd.run",
