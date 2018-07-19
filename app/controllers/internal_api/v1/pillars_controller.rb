@@ -145,7 +145,8 @@ class InternalApi::V1::PillarsController < InternalApiController
           floating:       Pillar.value(pillar: :cloud_openstack_floating),
           subnet:         Pillar.value(pillar: :cloud_openstack_subnet),
           bs_version:     Pillar.value(pillar: :cloud_openstack_bs_version),
-          lb_mon_retries: Pillar.value(pillar: :cloud_openstack_lb_mon_retries)
+          lb_mon_retries: Pillar.value(pillar: :cloud_openstack_lb_mon_retries),
+          ignore_vol_az:  Pillar.value(pillar: :cloud_openstack_ignore_vol_az)
         }
       }
     }

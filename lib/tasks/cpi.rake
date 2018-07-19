@@ -27,6 +27,7 @@ namespace :cpi do
       when "floating-network-id" then cfg["cloud:openstack:floating_id"] = value
       when "monitor-max-retries" then cfg["cloud:openstack:lb_mon_retries"] = value
       when "bs-version" then          cfg["cloud:openstack:bs_version"] = value
+      when "ignore-volume-az" then    cfg["cloud:openstack:ignore_vol_az"] = value
       when /^./ then                  puts "Unknown option: #{key}"
       end
     end
