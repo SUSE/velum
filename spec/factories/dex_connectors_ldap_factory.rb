@@ -27,7 +27,7 @@ FactoryGirl.define do
     trait :regular_admin do
       bind_anon false
       bind_dn { "cn=admin,dc=#{host.chomp(".com")},dc=com" }
-      bind_pw nil
+      bind_pw "pass"
     end
 
     username_prompt "Username"

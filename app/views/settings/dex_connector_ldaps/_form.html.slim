@@ -1,0 +1,138 @@
+= form_for [:settings, @certificate_holder], html: { class: "dex-connectors-form"} do |f|
+  .form-group class="#{error_class_for(@certificate_holder, :name)}"
+    = f.label :name
+    = f.text_field :name, class: "form-control", value: @certificate_holder.name
+    = error_messages_for(@certificate_holder, :name)
+
+  hr
+  h4 Server
+
+  .form-group class="#{error_class_for(@certificate_holder, :host)}"
+    = f.label :host
+    = f.text_field :host, class: "form-control", value: @certificate_holder.host
+    = error_messages_for(@certificate_holder, :host)
+
+  .form-group class="#{error_class_for(@certificate_holder, :port)}"
+    = f.label :port
+    = f.text_field :port, class: "form-control", value: @certificate_holder.port
+    = error_messages_for(@certificate_holder, :port)
+
+  .form-group class="#{error_class_for(@certificate_holder, :start_tls)}"
+    = f.label :start_tls, "StartTLS"
+    br
+    .btn-group.btn-group-toggle data-toggle="buttons"
+      = f.label :start_tls, nil, class: "btn btn-default #{'btn-primary active' if @certificate_holder.start_tls}"
+        = f.radio_button :start_tls, "true", checked: @certificate_holder.start_tls
+        | On
+      = f.label :start_tls, nil, class: "btn btn-default #{'btn-primary active' unless @certificate_holder.start_tls}"
+        = f.radio_button :start_tls, "false", checked: !@certificate_holder.start_tls
+        | Off
+    = error_messages_for(@certificate_holder, :start_tls)
+
+
+  .form-group class="#{error_class_for(@cert, :certificate)}"
+    = f.label :certificate
+    p Paste the certificate for the LDAP server here.
+    = f.text_area :certificate, value: @cert.certificate, class: "form-control", rows: 5, required: true
+    = error_messages_for(@cert, :certificate)
+
+  br
+  h4 Authentication
+
+  .form-group class="#{error_class_for(@certificate_holder, :bind_anon)}"
+    = f.label :bind_anon, "Anonymous"
+    br
+    .btn-group.btn-group-toggle data-toggle="buttons"
+      = f.label :bind_anon, nil, class: "btn btn-default #{'btn-primary active' if @certificate_holder.bind_anon}", data: {toggle: "collapse", target: ".ldap-dn-authentication"}
+        = f.radio_button :bind_anon, "true", checked: @certificate_holder.bind_anon
+        | True
+      = f.label :bind_anon, nil, class: "btn btn-default #{'btn-primary active' unless @certificate_holder.bind_anon}", data: {toggle: "collapse", target: ".ldap-dn-authentication"}
+        = f.radio_button :bind_anon, "false", checked: !@certificate_holder.bind_anon
+        | False
+    = error_messages_for(@certificate_holder, :bind_anon)
+
+  .ldap-dn-authentication.collapse class="#{'in' if !@certificate_holder.bind_anon}"
+    .form-group class="#{error_class_for(@certificate_holder, :bind_dn)}"
+      = f.label :bind_dn, "DN"
+      = f.text_field :bind_dn, class: "form-control", value: @certificate_holder.bind_dn, required: !@certificate_holder.bind_anon, disable: @certificate_holder.bind_anon
+      = error_messages_for(@certificate_holder, :bind_dn)
+
+    .form-group class="#{error_class_for(@certificate_holder, :bind_pw)}"
+      = f.label :bind_pw, "Password"
+      = f.password_field :bind_pw, class: "form-control", value: @certificate_holder.bind_pw, required: !@certificate_holder.bind_anon, disable: @certificate_holder.bind_anon
+      = error_messages_for(@certificate_holder, :bind_pw)
+
+  hr
+  h4 User Search
+  .form-group class="#{error_class_for(@certificate_holder, :username_prompt)}"
+    = f.label :username_prompt, "Username Prompt"
+    = f.text_field :username_prompt, class: "form-control", value: @certificate_holder.username_prompt
+    = error_messages_for(@certificate_holder, :username_prompt)
+
+  .form-group class="#{error_class_for(@certificate_holder, :user_base_dn)}"
+    = f.label :user_base_dn, "Base DN"
+    = f.text_field :user_base_dn, class: "form-control", value: @certificate_holder.user_base_dn
+    = error_messages_for(@certificate_holder, :user_base_dn)
+
+  .form-group class="#{error_class_for(@certificate_holder, :user_filter)}"
+    = f.label :user_filter, "Filter"
+    = f.text_field :user_filter, class: "form-control", value: @certificate_holder.user_filter
+    = error_messages_for(@certificate_holder, :user_filter)
+
+  br
+  h4 User Attribute Map
+
+  .form-group class="#{error_class_for(@certificate_holder, :user_attr_username)}"
+    = f.label :user_attr_username, "Username"
+    = f.text_field :user_attr_username, class: "form-control", value: @certificate_holder.user_attr_username
+    = error_messages_for(@certificate_holder, :user_attr_username)
+
+  .form-group class="#{error_class_for(@certificate_holder, :user_attr_id)}"
+    = f.label :user_attr_id, "ID"
+    = f.text_field :user_attr_id, class: "form-control", value: @certificate_holder.user_attr_id
+    = error_messages_for(@certificate_holder, :user_attr_id)
+
+  .form-group class="#{error_class_for(@certificate_holder, :user_attr_email)}"
+    = f.label :user_attr_email, "Email"
+    = f.text_field :user_attr_email, class: "form-control", value: @certificate_holder.user_attr_email
+    = error_messages_for(@certificate_holder, :user_attr_email)
+
+  .form-group class="#{error_class_for(@certificate_holder, :user_attr_name)}"
+    = f.label :user_attr_name, "Name"
+    = f.text_field :user_attr_name, class: "form-control", value: @certificate_holder.user_attr_name
+    = error_messages_for(@certificate_holder, :user_attr_name)
+
+  hr
+  h4 Group Search
+
+  .form-group class="#{error_class_for(@certificate_holder, :group_base_dn)}"
+    = f.label :group_base_dn, "Base DN"
+    = f.text_field :group_base_dn, class: "form-control", value: @certificate_holder.group_base_dn
+    = error_messages_for(@certificate_holder, :group_base_dn)
+
+  .form-group class="#{error_class_for(@certificate_holder, :group_filter)}"
+    = f.label :group_filter, "Filter"
+    = f.text_field :group_filter, class: "form-control", value: @certificate_holder.group_filter
+    = error_messages_for(@certificate_holder, :group_filter)
+
+  br
+  h4 Group Attribute Map
+
+  .form-group class="#{error_class_for(@certificate_holder, :group_attr_user)}"
+    = f.label :group_attr_user, "User"
+    = f.text_field :group_attr_user, class: "form-control", value: @certificate_holder.group_attr_user
+    = error_messages_for(@certificate_holder, :group_attr_user)
+
+  .form-group class="#{error_class_for(@certificate_holder, :group_attr_group)}"
+    = f.label :group_attr_group, "Group"
+    = f.text_field :group_attr_group, class: "form-control", value: @certificate_holder.group_attr_group
+    = error_messages_for(@certificate_holder, :group_attr_group)
+
+  .form-group class="#{error_class_for(@certificate_holder, :group_attr_name)}"
+    = f.label :group_attr_name, "Name"
+    = f.text_field :group_attr_name, class: "form-control", value: @certificate_holder.group_attr_name
+    = error_messages_for(@certificate_holder, :group_attr_name)
+
+  .form-actions.clearfix
+    = f.submit "Save", class: "btn btn-primary action"
+    = link_to "Cancel", settings_dex_connector_ldaps_path, class: "btn btn-default action"
