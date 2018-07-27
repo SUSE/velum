@@ -11,7 +11,8 @@ class SetupController < ApplicationController
 
   skip_before_action :redirect_to_setup
   before_action :redirect_to_dashboard
-  skip_before_action :redirect_to_dashboard, only: :worker_bootstrap
+  skip_before_action :redirect_to_dashboard,
+                     only: [:worker_bootstrap, :build_cloud_cluster]
   before_action :check_empty_settings, only: :configure
   before_action :check_empty_roles, only: :set_roles
 
@@ -117,11 +118,11 @@ class SetupController < ApplicationController
 
     if @cloud_cluster.save
       @cloud_cluster.build!
-      redirect_to setup_discovery_path,
+      redirect_to (setup_done? ? root_path : setup_discovery_path),
         notice: "Starting to build #{@cloud_cluster}..."
     else
       flash.keep
-      redirect_to setup_worker_bootstrap_path,
+      redirect_to (setup_done? ? root_path : setup_worker_bootstrap_path),
         flash: { error: @cloud_cluster.errors.full_messages.to_sentence }
     end
   end
