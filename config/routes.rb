@@ -64,6 +64,7 @@ Rails.application.routes.draw do
     resources :kubelet_compute_resources_reservations, only: [:index, :create]
     resources :auditing, only: [:index, :create]
     resources :system_certificates
+    resources :ldap_test
     resources :dex_connector_ldaps, path: :ldap_connectors
   end
 end

@@ -93,3 +93,15 @@ $sidebar-item-highlight: #00c081;
     margin-bottom: 15px;
   }
 }
+
+.ldap-conn-message-default {
+  color: black;
+}
+
+.ldap-conn-message-invalid {
+  color: $brand-danger;
+}
+
+.ldap-conn-message-valid {
+  color: $brand-success;
+}

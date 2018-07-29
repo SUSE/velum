@@ -52,7 +52,7 @@
         | False
     = error_messages_for(@certificate_holder, :bind_anon)
 
-  .ldap-dn-authentication.collapse class="#{'in' if !@certificate_holder.bind_anon}"
+  .ldap-dn-authentication.collapse class="#{'in' if !@certificate_holder.bind_anon}" id="anonymous_bind_toggle" aria-expanded="true"
     .form-group class="#{error_class_for(@certificate_holder, :bind_dn)}"
       = f.label :bind_dn, "DN"
       = f.text_field :bind_dn, class: "form-control", value: @certificate_holder.bind_dn, required: !@certificate_holder.bind_anon, disable: @certificate_holder.bind_anon
@@ -135,5 +135,9 @@
     = error_messages_for(@certificate_holder, :group_attr_name)
 
   .form-actions.clearfix
-    = f.submit "Save", class: "btn btn-primary action"
+    = f.submit "Save", class: "btn btn-primary action", id: "ldap_conn_save"
     = link_to "Cancel", settings_dex_connector_ldaps_path, class: "btn btn-default action"
+    button class="btn btn-primary" type="button" id="ldap_conn_test" Test Connection
+
+  h4 id="ldap_conn_message" Test Connection first before saving 
+  
