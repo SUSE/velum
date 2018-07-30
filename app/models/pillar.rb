@@ -90,7 +90,7 @@ class Pillar < ApplicationRecord
         cloud_worker_type:
           "cloud:profiles:cluster_node:size",
         cloud_worker_subnet:
-          "cloud:profiles:cluster_node:network_interfaces:SubnetId",
+          "cloud:profiles:cluster_node:subnet",
         cloud_worker_security_group:
           "cloud:profiles:cluster_node:network_interfaces:SecurityGroupId",
         cloud_worker_net:

@@ -1,0 +1,38 @@
+= content_for :body_class, "worker_bootstrap"
+
+h1
+  ' Bootstrap your #{product_name}
+  small in Google Compute Engine
+
+
+= form_for @cloud_cluster, url: setup_build_cloud_cluster_path do |form|
+  = form.hidden_field :cloud_framework
+  p
+    ' In order to complete the installation, it is necessary to bootstrap a few
+    ' additional nodes, those will be the Kubernetes Master and Workers.
+
+  = render "instance_type_panel",
+    form: form,
+    list_url: "https://cloud.google.com/compute/docs/machine-types"
+
+  = render "cluster_size_panel", form: form
+
+  .panel.panel-default
+    .panel-heading
+      h3.panel-title Networking
+    .panel-body
+      .col-lg-3.col-md-6
+        .form-group.required
+          label for="cloud_cluster_network_id" Network
+          = form.text_field :network_id, class: "form-control", required: true
+      .col-lg-3.col-md-6
+        .form-group
+          label for="cloud_cluster_subnet_id" Subnetwork
+          = form.text_field :subnet_id, class: "form-control"
+
+  .clearfix.text-right.steps-container
+    = link_to "Back", setup_path, class: "btn btn-danger"
+    = form.submit "Next", class: "btn btn-primary"
+
+- content_for :page_javascript do
+  = javascript_include_tag 'cloud/bootstrap', defer: true
