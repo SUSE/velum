@@ -27,5 +27,16 @@ $(function() {
   });
 
   new SUSERegistryMirrorPanel('.suse-mirror-panel-body');
-  new OpenStackSettings('.openstack-settings');
+  var openstackSettings = new OpenStackSettings('.openstack-settings');
+
+  function toggleOpenStackSettings() {
+    if ($('input[name="settings[cloud_provider]"]').val() === 'openstack') {
+      openstackSettings.settingsEnabled();
+    } else {
+      openstackSettings.settingsDisabled();
+    }
+  }
+
+  $(document).on('change', 'input[name="settings[cloud_provider]"]', toggleOpenStackSettings);
+  toggleOpenStackSettings();
 });
