@@ -25,7 +25,8 @@ class Minion < ApplicationRecord
 
         tx_update_reboot_needed = minion_grains["tx_update_reboot_needed"] || false
         tx_update_failed = minion_grains["tx_update_failed"] || false
-        minion.update_columns online:                  online,
+        minion.update_columns fqdn:                    minion_grains["fqdn"],
+                              online:                  online,
                               tx_update_reboot_needed: tx_update_reboot_needed,
                               tx_update_failed:        tx_update_failed
       rescue StandardError
