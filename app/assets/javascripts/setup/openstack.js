@@ -1,29 +1,46 @@
 (function (window) {
   var dom = {
-    NAME_INPUTS: '#settings_cloud_openstack_domain, #settings_cloud_openstack_project',
-    ID_INPUTS: '#settings_cloud_openstack_domain_id, #settings_cloud_openstack_project_id',
+    PROJECT_NAME_INPUT: '#settings_cloud_openstack_project',
+    PROJECT_ID_INPUT: '#settings_cloud_openstack_project_id',
+
+    DOMAIN_NAME_INPUT: '#settings_cloud_openstack_domain',
+    DOMAIN_ID_INPUT: '#settings_cloud_openstack_domain_id',
   };
 
   function OpenStackSettings(el) {
     this.$el = $(el);
 
-    this.$idInputs = this.$el.find(dom.ID_INPUTS);
-    this.$nameInputs = this.$el.find(dom.NAME_INPUTS);
+    this.$projectIdInput = this.$el.find(dom.PROJECT_ID_INPUT);
+    this.$projectNameInput = this.$el.find(dom.PROJECT_NAME_INPUT);
+
+    this.$domainIdInput = this.$el.find(dom.DOMAIN_ID_INPUT);
+    this.$domainNameInput = this.$el.find(dom.DOMAIN_NAME_INPUT);
 
     this.events();
   }
 
   OpenStackSettings.prototype.events = function () {
-    this.$el.on('input', dom.ID_INPUTS, this.onIdInputs.bind(this));
-    this.$el.on('input', dom.NAME_INPUTS, this.onNameInputs.bind(this));
+    this.$el.on('input', dom.PROJECT_ID_INPUT, this.onProjectIdInput.bind(this));
+    this.$el.on('input', dom.PROJECT_NAME_INPUT, this.onProjectNameInput.bind(this));
+
+    this.$el.on('input', dom.DOMAIN_ID_INPUT, this.onDomainIdInput.bind(this));
+    this.$el.on('input', dom.DOMAIN_NAME_INPUT, this.onDomainNameInput.bind(this));
   }
 
-  OpenStackSettings.prototype.onIdInputs = function (e) {
-    this.$nameInputs.prop('disabled', !this.isEmpty(this.$idInputs));
+  OpenStackSettings.prototype.onProjectIdInput = function (e) {
+    this.$projectNameInput.prop('disabled', !this.isEmpty(this.$projectIdInput));
   }
 
-  OpenStackSettings.prototype.onNameInputs = function (e) {
-    this.$idInputs.prop('disabled', !this.isEmpty(this.$nameInputs));
+  OpenStackSettings.prototype.onProjectNameInput = function (e) {
+    this.$projectIdInput.prop('disabled', !this.isEmpty(this.$projectNameInput));
+  }
+
+  OpenStackSettings.prototype.onDomainIdInput = function (e) {
+    this.$domainNameInput.prop('disabled', !this.isEmpty(this.$domainIdInput));
+  }
+
+  OpenStackSettings.prototype.onDomainNameInput = function (e) {
+    this.$domainIdInput.prop('disabled', !this.isEmpty(this.$domainNameInput));
   }
 
   OpenStackSettings.prototype.isEmpty = function (els) {
