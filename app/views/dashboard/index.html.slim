@@ -62,6 +62,10 @@ h1 Cluster Status
         i.fa.fa-refresh.fa-fw
         | Retry cluster update
 
+      = link_to setup_worker_bootstrap_path, id: "add-nodes", class: "btn btn-sm btn-success pull-right" do
+        i.fa.fa-plus.fa-fw
+        | Add node
+
     .panel-body
       .row.nodes-loading
         p.text-center
