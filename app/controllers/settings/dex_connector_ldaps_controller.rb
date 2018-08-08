@@ -5,11 +5,6 @@ class Settings::DexConnectorLdapsController < Settings::BaseCertificateControlle
     @ldap_connectors = DexConnectorLdap.all
   end
 
-  def new
-    @certificate_holder = certificate_holder_type.new
-    @cert = Certificate.new
-  end
-
   def destroy
     @certificate_holder.destroy
     redirect_to settings_dex_connector_ldaps_path,
@@ -27,15 +22,10 @@ class Settings::DexConnectorLdapsController < Settings::BaseCertificateControlle
   end
 
   def certificate_holder_update_params
-    ldap_connector_params.except(:certificate)
+    ldap_connector_params.except(:certificate, :current_cert)
   end
 
   private
-
-  def certificate_param
-    ldap_connector_params[:certificate].strip if
-      ldap_connector_params[:certificate].present?
-  end
 
   def ldap_connector_params
     params.require(:dex_connector_ldap).permit(:name, :host, :port,
