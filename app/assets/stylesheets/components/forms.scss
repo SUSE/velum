@@ -1,0 +1,5 @@
+label[required=true]:after,
+label[required=required]:after {
+  content: " *";
+  color: red;
+}
