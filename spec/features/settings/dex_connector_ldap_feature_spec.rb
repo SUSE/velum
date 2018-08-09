@@ -6,7 +6,9 @@ describe "Feature: LDAP connector settings", js: true do
   let!(:dex_connector_ldap) { create(:dex_connector_ldap) }
   let!(:dex_connector_ldap2) { create(:dex_connector_ldap) }
   let!(:dex_connector_ldap3) { create(:dex_connector_ldap) }
-  let(:admin_cert_text) { file_fixture("admin.crt").read.strip }
+  let!(:admin_cert) { create(:certificate) }
+  let(:admin_cert_text) { admin_cert.certificate.strip }
+  let(:admin_cert_file) { to_fixture_file(admin_cert.certificate, full_path: true) }
 
   before do
     setup_done
@@ -61,7 +63,7 @@ describe "Feature: LDAP connector settings", js: true do
     it "allows a user to create an ldap connector (w/ certificate)" do
       fill_in id: "dex_connector_ldap_name", with: "openldap"
       fill_in "Host", with: "ldaptest.com"
-      fill_in "Certificate", with: admin_cert_text
+      attach_file "Certificate", admin_cert_file
       fill_in id: "dex_connector_ldap_bind_dn", with: "cn=admin,dc=ldaptest,dc=com"
       fill_in "Password", with: "pass"
       click_button("Save")
@@ -74,7 +76,7 @@ describe "Feature: LDAP connector settings", js: true do
 
     it "shows an error message if model validation fails" do
       fill_in "Port", with: "AAA"
-      fill_in "Certificate", with: admin_cert_text
+      attach_file "Certificate", admin_cert_file
       fill_in "Password", with: "pass"
       click_button("Save")
 
@@ -91,7 +93,7 @@ describe "Feature: LDAP connector settings", js: true do
 
     it "allows a user to edit an ldap connector" do
       fill_in "Port", with: 626
-      fill_in "Certificate", with: admin_cert_text
+      attach_file "Certificate", admin_cert_file
       click_button("Save")
 
       expect(page).to have_content("DexConnectorLdap was successfully updated.")
@@ -99,7 +101,7 @@ describe "Feature: LDAP connector settings", js: true do
 
     it "shows an error message if model validation fails" do
       fill_in "Port", with: "AAA"
-      fill_in "Certificate", with: admin_cert_text
+      attach_file "Certificate", admin_cert_file
       click_button("Save")
 
       expect(page).to have_content("Port is not a number")

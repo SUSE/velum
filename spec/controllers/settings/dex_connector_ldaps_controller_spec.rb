@@ -2,6 +2,11 @@ require "rails_helper"
 
 RSpec.describe Settings::DexConnectorLdapsController, type: :controller do
   let(:user) { create(:user) }
+  let(:certificate) { create(:certificate) }
+  let(:certificate_text) { certificate.certificate.strip }
+  let(:certificate_file) do
+    fixture_file_upload(to_fixture_file(certificate.certificate), "application/x-x509-user-cert")
+  end
 
   before do
     setup_done
@@ -35,7 +40,6 @@ RSpec.describe Settings::DexConnectorLdapsController, type: :controller do
   end
 
   describe "GET #edit" do
-    let!(:certificate) { create(:certificate) }
     let!(:dex_connector_ldap) { create(:dex_connector_ldap) }
     let!(:dex_connector_ldap_with_cert) { create(:dex_connector_ldap) }
 
@@ -85,7 +89,6 @@ RSpec.describe Settings::DexConnectorLdapsController, type: :controller do
     end
 
     context "with ldap connector saved in the database" do
-      let!(:certificate) { create(:certificate) }
       let(:dex_connector_ldap) { DexConnectorLdap.find_by(name: "ldap1") }
 
       before do
@@ -93,7 +96,7 @@ RSpec.describe Settings::DexConnectorLdapsController, type: :controller do
                                             host:               "test.com",
                                             port:               389,
                                             start_tls:          false,
-                                            certificate:        certificate.certificate,
+                                            certificate:        certificate_file,
                                             bind_anon:          false,
                                             bind_dn:            "cn=admin,dc=example,dc=org",
                                             bind_pw:            "admin",
@@ -124,7 +127,7 @@ RSpec.describe Settings::DexConnectorLdapsController, type: :controller do
         expect(dex_connector_ldap.start_tls).to eq(false)
       end
       it "saves the correct certificate" do
-        expect(dex_connector_ldap.certificate.certificate).to eq(certificate.certificate.strip)
+        expect(dex_connector_ldap.certificate.certificate).to eq(certificate_text)
       end
       it "saves the correct bind_anon value" do
         expect(dex_connector_ldap.bind_anon).to eq(false)
@@ -175,7 +178,6 @@ RSpec.describe Settings::DexConnectorLdapsController, type: :controller do
   end
 
   describe "PATCH #update" do
-    let!(:certificate) { create(:certificate) }
     let!(:dex_connector_ldap) { create(:dex_connector_ldap) }
 
     before do

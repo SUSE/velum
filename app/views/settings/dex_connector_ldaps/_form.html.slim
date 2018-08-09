@@ -29,12 +29,13 @@
         | Off
     = error_messages_for(@certificate_holder, :start_tls)
 
-
-  .form-group class="#{error_class_for(@cert, :certificate)}"
+  .form-group.form-group-certificate class="#{error_class_for(@cert, :certificate) if @cert.present?}"
     = f.label :certificate
-    p Paste the certificate for the LDAP server here.
-    = f.text_area :certificate, value: @cert.certificate, class: "form-control", rows: 5, required: true
-    = error_messages_for(@cert, :certificate)
+    p Upload the certificate for the LDAP server here
+    = f.file_field :certificate, class: "form-control", required: @cert.present?
+    - if @cert.present?
+      = error_messages_for(@cert, :certificate)
+      = f.text_area :current_cert, class: "form-control", value: @cert.certificate, rows: 7, readonly: "readonly"
 
   br
   h4 Authentication

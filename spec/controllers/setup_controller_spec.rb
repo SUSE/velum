@@ -14,6 +14,11 @@ RSpec.describe SetupController, type: :controller do
       enable_proxy: "disable"
     }
   end
+  let(:pem_cert) { create(:certificate) }
+  let(:pem_cert_text) { pem_cert.certificate.strip }
+  let(:pem_cert_file) do
+    fixture_file_upload(to_fixture_file(pem_cert.certificate), "application/x-x509-user-cert")
+  end
 
   before do
     setup_stubbed_pending_minions!
@@ -69,7 +74,7 @@ RSpec.describe SetupController, type: :controller do
       let(:certificate_settings) do
         settings_params.dup.tap do |s|
           s["system_certificate"] = { name:        "sca1",
-                                      certificate: certificate.certificate }
+                                      certificate: pem_cert_file }
         end
       end
 
@@ -783,7 +788,7 @@ RSpec.describe SetupController, type: :controller do
       let(:certificate_settings) do
         settings_params.dup.tap do |s|
           s["system_certificate"] = { name:        "sca1",
-                                      certificate: certificate.certificate }
+                                      certificate: pem_cert_file }
         end
       end
 
@@ -795,7 +800,7 @@ RSpec.describe SetupController, type: :controller do
         put :configure, settings: certificate_settings
         system_certificate = SystemCertificate.find_by(name: "sca1")
         expect(system_certificate.name).to eq("sca1")
-        expect(system_certificate.certificate.certificate).to eq(certificate.certificate)
+        expect(system_certificate.certificate.certificate).to eq(pem_cert_text)
       end
     end
 
@@ -803,7 +808,7 @@ RSpec.describe SetupController, type: :controller do
       let(:certificate_settings) do
         settings_params.dup.tap do |s|
           s["system_certificate"] = { name:        "",
-                                      certificate: "cert" }
+                                      certificate: pem_cert_file }
         end
       end
 
