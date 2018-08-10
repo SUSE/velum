@@ -66,6 +66,7 @@ describe "Feature: LDAP connector settings", js: true do
       attach_file "Certificate", admin_cert_file
       fill_in id: "dex_connector_ldap_bind_dn", with: "cn=admin,dc=ldaptest,dc=com"
       fill_in "Password", with: "pass"
+      page.execute_script("$('#ldap_conn_save').removeProp('disabled')")
       click_button("Save")
 
       last_ldap_connector = DexConnectorLdap.last
@@ -78,6 +79,7 @@ describe "Feature: LDAP connector settings", js: true do
       fill_in "Port", with: "AAA"
       attach_file "Certificate", admin_cert_file
       fill_in "Password", with: "pass"
+      page.execute_script("$('#ldap_conn_save').removeProp('disabled')")
       click_button("Save")
 
       expect(page).to have_content("Name can't be blank")
@@ -94,6 +96,7 @@ describe "Feature: LDAP connector settings", js: true do
     it "allows a user to edit an ldap connector" do
       fill_in "Port", with: 626
       attach_file "Certificate", admin_cert_file
+      page.execute_script("$('#ldap_conn_save').removeProp('disabled')")
       click_button("Save")
 
       expect(page).to have_content("DexConnectorLdap was successfully updated.")
@@ -102,6 +105,7 @@ describe "Feature: LDAP connector settings", js: true do
     it "shows an error message if model validation fails" do
       fill_in "Port", with: "AAA"
       attach_file "Certificate", admin_cert_file
+      page.execute_script("$('#ldap_conn_save').removeProp('disabled')")
       click_button("Save")
 
       expect(page).to have_content("Port is not a number")
