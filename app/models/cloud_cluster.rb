@@ -66,7 +66,8 @@ class CloudCluster
     persist_to_pillar!(:cloud_worker_net, @network_id)
     persist_to_pillar!(:cloud_worker_subnet, @subnet_id)
     persist_to_pillar!(:cloud_worker_security_group, @security_group_id)
-    Velum::Salt.call(action: "saltutil.refresh_pillar")
+    Velum::Salt.call_runner(action: "saltutil.sync_pillar")
+    Velum::Salt.call(targets: "admin", action: "saltutil.refresh_pillar")
   end
 
   def build!
