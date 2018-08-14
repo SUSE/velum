@@ -1,15 +1,19 @@
 = content_for :body_class, "worker_bootstrap"
 
 h1
-  ' Bootstrap your #{product_name}
+  - if setup_done?
+    ' Add nodes to your cluster
+  - else
+    ' Bootstrap your #{product_name}
   small in Microsoft Azure
 
 
 = form_for @cloud_cluster, url: setup_build_cloud_cluster_path do |form|
   = form.hidden_field :cloud_framework
-  p
-    ' In order to complete the installation, it is necessary to bootstrap a few
-    ' additional nodes, those will be the Kubernetes Master and Workers.
+  - unless setup_done?
+    p
+      ' In order to complete the installation, it is necessary to bootstrap a
+      ' few additional nodes, those will be the Kubernetes Master and Workers.
 
   .panel.panel-default
     .panel-heading
@@ -66,7 +70,10 @@ h1
           = form.text_field :subnet_id, class: "form-control"
 
   .clearfix.text-right.steps-container
-    = link_to "Back", setup_path, class: "btn btn-danger"
+    - if setup_done?
+      = link_to "Back to dashboard", root_path, class: "btn btn-success"
+    - else
+      = link_to "Back", setup_path, class: "btn btn-danger"
     = form.submit "Next", class: "btn btn-primary"
 
 - content_for :page_javascript do
