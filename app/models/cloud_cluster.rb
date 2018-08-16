@@ -68,6 +68,7 @@ class CloudCluster
     persist_to_pillar!(:cloud_worker_security_group, @security_group_id)
     Velum::Salt.call_runner(action: "saltutil.sync_pillar")
     Velum::Salt.call(targets: "admin", action: "saltutil.refresh_pillar")
+    sleep(1)
   end
 
   def build!
