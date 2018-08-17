@@ -1,10 +1,18 @@
 = content_for :body_class, "worker_bootstrap"
 
-h1 Bootstrap your CaaS Platform
+- if setup_done?
+  h1 Adding new nodes to the cluster
+
+  p
+    |  You can add new nodes to the cluster by leveraging AutoYaST.
+- else
+  h1 Bootstrap your CaaS Platform
+
+  p
+    | In order to complete the installation, it is necessary to bootstrap a few additional nodes, those will be the Kubernetes Master and Workers.
+    |  This process leverages AutoYaST and is (almost) fully automated.
 
 p
-  | In order to complete the installation, it is necessary to bootstrap a few additional nodes, those will be the Kubernetes Master and Workers.
-  |  This process leverages AutoYaST and is (almost) fully automated.
   |  In case you are not familiar with it, you can find more information about AutoYaST in the&nbsp;
   a href="https://www.suse.com/documentation/sles-12/singlehtml/book_autoyast/book_autoyast.html" official documentation.
   |  The automatic installation gets invoked by adding <strong>autoyast=#{autoyast_url host: @controller_node, protocol: :http}</strong> to the kernel parameter list.
@@ -21,6 +29,10 @@ p
   a href="https://www.suse.com/documentation/sles-12/singlehtml/book_autoyast/book_autoyast.html#bootmedium.pxe" here
   | . Where <strong>#{autoyast_url host: @controller_node, protocol: :http}</strong> is the real, generated path to the AutoYaST profile served by the dashboard.
 
-.clearfix.text-right.steps-container
-  = link_to "Back", setup_path, class: "btn btn-danger"
-  = link_to "Next", setup_discovery_path, class: "btn btn-primary"
+- if setup_done?
+  .clearfix.text-right.steps-container
+    = link_to "Back to dashboard", root_path, class: "btn btn-success"
+- else
+  .clearfix.text-right.steps-container
+    = link_to "Back", setup_path, class: "btn btn-danger"
+    = link_to "Next", setup_discovery_path, class: "btn btn-primary"
