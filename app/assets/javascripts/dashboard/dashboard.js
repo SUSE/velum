@@ -334,7 +334,7 @@ MinionPoller = {
   },
 
   renderDashboard: function(minion) {
-    var statusHtml;
+    var appliedHtml;
     var checked;
     var masterHtml;
     var actionsHtml;
@@ -342,26 +342,26 @@ MinionPoller = {
 
     switch(minion.highstate) {
       case "not_applied":
-        statusHtml = '<i class="fa fa-circle-o text-success fa-2x" aria-hidden="true"></i>';
+        appliedHtml = '<i class="fa fa-circle-o text-success fa-2x" aria-hidden="true"></i>';
         break;
       case "pending_removal":
       case "pending":
-        statusHtml = '\
+        appliedHtml = '\
           <span class="fa-stack" aria-hidden="true">\
             <i class="fa fa-circle fa-stack-2x text-muted" aria-hidden="true"></i>\
             <i class="fa fa-refresh fa-stack-1x fa-spin fa-inverse" aria-hidden="true"></i>\
           </span>';
         break;
       case "failed":
-        statusHtml = '<i class="fa fa-times-circle text-danger fa-2x" aria-hidden="true"></i>';
+        appliedHtml = '<i class="fa fa-times-circle text-danger fa-2x" aria-hidden="true"></i>';
         MinionPoller.alertFailedBootstrap();
         break;
       case "removal_failed":
         removalFailedClass = 'removal-failed';
-        statusHtml = '<i class="fa fa-minus-circle text-danger fa-2x" aria-hidden="true"></i> Removal Failed';
+        appliedHtml = '<i class="fa fa-minus-circle text-danger fa-2x" aria-hidden="true"></i> Removal Failed';
         break;
       case "applied":
-        statusHtml = '<i class="fa fa-check-circle-o text-success fa-2x" aria-hidden="true"></i>';
+        appliedHtml = '<i class="fa fa-check-circle-o text-success fa-2x" aria-hidden="true"></i>';
         break;
     }
 
@@ -378,17 +378,17 @@ MinionPoller = {
     if (minion.tx_update_reboot_needed) {
       switch (minion.highstate) {
         case "applied":
-          statusHtml = '<i class="fa fa-arrow-circle-up text-info fa-2x" aria-hidden="true"></i> Update Available';
+          appliedHtml = '<i class="fa fa-arrow-circle-up text-info fa-2x" aria-hidden="true"></i> Update Available';
           break;
         case "failed":
-          statusHtml = '<i class="fa fa-arrow-circle-up text-warning fa-2x" aria-hidden="true"></i> Update Failed - Retryable';
+          appliedHtml = '<i class="fa fa-arrow-circle-up text-warning fa-2x" aria-hidden="true"></i> Update Failed - Retryable';
           break;
         case "pending":
-          statusHtml += ' Update in progress'
+          appliedHtml += ' Update in progress'
           break;
         }
     } else if (minion.tx_update_failed) {
-      statusHtml = '<i class="fa fa-arrow-circle-up text-danger fa-2x" aria-hidden="true"></i> Update Failed';
+      appliedHtml = '<i class="fa fa-arrow-circle-up text-danger fa-2x" aria-hidden="true"></i> Update Failed';
     }
 
     if (State.pendingRemovalMinionId || State.hasPendingStateNode) {
@@ -408,7 +408,8 @@ MinionPoller = {
 
     return '\
       <tr> \
-        <td class="status">' + statusHtml +  '</td>\
+        <td class="status">' + onlineHtml(minion) +  '</td>\
+        <td class="status">' + appliedHtml +  '</td>\
         <td><strong>' + minion.minion_id +  '</strong></td>\
         <td class="minion-hostname">' + minion.fqdn +  '</td>\
         <td>' + masterHtml + minion.role + '</td>\
@@ -454,8 +455,8 @@ MinionPoller = {
     ';
 
     return '\
-      <tr class="minion_' + minion.id + '"> \
-        <td>' + minion.minion_id + '</td>\
+      <tr class="minion_' + minion.id + '">' +
+        '<td>' + minion.minion_id + '</td>\
         <td class="minion-hostname">' + minion.fqdn + '</td>' +
         roleHtml +
       '</tr>';
@@ -1049,4 +1050,12 @@ function requestNodeForceRemoval(minionId) {
   }).done(disableOrchTriggers)
     .fail(enableOrchTriggers)
     .fail(notifyRemovalError);
+}
+
+function onlineHtml(minion) {
+  if(minion.online) {
+    return '<i class="fa fa-circle text-success fa-2x" aria-hidden="true" title="Online"></i>';
+  } else {
+    return '<i class="fa fa-circle text-danger fa-2x" aria-hidden="true" title="Offline (last updated at: ' + minion.updated_at + ' admin server time)"></i>';
+  }
 }

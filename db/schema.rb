@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181708070232) do
+ActiveRecord::Schema.define(version: 20181708070233) do
 
   create_table "certificate_services", force: :cascade do |t|
     t.integer  "certificate_id", limit: 4
@@ -54,6 +54,7 @@ ActiveRecord::Schema.define(version: 20181708070232) do
     t.integer  "highstate",               limit: 4,   default: 0
     t.boolean  "tx_update_reboot_needed",             default: false
     t.boolean  "tx_update_failed",                    default: false
+    t.boolean  "online",                              default: true
     t.datetime "created_at"
     t.datetime "updated_at"
   end
