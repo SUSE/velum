@@ -403,10 +403,15 @@ MinionPoller = {
       appliedHtml = '<i class="fa fa-arrow-circle-up text-danger fa-2x" aria-hidden="true"></i> Update Failed';
     }
 
-    if (State.pendingRemovalMinionId || State.hasPendingStateNode) {
-      actionsHtml = '<a href="#" class="disabled remove-node-link">Remove</a><a href="#" class="disabled force-remove-node-link">Force remove</a>';
+    // Public Cloud frameworks do not currently support removing nodes
+    if (['azure', 'ec2', 'gce'].indexOf(minion.cloud_framework) > -1) {
+      actionsHtml = '';
     } else {
-      actionsHtml = '<a href="#" class="remove-node-link">Remove</a><a href="#" class="force-remove-node-link">Force remove</a>';
+      if (State.pendingRemovalMinionId || State.hasPendingStateNode) {
+        actionsHtml = '<a href="#" class="disabled remove-node-link">Remove</a><a href="#" class="disabled force-remove-node-link">Force remove</a>';
+      } else {
+        actionsHtml = '<a href="#" class="remove-node-link">Remove</a><a href="#" class="force-remove-node-link">Force remove</a>';
+      }
     }
 
     if (minion.minion_id === State.pendingRemovalMinionId) {

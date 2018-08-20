@@ -41,6 +41,14 @@ describe "feature: node removal", js: true do
     expect(page).not_to have_link("Remove")
   end
 
+  # Public Cloud frameworks do not currently support removing nodes
+  it "hides 'Remove' link if running in public cloud" do
+    create(:ec2_pillar)
+
+    visit authenticated_root_path
+    expect(page).not_to have_link("Remove")
+  end
+
   it "does not show warning modal when removing worker and # masters is even" do
     # removed one master to put cluster in unsupported configuration
     minions[0].destroy
