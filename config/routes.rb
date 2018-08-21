@@ -32,6 +32,12 @@ Rails.application.routes.draw do
   namespace :orchestrations do
     resource :bootstrap, only: :create, controller: :bootstrap
     resource :upgrade, only: :create, controller: :upgrade
+    resource :migration, only: :create, controller: :migration
+    namespace :migration do
+      post :check, action: :check_mirror
+      post :reboot, action: :reboot_nodes
+      get :status
+    end
   end
 
   namespace :setup do

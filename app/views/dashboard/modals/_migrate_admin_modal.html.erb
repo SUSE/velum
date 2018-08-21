@@ -1,0 +1,28 @@
+<div class="modal fade migrate-admin-modal" tabindex="-1" role="dialog" aria-labelledby="modal-label">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="modal-label">
+          A new version of SUSE CaaS Platform is available
+        </h4>
+      </div>
+      <div class="modal-body">
+  <% if Minion.admin.first.tx_update_migration_notes =~ /^http.*/ %>
+        <p>You can find the release notes <a target="_blank" href="<%= Minion.admin.first.tx_update_migration_notes %>">here.</a></p>
+  <% end %>
+        <p>The migration will take some time, as there could be larger updates which need to be downloaded first.</p>
+        <p>Once the migration is installed, the admin node gets rebooted.</p>
+        <p>After this you can proceed with the migration with the rest of your cluster nodes</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary trigger-migrate-admin-btn" data-url="<%= orchestrations_migration_url %>" data-migration-check="<%= orchestrations_migration_status_url %>">
+          Migrate admin
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

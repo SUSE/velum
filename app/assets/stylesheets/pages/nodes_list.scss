@@ -81,6 +81,15 @@
 .admin-outdated-notification {
   background-color: #d9edf7;
   color: #31708f;
+}
+
+.admin-migration-notification {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.admin-outdated-notification,
+.admin-migration-notification {
   text-align: right;
 
   .message,
@@ -108,9 +117,16 @@
     vertical-align: middle;
   }
 
-  &--reboot {
+  &--reboot,
+  &--install {
     .actions .btn-link {
       visibility: visible;
+    }
+  }
+
+  &--maintenance {
+    .actions .btn-link {
+      visibility: hidden;
     }
   }
 
@@ -131,7 +147,8 @@
   }
 }
 
-.update-admin-modal {
+.update-admin-modal,
+.migrate-admin-modal {
   .modal-dialog {
     width: 450px;
   }

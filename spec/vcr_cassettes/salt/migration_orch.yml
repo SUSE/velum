@@ -1,0 +1,48 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://127.0.0.1:8000/run
+    body:
+      encoding: UTF-8
+      string: '{"client":"runner_async","fun":"state.orchestrate","mods":"orch.migration","username":"saltapi","password":"b0ugrUDP3C5KfP3vymLiTlAqWHJF3ExNIMkqVe/V45eOJZSFU8VVK75XX2XTg6IK+jk10jOOsu6o","eauth":"pam"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Ruby
+      Host:
+      - 127.0.0.1:8000
+      Content-Type:
+      - application/json; charset=utf-8
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '85'
+      Access-Control-Expose-Headers:
+      - GET, POST
+      Vary:
+      - Accept-Encoding
+      Server:
+      - CherryPy/3.6.0
+      Allow:
+      - GET, HEAD, POST
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Date:
+      - Tue, 13 Jun 2017 11:44:08 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Type:
+      - application/json
+    body:
+      encoding: UTF-8
+      string: '{"return": [{"jid": "20170613114408589568", "tag": "salt/run/20170613114408589568"}]}'
+    http_version:
+  recorded_at: Tue, 13 Jun 2017 11:44:08 GMT
+recorded_with: VCR 3.0.3

@@ -6,14 +6,14 @@ class Orchestration < ApplicationRecord
   class OrchestrationAlreadyRan < StandardError; end
   class OrchestrationOngoing < StandardError; end
 
-  enum kind: [:bootstrap, :upgrade, :removal, :force_removal]
+  enum kind: [:bootstrap, :upgrade, :removal, :force_removal, :migration]
   enum status: [:in_progress, :succeeded, :failed]
 
   serialize :params, JSON
 
   after_create :update_minions
 
-  # rubocop:disable Rails/SkipsModelValidations
+  # rubocop:disable Rails/SkipsModelValidations,Metrics/CyclomaticComplexity
   def run
     raise OrchestrationAlreadyRan if jid.present?
     update_column :status, Orchestration.statuses[:in_progress]
@@ -22,6 +22,8 @@ class Orchestration < ApplicationRecord
                Velum::Salt.orchestrate
              when "upgrade"
                Velum::Salt.update_orchestration
+             when "migration"
+               Velum::Salt.migration_orchestration
              when "removal"
                Velum::Salt.removal_orchestration(params: params)
              when "force_removal"
@@ -30,7 +32,7 @@ class Orchestration < ApplicationRecord
     update_column :jid, job["return"].first["jid"]
     true
   end
-  # rubocop:enable Rails/SkipsModelValidations
+  # rubocop:enable Rails/SkipsModelValidations,Metrics/CyclomaticComplexity
 
   def self.run(kind: :bootstrap, params: nil)
     raise OrchestrationOngoing unless runnable?
@@ -47,6 +49,8 @@ class Orchestration < ApplicationRecord
       Orchestration.bootstrap.last.try(:status) == "failed"
     when :upgrade
       Orchestration.upgrade.last.try(:status) == "failed"
+    when :migration
+      Orchestration.migration.last.try(:status) == "failed"
     when :removal, :force_removal
       false
     end

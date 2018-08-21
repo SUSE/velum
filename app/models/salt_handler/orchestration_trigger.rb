@@ -27,6 +27,8 @@ class SaltHandler::OrchestrationTrigger < SaltHandler::Orchestration
       ::Orchestration.kinds[:bootstrap]
     when "orch.update"
       ::Orchestration.kinds[:upgrade]
+    when "orch.migration"
+      ::Orchestration.kinds[:migration]
     when "orch.removal"
       ::Orchestration.kinds[:removal]
     when "orch.force-removal"

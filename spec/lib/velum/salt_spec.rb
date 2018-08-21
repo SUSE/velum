@@ -52,6 +52,24 @@ describe Velum::Salt do
     end
   end
 
+  describe "migration orchestration" do
+    it "runs the migration orchestration in async mode" do
+      VCR.use_cassette("salt/migration_orchestrate_async", record: :none) do
+        _, hsh = described_class.migration_orchestration
+        expect(hsh["return"].count).to eq 1
+      end
+    end
+  end
+
+  describe "update orchestration after product migration" do
+    it "runs the update orchestration with { migration: true } in async mode" do
+      VCR.use_cassette("salt/update_after_product_migration_orchestrate_async", record: :none) do
+        _, hsh = described_class.update_orchestration_after_product_migration
+        expect(hsh["return"].count).to eq 1
+      end
+    end
+  end
+
   describe "removal orchestration" do
     it "runs the removal orchestration in async mode" do
       VCR.use_cassette("salt/removal_orchestrate_async", record: :none) do

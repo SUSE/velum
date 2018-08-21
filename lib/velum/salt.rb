@@ -3,6 +3,7 @@ require "securerandom"
 
 module Velum
   # This class allows to interact with global salt actions
+  # rubocop:disable Metrics/ClassLength
   class Salt
     include SaltApi
 
@@ -110,6 +111,16 @@ module Velum
       run_async_orchestration orchestration: "update"
     end
 
+    # Call the update orchestration after migration
+    def self.update_orchestration_after_product_migration
+      run_async_orchestration orchestration: "update", params: { migration: true }
+    end
+
+    # Call the migration orchestration
+    def self.migration_orchestration
+      run_async_orchestration orchestration: "prepare-product-migration"
+    end
+
     # Call the removal orchestration
     def self.removal_orchestration(params:)
       run_async_orchestration orchestration: "removal", params: params
@@ -144,4 +155,5 @@ module Velum
       end
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end

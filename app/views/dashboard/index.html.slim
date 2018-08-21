@@ -5,6 +5,11 @@
     span class="reason"
     | .
 
+.alert.alert-danger.repomirror-sync-alert role="alert" hidden="true"
+  i.fa.fa-4x.pull-left aria-hidden="true"
+  span
+    | Your local RMT/SMT mirror looks like it's out of sync. Click #{link_to "here", orchestrations_migration_check_path, method: :post} to perform another check.
+
 h1 Cluster Status
 
 .nodes-summary
@@ -34,6 +39,8 @@ h1 Cluster Status
               span#out_dated_nodes 0
               = link_to update_path, id: "update-all-nodes", class: "hidden", method: :post do
                 | (update all nodes)
+              = link_to orchestrations_migration_reboot_path, id: "migrate-all-nodes", class: "hidden", method: :post do
+                | (migrate all nodes)
     .panel-footer.admin-outdated-notification.hidden
       .message
         i.fa.fw.fa-exclamation-circle
@@ -44,6 +51,16 @@ h1 Cluster Status
       .actions
         a.btn.btn-link.update-admin-btn data-toggle="modal" data-target=".update-admin-modal"
           | Update admin node
+    .panel-footer.admin-migration-notification.hidden
+      .message
+        i.fa.fw.fa-exclamation-circle
+        strong Cluster has migration available
+      .failed-message
+        i.fa.fw.fa-exclamation-circle
+        strong An error occurred during the admin node migration process
+      .actions
+        a.btn.btn-link.migrate-admin-btn data-toggle="modal" data-target=".migrate-admin-modal"
+          | Migrate admin node
 
 .nodes-container data-url=authenticated_root_path
   .panel.panel-default
@@ -61,6 +78,10 @@ h1 Cluster Status
       = link_to orchestrations_upgrade_path, method: :post, id: "retry-cluster-upgrade", class: "hidden btn btn-sm btn-primary pull-right" do
         i.fa.fa-refresh.fa-fw
         | Retry cluster update
+
+      = link_to orchestrations_migration_reboot_path, method: :post, id: "retry-cluster-migration", class: "hidden btn btn-sm btn-primary pull-right" do
+        i.fa.fa-refresh.fa-fw
+        | Retry cluster migration
 
       = link_to setup_worker_bootstrap_path, id: "add-nodes", class: "btn btn-sm btn-success pull-right" do
         i.fa.fa-plus.fa-fw
@@ -91,6 +112,8 @@ h1 Cluster Status
 
 = render "dashboard/pending_nodes"
 = render "dashboard/modals/update_admin_modal"
+= render "dashboard/modals/migrate_admin_modal"
+= render "dashboard/modals/warn_mirror_sync_modal"
 = render "dashboard/modals/warn_node_removal_modal"
 = render "dashboard/modals/warn_node_force_removal_modal"
 = render "dashboard/polling"

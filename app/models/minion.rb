@@ -1,11 +1,14 @@
 require "velum/salt_minion"
 
 # Minion represents the minions that have been registered in this application.
+# rubocop:disable Metrics/ClassLength
 class Minion < ApplicationRecord
   scope :assigned_role, -> { where.not role: nil }
   scope :cluster_role, -> { where role: [Minion.roles[:master], Minion.roles[:worker]] }
   scope :unassigned_role, -> { where role: nil }
   scope :needs_update, -> { where "tx_update_reboot_needed = true or tx_update_failed = true" }
+  scope :has_migration, -> { where tx_update_migration_available: true }
+  scope :needs_mirror_sync, -> { where tx_update_migration_mirror_synced: false }
 
   enum highstate: [:not_applied, :pending, :failed, :applied, :pending_removal, :removal_failed]
   enum role: [:master, :worker, :admin]
@@ -21,8 +24,9 @@ class Minion < ApplicationRecord
   end
 
   # Update all minions grains
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def self.update_grains
-    # rubocop:disable Lint/HandleExceptions, SkipsModelValidations
+    # rubocop:disable Lint/HandleExceptions, SkipsModelValidations, Metrics/LineLength
     Minion.all.find_each do |minion|
       begin
         minion_grains = minion.salt.info
@@ -32,15 +36,26 @@ class Minion < ApplicationRecord
 
         tx_update_reboot_needed = minion_grains["tx_update_reboot_needed"] || false
         tx_update_failed = minion_grains["tx_update_failed"] || false
-        minion.update_columns fqdn:                    minion_grains["fqdn"],
-                              online:                  online,
-                              tx_update_reboot_needed: tx_update_reboot_needed,
-                              tx_update_failed:        tx_update_failed
+        tx_update_migration_available = minion_grains["tx_update_migration_available"] || false
+        tx_update_migration_notes = minion_grains["tx_update_migration_notes"] || ""
+        tx_update_migration_mirror_synced = minion_grains["tx_update_migration_mirror_synced"] || false
+        tx_update_migration_newversion = minion_grains["tx_update_migration_newversion"] || ""
+        os_release = minion_grains["osrelease"] || ""
+        minion.update_columns fqdn:                              minion_grains["fqdn"],
+                              online:                            online,
+                              os_release:                        os_release,
+                              tx_update_reboot_needed:           tx_update_reboot_needed,
+                              tx_update_failed:                  tx_update_failed,
+                              tx_update_migration_available:     tx_update_migration_available,
+                              tx_update_migration_notes:         tx_update_migration_notes,
+                              tx_update_migration_mirror_synced: tx_update_migration_mirror_synced,
+                              tx_update_migration_newversion:    tx_update_migration_newversion
       rescue StandardError
       end
     end
-    # rubocop:enable Lint/HandleExceptions, SkipsModelValidations
+    # rubocop:enable Lint/HandleExceptions, SkipsModelValidations, Metrics/LineLength
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   # Example:
   #   Minion.assign_roles(
@@ -111,6 +126,15 @@ class Minion < ApplicationRecord
   # rubocop:enable SkipsModelValidations
 
   # rubocop:disable Rails/SkipsModelValidations
+  # Updates all nodes with a grain of `tx_update_migration_available: True` with a
+  # highstate = pending, and persists it to the database
+  def self.mark_pending_migration
+    Minion.cluster_role.where(tx_update_migration_available: true)
+          .update_all highstate: Minion.highstates[:pending]
+  end
+
+  # rubocop:enable SkipsModelValidations
+  # rubocop:disable Rails/SkipsModelValidations
   # Updates all nodes in `not_applied` or `failed` highstate to a pending highstate
   def self.mark_pending_bootstrap
     Minion.cluster_role.where(highstate: [Minion.highstates[:not_applied],
@@ -146,3 +170,4 @@ class Minion < ApplicationRecord
     Pillar.value(pillar: :cloud_framework)
   end
 end
+# rubocop:enable Metrics/ClassLength

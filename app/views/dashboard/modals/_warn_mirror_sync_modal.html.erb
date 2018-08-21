@@ -1,0 +1,26 @@
+<div class="modal fade warn-mirror-sync-modal" tabindex="-1" role="dialog" aria-labelledby="modal-label">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="modal-label">
+          Your mirrors seem to be out of sync
+        </h4>
+      </div>
+      <div class="modal-body">
+        <p>Cannot run migration with out of date mirrors.</p>
+        <p>Please synchronize your local RMT/SMT Mirror(s) first.</p>
+        <br>
+        <p>Click 'Confirm' when your mirror is synced. This will perform a sanity check.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary confirm-mirror-synced-btn" data-url="<%= orchestrations_migration_check_url %>">
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
