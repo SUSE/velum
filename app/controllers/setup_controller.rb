@@ -12,8 +12,7 @@ class SetupController < ApplicationController
   skip_before_action :redirect_to_setup
   before_action :redirect_to_dashboard
   skip_before_action :redirect_to_dashboard,
-                     only: [:worker_bootstrap, :build_cloud_cluster],
-                     if:   :setup_done?
+                     only: [:worker_bootstrap, :build_cloud_cluster]
   before_action :check_empty_settings, only: :configure
   before_action :check_empty_roles, only: :set_roles
 
