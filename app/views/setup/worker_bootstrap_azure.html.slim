@@ -17,29 +17,17 @@ h1
 
   .panel.panel-default
     .panel-heading
-      h3.panel-title Service Principal Authentication
+      h3.panel-title Managed Service Identity
     .panel-body
       .col-lg-3.col-md-6
         .form-group
           label for="cloud_cluster_subscription_id" Subscription ID
           = form.text_field :subscription_id, class: "form-control"
-      .col-lg-3.col-md-6
-        .form-group
-          label for="cloud_cluster_tenant_id" Tenant ID
-          = form.text_field :tenant_id, class: "form-control"
-      .col-lg-3.col-md-6
-        .form-group
-          label for="cloud_cluster_client_id" Application ID
-          = form.text_field :client_id, class: "form-control"
-      .col-lg-3.col-md-6
-        .form-group
-          label for="cloud_cluster_secret" Client Secret
-          = form.password_field :secret, class: "form-control"
     .panel-footer
       h4 Tip
       p
-        ' Questions about services principals? Check out the
-        = link_to("Azure documentation", "https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal")
+        ' Questions about managed service identities? Check out the
+        = link_to("Azure documentation", "https://docs.microsoft.com/en-us/azure/active-directory/managed-service-identity/overview")
         ' .
 
   = render "instance_type_panel",

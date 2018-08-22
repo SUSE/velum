@@ -199,50 +199,12 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
   context "when in Azure framework" do
     # provider pillars
     let(:subscription_id) { SecureRandom.uuid }
-    let(:tenant_id) { SecureRandom.uuid }
-    let(:client_id) { SecureRandom.uuid }
-    let(:secret) { SecureRandom.hex(16) }
     # profile pillars
     let(:custom_instance_type) { "CustomInstanceSize_v2" }
     let(:resource_group) { "azureresourcegroup" }
     let(:subnet_id) { "azuresubnetname" }
     let(:network_id) { "azurenetworkname" }
     let(:storage_account) { "azurestorageaccount" }
-
-    let(:expected_response) do
-      {
-        system_certificates: [],
-        registries:          [],
-        dex:                 {
-          connectors: []
-        },
-        kubelet:             {
-          :"compute-resources" => {},
-          :"eviction-hard"     => ""
-        },
-        cloud:               {
-          framework: "azure",
-          providers: {
-            azure: {
-              subscription_id: subscription_id,
-              tenant:          tenant_id,
-              client_id:       client_id,
-              secret:          secret
-            }
-          },
-          profiles:  {
-            cluster_node: {
-              size:                   custom_instance_type,
-              storage_account:        storage_account,
-              resource_group:         resource_group,
-              network_resource_group: resource_group,
-              network:                network_id,
-              subnet:                 subnet_id
-            }
-          }
-        }
-      }
-    end
 
     before do
       create(:azure_pillar)
@@ -251,21 +213,6 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
         :pillar,
         pillar: "cloud:providers:azure:subscription_id",
         value:  subscription_id
-      )
-      create(
-        :pillar,
-        pillar: "cloud:providers:azure:tenant",
-        value:  tenant_id
-      )
-      create(
-        :pillar,
-        pillar: "cloud:providers:azure:client_id",
-        value:  client_id
-      )
-      create(
-        :pillar,
-        pillar: "cloud:providers:azure:secret",
-        value:  secret
       )
       # profile pillars
       create(
@@ -295,9 +242,109 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
       )
     end
 
-    it "has cloud configuration" do
-      get :show
-      expect(json).to eq(expected_response)
+    context "when using MSI authorization" do
+      let(:expected_response) do
+        {
+          system_certificates: [],
+          registries:          [],
+          dex:                 {
+            connectors: []
+          },
+          kubelet:             {
+            :"compute-resources" => {},
+            :"eviction-hard"     => ""
+          },
+          cloud:               {
+            framework: "azure",
+            providers: {
+              azure: {
+                subscription_id: subscription_id
+              }
+            },
+            profiles:  {
+              cluster_node: {
+                size:                   custom_instance_type,
+                storage_account:        storage_account,
+                resource_group:         resource_group,
+                network_resource_group: resource_group,
+                network:                network_id,
+                subnet:                 subnet_id
+              }
+            }
+          }
+        }
+      end
+
+      it "has cloud configuration" do
+        get :show
+        expect(json).to eq(expected_response)
+      end
+    end
+
+    context "when using service principal authentication" do
+      # provider pillars
+      let(:tenant_id) { SecureRandom.uuid }
+      let(:client_id) { SecureRandom.uuid }
+      let(:secret) { SecureRandom.hex(16) }
+
+      let(:expected_response) do
+        {
+          system_certificates: [],
+          registries:          [],
+          dex:                 {
+            connectors: []
+          },
+          kubelet:             {
+            :"compute-resources" => {},
+            :"eviction-hard"     => ""
+          },
+          cloud:               {
+            framework: "azure",
+            providers: {
+              azure: {
+                subscription_id: subscription_id,
+                tenant:          tenant_id,
+                client_id:       client_id,
+                secret:          secret
+              }
+            },
+            profiles:  {
+              cluster_node: {
+                size:                   custom_instance_type,
+                storage_account:        storage_account,
+                resource_group:         resource_group,
+                network_resource_group: resource_group,
+                network:                network_id,
+                subnet:                 subnet_id
+              }
+            }
+          }
+        }
+      end
+
+      before do
+        # provider pillars
+        create(
+          :pillar,
+          pillar: "cloud:providers:azure:tenant",
+          value:  tenant_id
+        )
+        create(
+          :pillar,
+          pillar: "cloud:providers:azure:client_id",
+          value:  client_id
+        )
+        create(
+          :pillar,
+          pillar: "cloud:providers:azure:secret",
+          value:  secret
+        )
+      end
+
+      it "has cloud configuration" do
+        get :show
+        expect(json).to eq(expected_response)
+      end
     end
   end
 

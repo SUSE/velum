@@ -6,7 +6,7 @@ class CloudCluster
   attr_accessor :cloud_framework,
     :instance_count, :instance_type, :instance_type_custom, :subnet_id,
     :security_group_id, # EC2 profile
-    :subscription_id, :tenant_id, :client_id, :secret, # Azure provider
+    :subscription_id, # Azure provider
     :storage_account, :resource_group, :network_id # Azure profile
 
   MIN_CLUSTER_SIZE = 3
@@ -56,9 +56,6 @@ class CloudCluster
   def save!
     # cloud.provider pillars
     persist_to_pillar!(:azure_subscription_id, @subscription_id)
-    persist_to_pillar!(:azure_tenant_id, @tenant_id)
-    persist_to_pillar!(:azure_client_id, @client_id)
-    persist_to_pillar!(:azure_secret, @secret)
     # cloud.profile pillars
     persist_to_pillar!(:cloud_worker_type, @instance_type)
     persist_to_pillar!(:cloud_storage_account, @storage_account)
