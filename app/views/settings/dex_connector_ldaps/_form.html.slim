@@ -53,14 +53,17 @@
     = error_messages_for(@certificate_holder, :bind_anon)
 
   .ldap-dn-authentication.collapse class="#{'in' if !@certificate_holder.bind_anon}" id="anonymous_bind_toggle" aria-expanded="true"
-    .form-group class="#{error_class_for(@certificate_holder, :bind_dn)}"
+    .form-group class="#{error_class_for(@certificate_holder, :bind_dn)}" autocomplete="nope"
       = f.label :bind_dn, "DN"
       = f.text_field :bind_dn, class: "form-control", value: @certificate_holder.bind_dn, required: !@certificate_holder.bind_anon, disable: @certificate_holder.bind_anon
       = error_messages_for(@certificate_holder, :bind_dn)
 
-    .form-group class="#{error_class_for(@certificate_holder, :bind_pw)}"
+
+    .form-group class="#{error_class_for(@certificate_holder, :bind_pw)}" autocomplete="nope"
       = f.label :bind_pw, "Password"
-      = f.password_field :bind_pw, class: "form-control", value: @certificate_holder.bind_pw, required: !@certificate_holder.bind_anon, disable: @certificate_holder.bind_anon
+        / This is done to keep firefox from auto filling saved creditials.
+      = f.text_field :bind_pw, class: "form_control settings-hidden", value:"none" 
+      = f.password_field :bind_pw, class: "form-control", value: @certificate_holder.bind_pw, required: !@certificate_holder.bind_anon, disable: @certificate_holder.bind_anon, autocomplete: "new-password"
       = error_messages_for(@certificate_holder, :bind_pw)
 
   hr

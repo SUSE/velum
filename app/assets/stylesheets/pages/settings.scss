@@ -13,6 +13,11 @@ $sidebar-item-highlight: #00c081;
   z-index: 10;
 }
 
+//used to make elements hidden
+.settings-hidden {
+  display: none
+}
+
 .settings-sidebar-section {
   .title {
     color: $sidebar-section-title;
