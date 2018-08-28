@@ -68,6 +68,10 @@ class CloudCluster
     persist_to_pillar!(:cloud_worker_security_group, @security_group_id)
     Velum::Salt.call_runner(action: "saltutil.sync_pillar")
     Velum::Salt.call(targets: "admin", action: "saltutil.refresh_pillar")
+    # During tests, the salt-cloud call that immediately follows the pillar
+    # refresh was found to sometimes operate on the old pillar data and
+    # thus fail. The sleep(1) works around this issue. Ideally this should
+    # be resolved in salt and the work-around removed.
     sleep(1)
   end
 
