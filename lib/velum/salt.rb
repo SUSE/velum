@@ -20,6 +20,15 @@ module Velum
       [res, JSON.parse(res.body)]
     end
 
+    # This method provides an interface to call salt-runners on the master
+    def self.call_runner(action:, arg: nil)
+      hsh = { client: "runner", fun: action }
+      hsh[:arg] = arg if arg
+
+      res = perform_request(endpoint: "/run", method: "post", data: hsh)
+      [res, JSON.parse(res.body)]
+    end
+
     # Trigger salt-cloud to construct a cluster
     def self.build_cloud_cluster(count)
       instance_names = (1..count).collect { "caasp-node-" + SecureRandom.hex(4) }
