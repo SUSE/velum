@@ -9,7 +9,7 @@ be able to:
 
 - Bootstrap a Kubernetes cluster with a simple click.
 - Manage your Kubernetes cluster: adding and removing nodes from your cluster,
-  monitoring faulty nodes, etc.
+  monitoring faulty nodes, configuring the cluster, etc.
 - Setup an update policy that suits your needs. Kubic/SUSE CaaS Platform already provides a
   transparent and sensible procedure for updates that guarantees no downtime,
   but with Velum you will be able to further tune this.
@@ -26,20 +26,12 @@ Once you have bootstrapped your cluster, you will be presented with a web
 application that allows you to manage your cluster, define your update policy,
 and much more.
 
-## Configuration
-
-Given that you have already running the salt master instance, set the following environment
-variables and start the server:
-
-- `VELUM_SALT_HOST`: IP of the Salt API server.
-- `VELUM_SALT_PORT`: Port of the Salt API server.
-- `VELUM_SALT_USER`: The user allowed to access the Salt API.
-
-Note that the development environment already sets all these values for you.
+![Velum Dashboard](https://raw.githubusercontent.com/kubic-project/community/master/assets/velum-dashboard.png)
+![Velum Settings](https://raw.githubusercontent.com/kubic-project/community/master/assets/velum-settings.png)
 
 ## Development
 
-You can start a Velum development environment by following the instructions in [caasp-devenv](https://github.com/kubic-project/automation#caasp-devenv).
+You can start a Velum development environment by following the instructions in [caasp-kvm](https://github.com/kubic-project/automation/caasp-kvm).
 
 ## Licensing
 
