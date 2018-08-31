@@ -89,7 +89,7 @@ describe "Bootstrap cluster feature" do
       find(".minion_#{minions[2].id} .worker-btn").click
 
       expect(page).to have_content(minions[3].minion_id)
-      expect(page).to have_content("Accept Node")
+      expect(page).to have_content("Accept | Reject")
 
       click_on_when_enabled "#set-roles"
 
@@ -105,7 +105,7 @@ describe "Bootstrap cluster feature" do
 
       # means it can accept pending node
       expect(page).to have_content(minions[3].minion_id)
-      expect(page).to have_content("Accept Node")
+      expect(page).to have_content("Accept | Reject")
     end
 
     it "removes node from pending acceptance state if accepted", js: true do
@@ -114,8 +114,8 @@ describe "Bootstrap cluster feature" do
 
       visit setup_discovery_path
 
-      expect(page).to have_content("Accept Node")
-      click_on("Accept Node")
+      expect(page).to have_content("Accept | Reject")
+      click_on("Accept")
 
       expect(page).to have_content("Acceptance in progress")
       is_pending = evaluate_script("hasPendingAcceptance('#{minions[3].minion_id}')")
@@ -126,6 +126,25 @@ describe "Bootstrap cluster feature" do
       expect(page).not_to have_content("Acceptance in progress")
       is_pending = evaluate_script("hasPendingAcceptance('#{minions[3].minion_id}')")
       expect(is_pending).to be false
+    end
+
+    it "removes node from unassigned state if removed", js: true do
+      setup_stubbed_pending_minions!(stubbed: [minions[1].minion_id])
+      setup_stubbed_pending_minions!(stubbed: [minions[2].minion_id])
+      setup_stubbed_pending_minions!(stubbed: [minions[3].minion_id])
+      setup_stubbed_pending_minions!(stubbed: [minions[4].minion_id])
+      visit setup_discovery_path
+
+      expect(page).to have_content("Remove")
+      within ".minion_#{minions[0].id}" do
+        click_on "Remove"
+      end
+
+      expect(page).to have_content("Pending removal")
+
+      setup_stubbed_remove_minion!(stubbed: minions[0].minion_id)
+
+      expect(page).not_to have_content("Pending removal")
     end
 
     it "A user selects a subset of nodes to be bootstrapped", js: true do

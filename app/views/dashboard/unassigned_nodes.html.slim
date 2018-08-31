@@ -26,6 +26,7 @@ h1 Unassigned Nodes
     button.btn.btn-sm.btn-default.pull-right.hidden.deselect-nodes-btn title="Deselect all the nodes"
       i.fa.fa-times.fa-fw
       | Deselect all nodes
+
   .panel-body
     = form_tag(assign_nodes_url, method: "post")
       div class="nodes-container new-nodes-container" data-url=authenticated_root_path data-current-hostnames='#{@assigned_minions_hostnames}'
@@ -38,6 +39,8 @@ h1 Unassigned Nodes
                 | Hostname
               th width="235"
                 | Role
+              th width="90"
+                | Actions
           tbody
             tr
               td colspan=4

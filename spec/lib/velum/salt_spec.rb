@@ -95,4 +95,24 @@ describe Velum::Salt do
       end
     end
   end
+
+  describe "remove_minion" do
+    minion_id = "81ad05b9d7ae4d26a83c421b64ca1952"
+    it "removes a minion" do
+      VCR.use_cassette("salt/remove_minion", record: :none) do
+        responses = described_class.remove_minion(minion_id: minion_id)
+        expect(responses).to be(200)
+      end
+    end
+  end
+
+  describe "reject_minion" do
+    minion_id = "81ad05b9d7ae4d26a83c421b64ca1952"
+    it "rejects a minion" do
+      VCR.use_cassette("salt/reject_minion", record: :none) do
+        responses = described_class.reject_minion(minion_id: minion_id)
+        expect(responses).to be(200)
+      end
+    end
+  end
 end

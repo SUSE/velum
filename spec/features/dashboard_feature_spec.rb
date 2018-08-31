@@ -114,12 +114,30 @@ describe "Dashboard" do
       visit authenticated_root_path
 
       expect(page).to have_content(minions[3].minion_id)
-      expect(page).to have_content("Accept Node")
+      expect(page).to have_content("Accept | Reject")
 
       # one of the minions is pending (bootstrapping or update in progress)
       minions[1].update(highstate: Minion.highstates[:pending])
 
-      expect(page).not_to have_content("Accept Node")
+      expect(page).not_to have_content("Accept | Reject")
+    end
+
+    it "reject node from pending acceptance state", js: true do
+      setup_stubbed_pending_minions!(stubbed: [minions[3].minion_id])
+
+      visit authenticated_root_path
+
+      expect(page).to have_content("Accept | Reject")
+
+      within ".minion_#{minions[3].minion_id}" do
+        click_on "Reject"
+      end
+
+      expect(page).to have_content("Rejection in progress")
+
+      setup_stubbed_reject_minion!(stubbed: minions[3].minion_id)
+
+      expect(page).to have_content("Rejection in progress")
     end
 
     it "A user doesn't see (new) link if there's a pending highstate node", js: true do
