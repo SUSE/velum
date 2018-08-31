@@ -268,20 +268,25 @@ MinionPoller = {
   },
 
   renderPendingNodes: function(pendingMinionId) {
-    var acceptHtml;
+    var acceptHtml = '';
+    var rejectHtml = '';
 
     if (State.hasPendingStateNode || State.pendingRemovalMinionId) {
       acceptHtml = '';
+      rejectHtml = '';
     } else if (hasPendingAcceptance(pendingMinionId)) {
       acceptHtml = 'Acceptance in progress';
+    } else if (hasPendingRejection(pendingMinionId)) {
+      rejectHtml = 'Rejection in progress';
     } else {
-      acceptHtml = '<a class="accept-minion" href="#" data-minion-id="' + pendingMinionId + '">Accept Node</a>';
+      acceptHtml = '<a class="accept-minion" href="#" data-minion-id="' + pendingMinionId + '">Accept</a>';
+      rejectHtml = '&nbsp;|&nbsp;<a class="reject-minion" href="#" data-minion-id="' + pendingMinionId + '">Reject</a>';
     }
 
     return '\
-      <tr> \
+      <tr class="minion_'+ pendingMinionId +'"> \
         <td>' + pendingMinionId + '</td>\
-        <td class="pending-accept-link">' + acceptHtml + '</td>\
+        <td class="pending-accept-link">' + acceptHtml + rejectHtml + '</td>\
       </tr> \
     ';
   },
@@ -443,43 +448,65 @@ MinionPoller = {
     var isWorker = MinionPoller.selectedNodes.indexOf(minion.id) !== -1;
     var isUnused = !isMaster && !isWorker;
 
-    var masterHtml;
     var masterChecked = '';
-    var minionHtml;
     var minionChecked = '';
+    var disabledHtml = '';
+    var disabledClass = '';
+
+    if (State.pendingRemovalMinionId != null){
+      disabledHtml = 'disabled="disabled"';
+      disabledClass = 'disabled';
+      $('.select-nodes-btn').prop('disabled', true);
+    }else{
+      $('.select-nodes-btn').prop('disabled', false);
+    }
 
     if (isMaster) {
       masterChecked = 'checked';
     }
 
-    masterHtml = '\
-      <input name="roles[master][]" id="roles_master_' + minion.id +
+    var masterHtml = '\
+      <input hidden name="roles[master][]" id="roles_master_' + minion.id +
       '" value="' + minion.id + '" type="checkbox" title="Select node as master" ' + masterChecked + '>';
 
     if (isWorker) {
       minionChecked = 'checked';
     }
 
-    minionHtml = '<input name="roles[worker][]" id="roles_worker_' + minion.id +
+    var minionHtml = '\
+      <input hidden name="roles[worker][]" id="roles_worker_' + minion.id +
       '" value="' + minion.id + '" type="checkbox" title="Select node for bootstrapping" ' + minionChecked + '>';
-
     var roleHtml = '\
-      <td class="role-column">' +
+      <td class="role-column" id="role-column-'+ minion.minion_id +'">' +
         masterHtml +
         minionHtml +
         '<div class="btn-group role-btn-group">\
-          <button type="button" class="btn btn-default master-btn '+ (isMaster ? 'btn-primary' : '') + '" data-minion-id="' + minion.id + '" data-minion-role="master">Master</button>\
-          <button type="button" class="btn btn-default worker-btn ' + (isWorker ? 'btn-primary' : '') + '" data-minion-id="' + minion.id + '" data-minion-role="worker">Worker</button>\
-          <button type="button" class="btn btn-default unused-btn ' + (isUnused ? 'btn-primary' : '') + '" data-minion-id="' + minion.id + '">Unused</button>\
+          <button type="button" '+ disabledHtml +' class="btn btn-default master-btn '+ (isMaster ? 'btn-primary' : '') + '" data-minion-id="' + minion.id + '" data-minion-role="master">Master</button>\
+          <button type="button" '+ disabledHtml +' class="btn btn-default worker-btn ' + (isWorker ? 'btn-primary' : '') + '" data-minion-id="' + minion.id + '" data-minion-role="worker">Worker</button>\
+          <button type="button" '+ disabledHtml +' class="btn btn-default unused-btn ' + (isUnused ? 'btn-primary' : '') + '" data-minion-id="' + minion.id + '">Unused</button>\
         </div>\
       </td>\
     ';
+
+    var actionHtml = '\
+      <td class="action-column">\
+        <a class="remove-minion '+ disabledClass +'" href="#" data-minion-id="' + minion.minion_id + '" data-minion-fqdn="' + minion.fqdn + '">Remove</a>\
+      </td>\
+    ';
+
+    switch (minion.highstate) {
+      case "pending_removal":
+        $('#set-roles').prop('disabled', true);
+        actionHtml = '<td class="action-column">Pending removal</td>';
+        break;
+    }
 
     return '\
       <tr class="minion_' + minion.id + '">' +
         '<td>' + minion.minion_id + '</td>\
         <td class="minion-hostname">' + minion.fqdn + '</td>' +
         roleHtml +
+        actionHtml +
       '</tr>';
   },
 
@@ -487,6 +514,44 @@ MinionPoller = {
     return MinionPoller.renderDiscovery(minion);
   }
 };
+
+function removeNode(minionId, hostname) {
+  var $alert = $('.failed-removal-alert');
+  var error = 'Failed to remove node '+ minionId +'. Please try again.';
+
+  if (confirm('Are you sure you want to remove ' + hostname + '?')) {
+    setPendingRemoval(minionId);
+    $.ajax({
+      url: '/minions/'+ minionId +'/remove-minion.json',
+      method: 'POST',
+      data: { minion_id: minionId },
+      dataType: 'text'
+    }).fail(function () {
+      $alert.remove();
+      removePendingRemoval();
+      showAlert(error, 'alert', 'failed-removal-alert');
+    });
+  }
+}
+
+function rejectNode(minionId) {
+  var $alert = $('.failed-rejection-alert');
+  var error = 'Failed to reject node '+ minionId +'. Please try again.';
+
+  if (confirm('Are you sure you want to reject ' + minionId + '?')) {
+    setPendingRejection(minionId);
+    $.ajax({
+      url: '/minions/'+ minionId +'/reject-minion.json',
+      method: 'POST',
+      data: { minion_id: minionId },
+      dataType: 'text'
+    }).fail(function () {
+      removePendingRejection(minionId);
+      $alert.remove();
+      showAlert(error, 'alert', 'failed-rejection-alert');
+    });
+  }
+}
 
 function isTheLast(minion, role) {
   var remainingValid = State.minions.filter(function (m) {
@@ -512,6 +577,35 @@ function removePendingAcceptance(minionId) {
   sessionStorage.removeItem(minionId);
 }
 
+function hasPendingRejection(minionId) {
+  return sessionStorage.getItem('reject-'+minionId) === 'true';
+}
+
+function setPendingRejection(minionId) {
+  sessionStorage.setItem('reject-'+minionId, true);
+  $('.pending-nodes-container a[data-minion-id="' + minionId + '"]').parent().text('Rejection in progress');
+}
+
+function removePendingRejection(minionId) {
+  sessionStorage.removeItem('reject-'+minionId);
+}
+
+function setPendingRemoval(minionId) {
+  $('.nodes-container a[data-minion-id="' + minionId + '"]').parent().text('Pending removal');
+  $('#set-roles').data('previous', $('#set-roles').prop('disabled'));
+  $('#set-roles').prop('disabled', true);
+  $('.select-nodes-btn').prop('disabled', true);
+  $('.role-column .btn').prop('disabled', true);
+  $('.remove-minion').addClass('disabled');
+}
+
+function removePendingRemoval() {
+  $('.role-column .btn').prop('disabled', false);
+  $('.remove-minion').removeClass('disabled', false);
+  $('.select-nodes-btn').prop('disabled', false);
+  $('#set-roles').data('previous', $('#set-roles').prop('disabled'));
+}
+
 function requestMinionApproval(selector, minionIds) {
   var $alert = $('.failed-acceptance-alert');
   var error = 'Failed to accept all nodes. Please try again.';
@@ -529,7 +623,7 @@ function requestMinionApproval(selector, minionIds) {
 
   $alert.remove();
   $.ajax({
-    url: '/accept-minion.json',
+    url: '/minions/'+ selector +'/accept-minion.json',
     method: 'POST',
     data: { minion_id: selector },
     dataType: 'text'
@@ -567,6 +661,24 @@ $('body').on('click', '.accept-minion', function(e) {
   e.preventDefault();
   requestMinionApproval(minionId, minionId);
   checkAcceptAllAvailability();
+});
+
+$('body').on('click', '.remove-minion', function(e) {
+  var minionId = $(this).data('minion-id');
+  var fqdn = $(this).data('minion-fqdn')
+
+  e.preventDefault();
+  if ($(this).hasClass('disabled')) {
+    return;
+  }
+  removeNode(minionId, fqdn);
+});
+
+$('body').on('click', '.reject-minion', function(e) {
+  var minionId = $(this).data('minion-id');
+
+  e.preventDefault();
+  rejectNode(minionId);
 });
 
 $('.update-admin-modal').on('hide.bs.modal', function(e) {
@@ -757,6 +869,9 @@ function isSupportedConfiguration() {
 
 // handle bootstrap button title
 function handleBootstrapErrors() {
+  if (State.pendingRemovalMinionId) {
+    return;
+  }
   if (State.nextClicked && !isBootstrappable()) {
     showNodesSelectionErrors(State.bootstrapErrors, '.discovery-bootstrap-alert')
     $('#set-roles').prop('disabled', true);
