@@ -5,7 +5,8 @@ RSpec.describe Settings::DexConnectorLdapsController, type: :controller do
   let(:certificate) { create(:certificate) }
   let(:certificate_text) { certificate.certificate.strip }
   let(:certificate_file) do
-    fixture_file_upload(to_fixture_file(certificate.certificate), "application/x-x509-user-cert")
+    filename = to_file_fixture_name(certificate.certificate)
+    fixture_file_upload(filename, "application/x-x509-user-cert")
   end
 
   before do

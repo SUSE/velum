@@ -40,23 +40,25 @@ def file_fixture(fixture_name)
   end
 end
 
-# Create a new file in the fixture directory.
+# Creates a new temporary file in the fixture directory.
 #
 # @param content [String] The content of the new file in string format
-# @param full_path [Boolean] True if the full path should be returned, otherwise
-# will return only the filename.
 #
-# @return The name of the new fixture created or the full_path if full_path is
-# set to true.
-def to_fixture_file(content, full_path: false)
+# @return The TempFile instance of the temporary file fixture
+def to_file_fixture(content)
   file_fixture_path = RSpec.configuration.fixture_path
   Tempfile.open("test_fixture", file_fixture_path) do |file|
     file.write(content)
     file.close
-    if full_path
-      file.path
-    else
-      File.basename(file)
-    end
+    file
   end
+end
+
+# Returns a filename of a temporary file created in the fixture directory.
+#
+# @param content [String] The content of the new file in string format
+#
+# @return The filename of the new fixture created
+def to_file_fixture_name(content)
+  File.basename(to_file_fixture(content))
 end
