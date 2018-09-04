@@ -6,10 +6,10 @@ RSpec.describe Settings::SystemCertificatesController, type: :controller do
   let(:pem_cert) { create(:certificate) }
   let(:pem_cert_text) { pem_cert.certificate.strip }
   let(:pem_cert_file) do
-    fixture_file_upload(to_fixture_file(pem_cert.certificate), "application/x-x509-user-cert")
+    fixture_file_upload(to_file_fixture_name(pem_cert.certificate), "application/x-x509-user-cert")
   end
   let(:empty_file) do
-    fixture_file_upload(to_fixture_file(""), "text/plain")
+    fixture_file_upload(to_file_fixture_name(""), "text/plain")
   end
 
   before do

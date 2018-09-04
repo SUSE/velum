@@ -9,9 +9,9 @@ describe "Feature: Mirrors settings", js: true do
   let!(:mirror2) { create(:registry_mirror, registry: registry) }
   let!(:mirror3) { create(:registry_mirror, registry: registry2) }
   let(:admin_cert_text) { file_fixture("admin.crt").read.strip }
-  let!(:pem_cert) { create(:certificate) }
+  let(:pem_cert) { create(:certificate) }
   let(:pem_cert_text) { pem_cert.certificate.strip }
-  let(:pem_cert_file) { to_fixture_file(pem_cert.certificate, full_path: true) }
+  let(:pem_cert_file) { to_file_fixture(pem_cert.certificate) }
 
   before do
     setup_done
@@ -79,7 +79,7 @@ describe "Feature: Mirrors settings", js: true do
       select registry.name
       fill_in "Name", with: "Mirror"
       fill_in "URL", with: "https://google.com"
-      attach_file "Certificate", pem_cert_file
+      attach_file "Certificate", pem_cert_file.path
       click_button("Save")
 
       last_mirror = RegistryMirror.last

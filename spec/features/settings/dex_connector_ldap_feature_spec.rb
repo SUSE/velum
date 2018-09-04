@@ -2,14 +2,14 @@ require "rails_helper"
 
 # rubocop:disable RSpec/ExampleLength
 # run in order to fix an issue with the `new_cert` test.
-describe "Feature: LDAP connector settings", js: true, order: :defined do
+describe "Feature: LDAP connector settings", js: true do
   let!(:user) { create(:user) }
   let!(:dex_connector_ldap) { create(:dex_connector_ldap) }
   let!(:dex_connector_ldap2) { create(:dex_connector_ldap) }
   let!(:dex_connector_ldap3) { create(:dex_connector_ldap) }
-  let!(:admin_cert) { create(:certificate) }
+  let(:admin_cert) { create(:certificate) }
   let(:admin_cert_text) { admin_cert.certificate.strip }
-  let(:admin_cert_file) { to_fixture_file(admin_cert.certificate, full_path: true) }
+  let(:admin_cert_file) { to_file_fixture(admin_cert.certificate) }
 
   before do
     setup_done
@@ -56,7 +56,7 @@ describe "Feature: LDAP connector settings", js: true, order: :defined do
     end
   end
 
-  describe "#new_cert" do
+  describe "#new" do
     before do
       visit new_settings_dex_connector_ldap_path
     end
@@ -66,7 +66,7 @@ describe "Feature: LDAP connector settings", js: true, order: :defined do
       fill_in "Host", with: "ldaptest.com"
       fill_in "Port", with: "1234"
       fill_in "Identifying User Attribute", with: "pass"
-      attach_file "Certificate", admin_cert_file
+      attach_file "Certificate", admin_cert_file.path
       fill_in id: "dex_connector_ldap_bind_dn", with: "cn=admin,dc=ldaptest,dc=com"
       fill_in id: "dex_connector_ldap_bind_pw", with: "pass"
       fill_in id: "dex_connector_ldap_user_attr_username", with: "username"
@@ -77,7 +77,6 @@ describe "Feature: LDAP connector settings", js: true, order: :defined do
       fill_in id: "dex_connector_ldap_user_base_dn", with: "bdn"
       fill_in id: "dex_connector_ldap_user_filter", with: "filter"
       fill_in id: "dex_connector_ldap_group_filter", with: "filter"
-      fill_in id: "dex_connector_ldap_name", with: "name"
       fill_in id: "dex_connector_ldap_group_attr_user", with: "user"
       fill_in id: "dex_connector_ldap_group_attr_group", with: "group"
       fill_in id: "dex_connector_ldap_user_attr_id", with: "uid"
@@ -85,21 +84,14 @@ describe "Feature: LDAP connector settings", js: true, order: :defined do
       page.execute_script("$('#ldap_conn_save').removeProp('disabled')")
       click_button("Save")
       last_ldap_connector = DexConnectorLdap.last
-      expect(page.text).to have_text(admin_cert_text)
+      expect(page).to have_content(admin_cert_text)
       expect(page).to have_content("DexConnectorLdap was successfully created.")
       expect(page).to have_current_path(settings_dex_connector_ldap_path(last_ldap_connector))
     end
 
-  end
-
-  describe "#new" do
-    before do
-      visit new_settings_dex_connector_ldap_path
-    end
-
     it "shows an error message if model validation fails" do
       fill_in "Port", with: "AAA"
-      attach_file "Certificate", admin_cert_file
+      attach_file "Certificate", admin_cert_file.path
       fill_in "Password", with: "pass"
       fill_in "Identifying User Attribute", with: "pass"
       fill_in id: "dex_connector_ldap_bind_dn", with: "cn=admin,dc=ldaptest,dc=com"
@@ -121,7 +113,7 @@ describe "Feature: LDAP connector settings", js: true, order: :defined do
 
     it "allows a user to edit an ldap connector" do
       fill_in "Port", with: 626
-      attach_file "Certificate", admin_cert_file
+      attach_file "Certificate", admin_cert_file.path
       page.execute_script("$('#ldap_conn_save').removeProp('disabled')")
       click_button("Save")
 
@@ -130,7 +122,7 @@ describe "Feature: LDAP connector settings", js: true, order: :defined do
 
     it "shows an error message if model validation fails" do
       fill_in "Port", with: "AAA"
-      attach_file "Certificate", admin_cert_file
+      attach_file "Certificate", admin_cert_file.path
       page.execute_script("$('#ldap_conn_save').removeProp('disabled')")
       click_button("Save")
 
