@@ -5,7 +5,7 @@ h1
     ' Add nodes to your cluster
   - else
     ' Bootstrap your CaaS Platform
-  small in Amazon Web Services' Elastic Compute Cloud
+  small in Google Compute Engine
 
 
 = form_for @cloud_cluster, url: setup_build_cloud_cluster_path do |form|
@@ -17,7 +17,7 @@ h1
 
   = render "instance_type_panel",
     form: form,
-    list_url: "https://aws.amazon.com/ec2/instance-types/"
+    list_url: "https://cloud.google.com/compute/docs/machine-types"
 
   = render "cluster_size_panel", form: form
 
@@ -26,13 +26,13 @@ h1
       h3.panel-title Networking
     .panel-body
       .col-lg-3.col-md-6
-        .form-group
-          label for="cloud_cluster_subnet_id" Subnet ID
-          = form.text_field :subnet_id, class: "form-control"
+        .form-group.required
+          label for="cloud_cluster_network_id" Network
+          = form.text_field :network_id, class: "form-control", required: true
       .col-lg-3.col-md-6
         .form-group
-          label for="cloud_cluster_security_group_id" Security Group ID
-          = form.text_field :security_group_id, class: "form-control"
+          label for="cloud_cluster_subnet_id" Subnetwork
+          = form.text_field :subnet_id, class: "form-control"
 
   .clearfix.text-right.steps-container
     - if setup_done?

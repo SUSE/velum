@@ -168,7 +168,7 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
       )
       create(
         :pillar,
-        pillar: "cloud:profiles:cluster_node:network_interfaces:SubnetId",
+        pillar: "cloud:profiles:cluster_node:subnet",
         value:  subnet_id
       )
       create(
@@ -260,7 +260,7 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
       )
       create(
         :pillar,
-        pillar: "cloud:profiles:cluster_node:network_interfaces:SubnetId",
+        pillar: "cloud:profiles:cluster_node:subnet",
         value:  subnet_id
       )
       create(
@@ -277,6 +277,57 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
         :pillar,
         pillar: "cloud:profiles:cluster_node:storage_account",
         value:  storage_account
+      )
+    end
+
+    it "has cloud configuration" do
+      get :show
+      expect(json).to eq(expected_response)
+    end
+  end
+
+  context "when in GCE framework" do
+    let(:custom_instance_type) { "custom-instance-type" }
+    let(:network_id) { "gcenetwork" }
+    let(:subnet_id) { "gcesubnetwork" }
+
+    let(:expected_response) do
+      {
+        registries:          [],
+        system_certificates: [],
+        kubelet:             {
+          :"compute-resources" => {},
+          :"eviction-hard"     => ""
+        },
+        cloud:               {
+          framework: "gce",
+          profiles:  {
+            cluster_node: {
+              size:       custom_instance_type,
+              network:    network_id,
+              subnetwork: subnet_id
+            }
+          }
+        }
+      }
+    end
+
+    before do
+      create(:gce_pillar)
+      create(
+        :pillar,
+        pillar: "cloud:profiles:cluster_node:size",
+        value:  custom_instance_type
+      )
+      create(
+        :pillar,
+        pillar: "cloud:profiles:cluster_node:network",
+        value:  network_id
+      )
+      create(
+        :pillar,
+        pillar: "cloud:profiles:cluster_node:subnet",
+        value:  subnet_id
       )
     end
 
