@@ -29,7 +29,7 @@ class Settings::DexConnectorLdapsController < Settings::BaseCertificateControlle
 
   def ldap_connector_params
     params.require(:dex_connector_ldap).permit(:name, :host, :port,
-                                               :start_tls, :certificate, :bind_anon,
+                                               :start_tls, :certificate, :current_cert, :bind_anon,
                                                :bind_dn, :bind_pw, :username_prompt,
                                                :user_base_dn, :user_filter, :user_attr_username,
                                                :user_attr_id, :user_attr_email, :user_attr_name,
