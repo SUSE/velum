@@ -23,6 +23,7 @@ class Pillar < ApplicationRecord
       simple_pillars.merge(cloud_pillars).merge(cpi_pillars)
     end
 
+    # rubocop:disable Metrics/MethodLength
     def simple_pillars
       {
         dashboard:                          "dashboard",
@@ -42,6 +43,8 @@ class Pillar < ApplicationRecord
         http_proxy:                         "proxy:http",
         https_proxy:                        "proxy:https",
         no_proxy:                           "proxy:no_proxy",
+        psp:                                "addons:psp",
+        dns:                                "addons:dns",
         tiller:                             "addons:tiller",
         ldap_host:                          "ldap:host",
         ldap_port:                          "ldap:port",
@@ -60,6 +63,7 @@ class Pillar < ApplicationRecord
         cloud_framework:                    "cloud:framework",
         cloud_provider:                     "cloud:provider",
         kubernetes_feature_gates:           "kubernetes:feature_gates",
+        kube_log_level:                     "kube_log_level",
         container_runtime:                  "cri:chosen",
         api_audit_log_enabled:              "api:audit:log:enabled",
         api_audit_log_maxsize:              "api:audit:log:maxsize",
@@ -73,6 +77,7 @@ class Pillar < ApplicationRecord
         components_proxy_args:              "components:proxy:args"
       }
     end
+    # rubocop:enable Metrics/MethodLength
 
     # rubocop:disable Layout/AlignHash
     def cloud_pillars
