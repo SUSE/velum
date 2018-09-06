@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181715075510) do
+ActiveRecord::Schema.define(version: 20181715075511) do
 
   create_table "certificate_services", force: :cascade do |t|
     t.integer  "certificate_id", limit: 4
@@ -173,16 +173,16 @@ ActiveRecord::Schema.define(version: 20181715075510) do
     t.datetime "updated_at"
     t.string   "name",               limit: 255
     t.string   "host",               limit: 255
-    t.integer  "port",               limit: 2 
+    t.integer  "port",               limit: 2
     t.boolean  "start_tls",                          null: false
     t.boolean  "bind_anon",                          null: false
     t.string   "bind_dn",            limit: 255
     t.string   "bind_pw",            limit: 255
-    t.string   "username_prompt",    limit: 255 
-    t.string   "user_base_dn",       limit: 255 
-    t.string   "user_filter",        limit: 255 
-    t.string   "user_attr_username", limit: 255 
-    t.string   "user_attr_id",       limit: 255 
+    t.string   "username_prompt",    limit: 255
+    t.string   "user_base_dn",       limit: 255
+    t.string   "user_filter",        limit: 255
+    t.string   "user_attr_username", limit: 255
+    t.string   "user_attr_id",       limit: 255
     t.string   "user_attr_email",    limit: 255,     null: false
     t.string   "user_attr_name",     limit: 255
     t.string   "group_base_dn",      limit: 255
