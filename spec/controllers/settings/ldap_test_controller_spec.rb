@@ -16,6 +16,7 @@ RSpec.describe Settings::LdapTestController, type: :controller do
     let(:port) { 636 }
     let(:start_tls) { "false" }
     let(:cert) do
+      "-----BEGIN CERTIFICATE-----" \
       "MIIC0zCCAlmgAwIBAgIUCfQ+m0pgZ/BjYAJvxrn/bdGNZokwCgYIKoZIzj0EAwMw" \
       "gZYxCzAJBgNVBAYTAlVTMRUwEwYDVQQKEwxBMUEgQ2FyIFdhc2gxJDAiBgNVBAsT" \
       "G0luZm9ybWF0aW9uIFRlY2hub2xvZ3kgRGVwLjEUMBIGA1UEBxMLQWxidXF1ZXJx" \
@@ -31,7 +32,8 @@ RSpec.describe Settings::LdapTestController, type: :controller do
       "MB8GA1UdIwQYMBaAFE+l6XolXDAYnGLTl4W6ULKHrm74MAoGCCqGSM49BAMDA2gA" \
       "MGUCMQCXLZj8okyxW6UTL7hribUUbu63PbjuwIXnwi420DdNsvA9A7fcQEXScWFL" \
       "XAGC8rkCMGcqwXZPSRfwuI9r+R11gTrP92hnaVxs9sjRikctpkQpOyNlIXFPopFK" \
-      "8FdfWPypvA=="
+      "8FdfWPypvA==" \
+      "-----END CERTIFICATE-----"
     end
     let(:anon_bind) { "false" }
     let(:dn) { "cn=admin,dc=ldaptest,dc=com" }
@@ -81,7 +83,7 @@ RSpec.describe Settings::LdapTestController, type: :controller do
     # rubocop:enable RSpec/ExampleLength
 
     it "failure with malformed certificate" do
-      cert = "abcdefg"
+      cert = "-----BEGIN CERTIFICATE-----\nYWJjZGVm\n-----END CERTIFICATE-----"
       post :create, host: host, port: port, start_tls: start_tls, cert: cert,
       anon_bind: anon_bind, dn: dn, pass: pass, base_dn: base_dn, filter: filter, mock: mock
       parse_json = JSON(response.body)
