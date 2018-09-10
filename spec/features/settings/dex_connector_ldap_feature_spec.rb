@@ -130,6 +130,75 @@ describe "Feature: LDAP connector settings", js: true do
     end
   end
 
+  # rubocop:disable RSpec/ExpectInHook
+  describe "#new_save_disabled_by_change" do
+    before do
+      visit new_settings_dex_connector_ldap_path
+      have_button("Save", disabled: true)
+
+      # Test that we can enable the button
+      page.execute_script("$('#ldap_conn_save').removeProp('disabled')")
+      have_button("Save", disabled: false)
+    end
+
+    it "allows change of start_tls" do
+      # Is false by default - change to true
+      # Following line should work but it does not so using JS
+      # choose id: "dex_connector_ldap_start_tls_true"
+      page.execute_script("$('#dex_connector_ldap_start_tls_true').prop('checked', true)")
+      page.execute_script("$('#dex_connector_ldap_start_tls_true').trigger('change')")
+    end
+
+    it "allows change of bind_anon" do
+      # Is false by default - change to true
+      # Following line should work but it does not so using JS
+      # choose id: "dex_connector_ldap_bind_anon_true"
+      page.execute_script("$('#dex_connector_ldap_bind_anon_true').prop('checked', true)")
+      page.execute_script("$('#dex_connector_ldap_bind_anon_true').trigger('change')")
+    end
+
+    it "allows change of host" do
+      fill_in "Host", with: "AAA"
+      page.execute_script("$('#dex_connector_ldap_host').trigger('change')")
+    end
+
+    it "allows change of port" do
+      fill_in "Port", with: "AAA"
+      page.execute_script("$('#dex_connector_ldap_port').trigger('change')")
+    end
+
+    it "allows change certificate" do
+      attach_file "Certificate", admin_cert_file.path
+      page.execute_script("$('#dex_connector_ldap_certificate').trigger('change')")
+    end
+
+    it "allows change of bind dn" do
+      fill_in id: "dex_connector_ldap_bind_dn", with: "AAA"
+      page.execute_script("$('#dex_connector_ldap_bind_dn').trigger('change')")
+    end
+
+    it "allows change of password" do
+      fill_in id: "dex_connector_ldap_bind_pw", with: "AAA"
+      page.execute_script("$('#dex_connector_ldap_bind_pw[required=\"required\"]')"\
+        ".trigger('change')")
+    end
+
+    it "allows change of user base dn" do
+      fill_in id: "dex_connector_ldap_user_base_dn", with: "AAA"
+      page.execute_script("$('#dex_connector_ldap_user_base_dn').trigger('change')")
+    end
+
+    it "allows change of user filter" do
+      fill_in id: "dex_connector_ldap_user_filter", with: "AAA"
+      page.execute_script("$('#dex_connector_ldap_user_filter').trigger('change')")
+    end
+
+    after do
+      have_button("Save", disabled: true)
+    end
+  end
+  # rubocop:enable RSpec/ExpectInHook
+
   describe "#show" do
     before do
       visit settings_dex_connector_ldap_path(dex_connector_ldap)

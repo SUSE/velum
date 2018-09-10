@@ -33,7 +33,7 @@ $(function () {
 
     reader.readAsText(fileInput.files[0]);	
   }
-  
+
   function ldapFormSubmit (event) {
     var file = $('#dex_connector_ldap_certificate').val()
     if(!file) {
@@ -73,12 +73,27 @@ $(function () {
     }
   }
 
+  function setupFieldOnchange ( fieldName ) {
+    var fetch;
+    if( fieldName == 'bind_pw' ) fetch = "#dex_connector_ldap_bind_pw[required='required']";
+    else fetch = '#dex_connector_ldap_' + fieldName;
+
+    var field = $(fetch);
+    field.change( fieldChange );
+  }
+
+  function fieldChange () {
+    showTestConnectionMessage();
+  }
+
+  function showTestConnectionMessage () {
+    renderValidity( 'Test Connection first before saving', false );
+  }
+
   $(function () {
     // Elements specific to LDAP Connector page; check for existence before changing
     if ($('#ldap_conn_save').length > 0 && $('#ldap_conn_message').length > 0) {
-      $('#ldap_conn_save').prop('disabled', 'disabled')
-      $('#ldap_conn_message').addClass('ldap-conn-message-default')
-      $('#ldap_conn_message').html('Test Connection first before saving')
+      showTestConnectionMessage();
     };
 
     // Run LDAP Connection Test with button click
@@ -90,5 +105,13 @@ $(function () {
       var form = $('form.dex-connectors-form');
       form.submit(ldapFormSubmit);
     }
+
+    // prepend with dex_connector_ldap_
+    var fields = [
+      'name', 'host', 'port', 'start_tls_true', 'start_tls_false', 'certificate',
+      'bind_anon_true', 'bind_anon_false', 'bind_dn', 'bind_pw',
+      'user_base_dn', 'user_filter'
+    ];
+    for( var i=0;i<fields.length;i++ ) setupFieldOnchange( fields[i] );
   })
 })
