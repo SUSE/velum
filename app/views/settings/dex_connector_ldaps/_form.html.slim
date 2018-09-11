@@ -31,7 +31,7 @@
     = f.label :start_tls, "StartTLS"
     br
     .btn-group.btn-group-toggle data-toggle="buttons"
-      = f.label :start_tls, nil, class: "btn btn-default #{'btn-primary active' if @certificate_holder.start_tls}"
+      = f.label :start_tls, nil, id: "dex_connector_ldap_start_tls_true_label", class: "btn btn-default #{'btn-primary active' if @certificate_holder.start_tls}"
         = f.radio_button :start_tls, "true", checked: @certificate_holder.start_tls
         | On
       = f.label :start_tls, nil, class: "btn btn-default #{'btn-primary active' unless @certificate_holder.start_tls}"
@@ -39,7 +39,7 @@
         | Off
     = error_messages_for(@certificate_holder, :start_tls)
     br
-    small.form-text.text-muted 
+    small.form-text.text-muted
       | When enabled use StartTLS otherwise TLS will be used
 
   .form-group.form-group-certificate class="#{error_class_for(@cert, :certificate) if @cert.present?}"
@@ -57,7 +57,7 @@
     = f.label :bind_anon, "Anonymous"
     br
     .btn-group.btn-group-toggle data-toggle="buttons"
-      = f.label :bind_anon, nil, class: "btn btn-default #{'btn-primary active' if @certificate_holder.bind_anon}", data: {toggle: "collapse", target: ".ldap-dn-authentication"}
+      = f.label :bind_anon, nil, id: "dex_connector_ldap_bind_anon_true_label", class: "btn btn-default #{'btn-primary active' if @certificate_holder.bind_anon}", data: {toggle: "collapse", target: ".ldap-dn-authentication"}
         = f.radio_button :bind_anon, "true", checked: @certificate_holder.bind_anon
         | True
       = f.label :bind_anon, nil, class: "btn btn-default #{'btn-primary active' unless @certificate_holder.bind_anon}", data: {toggle: "collapse", target: ".ldap-dn-authentication"}
@@ -65,14 +65,14 @@
         | False
     = error_messages_for(@certificate_holder, :bind_anon)
     br
-    small.form-text.text-muted 
+    small.form-text.text-muted
       | Use anonymous authentication to do initial user search
 
   .ldap-dn-authentication.collapse class="#{'in' if !@certificate_holder.bind_anon}" id="anonymous_bind_toggle" aria-expanded="true"
     .form-group class="#{error_class_for(@certificate_holder, :bind_dn)}" autocomplete="nope"
       = f.label :bind_dn, "DN"
       = f.text_field :bind_dn, class: "form-control", value: @certificate_holder.bind_dn, required: !@certificate_holder.bind_anon, disable: @certificate_holder.bind_anon
-      = error_messages_for(@certificate_holder, :bind_dn)    
+      = error_messages_for(@certificate_holder, :bind_dn)
       small.form-text.text-muted
         | Bind DN of user that can do user searches
 
@@ -80,7 +80,7 @@
     .form-group class="#{error_class_for(@certificate_holder, :bind_pw)}" autocomplete="nope"
       = f.label :bind_pw, "Password"
         / This is done to keep firefox from auto filling saved creditials.
-      = f.text_field :bind_pw, class: "form_control settings-hidden", value:"none" 
+      = f.text_field :bind_pw, class: "form_control settings-hidden", value:"none"
       = f.password_field :bind_pw, class: "form-control", value: @certificate_holder.bind_pw, required: !@certificate_holder.bind_anon, disable: @certificate_holder.bind_anon, autocomplete: "new-password"
       = error_messages_for(@certificate_holder, :bind_pw)
       small.form-text.text-muted
@@ -179,8 +179,8 @@
   .form-group class="#{error_class_for(@certificate_holder, :group_attr_user)}"
     = f.label :group_attr_user, "User"
     = f.text_field :group_attr_user, class: "form-control", value: @certificate_holder.group_attr_user
-    = error_messages_for(@certificate_holder, :group_attr_user)    
-    small.form-text.text-muted 
+    = error_messages_for(@certificate_holder, :group_attr_user)
+    small.form-text.text-muted
       | Attribute to map as user (e.g.
       code
         | uid
@@ -192,7 +192,7 @@
     = error_messages_for(@certificate_holder, :group_attr_group)
     small.form-text.text-muted
       | Attribute identifying membership (e.g.
-      code 
+      code
         | member
       | )
 
@@ -211,5 +211,5 @@
     = link_to "Cancel", settings_dex_connector_ldaps_path, class: "btn btn-default action"
     button class="btn btn-primary" type="button" id="ldap_conn_test" Test Connection
 
-  h4 id="ldap_conn_message" Test Connection first before saving 
-  
+  h4 id="ldap_conn_message" Test Connection first before saving
+
