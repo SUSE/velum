@@ -22,6 +22,6 @@
 //= require_tree ./users
 //= require_tree ./utils
 
-$('body').on('click', '[disabled], .disabled', function(e) {
+$('body').on('click', '[disabled], .disabled', function (e) {
   e.preventDefault();
 });

@@ -25,17 +25,13 @@ class Settings::RegistriesController < Settings::BaseCertificateController
   end
 
   def certificate_holder_update_params
-    registry_params.except(:certificate)
+    registry_params.except(:certificate, :current_cert)
   end
 
   private
 
-  def certificate_param
-    registry_params[:certificate].strip if registry_params[:certificate].present?
-  end
-
   def registry_params
-    params.require(:registry).permit(:name, :url, :certificate)
+    params.require(:registry).permit(:name, :url, :certificate, :current_cert)
   end
 
   def suse_registry?(registry)

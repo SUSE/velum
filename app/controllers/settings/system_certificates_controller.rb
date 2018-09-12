@@ -27,17 +27,12 @@ class Settings::SystemCertificatesController < Settings::BaseCertificateControll
   end
 
   def certificate_holder_update_params
-    system_certificate_params.except(:certificate)
+    system_certificate_params.except(:certificate, :current_cert)
   end
 
   private
 
-  def certificate_param
-    system_certificate_params[:certificate].strip if
-      system_certificate_params[:certificate].present?
-  end
-
   def system_certificate_params
-    params.require(:system_certificate).permit(:name, :certificate)
+    params.require(:system_certificate).permit(:name, :certificate, :current_cert)
   end
 end

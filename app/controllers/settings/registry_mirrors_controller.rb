@@ -7,14 +7,16 @@ class Settings::RegistryMirrorsController < Settings::BaseCertificateController
 
   def create
     @registry = Registry.find(registry_mirror_params[:registry_id])
-    registry_mirror_create_params = registry_mirror_params.except(:certificate, :registry_id)
+    registry_mirror_create_params = registry_mirror_params.except(:certificate,
+                                                                  :current_cert,
+                                                                  :registry_id)
     @certificate_holder = @registry.registry_mirrors.build(registry_mirror_create_params)
-    @cert = Certificate.find_or_initialize_by(certificate: certificate_param)
+    @cert = passed_certificate
 
     ActiveRecord::Base.transaction do
       @certificate_holder.save!
 
-      create_or_update_certificate! if certificate_param.present?
+      create_or_update_certificate! if passed_certificate.present?
 
       @created = true
     end
@@ -35,17 +37,21 @@ class Settings::RegistryMirrorsController < Settings::BaseCertificateController
     RegistryMirror
   end
 
+  def certificate_holder_params
+    registry_mirror_params
+  end
+
   def certificate_holder_update_params
-    registry_mirror_params.except(:certificate, :registry_id)
+    registry_mirror_params.except(:certificate, :current_cert, :registry_id)
   end
 
   private
 
-  def certificate_param
-    registry_mirror_params[:certificate].strip if registry_mirror_params[:certificate].present?
-  end
-
   def registry_mirror_params
-    params.require(:registry_mirror).permit(:name, :url, :certificate, :registry_id)
+    params.require(:registry_mirror).permit(:name,
+                                            :url,
+                                            :certificate,
+                                            :registry_id,
+                                            :current_cert)
   end
 end

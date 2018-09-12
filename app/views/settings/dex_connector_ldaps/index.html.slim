@@ -1,0 +1,25 @@
+= render 'settings/apply'
+
+h2 LDAP Connectors
+
+= link_to "Add LDAP connector", new_settings_dex_connector_ldap_path, class: "btn btn-primary add-entry-btn"
+
+- if @ldap_connectors.present?
+    section
+      table.table
+        thead
+          tr
+            th Name
+            th width="110"
+        tbody
+          - @ldap_connectors.each do |conn|
+            tr class="dex_connector_ldap#{conn.id}"
+              td
+                = link_to conn.name, settings_dex_connector_ldap_path(conn)
+              td.actions
+                = link_to edit_settings_dex_connector_ldap_path(conn), class: "btn btn-default icon-only edit-btn" do
+                  i.fa.fa-pencil
+                = link_to settings_dex_connector_ldap_path(conn), method: "delete", class: "btn btn-danger icon-only delete-btn", data: { confirm: "Are you sure?" } do
+                  i.fa.fa-trash-o
+- else
+  p No LDAP connectors found.

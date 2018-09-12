@@ -15,6 +15,9 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
         url:  Registry::SUSE_REGISTRY_URL,
         cert: nil
       ],
+      dex:                 {
+        connectors: []
+      },
       kubelet:             {
         :"compute-resources" => {},
         :"eviction-hard"     => ""
@@ -72,6 +75,9 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
             ]
           }
         ],
+        dex:                 {
+          connectors: []
+        },
         kubelet:             {
           :"compute-resources" => {},
           :"eviction-hard"     => ""
@@ -108,6 +114,9 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
       {
         system_certificates: [],
         registries:          [],
+        dex:                 {
+          connectors: []
+        },
         kubelet:             {
           :"compute-resources" => {
             kube: {
@@ -136,6 +145,9 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
       {
         registries:          [],
         system_certificates: [],
+        dex:                 {
+          connectors: []
+        },
         kubelet:             {
           :"compute-resources" => {},
           :"eviction-hard"     => ""
@@ -201,6 +213,9 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
       {
         system_certificates: [],
         registries:          [],
+        dex:                 {
+          connectors: []
+        },
         kubelet:             {
           :"compute-resources" => {},
           :"eviction-hard"     => ""
@@ -342,6 +357,9 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
       {
         system_certificates: [],
         registries:          [],
+        dex:                 {
+          connectors: []
+        },
         kubelet:             {
           :"compute-resources" => {},
           :"eviction-hard"     => ""
@@ -391,6 +409,9 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
           name: "sca1",
           cert: certificate.certificate
         ],
+        dex:                 {
+          connectors: []
+        },
         kubelet:             {
           :"compute-resources" => {},
           :"eviction-hard"     => ""
@@ -408,4 +429,98 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
       expect(json).to eq(expected_response)
     end
   end
+
+  def expected_dex_json(num, certificate)
+    {
+      id:              num,
+      name:            "LDAP Server #{num}",
+      root_ca_data:    Base64.encode64(certificate.certificate),
+      bind:            {
+        anonymous: false,
+        dn:        "cn=admin,dc=ldap_host_#{num},dc=com",
+        pw:        "pass"
+      },
+      username_prompt: "Username",
+      user:            {
+        base_dn:  "cn=users,dc=ldap_host_#{num},dc=com",
+        filter:   "(objectClass=person)",
+        attr_map: {
+          username: "uid",
+          id:       "uid",
+          email:    "mail",
+          name:     "name"
+        }
+      },
+      group:           {
+        base_dn:  "cn=groups,dc=ldap_host_#{num},dc=com",
+        filter:   "(objectClass=group)",
+        attr_map: {
+          user:  "uid",
+          group: "member",
+          name:  "name"
+        }
+      }
+    }
+  end
+
+  # rubocop:disable RSpec/ExampleLength
+  context "with dex LDAP connectors tls" do
+    it "has dex LDAP connectors" do
+      dex_connector_ldap = create(:dex_connector_ldap, :tls, :regular_admin)
+      CertificateService.create(service: dex_connector_ldap, certificate: certificate)
+
+      expected_json = {
+        registries:          [],
+        kubelet:             {
+          :"compute-resources" => {},
+          :"eviction-hard"     => ""
+        },
+        system_certificates: [],
+        dex:                 {
+          connectors: [
+            expected_dex_json(dex_connector_ldap.id, certificate).merge(
+              server:    "ldap_host_#{dex_connector_ldap.id}.com:636",
+              start_tls: false
+            )
+          ]
+        }
+      }
+      get :show do
+        expect(json).to eq(expected_json)
+        delete(dex_connector_ldap)
+      end
+    end
+  end
+
+  context "with dex LDAP connectors starttls" do
+    it "has dex LDAP connectors" do
+      dex_connector_ldap = create(:dex_connector_ldap, :starttls, :anon_admin)
+      CertificateService.create(service: dex_connector_ldap, certificate: certificate)
+
+      expected_json = {
+        registries:          [],
+        kubelet:             {
+          :"compute-resources" => {},
+          :"eviction-hard"     => ""
+        },
+        system_certificates: [],
+        dex:                 {
+          connectors: [
+            expected_dex_json(dex_connector_ldap.id, certificate).merge(
+              server:    "ldap_host_#{dex_connector_ldap.id}.com:389",
+              start_tls: true,
+              bind:      {
+                anonymous: true
+              }
+            )
+          ]
+        }
+      }
+      get :show do
+        expect(json).to eq(expected_json)
+        delete(dex_connector_ldap)
+      end
+    end
+  end
+  # rubocop:enable RSpec/ExampleLength
 end
