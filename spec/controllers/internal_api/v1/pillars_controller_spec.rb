@@ -310,6 +310,9 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
       {
         registries:          [],
         system_certificates: [],
+        dex:                 {
+          connectors: []
+        },
         kubelet:             {
           :"compute-resources" => {},
           :"eviction-hard"     => ""
