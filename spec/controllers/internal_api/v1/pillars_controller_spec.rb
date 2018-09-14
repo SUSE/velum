@@ -185,7 +185,7 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
       )
       create(
         :pillar,
-        pillar: "cloud:profiles:cluster_node:network_interfaces:SecurityGroupId",
+        pillar: "cloud:profiles:cluster_node:security_group",
         value:  security_group_id
       )
     end
