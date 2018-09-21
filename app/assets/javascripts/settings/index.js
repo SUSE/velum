@@ -1,22 +1,25 @@
-$(function() {
+/* eslint-disable no-new */
+$(function () {
+  var globals = window;
+
   var $mirrorForm = $('.mirror-form');
   var $registryForm = $('.registry-form');
   var $systemCertificateForm = $('.system-certificate-form');
   var $dexConnectorForm = $('.dex-connector-form');
 
   if ($mirrorForm.length) {
-    new RegistryForm($mirrorForm);
+    new globals.RegistryForm($mirrorForm);
   }
 
   if ($registryForm.length) {
-    new RegistryForm($registryForm);
+    new globals.RegistryForm($registryForm);
   }
 
   if ($systemCertificateForm.length) {
-    new SystemCertificateForm($systemCertificateForm);
+    new globals.SystemCertificateForm($systemCertificateForm);
   }
 
   if ($dexConnectorForm.length) {
-    new DexConnectorForm($dexConnectorForm);
+    new globals.DexConnectorForm($dexConnectorForm);
   }
 });

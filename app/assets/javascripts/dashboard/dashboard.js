@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 State = {
   nextClicked: false,
   bootstrapErrors: [],

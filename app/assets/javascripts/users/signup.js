@@ -19,7 +19,7 @@ $(function () {
   // keyup event handler
   $userEmail.on('input', function () {
     var w3cRegex = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    var dotRegex = /^.+@.+\..+/
+    var dotRegex = /^.+@.+\..+/;
     var value = this.value;
 
     if (w3cRegex.test(value) && !dotRegex.test(value)) {
@@ -28,4 +28,4 @@ $(function () {
       $userEmail.tooltip('hide');
     }
   });
-})
+});

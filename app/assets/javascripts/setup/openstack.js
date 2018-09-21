@@ -1,4 +1,6 @@
-(function (window) {
+(function () {
+  var globals = this;
+
   var dom = {
     PROJECT_NAME_INPUT: '#settings_cloud_openstack_project',
     PROJECT_NAME_LABEL: 'label[for=settings_cloud_openstack_project]',
@@ -10,7 +12,7 @@
     DOMAIN_ID_INPUT: '#settings_cloud_openstack_domain_id',
     DOMAIN_ID_LABEL: 'label[for=settings_cloud_openstack_domain_id]',
 
-    REQUIRED_INPUTS: 'input[required="required"]',
+    REQUIRED_INPUTS: 'input[required="required"]'
   };
 
   function OpenStackSettings(el) {
@@ -39,53 +41,53 @@
 
     this.$el.on('settings.enabled', this.settingsEnabled.bind(this));
     this.$el.on('settings.disabled', this.settingsDisabled.bind(this));
-  }
+  };
 
-  OpenStackSettings.prototype.onProjectIdInput = function (e) {
-    const isIdEmpty = this.isEmpty(this.$projectIdInput);
+  OpenStackSettings.prototype.onProjectIdInput = function () {
+    var isIdEmpty = this.isEmpty(this.$projectIdInput);
 
     this.$projectNameInput.prop('disabled', !isIdEmpty);
     this.$projectNameLabel.attr('required', isIdEmpty);
-  }
+  };
 
-  OpenStackSettings.prototype.onProjectNameInput = function (e) {
-    const isNameEmpty = this.isEmpty(this.$projectNameInput);
+  OpenStackSettings.prototype.onProjectNameInput = function () {
+    var isNameEmpty = this.isEmpty(this.$projectNameInput);
 
     this.$projectIdInput.prop('disabled', !isNameEmpty);
     this.$projectIdLabel.attr('required', isNameEmpty);
-  }
+  };
 
-  OpenStackSettings.prototype.onDomainIdInput = function (e) {
-    const isIdEmpty = this.isEmpty(this.$domainIdInput);
+  OpenStackSettings.prototype.onDomainIdInput = function () {
+    var isIdEmpty = this.isEmpty(this.$domainIdInput);
 
     this.$domainNameInput.prop('disabled', !isIdEmpty);
     this.$domainNameLabel.attr('required', isIdEmpty);
-  }
+  };
 
-  OpenStackSettings.prototype.onDomainNameInput = function (e) {
-    const isNameEmpty = this.isEmpty(this.$domainNameInput);
+  OpenStackSettings.prototype.onDomainNameInput = function () {
+    var isNameEmpty = this.isEmpty(this.$domainNameInput);
 
     this.$domainIdInput.prop('disabled', !isNameEmpty);
     this.$domainIdLabel.attr('required', isNameEmpty);
-  }
+  };
 
-  OpenStackSettings.prototype.settingsDisabled = function (e) {
+  OpenStackSettings.prototype.settingsDisabled = function () {
     this.$requiredInputs.prop('required', false);
-  }
+  };
 
-  OpenStackSettings.prototype.settingsEnabled = function (e) {
+  OpenStackSettings.prototype.settingsEnabled = function () {
     this.$requiredInputs.prop('required', true);
     this.onDomainNameInput();
     this.onDomainIdInput();
     this.onProjectNameInput();
     this.onProjectIdInput();
-  }
+  };
 
   OpenStackSettings.prototype.isEmpty = function (els) {
-    var value = $.map(els, function (el) { return el.value }).join('');
+    var value = $.map(els, function (el) { return el.value; }).join('');
 
     return value.length === 0;
-  }
+  };
 
-  window.OpenStackSettings = OpenStackSettings;
-}(window));
+  globals.OpenStackSettings = OpenStackSettings;
+}.call(window));
