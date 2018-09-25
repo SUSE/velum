@@ -33,6 +33,20 @@ and much more.
 
 You can start a Velum development environment by following the instructions in [caasp-kvm](https://github.com/kubic-project/automation/caasp-kvm).
 
+## Testing
+
+After you started a Velum development [environment](https://github.com/kubic-project/automation#caasp-devenv). Follow this steps:
+
+1. ssh into the admin node (normally the IP is `10.17.1.0`)
+
+2. run this docker command
+
+    `docker exec -it $(docker ps -q -f 'name=velum-dashboard') entrypoint.sh bash -c "RAILS_ENV=test rspec spec"`
+
+    This will execute the test battery inside the velum-dashboard container. To run a specific test file specify it like this:
+
+    `docker exec -it $(docker ps -q -f 'name=velum-dashboard') entrypoint.sh bash -c "RAILS_ENV=test rspec spec/features/file_name_spec.rb"`
+
 ## Licensing
 
 Velum is licensed under the Apache License, Version 2.0. See

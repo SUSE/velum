@@ -70,6 +70,24 @@ module Velum
       JSON.parse(res.body)["return"].first["data"]["return"]["minions"]
     end
 
+    # Removes a minion from the cluster
+    def self.remove_minion(minion_id: "")
+      res = perform_request(endpoint: "/", method: "post",
+                            data: { client: "wheel",
+                                    fun:    "key.delete",
+                                    match:  minion_id })
+      JSON.parse(res.code)
+    end
+
+    # Rejects a minion from the cluster
+    def self.reject_minion(minion_id: "")
+      res = perform_request(endpoint: "/", method: "post",
+                            data: { client: "wheel",
+                                    fun:    "key.reject",
+                                    match:  minion_id })
+      JSON.parse(res.code)
+    end
+
     # Returns the list of jobs
     def self.jobs
       res = perform_request(endpoint: "/jobs", method: "get")

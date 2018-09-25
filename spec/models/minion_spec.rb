@@ -317,4 +317,20 @@ describe Minion do
       end
     end
   end
+
+  describe "#remove_minion" do
+    before do
+      minions
+    end
+
+    let(:minion_ids) { [described_class.unassigned_role.first.minion_id] }
+
+    context "when a minion is marked for removal" do
+      it "updates the minion to have pending_removal state" do
+        expect do
+          described_class.remove_minion(minion_ids[0])
+        end.to change { described_class.unassigned_role.count }.from(3).to(2)
+      end
+    end
+  end
 end
