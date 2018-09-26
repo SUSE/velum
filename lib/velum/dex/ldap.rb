@@ -59,7 +59,7 @@ module Velum
           attr_map: {
             user:  con.group_attr_user,
             group: con.group_attr_group,
-            name:  con.group_attr_group
+            name:  con.group_attr_name
           }
         }
       end
