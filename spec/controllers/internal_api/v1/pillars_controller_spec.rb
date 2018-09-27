@@ -434,46 +434,44 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
     end
   end
 
-  def expected_dex_json(num, certificate)
-    {
-      id:              num,
-      name:            "LDAP Server #{num}",
-      root_ca_data:    Base64.encode64(certificate.certificate),
-      bind:            {
-        anonymous: false,
-        dn:        "cn=admin,dc=ldap_host_#{num},dc=com",
-        pw:        "pass"
-      },
-      username_prompt: "Username",
-      user:            {
-        base_dn:  "cn=users,dc=ldap_host_#{num},dc=com",
-        filter:   "(objectClass=person)",
-        attr_map: {
-          username: "uid",
-          id:       "uid",
-          email:    "mail",
-          name:     "name"
-        }
-      },
-      group:           {
-        base_dn:  "cn=groups,dc=ldap_host_#{num},dc=com",
-        filter:   "(objectClass=group)",
-        attr_map: {
-          user:  "uid",
-          group: "member",
-          name:  "name"
+  context "with Dex LDAP connectors" do
+    def expected_dex_json(conn, certificate)
+      dn_common = "dc=#{conn.host.chomp(".com")},dc=com"
+      connector_json = {
+        type:            "ldap",
+        id:              conn.id,
+        name:            conn.name,
+        root_ca_data:    Base64.encode64(certificate.certificate),
+        server:          "#{conn.host}:#{conn.start_tls ? 389 : 636}",
+        start_tls:       conn.start_tls,
+        bind:            {
+          anonymous: false,
+          dn:        "cn=admin,#{dn_common}",
+          pw:        "pass"
+        },
+        username_prompt: "Username",
+        user:            {
+          base_dn:  "cn=users,#{dn_common}",
+          filter:   "(objectClass=person)",
+          attr_map: {
+            username: "uid",
+            id:       "uid",
+            email:    "mail",
+            name:     "name"
+          }
+        },
+        group:           {
+          base_dn:  "cn=groups,#{dn_common}",
+          filter:   "(objectClass=group)",
+          attr_map: {
+            user:  "uid",
+            group: "member",
+            name:  "name"
+          }
         }
       }
-    }
-  end
-
-  # rubocop:disable RSpec/ExampleLength
-  context "with dex LDAP connectors tls" do
-    it "has dex LDAP connectors" do
-      dex_connector_ldap = create(:dex_connector_ldap, :tls, :regular_admin)
-      CertificateService.create(service: dex_connector_ldap, certificate: certificate)
-
-      expected_json = {
+      connector_json = connector_json.merge(bind: { anonymous: true }) if conn.bind_anon
+      {
         registries:          [],
         kubelet:             {
           :"compute-resources" => {},
@@ -481,50 +479,23 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
         },
         system_certificates: [],
         dex:                 {
-          connectors: [
-            expected_dex_json(dex_connector_ldap.id, certificate).merge(
-              server:    "ldap_host_#{dex_connector_ldap.id}.com:636",
-              start_tls: false
-            )
-          ]
+          connectors: [connector_json]
         }
       }
-      get :show do
-        expect(json).to eq(expected_json)
-        delete(dex_connector_ldap)
+    end
+
+    [:tls, :starttls].each do |security|
+      [:regular_admin, :anon_admin].each do |bind_method|
+        context "with #{security}" do
+          it "has dex LDAP connectors for bind as #{bind_method}" do
+            dex_connector_ldap = create(:dex_connector_ldap, security, bind_method)
+            CertificateService.create(service: dex_connector_ldap, certificate: certificate)
+
+            get :show
+            expect(json).to eq(expected_dex_json(dex_connector_ldap, certificate))
+          end
+        end
       end
     end
   end
-
-  context "with dex LDAP connectors starttls" do
-    it "has dex LDAP connectors" do
-      dex_connector_ldap = create(:dex_connector_ldap, :starttls, :anon_admin)
-      CertificateService.create(service: dex_connector_ldap, certificate: certificate)
-
-      expected_json = {
-        registries:          [],
-        kubelet:             {
-          :"compute-resources" => {},
-          :"eviction-hard"     => ""
-        },
-        system_certificates: [],
-        dex:                 {
-          connectors: [
-            expected_dex_json(dex_connector_ldap.id, certificate).merge(
-              server:    "ldap_host_#{dex_connector_ldap.id}.com:389",
-              start_tls: true,
-              bind:      {
-                anonymous: true
-              }
-            )
-          ]
-        }
-      }
-      get :show do
-        expect(json).to eq(expected_json)
-        delete(dex_connector_ldap)
-      end
-    end
-  end
-  # rubocop:enable RSpec/ExampleLength
 end
