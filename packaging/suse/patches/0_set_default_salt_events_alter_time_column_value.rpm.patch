@@ -1,8 +1,8 @@
 diff --git a/db/schema.rb b/db/schema.rb
-index d37f481..ec3219f 100644
+index ee50981..b2cd61f 100644
 --- a/db/schema.rb
 +++ b/db/schema.rb
-@@ -107,7 +107,7 @@ ActiveRecord::Schema.define(version: 20181708070234) do
+@@ -107,7 +107,7 @@ ActiveRecord::Schema.define(version: 20181715075511) do
    create_table "salt_events", force: :cascade do |t|
      t.string   "tag",          limit: 255,      null: false
      t.text     "data",         limit: 16777215, null: false
@@ -11,12 +11,12 @@ index d37f481..ec3219f 100644
      t.string   "master_id",    limit: 255,      null: false
      t.datetime "taken_at"
      t.datetime "processed_at"
-@@ -136,7 +136,7 @@ ActiveRecord::Schema.define(version: 20181708070234) do
+@@ -136,7 +136,7 @@ ActiveRecord::Schema.define(version: 20181715075511) do
      t.string   "id",         limit: 255,      null: false
      t.string   "success",    limit: 10,       null: false
      t.text     "full_ret",   limit: 16777215, null: false
 -    t.datetime "alter_time",                  null: false
 +    t.column   "alter_time", "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
    end
- 
+
    add_index "salt_returns", ["fun"], name: "fun", using: :btree
