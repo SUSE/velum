@@ -1,8 +1,0 @@
----
-engines:
-  rubocop:
-    enabled: false
-checks:
-  # disable checks already done by rubocop
-  method-complexity:
-    enabled: false
