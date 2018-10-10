@@ -62,7 +62,7 @@ setup_cpi() {
   CPI_CONFIG="/etc/caasp/cpi/openstack.conf"
   if [ -f "${CPI_CONFIG}" ]; then
     # Import Cloud Provider config
-    bundle exec rake cpi:openstack['${CPI_CONFIG}']
+    bundle exec rake cpi:openstack["${CPI_CONFIG}"]
   fi
 }
 
