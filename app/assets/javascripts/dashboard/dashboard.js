@@ -387,7 +387,11 @@ MinionPoller = {
           appliedHtml = '<i class="fa fa-arrow-circle-up text-warning fa-2x" aria-hidden="true"></i> Update Failed - Retryable';
           break;
         case "pending":
-          appliedHtml += ' Update in progress'
+          if (!minion.online) {
+            appliedHtml += ' Rebooting'
+          } else {
+            appliedHtml += ' Update in progress'
+          }
           break;
         }
     } else if (minion.tx_update_failed) {
