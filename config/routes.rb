@@ -24,7 +24,6 @@ Rails.application.routes.draw do
   get "/kubeconfig", to: "oidc#index"
   get "/_health", to: "health#index"
   post "/update", to: "salt#update"
-  post "/accept-minion", to: "salt#accept_minion"
 
   get "/oidc", to: "oidc#index"
   get "/oidc/done", to: "oidc#done"
@@ -48,6 +47,9 @@ Rails.application.routes.draw do
 
   resources :minions, only: :destroy do
     delete :force, action: :force_destroy, on: :member
+    post "accept-minion", to: "salt#accept_minion"
+    post "remove-minion", to: "salt#remove_minion"
+    post "reject-minion", to: "salt#reject_minion"
   end
 
   namespace :internal_api, path: "internal-api" do

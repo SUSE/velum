@@ -131,6 +131,10 @@ class Minion < ApplicationRecord
   end
   # rubocop:enable Rails/SkipsModelValidations
 
+  def self.remove_minion(minion_id)
+    Minion.delete_all(minion_id: minion_id)
+  end
+
   # Returns the proxy for the salt minion
   def salt
     @salt ||= Velum::SaltMinion.new minion: self

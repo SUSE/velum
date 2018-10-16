@@ -143,6 +143,33 @@ describe SaltEvent do
       expect(salt_event.handler).to be_an_instance_of(SaltHandler::OrchestrationResult)
     end
 
+    it "must return an instance of SaltHandler::AuthEvent for salt.auth reject" do
+      salt_event = described_class.new(
+        tag:  "salt/auth",
+        data: { fun: "key.reject" }.to_json
+      )
+
+      expect(salt_event.handler).to be_an_instance_of(SaltHandler::AuthEvent)
+    end
+
+    it "must return an instance of SaltHandler::AuthEvent for salt.auth delete" do
+      salt_event = described_class.new(
+        tag:  "salt/auth",
+        data: { fun: "key.delete" }.to_json
+      )
+
+      expect(salt_event.handler).to be_an_instance_of(SaltHandler::AuthEvent)
+    end
+
+    it "must return an instance of SaltHandler::AuthEvent for salt.auth accept" do
+      salt_event = described_class.new(
+        tag:  "salt/auth",
+        data: { fun: "key.accept" }.to_json
+      )
+
+      expect(salt_event.handler).to be_an_instance_of(SaltHandler::AuthEvent)
+    end
+
     # rubocop:disable RSpec/ExampleLength
     it "must not return an instance of SaltHandler::MinionOrchestration for"\
       " orch.update_etc_hosts" do
