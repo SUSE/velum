@@ -287,8 +287,11 @@ MinionPoller = {
 
   handleAdminUpdate: function(admin) {
     var $notification = $('.admin-outdated-notification');
+    var failedToUpdate = State.minions.filter(function (m) {
+      return m.tx_update_reboot_needed && m.highstate === "failed"
+    }).length > 0
 
-    if (State.hasPendingStateNode || State.pendingRemovalMinionId) {
+    if (State.hasPendingStateNode || State.pendingRemovalMinionId || failedToUpdate) {
       State.updateAdminNode = false;
       return;
     }
