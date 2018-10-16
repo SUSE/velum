@@ -147,6 +147,54 @@ RSpec.describe DashboardController, type: :controller do
         end
       end
     end
+
+    context "when a keyboard layout was defined during installation" do
+      before do
+        keyboard_file = "/var/lib/misc/keyboard"
+        keyboard_layout = 'YAST_KEYBOARD="german,pc104"'
+        allow(File).to receive(:file?).with(keyboard_file).and_return(true)
+        allow(File).to receive(:readlines).with(keyboard_file).and_return([keyboard_layout])
+      end
+
+      it "serves the keyboard layout in the autoyast" do
+        VCR.use_cassette("suse_connect/caasp_registration_active", record: :none) do
+          get :autoyast
+          expect(response.status).to eq 200
+          expect(response.body).to include "<keymap>german</keymap>"
+        end
+      end
+    end
+
+    context "when no keyboard layout is set" do
+      before do
+        keyboard_file = "/var/lib/misc/keyboard"
+        allow(File).to receive(:file?).with(keyboard_file).and_return(true)
+        allow(File).to receive(:readlines).with(keyboard_file).and_return([""])
+      end
+
+      it "serves the default keyboard layout in the autoyast" do
+        VCR.use_cassette("suse_connect/caasp_registration_active", record: :none) do
+          get :autoyast
+          expect(response.status).to eq 200
+          expect(response.body).to include "<keymap>english-us</keymap>"
+        end
+      end
+    end
+
+    context "when no keyboard file exists" do
+      before do
+        keyboard_file = "/var/lib/misc/keyboard"
+        allow(File).to receive(:file?).with(keyboard_file).and_return(false)
+      end
+
+      it "serves the default keyboard layout in the autoyast" do
+        VCR.use_cassette("suse_connect/caasp_registration_active", record: :none) do
+          get :autoyast
+          expect(response.status).to eq 200
+          expect(response.body).to include "<keymap>english-us</keymap>"
+        end
+      end
+    end
   end
 
   # rubocop:disable RSpec/AnyInstance

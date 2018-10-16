@@ -1,4 +1,5 @@
 require "velum/suse_connect"
+require "velum/autoyast_values"
 
 # DashboardController shows the main page.
 class DashboardController < ApplicationController
@@ -29,33 +30,10 @@ class DashboardController < ApplicationController
   # fields that customer uses) and also skips the redirection to the setup process (when a worker
   # asks for the autoyast profile we will either serve it, or return an error).
   def autoyast
-    @controller_node = Pillar.value pillar: :dashboard
+    pollute_variables!(Velum::AutoyastValues.new)
     if @controller_node.blank?
       head :service_unavailable
     else
-      begin
-        suse_connect_config = Rails.cache.fetch("SUSEConnect_config") do
-          Velum::SUSEConnect.config
-        end
-        @suse_smt_url = suse_connect_config.smt_url
-        @suse_regcode = suse_connect_config.regcode
-        @do_registration = true
-      rescue Velum::SUSEConnect::MissingRegCodeException,
-             Velum::SUSEConnect::MissingCredentialsException,
-             Velum::SUSEConnect::SCCConnectionException
-        @do_registration = false
-      end
-      ssh_key_file = "/var/lib/misc/ssh-public-key/id_rsa.pub"
-      # rubocop:disable Style/RescueModifier
-      @ssh_public_key = File.read(ssh_key_file) rescue nil
-      # rubocop:enable Style/RescueModifier
-
-      # proxy related settings
-      @proxy_systemwide = Pillar.value(pillar: :proxy_systemwide) == "true"
-      @proxy_http       = Pillar.value(pillar: :http_proxy)
-      @proxy_https      = Pillar.value(pillar: :https_proxy)
-      @proxy_no_proxy   = Pillar.value(pillar: :no_proxy)
-
       render "autoyast.xml.erb", layout: false, content_type: "text/xml"
     end
   end
@@ -96,5 +74,20 @@ class DashboardController < ApplicationController
     flash[:alert] = "You are accessing velum from an unregistered host (#{request.host}). " \
                     "It is advised to access velum via one of the registered hosts " \
                     "#{accessible_hosts.join(" or ")}"
+  end
+
+  # This method will copy *all* instance variables of the given object to the
+  # current instance. No checks will be performed if a variable already exists -
+  # the current value will be overwritten in that case.
+  #
+  # This copying right now is used to prevent nesting values in the template:
+  # instead of writing `<%= other.var %>` it is possible to just write `<%= var
+  # %>` again.
+  #
+  # @param other [Object] Any object with instance variables.
+  def pollute_variables!(other)
+    other.instance_variables.each do |var|
+      instance_variable_set(var, other.instance_variable_get(var))
+    end
   end
 end
