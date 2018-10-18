@@ -1,0 +1,79 @@
+################################################################################
+# This is the test Dex config for verifying external OIDC connector support
+#
+# This config will give two options when trying to auth via OIDC:
+# * "mock", which always sends back a fake name ("Kilgore Trout") without any
+# further authentication. (this is hard-coded in the mock callback)
+# * "static", which uses an email (admin@example.com) as the username and a
+# password of "password", then returns a username of "admin"
+################################################################################
+
+################################################################################
+# you need to change this value
+################################################################################
+# The base path of dex and the external name of the OpenID Connect service.
+# This is the canonical URL that all clients MUST use to refer to dex. If a
+# path is provided, dex's HTTP service will listen at a non-root URL.
+# NOTE: This needs to exactly match the URL you'll use (in the Provider URL)
+#       Significantly, it will not work with an IP if you connect to a hostname
+#       It may not work with an IP at all. Just use a hostname.
+issuer: http://your.fqdn.here:5556/dex
+
+################################################################################
+# you probably don't need to change anything below here, but it's worth reading
+################################################################################
+
+connectors:
+- type: mockCallback
+  id: mock
+  name: Example
+
+staticPasswords:
+- email: "admin@example.com"
+  # bcrypt hash of the string "password"
+  hash: "$2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4W"
+  # username which will be returned
+  username: "admin"
+  # Type 4 "random" UUID string; value is insignificant
+  userID: "08a8684b-db88-4b73-90a9-3cd1661f5466"
+
+# This should be the Kubernetes callback, not Velum (the defaults should work)
+# The id and secret heere are what you paste in to Velum
+staticClients:
+- id: example-app
+  redirectURIs:
+  - 'https://kube-api-x1.devenv.caasp.suse.net:32000/callback'
+  name: 'Example App'
+  secret: ZXhhbXBsZS1hcHAtc2VjcmV0
+
+# Configuration for the HTTP endpoints.  Only change this if you want to test
+# the use of TLS, which requires you to create a key/cert pair and trust the CA
+web:
+  http: 0.0.0.0:5556
+  # Uncomment for HTTPS options.
+  # https: 0.0.0.0:5554
+  # tlsCert: /etc/dex/tls.crt
+  # tlsKey: /etc/dex/tls.key
+
+################################################################################
+# you almost certainly don't need to change or care about anything below here
+################################################################################
+
+enablePasswordDB: true
+storage:
+  type: sqlite3
+  config:
+    file: /go/src/github.com/coreos/dex/examples/dex.db
+
+# metrics/logging; ideally, leave these unchanged
+telemetry:
+  http: 0.0.0.0:5558
+logger:
+  level: "debug"
+  format: "text" # can also be "json"
+
+# we need this for testing
+oauth2:
+  responseTypes: ["code"]
+  skipApprovalScreen: true
+

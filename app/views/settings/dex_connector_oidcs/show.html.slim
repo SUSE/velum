@@ -1,0 +1,26 @@
+= render 'settings/apply'
+
+header.settings-content-header.clearfix
+  .title.pull-left
+    h2 #{@data_holder.name} details
+  .actions.pull-right
+    = link_to settings_dex_connector_oidc_path(@data_holder), method: "delete", class: "btn btn-danger", data: { confirm: "Are you sure?" } do
+      | Delete
+    = link_to edit_settings_dex_connector_oidc_path(@data_holder), class: "btn btn-primary" do
+      | Edit
+
+section.settings-details
+  .field
+    .details-label ID
+    .details-value
+      = @data_holder.id
+  .field
+    .details-label Name
+    .details-value
+      = @data_holder.name
+
+  h4 Provider
+  .field
+    .details-label Provider URL
+    .details-value
+      = @data_holder.provider_url

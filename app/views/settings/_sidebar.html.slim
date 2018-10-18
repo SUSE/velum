@@ -10,7 +10,9 @@ aside.settings-sidebar-section
   h5.title External Authentication
   ul.list
     li class="#{active_class?(settings_dex_connector_ldaps_path?)}"
-      = link_to "LDAP Connectors", settings_dex_connector_ldaps_path
+      = link_to "LDAP Servers", settings_dex_connector_ldaps_path
+    li class="#{active_class?(settings_dex_connector_oidcs_path?)}"
+      = link_to "OIDC Providers", settings_dex_connector_oidcs_path  
   h5.title Kubernetes
   ul.list
     li class="#{active_class?(settings_kubelet_compute_resources_reservations_path?)}"

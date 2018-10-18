@@ -20,6 +20,13 @@ VCR.configure do |c|
   c.ignore_request do |request|
     request.uri =~ /__identify__/
   end
+  # Don't try to playback under the RFC6761 .invalid TLD (should always return NXDOMAIN)
+  c.ignore_request do |request|
+    URI(request.uri).host.end_with?(".invalid")
+  end
+  # Also ignore the .0 IP in RFC5737 test-net-1, and an invalid IP address
+  c.ignore_hosts "192.0.2.0"
+  c.ignore_hosts "1.2.3.256"
 
   # To debug when a VCR goes wrong.
   # c.debug_logger = $stdout

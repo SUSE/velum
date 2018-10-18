@@ -1,4 +1,5 @@
 require "velum/dex/ldap"
+require "velum/dex/oidc"
 
 # Serve the pillar information
 # rubocop:disable Metrics/ClassLength
@@ -191,6 +192,7 @@ class InternalApi::V1::PillarsController < InternalApiController
   def dex_connectors_as_pillar
     connectors = []
     connectors.concat(Velum::Dex.ldap_connectors_as_pillar)
+    connectors.concat(Velum::Dex.oidc_connectors_as_pillar)
     { dex: { connectors: connectors } }
   end
 end
