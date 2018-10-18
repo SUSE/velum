@@ -16,15 +16,15 @@ namespace :cpi do
       case key
       when /^[\[#]/ then              puts "Skipping the line"
       when "auth-url" then            cfg["cloud:openstack:auth_url"] = value
-      when "domain-name" then         cfg["cloud:openstack:domain_name"] = value
+      when "domain-name" then         cfg["cloud:openstack:domain"] = value
       when "domain-id" then           cfg["cloud:openstack:domain_id"] = value
-      when "tenant-name" then         cfg["cloud:openstack:tenant_name"] = value
-      when "tenant-id" then           cfg["cloud:openstack:tenant_id"] = value
+      when "tenant-name" then         cfg["cloud:openstack:project"] = value
+      when "tenant-id" then           cfg["cloud:openstack:project_id"] = value
       when "region" then              cfg["cloud:openstack:region"] = value
       when "username" then            cfg["cloud:openstack:username"] = value
       when "password" then            cfg["cloud:openstack:password"] = value
-      when "subnet-id" then           cfg["cloud:openstack:subnet_id"] = value
-      when "floating-network-id" then cfg["cloud:openstack:floating_id"] = value
+      when "subnet-id" then           cfg["cloud:openstack:subnet"] = value
+      when "floating-network-id" then cfg["cloud:openstack:floating"] = value
       when "monitor-max-retries" then cfg["cloud:openstack:lb_mon_retries"] = value
       when "bs-version" then          cfg["cloud:openstack:bs_version"] = value
       when /^./ then                  puts "Unknown option: #{key}"
