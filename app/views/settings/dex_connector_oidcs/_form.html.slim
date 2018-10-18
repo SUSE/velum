@@ -1,0 +1,70 @@
+= form_for [:settings, @data_holder], html: { class: "dex-connectors-form", autocomplete: "false" } do |f|
+  / Chrome may autocomplete username into text field before a password field, regardless of name
+  / This *should* prevent that (in combination with 'autocomplete=false' on the form_for; "off" no longer works)
+  / Explanation: Chrome looks for the first password field, while newer versions prefer one named "password"
+  / Firefox behaves similarly.  Hopefully they don't figure out the hidden workaround soon...
+  = f.text_field     :username, style: "display:none", value:"autocomplete trap"
+  = f.password_field :password, style: "display:none", value:"autocomplete bait"
+
+
+  .form-group class="#{error_class_for(@data_holder, :name)}"
+    = f.label :name
+    = f.text_field :name, id: "oidc_name", class: "form-control", value: @data_holder.name, required: true
+    = error_messages_for(@data_holder, :name)
+    small.form-text.text-muted
+      | Name shown to user when selecting a connector
+
+  h4 Provider
+
+  .form-group class="#{error_class_for(@data_holder, :provider_url)}"
+    = f.label :provider_url, "Provider URL"
+    = f.text_field :provider_url, id: "oidc_provider", class: "form-control", value: @data_holder.provider_url, required: true
+    = error_messages_for(@data_holder, :provider_url)
+    small.form-text.text-muted
+      | Issuer used by OIDC Provider
+    
+  .form-group class="#{error_class_for(@data_holder, :basic_auth)}"
+    = f.label :basic_auth, "Negotiate client auth"
+    br
+    .btn-group.btn-group-toggle data-toggle="buttons"
+      = f.label :basic_auth, nil, class: "btn btn-default #{'btn-primary active' if @data_holder.basic_auth}"
+        = f.radio_button :basic_auth, "true", checked: @data_holder.basic_auth
+        | Enable
+      = f.label :basic_auth, nil, class: "btn btn-default #{'btn-primary active' unless @data_holder.basic_auth}"
+        = f.radio_button :basic_auth, "false", checked: !@data_holder.basic_auth
+        | Disable
+    = error_messages_for(@data_holder, :basic_auth)
+    br
+    small.form-text.text-muted
+      | Set to "Disable" only if this provider requires client credentials to be sent using POST but doesn't publish that requirement in discovery response (this is uncommon)
+    
+  h4 Client
+  
+  / The 'https' and '3200' seem to be hard-coded elsewhere, so I assume they're not discoverable :/
+  - external_api_url = "https://#{Pillar.value(pillar: :apiserver)}:32000/callback"
+  .form-group class="#{error_class_for(@data_holder, :callback_url)}"
+    = f.label :callback_url, "Callback URL:"
+    span.show
+      = external_api_url
+    small.form-text.text-muted
+      | URL which will be provided to OIDC provider as the callback location
+    = f.hidden_field :callback_url, id: "oidc_callback_url", class: "form-control", value: external_api_url, readonly: true
+
+  .form-group class="#{error_class_for(@data_holder, :client_id)}"
+    = f.label :client_id, "ID"
+    = f.text_field :client_id, id: "oidc_client_id", class: "form-control", value: @data_holder.client_id, required: true
+    = error_messages_for(@data_holder, :client_id)
+    small.form-text.text-muted
+      | Client ID provided by OIDC Provider
+    
+  .form-group class="#{error_class_for(@data_holder, :client_secret)}"
+    = f.label :client_secret, "Secret"
+    = f.password_field :client_secret, id: "oidc_client_secret", class: "form-control", value: @data_holder.client_secret, required: true
+    = error_messages_for(@data_holder, :client_secret)
+    small.form-text.text-muted
+      | Secret associated with Relying Party's Client ID
+
+  .form-actions.clearfix
+    = f.submit "Save", class: "btn btn-primary action", id: "oidc_conn_save", name: "submit", disabled: !@is_data_valid
+    = link_to "Cancel", settings_dex_connector_oidcs_path, class: "btn btn-default action"
+    = f.submit "Test Connection", class: "btn btn-primary", id: "oidc_conn_validate", name: "validate"

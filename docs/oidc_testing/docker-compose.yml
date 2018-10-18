@@ -1,0 +1,19 @@
+# simple test dex instance
+version: "2.1"
+
+services:
+  base:
+    image: quay.io/coreos/dex:v2.10.0
+
+  dex:
+    extends:
+      service: base
+    volumes:
+      - "./examples/:/go/src/github.com/coreos/dex/examples"
+    # We're using the example developer config with a static entry
+    command: ["serve","/go/src/github.com/coreos/dex/examples/config-dev.yaml"]
+    ports:
+      - 5554:5554 # SSL port, if enabled
+      - 5556:5556 # non-SSL port (http://yourhost:5556/dex)
+      - 5558:5558 # metrics, prometheus style - http://yourhost:5558/metrics
+
