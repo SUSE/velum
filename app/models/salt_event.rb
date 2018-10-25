@@ -52,13 +52,15 @@ class SaltEvent < ApplicationRecord
     # :nocov:
     ActiveRecord::Base.connection.execute("
      delete from `jids` where jid in (select distinct jid from salt_returns
-                                      where alter_time < #{date.to_i})
+                                      where unix_timestamp(alter_time) < #{date.to_i});
     ")
-    [:events, :returns].each do |table|
-      ActiveRecord::Base.connection.execute("
-        delete from `salt_#{table}` where alter_time < #{date.to_i};
+    ActiveRecord::Base.connection.execute("
+     delete from `salt_events` where unix_timestamp(alter_time) < #{date.to_i}
+                                                              and processed_at is not null;
     ")
-    end
+    ActiveRecord::Base.connection.execute("
+     delete from `salt_returns` where unix_timestamp(alter_time) < #{date.to_i};
+    ")
     # :nocov:
   end
 
