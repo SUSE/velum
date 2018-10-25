@@ -1,53 +1,13 @@
 {
   "ignored_warnings": [
     {
-      "warning_type": "Unscoped Find",
-      "warning_code": 82,
-      "fingerprint": "4ed1ea893b8d2b5d3627f79f09b96f52fa765a0b3ae46921bf4546028eb29aa0",
-      "check_name": "UnscopedFind",
-      "message": "Unscoped call to RegistryMirror#find",
-      "file": "app/controllers/settings/registry_mirrors_controller.rb",
-      "line": 81,
-      "link": "http://brakemanscanner.org/docs/warning_types/unscoped_find/",
-      "code": "RegistryMirror.find(params[:id])",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "Settings::RegistryMirrorsController",
-        "method": "set_registry_mirror"
-      },
-      "user_input": "params[:id]",
-      "confidence": "Weak",
-      "note": ""
-    },
-    {
-      "warning_type": "SQL Injection",
-      "warning_code": 0,
-      "fingerprint": "6d8def71ff08f847b07b8d4791d3c2c900635c3991c4b5a14f55b5aab6ba2950",
-      "check_name": "SQL",
-      "message": "Possible SQL injection",
-      "file": "app/models/salt_event.rb",
-      "line": 59,
-      "link": "http://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "ActiveRecord::Base.connection.execute(\"\\n        delete from `salt_#{table}` where alter_time < #{date.to_i};\\n    \")",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "SaltEvent",
-        "method": "SaltEvent.purge_jobs_older_than"
-      },
-      "user_input": "table",
-      "confidence": "Medium",
-      "note": ""
-    },
-    {
       "warning_type": "Cross-Site Request Forgery",
       "warning_code": 7,
       "fingerprint": "b5774d21ea475ca65a2589e83898ea1571a5ce810e3715f8af7fb9638057b842",
       "check_name": "ForgerySetting",
       "message": "'protect_from_forgery' should be called in InternalApiController",
       "file": "app/controllers/internal_api_controller.rb",
-      "line": 4,
+      "line": 2,
       "link": "http://brakemanscanner.org/docs/warning_types/cross-site_request_forgery/",
       "code": null,
       "render_path": null,
@@ -66,7 +26,7 @@
       "check_name": "SSLVerify",
       "message": "SSL certificate verification was bypassed",
       "file": "lib/velum/suse_connect.rb",
-      "line": 134,
+      "line": 133,
       "link": "http://brakemanscanner.org/docs/warning_types/ssl_verification_bypass/",
       "code": "Net::HTTP.start(URI.join(@smt_url, endpoint).hostname, URI.join(@smt_url, endpoint).port, :open_timeout => 2, :use_ssl => (URI.join(@smt_url, endpoint).scheme == \"https\"), :verify_mode => (OpenSSL::SSL::VERIFY_NONE))",
       "render_path": null,
@@ -80,6 +40,6 @@
       "note": ""
     }
   ],
-  "updated": "2018-03-01 12:41:56 +0000",
+  "updated": "2018-10-29 13:55:47 +0100",
   "brakeman_version": "3.5.0"
 }
