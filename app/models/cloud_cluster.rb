@@ -21,7 +21,7 @@ class CloudCluster
   end
 
   def current_cluster_size
-    SaltJob.all_open.count + Minion.where.not(role: :admin).count
+    SaltJob.all_open.count + Minion.where.not(role: Minion.roles[:admin]).count
   end
 
   def min_nodes_required
