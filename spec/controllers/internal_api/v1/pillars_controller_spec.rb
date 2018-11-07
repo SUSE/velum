@@ -435,7 +435,7 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
   end
 
   context "with Dex LDAP connectors" do
-    def expected_dex_json(conn, certificate)
+    def expected_dex_json_ldap(conn, certificate)
       dn_common = "dc=#{conn.host.chomp(".com")},dc=com"
       connector_json = {
         type:            "ldap",
@@ -492,9 +492,55 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
             CertificateService.create(service: dex_connector_ldap, certificate: certificate)
 
             get :show
-            expect(json).to eq(expected_dex_json(dex_connector_ldap, certificate))
+            expect(json).to eq(expected_dex_json_ldap(dex_connector_ldap, certificate))
           end
         end
+      end
+    end
+  end
+  # rubocop:enable RSpec/ExampleLength
+
+  context "with dex OIDC connectors" do
+    def expected_dex_oidc_json(conn)
+      {
+        registries:          [],
+        kubelet:             {
+          :"compute-resources" => {},
+          :"eviction-hard"     => ""
+        },
+        system_certificates: [],
+        dex:                 {
+          connectors: [
+            {
+              id:            "oidc-#{conn.id}",
+              type:          "oidc",
+              name:          conn.name,
+              provider_url:  conn.provider_url,
+              client_id:     conn.client_id,
+              client_secret: conn.client_secret,
+              callback_url:  conn.callback_url,
+              basic_auth:    conn.basic_auth
+            }
+          ]
+        }
+      }
+    end
+
+    context "with basic auth" do
+      let!(:oidc_connector) { create(:dex_connector_oidc, :skip_validation) }
+
+      it "has dex OIDC connectors" do
+        get :show
+        expect(json).to eq(expected_dex_oidc_json(oidc_connector))
+      end
+    end
+
+    context "without basic auth" do
+      let!(:oidc_connector) { create(:dex_connector_oidc, :skip_validation, basic_auth: true) }
+
+      it "has dex OIDC connectors" do
+        get :show
+        expect(json).to eq(expected_dex_oidc_json(oidc_connector))
       end
     end
   end
