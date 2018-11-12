@@ -11,3 +11,5 @@
 /env.sh
 .rspec
 /.vagrant
+/node_modules
+/*.log

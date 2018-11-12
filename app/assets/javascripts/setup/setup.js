@@ -1,16 +1,23 @@
-$(function() {
-  $('.btn-group-toggle').click(function(e) {
+/* eslint-disable no-new */
+
+$(function () {
+  var globals = window;
+
+  var openstackSettings = new globals.OpenStackSettings('.openstack-settings');
+  new globals.SUSERegistryMirrorPanel('.suse-mirror-panel-body');
+
+  $('.btn-group-toggle').click(function (e) {
     var $btnGroup = $(this);
     var $btnClicked = $(e.target);
 
     if ($btnClicked.hasClass('btn-primary')) {
-      return false;
+      return;
     }
 
     $btnGroup.find('.btn').toggleClass('btn-primary active');
   });
 
-  $(document).on('click', '.js-toggle-overlay-settings-btn', function() {
+  $(document).on('click', '.js-toggle-overlay-settings-btn', function () {
     var targetId = $(this).data('target');
     var collapsed = $(targetId).attr('aria-expanded') === 'true';
 
@@ -21,13 +28,10 @@ $(function() {
     }
   });
 
-  $(document).on('click', '.runtime-btn-group .btn', function() {
+  $(document).on('click', '.runtime-btn-group .btn', function () {
     $('.docker-desc, .crio-desc').collapse('hide');
     $($(this).data('element')).collapse('show');
   });
-
-  new SUSERegistryMirrorPanel('.suse-mirror-panel-body');
-  var openstackSettings = new OpenStackSettings('.openstack-settings');
 
   function toggleOpenStackSettings() {
     if ($('input[name="settings[cloud_provider]"]').val() === 'openstack') {

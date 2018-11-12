@@ -1,9 +1,11 @@
-(function (window) {
+(function () {
+  var globals = this;
+
   var dom = {
     MIRROR_URL_GROUP: '.mirror-url-group',
     MIRROR_URL_INPUT: '#settings_suse_registry_mirror_url',
     MIRROR_INVALID_INSECURE: '.invalid-insecure',
-    MIRROR_INVALID_URL: '.invalid-url',
+    MIRROR_INVALID_URL: '.invalid-url'
   };
 
   function SUSERegistryMirrorPanel(el) {
@@ -19,7 +21,7 @@
 
   SUSERegistryMirrorPanel.prototype.events = function () {
     this.$el.on('input', dom.MIRROR_URL_INPUT, this.validate.bind(this));
-  }
+  };
 
   SUSERegistryMirrorPanel.prototype.validate = function () {
     this.clearValidation();
@@ -31,12 +33,13 @@
     this.timeoutId = setTimeout(function () {
       var urlValue = this.$url.val();
       var valid = true;
+      var url;
 
       try {
-        var url = new URL(urlValue);
+        url = new URL(urlValue);
 
-        valid = (url.protocol === 'http:' || url.protocol === 'https:') &&
-                !!url.host;
+        valid = (url.protocol === 'http:' || url.protocol === 'https:')
+             && !!url.host;
       } catch (error) {
         valid = false;
       }
@@ -54,20 +57,20 @@
       this.$invalidUrl.toggleClass('hide', valid);
       this.timeoutId = null;
     }.bind(this), 1500);
-  }
+  };
 
   SUSERegistryMirrorPanel.prototype.clearValidation = function () {
     this.$urlGroup.removeClass('has-error');
     this.$invalidUrl.addClass('hide');
     this.$invalidInsecure.addClass('hide');
-  }
+  };
 
   SUSERegistryMirrorPanel.prototype.checkInsecure = function () {
     var url = this.$url.val();
     var isSecure = url.indexOf('https') !== -1;
 
     this.$el.find(dom.MIRROR_INVALID_INSECURE).toggleClass('hide', isSecure);
-  }
+  };
 
-  window.SUSERegistryMirrorPanel = SUSERegistryMirrorPanel;
-}(window));
+  globals.SUSERegistryMirrorPanel = SUSERegistryMirrorPanel;
+}.call(window));
