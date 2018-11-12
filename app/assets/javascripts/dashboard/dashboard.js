@@ -149,6 +149,7 @@ MinionPoller = {
         }
 
         State.minions = minions;
+        State.lastOrchestrationAt = data.last_orchestration_at;
 
         var pendingStateMinion = minions.find(function (minion) {
           return minion.highstate == "pending";
@@ -336,9 +337,20 @@ MinionPoller = {
   },
 
   alertFailedBootstrap: function() {
-    if (!$('.failed-bootstrap-alert').length) {
-      showAlert('At least one of the nodes is in a failed state. Please run "supportconfig" on the failed node(s) to gather the logs.', 'alert', 'failed-bootstrap-alert');
+    var cachedFailedLastOrchestration = window.localStorage.getItem('failedLastOrchestrationAt');
+
+    if ($('.failed-bootstrap-alert').length ||
+        cachedFailedLastOrchestration === State.lastOrchestrationAt) {
+      return;
     }
+
+    var $alert = showAlert('At least one of the nodes is in a failed state. Please run "supportconfig" on the failed node(s) to gather the logs.', 'alert', 'failed-bootstrap-alert');
+
+    window.localStorage.removeItem('failedLastOrchestrationAt');
+    $alert.on('closed.bs.alert', function () {
+      window.localStorage.setItem('failedLastOrchestrationAt', State.lastOrchestrationAt);
+      $alert.off('closed.bs.alert');
+    })
   },
 
   renderDashboard: function(minion) {
