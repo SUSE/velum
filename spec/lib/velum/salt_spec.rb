@@ -101,7 +101,7 @@ describe Velum::Salt do
     it "removes a minion" do
       VCR.use_cassette("salt/remove_minion", record: :none) do
         responses = described_class.remove_minion(minion_id: minion_id)
-        expect(responses).to be(200)
+        expect(responses["return"][0]["data"]["success"]).to be(true)
       end
     end
   end
@@ -111,7 +111,7 @@ describe Velum::Salt do
     it "rejects a minion" do
       VCR.use_cassette("salt/reject_minion", record: :none) do
         responses = described_class.reject_minion(minion_id: minion_id)
-        expect(responses).to be(200)
+        expect(responses["return"][0]["data"]["success"]).to be(true)
       end
     end
   end

@@ -101,7 +101,7 @@ http_interactions:
         21:42:58 GMT; Path=/
     body:
       encoding: UTF-8
-      string: '{"return": [{]}'
+      string: '{"return": [{"data": {"success": true}}]}'
     http_version:
   recorded_at: Fri, 23 Jun 2017 11:42:58 GMT
 recorded_with: VCR 3.0.3
