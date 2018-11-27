@@ -76,7 +76,7 @@ module Velum
                             data: { client: "wheel",
                                     fun:    "key.delete",
                                     match:  minion_id })
-      JSON.parse(res.code)
+      JSON.parse(res.body)
     end
 
     # Rejects a minion from the cluster
@@ -85,7 +85,7 @@ module Velum
                             data: { client: "wheel",
                                     fun:    "key.reject",
                                     match:  minion_id })
-      JSON.parse(res.code)
+      JSON.parse(res.body)
     end
 
     # Returns the list of jobs
