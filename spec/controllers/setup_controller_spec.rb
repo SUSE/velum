@@ -262,9 +262,6 @@ RSpec.describe SetupController, type: :controller do
     let(:instance_type) { "Standard_DS3_v2" }
     let(:instance_count) { 5 }
     let(:subscription_id) { SecureRandom.uuid }
-    let(:tenant_id) { SecureRandom.uuid }
-    let(:client_id) { SecureRandom.uuid }
-    let(:secret) { SecureRandom.hex(16) }
     let(:resource_group) { "azureresourcegroup" }
     let(:storage_account) { "azurestorageaccount" }
     let(:subnet_id) { "azuresubnetname" }
@@ -272,9 +269,6 @@ RSpec.describe SetupController, type: :controller do
     let(:cloud_cluster_params) do
       {
         subscription_id: subscription_id,
-        tenant_id:       tenant_id,
-        client_id:       client_id,
-        secret:          secret,
         instance_type:   instance_type,
         instance_count:  instance_count,
         resource_group:  resource_group,
@@ -305,15 +299,6 @@ RSpec.describe SetupController, type: :controller do
 
       it "assigns the subscription id" do
         expect(assigns(:cloud_cluster).subscription_id).to eq(subscription_id)
-      end
-
-      it "assigns the tenant id" do
-        expect(assigns(:cloud_cluster).tenant_id).to eq(tenant_id)
-      end
-
-      it "assigns the service principal credentials" do
-        expect(assigns(:cloud_cluster).client_id).to eq(client_id)
-        expect(assigns(:cloud_cluster).secret).to eq(secret)
       end
 
       it "assigns the instance type" do

@@ -4,9 +4,6 @@ require "velum/salt_api"
 describe CloudCluster do
   let(:custom_instance_type) { "custom-instance-type" }
   let(:subscription_id) { SecureRandom.uuid }
-  let(:tenant_id) { SecureRandom.uuid }
-  let(:client_id) { SecureRandom.uuid }
-  let(:secret) { SecureRandom.hex(16) }
   let(:resource_group) { "azureresourcegroup" }
   let(:network_id) { "azurenetworkname" }
   let(:subnet_id) { "subnet-9d4a7b6c" }
@@ -168,9 +165,6 @@ describe CloudCluster do
       described_class.new(
         cloud_framework: framework,
         subscription_id: subscription_id,
-        tenant_id:       tenant_id,
-        client_id:       client_id,
-        secret:          secret,
         instance_type:   custom_instance_type,
         resource_group:  resource_group,
         network_id:      network_id,
@@ -184,27 +178,6 @@ describe CloudCluster do
         expect(cluster.save).to be(true)
       end
       expect(Pillar.value(pillar: :azure_subscription_id)).to eq(subscription_id)
-    end
-
-    it "stores tenant id as :azure_tenant_id Pillar and refreshes" do
-      ensure_pillar_refresh do
-        expect(cluster.save).to be(true)
-      end
-      expect(Pillar.value(pillar: :azure_tenant_id)).to eq(tenant_id)
-    end
-
-    it "stores client id as :azure_client_id Pillar and refreshes" do
-      ensure_pillar_refresh do
-        expect(cluster.save).to be(true)
-      end
-      expect(Pillar.value(pillar: :azure_client_id)).to eq(client_id)
-    end
-
-    it "stores secret as :azure_secret Pillar and refreshes" do
-      ensure_pillar_refresh do
-        expect(cluster.save).to be(true)
-      end
-      expect(Pillar.value(pillar: :azure_secret)).to eq(secret)
     end
 
     it "stores storage account as :cloud_storage_account Pillar and refreshes" do

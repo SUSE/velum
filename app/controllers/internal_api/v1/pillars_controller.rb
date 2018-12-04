@@ -107,16 +107,30 @@ class InternalApi::V1::PillarsController < InternalApiController
   end
 
   def azure_cloud_contents
+    tenant = Pillar.value(pillar: :azure_tenant_id)
+    client = Pillar.value(pillar: :azure_client_id)
+    secret = Pillar.value(pillar: :azure_secret)
+
+    if tenant && client && secret # rubocop:disable Style/ConditionalAssignment
+      # Using service principal credentials for authentication
+      azure_provider = {
+        subscription_id: Pillar.value(pillar: :azure_subscription_id),
+        tenant:          tenant,
+        client_id:       client,
+        secret:          secret
+      }
+    else
+      # Using MSI authorization
+      azure_provider = {
+        subscription_id: Pillar.value(pillar: :azure_subscription_id)
+      }
+    end
+
     {
       cloud: {
         framework: "azure",
         providers: {
-          azure: {
-            subscription_id: Pillar.value(pillar: :azure_subscription_id),
-            tenant:          Pillar.value(pillar: :azure_tenant_id),
-            client_id:       Pillar.value(pillar: :azure_client_id),
-            secret:          Pillar.value(pillar: :azure_secret)
-          }
+          azure: azure_provider
         },
         profiles:  {
           cluster_node: {
