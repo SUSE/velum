@@ -56,7 +56,12 @@ MinionPoller = {
         var pendingRendered = "";
         var masterApplied = false;
         var updateAvailable = false;
+        var migrationAvailable = false;
         var updateAvailableNodeCount = 0;
+        var migrationAvailableNodeCount = 0;
+
+        // reset admin migrated
+        State.adminMigrated = adminMigrated(data);
 
         // reset pending
         State.hasPendingStateNode = false;
@@ -158,6 +163,7 @@ MinionPoller = {
         });
 
         State.hasPendingStateNode = !!pendingStateMinion;
+        State.hasPendingStateAdmin = data.admin.highstate == "pending";
 
         // find if there's a node pending removal
         // to set State.pendingRemovalMinionId
@@ -185,6 +191,11 @@ MinionPoller = {
             updateAvailableNodeCount++;
           }
 
+          if (minions[i].tx_update_migration_available) {
+            migrationAvailable = true;
+            migrationAvailableNodeCount++;
+          }
+
           // removes node from the pending acceptance state in the browser
           removePendingAcceptance(minions[i].minion_id);
         }
@@ -195,6 +206,10 @@ MinionPoller = {
         updateAvailable = updateAvailable &&
                           !State.hasPendingStateNode &&
                           !State.pendingRemovalMinionId;
+
+        migrationAvailable = migrationAvailable &&
+                             !State.hasPendingStateNode &&
+                             !State.pendingRemovalMinionId;
 
         // Build Pending Nodes display table
         if (pendingMinions.length) {
@@ -214,20 +229,32 @@ MinionPoller = {
         $('.discovery-nodes-panel').toggleClass('hide', allMinions.length === 0);
         $('.discovery-empty-panel').toggleClass('hide', allMinions.length > 0);
 
-        MinionPoller.handleAdminUpdate(data.admin || {});
+        MinionPoller.handleAdminUpdate(data || {});
+        MinionPoller.handleAdminMigration(data || {});
         MinionPoller.handleRetryableOrchestrations(data);
 
         handleBootstrapErrors();
         handleUnsupportedClusterConfiguration();
+        showRepoMirrorAlert(data.admin);
 
         // show/hide "update all nodes" link
         var hasAdminNodeUpdate = data.admin.tx_update_reboot_needed || data.admin.tx_update_failed;
-        State.updateAllNodes = updateAvailable && !hasAdminNodeUpdate;
+        State.updateAllNodes = updateAvailable && !hasAdminNodeUpdate && !adminMigrated(data);
         $("#update-all-nodes").toggleClass('hidden', !State.updateAllNodes);
+
+        // show/hide "migrate all nodes" link
+        var hasAdminNodeMigration = data.admin.tx_update_migration_available || data.admin.tx_update_failed;
+        var nodeIsPending = State.minions.filter(function (m) { return m.highstate === "pending" }).length > 0;
+        State.migrateAllNodes = migrationAvailable && !hasAdminNodeMigration && !nodeIsPending;
+        $("#migrate-all-nodes").toggleClass('hidden', !State.migrateAllNodes);
 
         MinionPoller.enable_kubeconfig(masterApplied);
 
-        $('#out_dated_nodes').text(updateAvailableNodeCount + ' ');
+        if (updateAvailable) {
+          $('#out_dated_nodes').text(updateAvailableNodeCount + ' ');
+        } else if (migrationAvailable) {
+          $('#out_dated_nodes').text(migrationAvailableNodeCount + ' ');
+        }
 
         $('.assigned-count').text(minions.length);
         $('.master-count').text(MinionPoller.selectedMasters.length);
@@ -293,31 +320,72 @@ MinionPoller = {
     ';
   },
 
-  handleAdminUpdate: function(admin) {
-    var $notification = $('.admin-outdated-notification');
-    var failedToUpdate = admin.tx_update_reboot_needed && State.minions.filter(function (m) {
+  handleAdminUpdate: function(data) {
+    var notification_class = 'admin-outdated-notification';
+    var $notification = createAdminNotification(notification_class);
+    var failedToUpdate = data.admin.tx_update_reboot_needed && State.minions.filter(function (m) {
       return m.highstate === "failed"
     }).length > 0
 
-    if (State.hasPendingStateNode || State.pendingRemovalMinionId || failedToUpdate) {
+    if (State.hasPendingStateNode || State.hasPendingStateAdmin || State.pendingRemovalMinionId || failedToUpdate) {
       State.updateAdminNode = false;
       return;
     }
 
-    var updateFlag = admin.tx_update_reboot_needed || admin.tx_update_failed;
+    var updateFlag = data.admin.tx_update_reboot_needed ||
+                       (data.admin.tx_update_failed && !data.admin.tx_update_migration_available);
 
     State.updateAdminNode = updateFlag;
     $notification.toggleClass('hidden', !updateFlag);
 
-    $notification.removeClass('admin-outdated-notification--reboot');
-    $notification.removeClass('admin-outdated-notification--failed');
-
-    if (admin.tx_update_reboot_needed) {
-      $notification.addClass('admin-outdated-notification--reboot');
+    if (data.admin.tx_update_reboot_needed) {
+      $notification.addClass(notification_class + '--reboot');
     }
 
-    if (admin.tx_update_failed) {
-      $notification.addClass('admin-outdated-notification--failed');
+    if (data.admin.tx_update_failed) {
+      $notification.addClass(notification_class + '--failed');
+    }
+  },
+
+  handleAdminMigration: function(data) {
+    var notification_class = 'admin-migration-notification';
+    var $notification = createAdminNotification(notification_class);
+
+    if (State.hasPendingStateNode || State.pendingRemovalMinionId) {
+      State.migrateAdminNode = false;
+      return;
+    }
+    // check if any node is offline
+    var anyNodeOffline = State.minions.filter(function (m) { return m.online === false }).length > 0;
+    var onlyAdminUpdated = (
+      !data.admin.tx_update_reboot_needed &&
+        State.minions.filter(function (m) { return m.tx_update_reboot_needed }).length > 0
+    )
+    if (anyNodeOffline || onlyAdminUpdated) {
+      return;
+    }
+
+    var migrateFlag = data.admin.tx_update_migration_available || data.admin.tx_update_failed;
+
+    State.migrateAdminNode = migrateFlag;
+    $notification.toggleClass('hidden', !migrateFlag);
+
+    if (data.admin.tx_update_migration_available && !data.admin.tx_update_failed) {
+      if (data.admin.tx_update_reboot_needed) {
+        // prevent migration, enforce installing updates first
+        $notification.addClass(notification_class + '--maintenance');
+        $notification.find('div.message strong').html('<strong> Cluster has migration available. (Install Updates first)</strong>');
+      } else if (data.admin.highstate == "pending") {
+        $notification.addClass(notification_class + '--maintenance');
+        $notification.find('div.message strong').html('<strong> Cluster has migration available. (Waiting for admin reboot)</strong>');
+      } else {
+        $notification.addClass(notification_class + '--install');
+        $notification.find('div.message strong').html('<strong> Cluster has migration available. </strong>');
+      }
+    }
+
+    if (data.admin.tx_update_failed) {
+      $notification.addClass(notification_class + '--failed');
     }
   },
 
@@ -331,6 +399,11 @@ MinionPoller = {
       $('#retry-cluster-upgrade').removeClass('hidden');
     } else {
       $('#retry-cluster-upgrade').addClass('hidden');
+    }
+    if (data.retryable_migration_orchestration) {
+      $('#retry-cluster-migration').removeClass('hidden');
+    } else {
+      $('#retry-cluster-migration').addClass('hidden');
     }
   },
 
@@ -396,7 +469,6 @@ MinionPoller = {
     masterHtml = '<input name="roles[master][]" id="roles_master_' + minion.id +
       '" value="' + minion.id + '" type="checkbox" disabled="" ' + checked + '> ';
 
-
     if (minion.tx_update_reboot_needed) {
       switch (minion.highstate) {
         case "applied":
@@ -412,8 +484,29 @@ MinionPoller = {
             appliedHtml += ' Update in progress'
           }
           break;
-        }
-    } else if (minion.tx_update_failed) {
+      }
+    }
+
+    if (minion.tx_update_migration_available && (State.adminMigrated || !overlapSupport())) {
+      switch (minion.highstate) {
+        case "applied":
+          appliedHtml = '<i class="fa fa-arrow-circle-up text-info fa-2x" aria-hidden="true"></i> Migration Available';
+          break;
+        case "failed":
+          appliedHtml = '<i class="fa fa-arrow-circle-up text-warning fa-2x" aria-hidden="true"></i> Migration Failed - Retryable';
+          break;
+        case "pending":
+          if(minion.online) {
+            msg = 'Migration in progress'
+          } else {
+            msg = 'Rebooting'
+          }
+          appliedHtml = appliedHtml.replace('Update in progress', msg)
+          break;
+      }
+    }
+
+    if (minion.tx_update_failed) {
       appliedHtml = '<i class="fa fa-arrow-circle-up text-danger fa-2x" aria-hidden="true"></i> Update Failed';
     }
 
@@ -694,6 +787,22 @@ $('.update-admin-modal').on('hide.bs.modal', function(e) {
   }
 });
 
+$('.migrate-admin-modal').on('hide.bs.modal', function(e) {
+  var isMigrating = $('.migrate-admin-modal').data('migrating');
+
+  if (isMigrating) {
+    e.preventDefault();
+  }
+});
+
+$('.mirror-sync-modal').on('hide.bs.modal', function(e) {
+  var isSyncing = $('.mirror-sync-modal').data('syncing');
+
+  if (isSyncing) {
+    e.preventDefault();
+  }
+});
+
 // unlock modal, now closable
 function unlockUpdateAdminModal() {
   var $modal = $('.update-admin-modal');
@@ -711,6 +820,46 @@ function lockUpdateAdminModal() {
 
   $btn.prop('disabled', true);
   $modal.data('rebooting', true);
+  $modal.find('.close').hide();
+}
+
+// unlock modal, now closable
+function unlockMigrateAdminModal() {
+  var $modal = $('.migrate-admin-modal');
+  var $btn = $modal.find('.btn');
+
+  $modal.data('migrating', false);
+  $modal.find('.close').show();
+  $btn.prop('disabled', false);
+}
+
+// lock modal, won't close
+function lockMigrateAdminModal() {
+  var $modal = $('.migrate-admin-modal');
+  var $btn = $modal.find('.btn');
+
+  $btn.prop('disabled', true);
+  $modal.data('migrating', true);
+  $modal.find('.close').hide();
+}
+
+// unlock modal, now closable
+function unlockMirrorSyncModal() {
+  var $modal = $('.warn-mirror-sync-modal');
+  var $btn = $modal.find('.btn');
+
+  $modal.data('syncing', false);
+  $modal.find('.close').show();
+  $btn.prop('disabled', false);
+}
+
+// lock modal, won't close
+function lockMirrorSyncModal() {
+  var $modal = $('.warn-mirror-sync-modal');
+  var $btn = $modal.find('.btn');
+
+  $btn.prop('disabled', true);
+  $modal.data('syncing', true);
   $modal.find('.close').hide();
 }
 
@@ -740,6 +889,54 @@ $('body').on('click', '.reboot-update-btn', function(e) {
   });
 });
 
+// migrate admin node handler
+$('body').on('click', '.trigger-migrate-admin-btn', function(e) {
+  var $btn = $(this);
+  var $modal = $('.migrate-admin-modal');
+
+  // should any node have an out of sync mirror, open the sync modal
+  if(showMirrorSyncModal() > 0) {
+    $modal.modal('hide');
+    return
+  }
+
+  e.preventDefault();
+
+  $btn.html('<i class="fa fa-spinner fa-pulse fa-fw"></i> Migrating...');
+  lockMigrateAdminModal();
+
+  State.hasPendingStateNode = true;
+
+  $.post($btn.data('url'))
+  .done(function(data) {
+    // Here we need to wait for the orchestration to complete, AND check for a reboot
+    setTimeout(migrationCheckToReload, 10000);
+  })
+  .fail(function() {
+    unlockMigrateAdminModal();
+    $btn.text('Migrate admin (failed last time)');
+  });
+});
+
+$('body').on('click', '.confirm-mirror-synced-btn', function(e) {
+  var $btn = $(this);
+  var $modal = $('.migrate-admin-modal');
+
+  e.preventDefault();
+
+  $btn.html('<i class="fa fa-spinner fa-pulse fa-fw"></i> Checking...');
+  lockMirrorSyncModal();
+
+  $.post($btn.data('url'))
+  .success(function() {
+    window.location.reload();
+  })
+  .fail(function() {
+    // mark failed
+    unlockMirrorSyncModal();
+  });
+});
+
 // health check request
 // if successful, reload page
 // schedule another check otherwise
@@ -751,6 +948,21 @@ function healthCheckToReload() {
     window.location.reload();
   })
   .fail(function() {
+    setTimeout(healthCheckToReload, 3000);
+  });
+};
+
+// migration status check
+function migrationCheckToReload() {
+  var migrationCheckUrl = $('.migrate-update-btn').data('migrationCheck');
+
+  $.get(migrationCheckUrl)
+  .success(function() {
+    // check for in_progress migration
+    setTimeout(migrationCheckToReload, 10000);
+  })
+  .fail(function() {
+    // rebooting
     setTimeout(healthCheckToReload, 3000);
   });
 };
@@ -1123,6 +1335,7 @@ function enableOrchTriggers() {
   $('.force-remove-node-link').removeClass('disabled');
   $('.assign-nodes-link').removeClass('disabled');
   $('#update-all-nodes').toggleClass('hidden', !State.updateAllNodes);
+  $('#migrate-all-nodes').toggleClass('hidden', !State.migrateAllNodes);
   $('.pending-accept-link').removeClass('hidden');
   $('.admin-outdated-notification').toggleClass('hidden', !State.updateAdminNode);
 };
@@ -1133,6 +1346,7 @@ function disableOrchTriggers(typeSelector) {
   $('.remove-node-link').addClass('disabled');
   $('.assign-nodes-link').addClass('disabled');
   $('#update-all-nodes').addClass('hidden');
+  $('#migrate-all-nodes').addClass('hidden');
   $('.pending-accept-link').addClass('hidden');
   $('.admin-outdated-notification').addClass('hidden');
 }
@@ -1149,6 +1363,35 @@ function handleUnsupportedClusterConfiguration() {
   } else if (masters.length % 2 === 0) {
     // We need an odd number of masters
     $alert.find('.reason').text('an odd number of masters nodes');
+    $alert.fadeIn(100);
+  } else {
+    $alert.fadeOut(500);
+  }
+}
+
+function showRepoMirrorAlert(admin) {
+  // show mirror sync alert only when there's no node in pending state
+  if (State.minions.filter(function (m) { return m.highstate === "pending" }).length > 0) {
+    return;
+  }
+  var minions = State.minions;
+  var $alert = $('.repomirror-sync-alert');
+  // + 1 for the admin
+  var node_number = minions.length;
+  var in_sync = true;
+
+  // check admin
+  in_sync = admin.tx_update_migration_mirror_synced
+
+  // check minions
+  if (in_sync) {
+    for (var i = 0; i < node_number; i++) {
+      in_sync = minions[i].tx_update_migration_mirror_synced
+      if (!in_sync) { break; }
+    }
+  }
+
+  if (!in_sync) {
     $alert.fadeIn(100);
   } else {
     $alert.fadeOut(500);
@@ -1199,4 +1442,39 @@ function onlineHtml(minion) {
   } else {
     return '<i class="fa fa-circle text-danger fa-2x" aria-hidden="true" title="Offline (last updated at: ' + minion.updated_at + ' admin server time)"></i>';
   }
+}
+
+function showMirrorSyncModal() {
+  unsynced_node_number = State.minions.filter(function (m) { return m.tx_update_migration_mirror_synced === false }).length;
+  if(unsynced_node_number > 0) {
+    $('.warn-mirror-sync-modal').modal('show');
+  }
+  return unsynced_node_number;
+}
+
+function overlapSupport() {
+  return State.minions.filter(function (m) {
+    return m.tx_update_reboot_needed && m.tx_update_migration_available
+  }).length > 0
+}
+
+function adminMigrated(data) {
+  // check if we are in the middle of a migration
+  var migrated = false;
+  for (var i = 0; i < data.assigned_minions.length; i++) {
+    if (data.assigned_minions[i].os_release != data.admin.os_release) {
+      migrated = true;
+    }
+  }
+  return migrated;
+}
+
+function createAdminNotification(n) {
+  var notification = $('.' + n);
+  // cleanup old messages
+  ['reboot', 'failed', 'maintenance', 'install'].forEach(function(id) {
+    notification.removeClass(n + '--' + id);
+  });
+
+  return notification;
 }

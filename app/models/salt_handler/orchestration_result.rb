@@ -1,13 +1,14 @@
 # This class is responsible to handle the salt events that are orchestration results.
-# Only the bootstrap and update orchestrations will be handled by this class.
+# Only the bootstrap, update and migration orchestrations will be handled by this class.
 class SaltHandler::OrchestrationResult < SaltHandler::Orchestration
   def self.tag_matcher
     %r{salt/run/(\d+)/ret}
   end
 
-  # This method is responsible for all actions needed when the bootstrap/update orchestration
-  # has failed. We mark all pending minions as failed if the orchestration failed. If it
-  # succeeded, we do nothing, as they will be marked as success by their own highstates events.
+  # This method is responsible for all actions needed when the bootstrap/update/migration
+  # orchestration has failed. We mark all pending minions as failed if the orchestration failed.
+  # If it succeeded, we do nothing, as they will be marked as success by their own highstates
+  # events.
   def process_event
     event_data = JSON.parse @salt_event.data
 
@@ -48,7 +49,7 @@ class SaltHandler::OrchestrationResult < SaltHandler::Orchestration
 
   def update_minions(orchestration_type:, orchestration_succeeded:)
     case orchestration_type
-    when "orch.kubernetes", "orch.update"
+    when "orch.kubernetes", "orch.update", "orch.migration"
       update_pending_minions orchestration_succeeded: orchestration_succeeded
     when "orch.removal"
       update_pending_removal_minions orchestration:           orchestration,

@@ -280,6 +280,30 @@ describe Minion do
     end
   end
 
+  describe "#mark_pending_migration" do
+    before do
+      minions
+      described_class.second.assign_role :master, remote: false
+      described_class.all[2..-1].each { |minion| minion.assign_role :worker, remote: false }
+      # rubocop:disable Rails/SkipsModelValidations
+      described_class.update_all highstate: described_class.highstates[:applied]
+      # rubocop:enable Rails/SkipsModelValidations
+      described_class.update([described_class.second.id, described_class.third.id,
+                              described_class.fourth.id],
+                             [{ tx_update_migration_available: true, tx_update_failed: false },
+                              { tx_update_migration_available: true, tx_update_failed: false },
+                              { tx_update_migration_available: true, tx_update_failed: false }])
+    end
+
+    context "when a migration is needed" do
+      it "sets the highstate of the migratable minions as pending" do
+        expect { described_class.mark_pending_migration }.to change {
+          described_class.cluster_role.applied.count
+        }.from(3).to(0)
+      end
+    end
+  end
+
   describe "#mark_pending_bootstrap!" do
     before do
       minions

@@ -4,6 +4,7 @@ describe Orchestration do
 
   let(:orchestration) { create(:orchestration) }
   let(:upgrade_orchestration) { create(:upgrade_orchestration) }
+  let(:migration_orchestration) { create(:migration_orchestration) }
   let(:removal_orchestration) { create(:removal_orchestration, params: { target: "some-minion" }) }
   let(:force_removal_orchestration) do
     create(:force_removal_orchestration, params: { target: "some-minion" })
@@ -35,7 +36,7 @@ describe Orchestration do
       )
     end
 
-    it "spawns a new bootstrap orchestration" do
+    it "spawns a new upgrade orchestration" do
       expect { described_class.run kind: :upgrade }.to(change { described_class.upgrade.count })
       expect(Velum::Salt).to have_received(:update_orchestration).once
     end
@@ -44,6 +45,19 @@ describe Orchestration do
       allow(Minion).to receive :mark_pending_update
       upgrade_orchestration.send :update_minions
       expect(Minion).to have_received :mark_pending_update
+    end
+  end
+
+  context "when a migration orchestration is ran" do
+    before do
+      allow(Velum::Salt).to receive(:migration_orchestration).and_return(
+        [nil, { "return" => [{ "jid" => "20170706104527757674" }] }]
+      )
+    end
+
+    it "spawns a new migration orchestration" do
+      expect { described_class.run kind: :migration }.to(change { described_class.migration.count })
+      expect(Velum::Salt).to have_received(:migration_orchestration).once
     end
   end
 
