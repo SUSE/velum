@@ -381,7 +381,8 @@ RSpec.describe InternalApi::V1::PillarsController, type: :controller do
             floating:       "9bc3e819-a6ca-648b-b5e3-c26c9e6c5e57",
             subnet:         "4b64b38d-0b38-40d0-a69f-ade7299ef4ab",
             bs_version:     "v2",
-            lb_mon_retries: "3"
+            lb_mon_retries: "3",
+            ignore_vol_az:  "false"
           }
         }
       }
