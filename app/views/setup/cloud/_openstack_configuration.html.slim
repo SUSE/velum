@@ -1,50 +1,65 @@
-.openstack-settings
-  h4 OpenStack Settings
+- required = @cloud_provider.present?
 
-  .form-group
-    = f.label :cloud_openstack_auth_url, "Keystone API URL"
-    = f.text_field :cloud_openstack_auth_url, value: @cloud_openstack_auth_url, class: "form-control"
-  .form-group
-    = f.label :cloud_openstack_domain, "Domain name"
-    = f.text_field :cloud_openstack_domain, value: @cloud_openstack_domain, class: "form-control"
-  .form-group
-    = f.label :cloud_openstack_domain_id, "Domain ID"
-    = f.text_field :cloud_openstack_domain_id, value: @cloud_openstack_domain_id, class: "form-control"
-  .form-group
-    = f.label :cloud_openstack_project, "Project name"
-    = f.text_field :cloud_openstack_project, value: @cloud_openstack_project, class: "form-control"
-  .form-group
-    = f.label :cloud_openstack_project_id, "Project ID"
-    = f.text_field :cloud_openstack_project_id, value: @cloud_openstack_project_id, class: "form-control"
-  .form-group
-    = f.label :cloud_openstack_region, "Region name"
-    = f.text_field :cloud_openstack_region, value: @cloud_openstack_region, class: "form-control"
-  .form-group
-    = f.label :cloud_openstack_username, "Username"
-    = f.text_field :cloud_openstack_username, value: @cloud_openstack_username, class: "form-control"
-  .form-group
-    = f.label :cloud_openstack_password, "Password"
-    = f.password_field :cloud_openstack_password, value: @cloud_openstack_password, class: "form-control"
-  .form-group
-    = f.label :cloud_openstack_subnet, "Subnet UUID for the CaaS Platform private network"
-    = f.text_field :cloud_openstack_subnet, value: @cloud_openstack_subnet, class: "form-control"
-  .form-group
-    = f.label :cloud_openstack_floating, "Floating network UUID"
-    = f.text_field :cloud_openstack_floating, value: @cloud_openstack_floating, class: "form-control"
-  .form-group
-    = f.label :cloud_openstack_lb_mon_retries, "Load balancer monitor max retries"
-    = f.text_field :cloud_openstack_lb_mon_retries, value: @cloud_openstack_lb_mon_retries, class: "form-control"
-  .form-group
-    = f.label :cloud_openstack_bs_version, "Cinder Block Storage API version"
-    = f.text_field :cloud_openstack_bs_version, value: @cloud_openstack_bs_version, class: "form-control"
+- if cloud_framework_value === "openstack"
+  .openstack-settings
+    h4 OpenStack Settings
 
-  .form-group
-    = f.label :cloud_openstack_ignore_vol_az, "Ignore Cinder availability zone"
-    br
-      .btn-group.btn-group-toggle data-toggle="buttons"
-        = label_tag :cloud_openstack_ignore_vol_az, nil, class: "btn btn-default #{'btn-primary active' if @cloud_openstack_ignore_vol_az == "true"}"
-          = f.radio_button :cloud_openstack_ignore_vol_az, "true", checked: @cloud_openstack_ignore_vol_az == "true"
-          | True
-        = label_tag :cloud_openstack_ignore_vol_az, nil, class: "btn btn-default #{'btn-primary active' if @cloud_openstack_ignore_vol_az == "false"}"
-          = f.radio_button :cloud_openstack_ignore_vol_az, "false", checked: @cloud_openstack_ignore_vol_az == "false"
-          | False
+    .form-group
+      = f.label :cloud_openstack_auth_url, "Keystone API URL", required: true
+      = f.text_field :cloud_openstack_auth_url, value: @cloud_openstack_auth_url, class: "form-control", required: required
+      small.form-text.text-muted
+        | This is the URL of the keystone API used to authenticate the user. This value can be found
+        |  on the OpenStack control plane under <code>“Access and Security” > “API Access” > “Credentials”</code>.
+    .form-group
+      = f.label :cloud_openstack_domain, "Domain name", required: true
+      = f.text_field :cloud_openstack_domain, value: @cloud_openstack_domain, class: "form-control", required: required
+      small.form-text.text-muted
+        | Used to specify the name of the domain your user belongs to.
+    .form-group
+      = f.label :cloud_openstack_domain_id, "Domain ID", required: true
+      = f.text_field :cloud_openstack_domain_id, value: @cloud_openstack_domain_id, class: "form-control", required: required
+      small.form-text.text-muted
+        | Used to specify the ID of the domain your user belongs to.
+    .form-group
+      = f.label :cloud_openstack_project, "Project name", required: true
+      = f.text_field :cloud_openstack_project, value: @cloud_openstack_project, class: "form-control", required: required
+      small.form-text.text-muted
+        | Used to specify the name of the project where you want to create your resources.
+    .form-group
+      = f.label :cloud_openstack_project_id, "Project ID", required: true
+      = f.text_field :cloud_openstack_project_id, value: @cloud_openstack_project_id, class: "form-control", required: required
+      small.form-text.text-muted
+        | Used to specify the ID of the project where you want to create your resources.
+    .form-group
+      = f.label :cloud_openstack_region, "Region name", required: true
+      = f.text_field :cloud_openstack_region, value: @cloud_openstack_region, class: "form-control", required: required
+      small.form-text.text-muted
+        | Used to specify the identifier of the region to use when running on a multi-region OpenStack
+        |  cloud. A region is a general division of an OpenStack deployment.
+    .form-group
+      = f.label :cloud_openstack_username, "Username", required: true
+      = f.text_field :cloud_openstack_username, value: @cloud_openstack_username, class: "form-control", required: required
+      small.form-text.text-muted
+        | Refers to the username of a valid user set in keystone.
+    .form-group
+      = f.label :cloud_openstack_password, "Password", required: true
+      = f.password_field :cloud_openstack_password, value: @cloud_openstack_password, class: "form-control", required: required
+      small.form-text.text-muted
+        | Refers to the password of a valid user set in keystone.
+    .form-group
+      = f.label :cloud_openstack_subnet, "Subnet UUID for the CaaS Platform private network", required: true
+      = f.text_field :cloud_openstack_subnet, value: @cloud_openstack_subnet, class: "form-control", required: required
+      small.form-text.text-muted
+        | Used to specify the identifier of the subnet you want to create your load balancer on.
+        |  This value can be found on the OpenStack control panels, <code>under “Network” > “Networks”</code> - click on the respective network to get its subnets.
+    .form-group
+      = f.label :cloud_openstack_floating, "Floating network UUID"
+      = f.text_field :cloud_openstack_floating, value: @cloud_openstack_floating, class: "form-control"
+      small.form-text.text-muted
+        | When specified will lead to the creation of a floating IP for the load balancer.
+    .form-group
+      = f.label :cloud_openstack_lb_mon_retries, "Load balancer monitor max retries"
+      = f.text_field :cloud_openstack_lb_mon_retries, value: @cloud_openstack_lb_mon_retries, class: "form-control"
+    .form-group
+      = f.label :cloud_openstack_bs_version, "Cinder Block Storage API version"
+      = f.text_field :cloud_openstack_bs_version, value: @cloud_openstack_bs_version, class: "form-control"
