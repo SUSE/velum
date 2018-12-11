@@ -19,7 +19,9 @@ Rails.application.configure do
   config.serve_static_files = ENV["RAILS_SERVE_STATIC_FILES"].present?
 
   # Compress JavaScripts and CSS.
-  config.assets.js_compressor = :uglifier
+  if ENV["RPM_BUILD_ROOT"]
+    config.assets.js_compressor = Uglifier.new(harmony: true)
+  end
   # config.assets.css_compressor = :sass
 
   # include svg in the precompile
