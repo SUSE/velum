@@ -404,7 +404,7 @@ MinionPoller = {
     }
 
     // Public Cloud frameworks do not currently support removing nodes
-    if (['azure', 'ec2', 'gce'].indexOf(minion.cloud_framework) > -1) {
+    if (PUBLIC_CLOUDS.indexOf(minion.cloud_framework) > -1) {
       actionsHtml = '';
     } else {
       if (State.pendingRemovalMinionId || State.hasPendingStateNode) {
@@ -479,11 +479,15 @@ MinionPoller = {
       </td>\
     ';
 
-    var actionHtml = '\
-      <td class="action-column">\
-        <a class="remove-minion '+ disabledClass +'" href="#" data-minion-id="' + minion.minion_id + '" data-minion-fqdn="' + minion.fqdn + '">Remove</a>\
-      </td>\
-    ';
+    if (PUBLIC_CLOUDS.indexOf(minion.cloud_framework) > -1) {
+      var actionHtml = '';
+    } else {
+      var actionHtml = '\
+        <td class="action-column">\
+          <a class="remove-minion '+ disabledClass +'" href="#" data-minion-id="' + minion.minion_id + '" data-minion-fqdn="' + minion.fqdn + '">Remove</a>\
+        </td>\
+      ';
+    }
 
     switch (minion.highstate) {
       case "pending_removal":
