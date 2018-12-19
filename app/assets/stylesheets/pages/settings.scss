@@ -110,3 +110,36 @@ $sidebar-item-highlight: #00c081;
 .ldap-conn-message-valid {
   color: $brand-success;
 }
+
+.cert-table {
+  td.field {
+    font-weight: bold;
+    width: 180px;
+    vertical-align: top;
+    padding-bottom: 3px;
+  }
+  td.value {
+    word-break: break-word;
+  }
+}
+
+.ext-cert-success {
+  color: $brand-success;
+}
+
+.ext-cert-fail {
+  color: $brand-danger;
+}
+
+.cert-element {
+  margin: 0 0 2px;
+}
+
+.cert-subelement {
+  padding-left: 40px;
+  text-indent: -15px;
+}
+
+.cert-parse-heading {
+  font-size: 16px;
+}
