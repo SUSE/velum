@@ -68,7 +68,7 @@ describe "Feature: Registries settings", js: true do
       click_button("Save")
 
       last_registry = Registry.last
-      expect(page).not_to have_content("Certificate")
+      expect(page).not_to have_css(".details-value-certificate")
       expect(page).to have_content("Registry was successfully created.")
       expect(page).to have_current_path(settings_registry_path(last_registry))
     end
@@ -111,12 +111,12 @@ describe "Feature: Registries settings", js: true do
 
     it "does not show the certificate textarea if url is not secure" do
       fill_in "URL", with: "http://google.com"
-      expect(page).not_to have_content("Certificate")
+      expect(page).not_to have_selector("#registry_certificate")
     end
 
     it "shows the certificate textarea if url is secure" do
       fill_in "URL", with: "https://google.com"
-      expect(page).to have_content("Certificate")
+      expect(page).to have_selector("#registry_certificate")
     end
   end
 
@@ -151,12 +151,12 @@ describe "Feature: Registries settings", js: true do
 
     it "does not show the certificate textarea if url is not secure" do
       fill_in "URL", with: "http://google.com"
-      expect(page).not_to have_content("Certificate")
+      expect(page).not_to have_selector("#registry_certificate")
     end
 
     it "shows the certificate textarea if url is secure" do
       fill_in "URL", with: "https://google.com"
-      expect(page).to have_content("Certificate")
+      expect(page).to have_selector("#registry_certificate")
     end
   end
 
