@@ -7,17 +7,19 @@ class Settings::ExternalCertController < SettingsController
   VELUM_NAME = "Velum".freeze
   KUBEAPI_NAME = "Kubernetes API".freeze
   DEX_NAME = "Dex".freeze
+  WEAK_SIGNATURE_HASHES = ["sha1", "md5"].freeze
 
   def index
     set_instance_variables
   end
 
+  # rubocop:disable Metrics/AbcSize
   def create
     key_cert_map_temp = key_cert_map
     key_cert_map_temp.each_key do |i|
       return false unless upload_validate(key_cert_map_temp[i])
     end
-
+    warning_messages = get_warning_message(key_cert_map_temp)
     cert_map = {
       external_cert_velum_cert:   key_cert_map_temp[:velum][:cert][:cert_string],
       external_cert_velum_key:    key_cert_map_temp[:velum][:key][:key_string],
@@ -28,8 +30,9 @@ class Settings::ExternalCertController < SettingsController
     }
     @errors = Pillar.apply cert_map
     if @errors.empty?
-      redirect_to settings_external_cert_index_path,
-        notice: "External Certificate settings successfully saved."
+      flash[:alert] = warning_messages.join(" && ") if warning_messages.count > 0
+      redirect_to settings_external_cert_index_path, \
+                           notice: "External Certificate settings successfully saved."
       return
     # :nocov:
     # An error here would require a failure in connection to velum->salt
@@ -40,6 +43,7 @@ class Settings::ExternalCertController < SettingsController
       # :nocov:
     end
   end
+  # rubocop:enable Metrics/AbcSize
 
   private
 
@@ -131,8 +135,8 @@ class Settings::ExternalCertController < SettingsController
         return render_failure_event(message)
       end
 
-      # Check that cert has valid date range
-      return false unless cert_date_check(cert)
+      # Check if a certificate has a vaild date
+      return false unless valid_cert_date?(cert)
 
       # Moved to another task
       # Check that hostname is in SubjectAltName of cert
@@ -242,13 +246,37 @@ class Settings::ExternalCertController < SettingsController
     subject_alt_name.value.gsub("DNS:", "").delete(",").split(" ")
   end
 
-  def cert_date_check(cert)
-    if Time.now.utc > cert.not_after || Time.now.utc < cert.not_before
-      message = "Certificate out of valid date range"
-      render_failure_event(message)
-    else
-      true # return true
+  # Check if a certificate has a vaild date
+  def valid_cert_date?(cert)
+    return true unless Time.now.utc > cert.not_after || Time.now.utc < cert.not_before
+    message = "Certificate out of valid date range"
+    render_failure_event(message)
+  end
+
+  def get_warning_message(key_cert_map)
+    warning_messages = []
+    key_cert_map.each_key do |i|
+      next if key_cert_map[i][:cert][:cert_string].empty?
+      cert = read_cert(key_cert_map[i][:cert][:cert_string])
+      warning_rsa_keylength(cert, warning_messages)
+      warning_weak_hash(cert, warning_messages)
     end
+    warning_messages.uniq
+  end
+
+  # Warn if a certificate uses the key length that is less than 2048 bits
+  def warning_rsa_keylength(cert, warning_messages)
+    key_length_in_bits = cert.public_key.n.num_bytes * 8
+    return unless key_length_in_bits < 2048
+    warning_messages.push("Warning: RSA key bit length should be greater than or equal to 2048")
+  end
+
+  # Warn if a certificate uses a weak hash algorithm
+  def warning_weak_hash(cert, warning_messages)
+    hash_algorithm = cert.signature_algorithm.chomp "WithRSAEncryption"
+    return unless WEAK_SIGNATURE_HASHES.include? hash_algorithm
+    warning_messages.push("Warning: Certificate includes a weak signature hash algorithm
+                      (#{WEAK_SIGNATURE_HASHES.join(", ")})")
   end
 
   # # Placeholder for hostname/SubjectAltName check

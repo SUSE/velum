@@ -26,6 +26,16 @@ describe "Feature: External Cerificate settings", js: true do
   let(:expired_cert) { File.join(fixture_path, "expired_cert.pem") }
   let(:key_for_expired_cert) { File.join(fixture_path, "key_for_expired_cert.pem") }
 
+  # weak_key_cert and key_for_weak_key_cert are a cert/key pair that are valid
+  # in every way except 1028 bit key length
+  let(:weak_key_cert) { File.join(fixture_path, "weak_key_cert.pem") }
+  let(:key_for_weak_key_cert) { File.join(fixture_path, "key_for_weak_key_cert.pem") }
+
+  # sha1_signing_hash_cert and key_for_sha1_signing_hash_cert are a cert/key pair that are valid
+  # in every way except a weak hash algorithm
+  let(:weak_hash_cert) { File.join(fixture_path, "sha1_signing_hash_cert.pem") }
+  let(:key_for_weak_hash_cert) { File.join(fixture_path, "key_for_sha1_signing_hash_cert.pem") }
+
   before do
     setup_done
     login_as user, scope: :user
@@ -105,7 +115,25 @@ describe "Feature: External Cerificate settings", js: true do
       expect(page).to have_content("ftp.example.com")
     end
 
-    # Faiure Conditions
+    it "uploads velum cert with a weak RSA bit length key (<= 2048)" do
+      attach_file("external_certificate_velum_cert", weak_key_cert)
+      attach_file("external_certificate_velum_key", key_for_weak_key_cert)
+
+      click_button("Save")
+      expect(page).to have_http_status(:success)
+      expect(page).to have_content("RSA key bit length should be greater than or equal to 2048")
+    end
+
+    it "uploads velum cert with a weak hash algorithm (sha1)" do
+      attach_file("external_certificate_velum_cert", weak_hash_cert)
+      attach_file("external_certificate_velum_key", key_for_weak_hash_cert)
+
+      click_button("Save")
+      expect(page).to have_http_status(:success)
+      expect(page).to have_content("Certificate includes a weak signature hash algorithm")
+    end
+
+    # Failure Conditions
 
     it "uploads malformed velum certificate" do
       attach_file("external_certificate_velum_cert", ssl_cert_file_malformed)
