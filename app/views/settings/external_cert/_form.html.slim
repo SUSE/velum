@@ -23,7 +23,20 @@
     .form-group.form-group-certificate
       p Select "Choose File" to upload a new #{_service_name} SSL Certificate:
       = f.file_field _cert_file_field, required: false
-    br
+
+    #accordion.panel-group aria-multiselectable="true" role="tablist" 
+    .panel.panel-default
+      .panel-heading.active role="tab" id=_heading
+        h4.panel-title
+          a.collapsed aria-controls=_collapse aria-expanded="false" data-parent="#accordion" data-toggle="collapse" href="##{_collapse}" role="button" 
+            | Show list of required Subject Alternative Names for #{_service_name}
+      .panel-collapse.collapse aria-labelledby=_heading role="tabpanel" id=_collapse
+        .panel-body
+          ul
+            - _subjectaltnames.each do |name|
+              li #{name}
+
+    hr
     - if _key
       .cert-table
         h5.cert-parse-heading Current #{_service_name} SSL Key Info:

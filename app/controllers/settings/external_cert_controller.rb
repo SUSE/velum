@@ -1,9 +1,14 @@
 require "openssl"
+require "velum/salt"
+require "net/http"
 
 # Settings::ExternalCertController allows users to install their own SSL Certificates
 # and Private Keys for encrypted external communication
 # rubocop:disable Metrics/ClassLength
 class Settings::ExternalCertController < SettingsController
+  VELUM_HASH_KEY = :velum
+  KUBEAPI_HASH_KEY = :kubeapi
+  DEX_HASH_KEY = :dex
   VELUM_NAME = "Velum".freeze
   KUBEAPI_NAME = "Kubernetes API".freeze
   DEX_NAME = "Dex".freeze
@@ -21,22 +26,26 @@ class Settings::ExternalCertController < SettingsController
     end
     warning_messages = get_warning_message(key_cert_map_temp)
     cert_map = {
-      external_cert_velum_cert:   key_cert_map_temp[:velum][:cert][:cert_string],
-      external_cert_velum_key:    key_cert_map_temp[:velum][:key][:key_string],
-      external_cert_kubeapi_cert: key_cert_map_temp[:kubeapi][:cert][:cert_string],
-      external_cert_kubeapi_key:  key_cert_map_temp[:kubeapi][:key][:key_string],
-      external_cert_dex_cert:     key_cert_map_temp[:dex][:cert][:cert_string],
-      external_cert_dex_key:      key_cert_map_temp[:dex][:key][:key_string]
+      external_cert_velum_cert: key_cert_map_temp[VELUM_HASH_KEY][:cert][:cert_string],
+      external_cert_velum_key: key_cert_map_temp[VELUM_HASH_KEY][:key][:key_string],
+      external_cert_kubeapi_cert: key_cert_map_temp[KUBEAPI_HASH_KEY][:cert][:cert_string],
+      external_cert_kubeapi_key: key_cert_map_temp[KUBEAPI_HASH_KEY][:key][:key_string],
+      external_cert_dex_cert: key_cert_map_temp[DEX_HASH_KEY][:cert][:cert_string],
+      external_cert_dex_key: key_cert_map_temp[DEX_HASH_KEY][:key][:key_string],
     }
-    @errors = Pillar.apply cert_map
+
+    logger.silence do
+      # Silences logging of cert/key insertion into DB
+      @errors = Pillar.apply cert_map
+    end
+
     if @errors.empty?
       flash[:alert] = warning_messages.join(" && ") if warning_messages.count > 0
-      redirect_to settings_external_cert_index_path, \
-                           notice: "External Certificate settings successfully saved."
+      redirect_to settings_external_cert_index_path, notice: "External Certificate settings successfully saved."
       return
-    # :nocov:
-    # An error here would require a failure in connection to velum->salt
-    # or a corruption in mapping of values in the salt pillar
+      # :nocov:
+      # An error here would require a failure in connection to velum->salt
+      # or a corruption in mapping of values in the salt pillar
     else
       set_instance_variables
       render action: :index, status: :unprocessable_entity
@@ -54,6 +63,8 @@ class Settings::ExternalCertController < SettingsController
     @kubeapi_key = key_parse(Pillar.value(pillar: :external_cert_kubeapi_key))
     @dex_cert = cert_parse(Pillar.value(pillar: :external_cert_dex_cert))
     @dex_key = key_parse(Pillar.value(pillar: :external_cert_dex_key))
+
+    @subject_alt_names = build_subject_alt_names
   end
 
   def get_val_from_form(param)
@@ -66,71 +77,71 @@ class Settings::ExternalCertController < SettingsController
 
   def key_cert_map
     {
-      velum:   {
+      VELUM_HASH_KEY => {
         name: VELUM_NAME,
         cert: {
-          cert_string:      get_val_from_form(:velum_cert),
-          pillar_model_key: :external_cert_velum_cert
+          cert_string: get_val_from_form(:velum_cert),
+          pillar_model_key: :external_cert_velum_cert,
         },
-        key:  {
-          key_string:       get_val_from_form(:velum_key),
-          pillar_model_key: :external_cert_velum_key
-        }
+        key: {
+          key_string: get_val_from_form(:velum_key),
+          pillar_model_key: :external_cert_velum_key,
+        },
       },
-      kubeapi: {
+      KUBEAPI_HASH_KEY => {
         name: KUBEAPI_NAME,
         cert: {
-          cert_string:      get_val_from_form(:kubeapi_cert),
-          pillar_model_key: :external_cert_kubeapi_cert
+          cert_string: get_val_from_form(:kubeapi_cert),
+          pillar_model_key: :external_cert_kubeapi_cert,
         },
-        key:  {
-          key_string:       get_val_from_form(:kubeapi_key),
-          pillar_model_key: :external_cert_kubeapi_key
-        }
+        key: {
+          key_string: get_val_from_form(:kubeapi_key),
+          pillar_model_key: :external_cert_kubeapi_key,
+        },
       },
-      dex:     {
+      DEX_HASH_KEY => {
         name: DEX_NAME,
         cert: {
-          cert_string:      get_val_from_form(:dex_cert),
-          pillar_model_key: :external_cert_dex_cert
+          cert_string: get_val_from_form(:dex_cert),
+          pillar_model_key: :external_cert_dex_cert,
         },
-        key:  {
-          key_string:       get_val_from_form(:dex_key),
-          pillar_model_key: :external_cert_dex_key
-        }
-      }
+        key: {
+          key_string: get_val_from_form(:dex_key),
+          pillar_model_key: :external_cert_dex_key,
+        },
+      },
     }
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-  def upload_validate(key_cert_map)
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
+  def upload_validate(key_cert_map_elem)
     # Do nothing if both cert/key are empty
-    if key_cert_map[:cert][:cert_string].empty? && key_cert_map[:key][:key_string].empty?
+    if key_cert_map_elem[:cert][:cert_string].empty? && key_cert_map_elem[:key][:key_string].empty?
       true # return true
-    # Prevent upload unnless both cert/key are present
-    elsif key_cert_map[:cert][:cert_string].empty? || key_cert_map[:key][:key_string].empty?
-      message = "Error with #{key_cert_map[:name]}, certificate and key must be uploaded together."
+      # Prevent upload unnless both cert/key are present
+    elsif key_cert_map_elem[:cert][:cert_string].empty? || key_cert_map_elem[:key][:key_string].empty?
+      message = "Error with #{key_cert_map_elem[:name]}, certificate and key must be uploaded together."
       render_failure_event(message)
-    # Validate cert/key and verify that they match
+      # Validate cert/key and verify that they match
     else
-      cert = read_cert(key_cert_map[:cert][:cert_string])
-      key = read_key(key_cert_map[:key][:key_string])
+      cert = read_cert(key_cert_map_elem[:cert][:cert_string])
+      key = read_key(key_cert_map_elem[:key][:key_string])
 
       # Check certificate valid format
       unless cert
-        message = "Invalid #{key_cert_map[:name]} certificate, check format and try again."
+        message = "Invalid #{key_cert_map_elem[:name]} certificate, check format and try again."
         return render_failure_event(message)
       end
 
       # Check key valid format
       unless key
-        message = "Invalid #{key_cert_map[:name]} key, check format and try again."
+        message = "Invalid #{key_cert_map_elem[:name]} key, check format and try again."
         return render_failure_event(message)
       end
 
       # Check that key matches certificate
       unless cert.check_private_key(key)
-        message = "#{key_cert_map[:name]} Certificate/Key pair invalid.  Ensure Certificate" \
+        message = "#{key_cert_map_elem[:name]} Certificate/Key pair invalid.  Ensure Certificate" \
         " and Key are matching."
         return render_failure_event(message)
       end
@@ -150,7 +161,7 @@ class Settings::ExternalCertController < SettingsController
       true
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
 
   def cert_parse(cert_string)
     params = {}
@@ -243,7 +254,26 @@ class Settings::ExternalCertController < SettingsController
   def get_san_array(cert)
     subject_alt_name = cert.extensions.find { |e| e.oid == "subjectAltName" }
     return nil unless subject_alt_name
-    subject_alt_name.value.gsub("DNS:", "").delete(",").split(" ")
+    # subject_alt_name.value.gsub("DNS:", "").gsub("IP:", "").delete(",").split(" ")
+
+    asn_san = OpenSSL::ASN1.decode(subject_alt_name)
+    asn_san_sequence = OpenSSL::ASN1.decode(asn_san.value[1].value)
+
+    address_array = []
+    asn_san_sequence.each do |asn_data|
+      temp_val = asn_data.value
+      begin
+        # If the address is an IP, it is represented as string-encoded byte array
+        # here.  As far as ruby is concerned it is the same type and encoding as
+        # DNS entries.  There is no convenient way to distinguish the difference
+        # other than to parse with IPAddr.ntop and catch the exception for DNS.
+        address_array << IPAddr.ntop(temp_val)
+      rescue IPAddr::AddressFamilyError
+        address_array << temp_val
+      end
+    end
+
+    return address_array
   end
 
   # Check if a certificate has a vaild date
@@ -255,11 +285,13 @@ class Settings::ExternalCertController < SettingsController
 
   def get_warning_message(key_cert_map)
     warning_messages = []
+    subjectaltname_hash = build_subject_alt_names
     key_cert_map.each_key do |i|
       next if key_cert_map[i][:cert][:cert_string].empty?
       cert = read_cert(key_cert_map[i][:cert][:cert_string])
       warning_rsa_keylength(cert, warning_messages)
       warning_weak_hash(cert, warning_messages)
+      warning_subjectaltname(cert, warning_messages, subjectaltname_hash[i], key_cert_map[i][:name])
     end
     warning_messages.uniq
   end
@@ -279,14 +311,177 @@ class Settings::ExternalCertController < SettingsController
                       (#{WEAK_SIGNATURE_HASHES.join(", ")})")
   end
 
-  # # Placeholder for hostname/SubjectAltName check
-  # def hostname_check(_cert)
-  #   true
-  # end
+  # Checks the Certificate's SubjectAltName list against list of hostnames required by the cluster
+  def warning_subjectaltname(cert, warning_messages, required_san_array, service_name)
+    missing_cert_base_msg = "Warning: #{service_name} is missing the following hostnames in its certificate:  "
+    cert_san_array = get_san_array(cert)
+    missing_hostnames = []
+    
+    if !cert_san_array
+      warning_messages.push( missing_cert_base_msg + required_san_array.join(" "))
+    else
+      required_san_array.each do |i|
+        if !cert_san_array.include?(i)
+          missing_hostnames << i
+        end
+      end
+    end
+
+    if missing_hostnames.length > 0
+      warning_messages.push("Missing the following hostnames in the certificate: #{missing_hostnames.join(" ")}")
+    end
+  end
 
   # # Placeholder for trust chain validation
   # def trust_chain_verify(_cert)
   #   true
+  # end
+
+  def hosts_info
+    minion_hash = {}
+    minions = Velum::Salt.minions
+
+    minions.each_key do |i|
+      machine_id = minions[i]["machine_id"]
+      node_name = minions[i]["nodename"]
+      roles = minions[i]["roles"]
+      # minion_hash[i.to_sym] = minions[i]["machine_id"]
+      minion_hash[i.to_sym] = {machine_id: machine_id, node_name: node_name, roles: roles}
+    end
+    minion_hash
+  end
+
+  # def pillar_info(pillar)
+  #   pillar_obj = Velum::Salt.call(
+  #     action: "pillar.get",
+  #     arg: pillar,
+  #     targets: "admin",
+  #     # targets:     "roles:(admin|kube-(master|minion))",
+  #     # target_type: "grain_pcre"
+  #   )
+  #   if pillar_obj[0].kind_of? Net::HTTPSuccess
+  #     return pillar_obj[1]["return"][0]["admin"]
+  #   else
+  #     return nil
+  #   end
+  # end
+
+  def pillar_items
+    pillar = Velum::Salt.call(
+      action: "pillar.items",
+      targets: "admin",
+    )
+    if pillar[0].kind_of? Net::HTTPSuccess
+      return pillar[1]["return"][0]["admin"]
+    else
+      return nil
+    end
+  end
+
+  # rubocop:disable Metrics/AbcSize
+  def build_subject_alt_names
+    begin
+      host_info = hosts_info
+    rescue NoMethodError
+      error_hash = {:error => "Error retrieving node information, please refresh page to try again"}
+      return {
+               VELUM_HASH_KEY => error_hash,
+               KUBEAPI_HASH_KEY => error_hash,
+               DEX_HASH_KEY => error_hash,
+             }
+    end
+
+    pillar = pillar_items
+
+    # Generic required hostnames
+    begin
+      velum_san_array_base = [
+        pillar["dashboard_external_fqdn"],
+        pillar["dashboard"],
+      ]
+
+      kubeapi_san_array_base = [
+        "kubernetes",
+        "kubernetes.default",
+        "kubernetes.default.svc",
+        "kubernetes.default.svc.cluster.local",
+        "api",
+        "api" + "." + pillar["internal_infra_domain"],
+        pillar["api"]["server"]["external_fqdn"],
+        pillar["api"]["cluster_ip"],
+        pillar["api"]["server"]["extra_names"],
+        pillar["api"]["server"]["extra_ips"],
+      ]
+
+      dex_san_array_base = [
+        "dex",
+        "dex.kube-system",
+        "dex.kube-system.svc",
+        "dex.kube-system.svc" + "." + pillar["internal_infra_domain"],
+        "dex.kube-system.svc" + "." + pillar["dns"]["domain"],
+        "kubernetes",
+        "kubernetes.default",
+        "kubernetes.default.svc",
+        "api",
+        "api" + "." + pillar["internal_infra_domain"],
+        pillar["api"]["server"]["external_fqdn"],
+        pillar["api"]["cluster_ip"],
+        pillar["api"]["server"]["extra_names"],
+        pillar["api"]["server"]["extra_ips"],
+      ]
+    rescue NoMethodError
+      error_hash = {:error => "Error retrieving pillar information, please refresh page to try again"}
+      return {
+               VELUM_HASH_KEY => error_hash,
+               KUBEAPI_HASH_KEY => error_hash,
+               DEX_HASH_KEY => error_hash,
+             }
+    end
+
+    # Add host-specific hostnames
+    begin
+      host_info.values.each do |i|
+        if i[:roles].include? "admin"
+          velum_san_array_base << i[:node_name]
+          velum_san_array_base << i[:node_name] + "." + pillar["internal_infra_domain"]
+          velum_san_array_base << i[:machine_id]
+          velum_san_array_base << i[:machine_id] + "." + pillar["internal_infra_domain"]
+        elsif i[:roles].include? "kube-master"
+          node_name = i[:node_name]
+          machine_id = i[:machine_id]
+
+          kubeapi_san_array_base << node_name
+          kubeapi_san_array_base << node_name + "." + pillar["internal_infra_domain"]
+          kubeapi_san_array_base << machine_id
+          kubeapi_san_array_base << machine_id + "." + pillar["internal_infra_domain"]
+          dex_san_array_base << node_name
+          dex_san_array_base << node_name + "." + pillar["internal_infra_domain"]
+          dex_san_array_base << machine_id
+          dex_san_array_base << machine_id + "." + pillar["internal_infra_domain"]
+        end
+      end
+    rescue TypeError
+      error_hash = {:error => "Error retrieving node information, please refresh page to try again"}
+      return {
+               VELUM_HASH_KEY => error_hash,
+               KUBEAPI_HASH_KEY => error_hash,
+               DEX_HASH_KEY => error_hash,
+             }
+    end
+
+    # Remove empty entries
+    velum_san_array = velum_san_array_base.reject { |i| i.nil? || i.empty? }
+    kubeapi_san_array = kubeapi_san_array_base.reject { |i| i.nil? || i.empty? }
+    dex_san_array = dex_san_array_base.reject { |i| i.nil? || i.empty? }
+
+    {VELUM_HASH_KEY => velum_san_array, KUBEAPI_HASH_KEY => kubeapi_san_array, DEX_HASH_KEY => dex_san_array}
+  end
+
+  # rubocop:enable Metrics/AbcSize
+
+  # def gen_velum_hostnames
+  #   velum_hosts = {}
+  #   Pillar.value(pillar: :external_cert_velum_cert)
   # end
 end
 # rubocop:enable Metrics/ClassLength
