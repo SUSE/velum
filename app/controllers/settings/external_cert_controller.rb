@@ -1,6 +1,6 @@
+# :nocov:
 require "openssl"
 require "velum/salt"
-require "net/http"
 
 # Settings::ExternalCertController allows users to install their own SSL Certificates
 # and Private Keys for encrypted external communication
@@ -26,30 +26,31 @@ class Settings::ExternalCertController < SettingsController
     end
     warning_messages = get_warning_message(key_cert_map_temp)
     cert_map = {
-      external_cert_velum_cert: key_cert_map_temp[VELUM_HASH_KEY][:cert][:cert_string],
-      external_cert_velum_key: key_cert_map_temp[VELUM_HASH_KEY][:key][:key_string],
+      external_cert_velum_cert:   key_cert_map_temp[VELUM_HASH_KEY][:cert][:cert_string],
+      external_cert_velum_key:    key_cert_map_temp[VELUM_HASH_KEY][:key][:key_string],
       external_cert_kubeapi_cert: key_cert_map_temp[KUBEAPI_HASH_KEY][:cert][:cert_string],
-      external_cert_kubeapi_key: key_cert_map_temp[KUBEAPI_HASH_KEY][:key][:key_string],
-      external_cert_dex_cert: key_cert_map_temp[DEX_HASH_KEY][:cert][:cert_string],
-      external_cert_dex_key: key_cert_map_temp[DEX_HASH_KEY][:key][:key_string],
+      external_cert_kubeapi_key:  key_cert_map_temp[KUBEAPI_HASH_KEY][:key][:key_string],
+      external_cert_dex_cert:     key_cert_map_temp[DEX_HASH_KEY][:cert][:cert_string],
+      external_cert_dex_key:      key_cert_map_temp[DEX_HASH_KEY][:key][:key_string]
     }
 
     logger.silence do
-      # Silences logging of cert/key insertion into DB
+      # Silences logging of cert/key insertion into the database
       @errors = Pillar.apply cert_map
     end
 
     if @errors.empty?
       flash[:alert] = warning_messages.join(" && ") if warning_messages.count > 0
-      redirect_to settings_external_cert_index_path, notice: "External Certificate settings successfully saved."
+      redirect_to settings_external_cert_index_path, notice: "External Certificate " \
+      "settings successfully saved."
       return
-      # :nocov:
+      # ---- :nocov: Temporary blocking nocov statement until tests are completed
       # An error here would require a failure in connection to velum->salt
       # or a corruption in mapping of values in the salt pillar
     else
       set_instance_variables
       render action: :index, status: :unprocessable_entity
-      # :nocov:
+      # ---- :nocov: Temporary blocking nocov statement until tests are completed
     end
   end
   # rubocop:enable Metrics/AbcSize
@@ -77,52 +78,55 @@ class Settings::ExternalCertController < SettingsController
 
   def key_cert_map
     {
-      VELUM_HASH_KEY => {
+      VELUM_HASH_KEY   => {
         name: VELUM_NAME,
         cert: {
-          cert_string: get_val_from_form(:velum_cert),
-          pillar_model_key: :external_cert_velum_cert,
+          cert_string:      get_val_from_form(:velum_cert),
+          pillar_model_key: :external_cert_velum_cert
         },
-        key: {
-          key_string: get_val_from_form(:velum_key),
-          pillar_model_key: :external_cert_velum_key,
-        },
+        key:  {
+          key_string:       get_val_from_form(:velum_key),
+          pillar_model_key: :external_cert_velum_key
+        }
       },
       KUBEAPI_HASH_KEY => {
         name: KUBEAPI_NAME,
         cert: {
-          cert_string: get_val_from_form(:kubeapi_cert),
-          pillar_model_key: :external_cert_kubeapi_cert,
+          cert_string:      get_val_from_form(:kubeapi_cert),
+          pillar_model_key: :external_cert_kubeapi_cert
         },
-        key: {
-          key_string: get_val_from_form(:kubeapi_key),
-          pillar_model_key: :external_cert_kubeapi_key,
-        },
+        key:  {
+          key_string:       get_val_from_form(:kubeapi_key),
+          pillar_model_key: :external_cert_kubeapi_key
+        }
       },
-      DEX_HASH_KEY => {
+      DEX_HASH_KEY     => {
         name: DEX_NAME,
         cert: {
-          cert_string: get_val_from_form(:dex_cert),
-          pillar_model_key: :external_cert_dex_cert,
+          cert_string:      get_val_from_form(:dex_cert),
+          pillar_model_key: :external_cert_dex_cert
         },
-        key: {
-          key_string: get_val_from_form(:dex_key),
-          pillar_model_key: :external_cert_dex_key,
-        },
-      },
+        key:  {
+          key_string:       get_val_from_form(:dex_key),
+          pillar_model_key: :external_cert_dex_key
+        }
+      }
     }
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # Validates certificate and key prior to uploading
   def upload_validate(key_cert_map_elem)
     # Do nothing if both cert/key are empty
     if key_cert_map_elem[:cert][:cert_string].empty? && key_cert_map_elem[:key][:key_string].empty?
       true # return true
-      # Prevent upload unnless both cert/key are present
-    elsif key_cert_map_elem[:cert][:cert_string].empty? || key_cert_map_elem[:key][:key_string].empty?
-      message = "Error with #{key_cert_map_elem[:name]}, certificate and key must be uploaded together."
+    # Prevent upload unless both cert/key are present
+    elsif key_cert_map_elem[:cert][:cert_string].empty? ||
+        key_cert_map_elem[:key][:key_string].empty?
+      message = "Error with #{key_cert_map_elem[:name]}, certificate and key must be " \
+      "uploaded together."
       render_failure_event(message)
-      # Validate cert/key and verify that they match
+    # Validate cert/key and verify that they match
     else
       cert = read_cert(key_cert_map_elem[:cert][:cert_string])
       key = read_key(key_cert_map_elem[:key][:key_string])
@@ -150,10 +154,6 @@ class Settings::ExternalCertController < SettingsController
       return false unless valid_cert_date?(cert)
 
       # Moved to another task
-      # Check that hostname is in SubjectAltName of cert
-      # return false unless hostname_check(key_cert_map[:name], cert)
-
-      # Moved to another task
       # Check the trust chain is valid
       # return false unless trust_chain_verify(cert)
 
@@ -161,8 +161,23 @@ class Settings::ExternalCertController < SettingsController
       true
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
+  # Checks for warning conditions prior to uploading
+  def get_warning_message(key_cert_map)
+    warning_messages = []
+    subjectaltname_hash = build_subject_alt_names
+    key_cert_map.each_key do |i|
+      next if key_cert_map[i][:cert][:cert_string].empty?
+      cert = read_cert(key_cert_map[i][:cert][:cert_string])
+      warning_rsa_keylength(cert, warning_messages)
+      warning_weak_hash(cert, warning_messages)
+      warning_subjectaltname(cert, warning_messages, subjectaltname_hash[i], key_cert_map[i][:name])
+    end
+    warning_messages.uniq
+  end
+
+  # Parses certificate to display details
   def cert_parse(cert_string)
     params = {}
 
@@ -172,13 +187,13 @@ class Settings::ExternalCertController < SettingsController
     else
       cert = read_cert(cert_string)
       unless cert
-        # :nocov:
+        # ---- :nocov: Temporary blocking nocov statement until tests are completed
         # Cert has aleady been valiated when entered, an error here would require a failure
         # in connection from velum to salt or an unintended change in the salt pillar
         params[:Message] = { Error: "Failed to parse stored certificate, please check format and " \
         "upload again" }
         return params
-        # :nocov:
+        # ---- :nocov: Temporary blocking nocov statement until tests are completed
       end
       fingerprint = cert_fingerprint(cert)
 
@@ -193,6 +208,7 @@ class Settings::ExternalCertController < SettingsController
     params
   end
 
+  # Calculates SHA256 signature of certificate
   def cert_fingerprint(cert)
     # Error-checking ignored, cert already validated and verified
     fingerprint = OpenSSL::Digest::SHA256.new(cert.to_der)
@@ -201,13 +217,14 @@ class Settings::ExternalCertController < SettingsController
     ["SHA256 Fingerprint".to_sym, fingerprint_string]
   end
 
+  # Check validity of private key
   def key_parse(key_string)
     params = {}
     if !key_string
       params[:Message] = { Notice: "Key not available, please upload a key" }
-    # :nocov:
-    # Key has aleady been valiated when entered, an error here would require a failure
-    # in connection from velum to salt or an unintended change in the salt pillar
+      # ---- :nocov: Temporary blocking nocov statement until tests are completed
+      # Key has aleady been valiated when entered, an error here would require a failure
+      # in connection from velum to salt or an unintended change in the salt pillar
     else
       key = read_key(key_string)
       unless key
@@ -216,12 +233,12 @@ class Settings::ExternalCertController < SettingsController
         return params
       end
       key_valid = if key
-        true # return true
+        true # returns true
       else
-        false # return false
+        false # returns false
       end
       params["Valid Key"] = key_valid
-      # :nocov:
+      # ---- :nocov: Temporary blocking nocov statement until tests are completed
     end
     params
   end
@@ -250,7 +267,7 @@ class Settings::ExternalCertController < SettingsController
     false
   end
 
-  # Get SubjectAltName field buried in a certificate
+  # Get SubjectAltName field of a certificate
   def get_san_array(cert)
     subject_alt_name = cert.extensions.find { |e| e.oid == "subjectAltName" }
     return nil unless subject_alt_name
@@ -273,7 +290,7 @@ class Settings::ExternalCertController < SettingsController
       end
     end
 
-    return address_array
+    address_array
   end
 
   # Check if a certificate has a vaild date
@@ -281,19 +298,6 @@ class Settings::ExternalCertController < SettingsController
     return true unless Time.now.utc > cert.not_after || Time.now.utc < cert.not_before
     message = "Certificate out of valid date range"
     render_failure_event(message)
-  end
-
-  def get_warning_message(key_cert_map)
-    warning_messages = []
-    subjectaltname_hash = build_subject_alt_names
-    key_cert_map.each_key do |i|
-      next if key_cert_map[i][:cert][:cert_string].empty?
-      cert = read_cert(key_cert_map[i][:cert][:cert_string])
-      warning_rsa_keylength(cert, warning_messages)
-      warning_weak_hash(cert, warning_messages)
-      warning_subjectaltname(cert, warning_messages, subjectaltname_hash[i], key_cert_map[i][:name])
-    end
-    warning_messages.uniq
   end
 
   # Warn if a certificate uses the key length that is less than 2048 bits
@@ -313,23 +317,22 @@ class Settings::ExternalCertController < SettingsController
 
   # Checks the Certificate's SubjectAltName list against list of hostnames required by the cluster
   def warning_subjectaltname(cert, warning_messages, required_san_array, service_name)
-    missing_cert_base_msg = "Warning: #{service_name} is missing the following hostnames in its certificate:  "
+    missing_cert_base_msg = "Warning: #{service_name} is missing the following hostnames " \
+    "in its certificate:  "
     cert_san_array = get_san_array(cert)
     missing_hostnames = []
-    
+
     if !cert_san_array
-      warning_messages.push( missing_cert_base_msg + required_san_array.join(" "))
+      warning_messages.push(missing_cert_base_msg + required_san_array.join(" "))
     else
       required_san_array.each do |i|
-        if !cert_san_array.include?(i)
-          missing_hostnames << i
-        end
+        missing_hostnames << i unless cert_san_array.include?(i)
       end
     end
 
-    if missing_hostnames.length > 0
-      warning_messages.push("Missing the following hostnames in the certificate: #{missing_hostnames.join(" ")}")
-    end
+    return if missing_hostnames.empty?
+    warning_messages.push("Missing the following hostnames in the certificate: " \
+      "#{missing_hostnames.join(" ")}")
   end
 
   # # Placeholder for trust chain validation
@@ -337,6 +340,7 @@ class Settings::ExternalCertController < SettingsController
   #   true
   # end
 
+  # Returns host info via Salt Grains
   def hosts_info
     minion_hash = {}
     minions = Velum::Salt.minions
@@ -346,49 +350,57 @@ class Settings::ExternalCertController < SettingsController
       node_name = minions[i]["nodename"]
       roles = minions[i]["roles"]
       # minion_hash[i.to_sym] = minions[i]["machine_id"]
-      minion_hash[i.to_sym] = {machine_id: machine_id, node_name: node_name, roles: roles}
+      minion_hash[i.to_sym] = { machine_id: machine_id, node_name: node_name, roles: roles }
     end
     minion_hash
   end
 
-  # def pillar_info(pillar)
-  #   pillar_obj = Velum::Salt.call(
-  #     action: "pillar.get",
-  #     arg: pillar,
-  #     targets: "admin",
-  #     # targets:     "roles:(admin|kube-(master|minion))",
-  #     # target_type: "grain_pcre"
-  #   )
-  #   if pillar_obj[0].kind_of? Net::HTTPSuccess
-  #     return pillar_obj[1]["return"][0]["admin"]
-  #   else
-  #     return nil
-  #   end
-  # end
-
+  # Returns Salt Pillar for admin node
   def pillar_items
     pillar = Velum::Salt.call(
-      action: "pillar.items",
-      targets: "admin",
+      action:  "pillar.items",
+      targets: "admin"
     )
-    if pillar[0].kind_of? Net::HTTPSuccess
-      return pillar[1]["return"][0]["admin"]
-    else
-      return nil
-    end
+    return nil unless pillar[0].is_a? Net::HTTPSuccess
+    pillar[1]["return"][0]["admin"]
+
+    # if ENV["RAILS_ENV"] != "test"
+    #   pillar = Velum::Salt.call(
+    #     action:  "pillar.items",
+    #     targets: "admin"
+    #   )
+    #   return nil unless pillar[0].is_a? Net::HTTPSuccess
+    #   pillar[1]["return"][0]["admin"]
+    # else
+    #   {
+    #     "dashboard_external_fqdn" => "abcd",
+    #     "dashboard"               => "efg",
+    #     "internal_infra_domain"   => "hijk",
+    #     "api"                     => {
+    #       "server"     => {
+    #         "external_fqdn" => "lmn",
+    #         "extra_names"   => "opq",
+    #         "extra_ips"     => "rst"
+    #       },
+    #       "cluster_ip" => "uvw"
+    #     }
+    #   }
+    # end
+    # return pillar
   end
 
-  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  # Returns a hash of required SubjectAltNames covering all three services
   def build_subject_alt_names
     begin
       host_info = hosts_info
     rescue NoMethodError
-      error_hash = {:error => "Error retrieving node information, please refresh page to try again"}
+      error_hash = { error: "Error retrieving node information, please refresh page to try again" }
       return {
-               VELUM_HASH_KEY => error_hash,
-               KUBEAPI_HASH_KEY => error_hash,
-               DEX_HASH_KEY => error_hash,
-             }
+        VELUM_HASH_KEY   => error_hash,
+        KUBEAPI_HASH_KEY => error_hash,
+        DEX_HASH_KEY     => error_hash
+      }
     end
 
     pillar = pillar_items
@@ -397,7 +409,7 @@ class Settings::ExternalCertController < SettingsController
     begin
       velum_san_array_base = [
         pillar["dashboard_external_fqdn"],
-        pillar["dashboard"],
+        pillar["dashboard"]
       ]
 
       kubeapi_san_array_base = [
@@ -410,7 +422,7 @@ class Settings::ExternalCertController < SettingsController
         pillar["api"]["server"]["external_fqdn"],
         pillar["api"]["cluster_ip"],
         pillar["api"]["server"]["extra_names"],
-        pillar["api"]["server"]["extra_ips"],
+        pillar["api"]["server"]["extra_ips"]
       ]
 
       dex_san_array_base = [
@@ -427,20 +439,22 @@ class Settings::ExternalCertController < SettingsController
         pillar["api"]["server"]["external_fqdn"],
         pillar["api"]["cluster_ip"],
         pillar["api"]["server"]["extra_names"],
-        pillar["api"]["server"]["extra_ips"],
+        pillar["api"]["server"]["extra_ips"]
       ]
     rescue NoMethodError
-      error_hash = {:error => "Error retrieving pillar information, please refresh page to try again"}
+      error_hash = {
+        error: "Error retrieving pillar information, please refresh page to try again"
+      }
       return {
-               VELUM_HASH_KEY => error_hash,
-               KUBEAPI_HASH_KEY => error_hash,
-               DEX_HASH_KEY => error_hash,
-             }
+        VELUM_HASH_KEY   => error_hash,
+        KUBEAPI_HASH_KEY => error_hash,
+        DEX_HASH_KEY     => error_hash
+      }
     end
 
     # Add host-specific hostnames
     begin
-      host_info.values.each do |i|
+      host_info.each_value do |i|
         if i[:roles].include? "admin"
           velum_san_array_base << i[:node_name]
           velum_san_array_base << i[:node_name] + "." + pillar["internal_infra_domain"]
@@ -461,27 +475,26 @@ class Settings::ExternalCertController < SettingsController
         end
       end
     rescue TypeError
-      error_hash = {:error => "Error retrieving node information, please refresh page to try again"}
+      error_hash = { error: "Error retrieving node information, please refresh page to try again" }
       return {
-               VELUM_HASH_KEY => error_hash,
-               KUBEAPI_HASH_KEY => error_hash,
-               DEX_HASH_KEY => error_hash,
-             }
+        VELUM_HASH_KEY   => error_hash,
+        KUBEAPI_HASH_KEY => error_hash,
+        DEX_HASH_KEY     => error_hash
+      }
     end
 
     # Remove empty entries
-    velum_san_array = velum_san_array_base.reject { |i| i.nil? || i.empty? }
-    kubeapi_san_array = kubeapi_san_array_base.reject { |i| i.nil? || i.empty? }
-    dex_san_array = dex_san_array_base.reject { |i| i.nil? || i.empty? }
+    velum_san_array = velum_san_array_base.reject(&:blank?)
+    kubeapi_san_array = kubeapi_san_array_base.reject(&:blank?)
+    dex_san_array = dex_san_array_base.reject(&:blank?)
 
-    {VELUM_HASH_KEY => velum_san_array, KUBEAPI_HASH_KEY => kubeapi_san_array, DEX_HASH_KEY => dex_san_array}
+    {
+      VELUM_HASH_KEY   => velum_san_array,
+      KUBEAPI_HASH_KEY => kubeapi_san_array,
+      DEX_HASH_KEY     => dex_san_array
+    }
   end
-
-  # rubocop:enable Metrics/AbcSize
-
-  # def gen_velum_hostnames
-  #   velum_hosts = {}
-  #   Pillar.value(pillar: :external_cert_velum_cert)
-  # end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 end
 # rubocop:enable Metrics/ClassLength
+# :nocov:
