@@ -23,7 +23,7 @@ class MinionsController < ApplicationController
 
   # Public Cloud frameworks do not currently support removing nodes
   def not_implemented_in_public_cloud
-    return unless ["azure", "ec2", "gce"].include? Pillar.value(pillar: :cloud_framework)
+    return unless in_public_cloud?
     render nothing: true, status: :not_implemented
   end
 

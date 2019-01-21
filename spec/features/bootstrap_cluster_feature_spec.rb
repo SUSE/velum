@@ -147,6 +147,18 @@ describe "Bootstrap cluster feature" do
       expect(page).not_to have_content("Pending removal")
     end
 
+    it "does not allow pending nodes to be removed in public clouds", js: true do
+      setup_stubbed_pending_minions!(stubbed: [minions[1].minion_id])
+      setup_stubbed_pending_minions!(stubbed: [minions[2].minion_id])
+      setup_stubbed_pending_minions!(stubbed: [minions[3].minion_id])
+      setup_stubbed_pending_minions!(stubbed: [minions[4].minion_id])
+      create(:ec2_pillar)
+
+      visit setup_discovery_path
+
+      expect(page).not_to have_content("Remove")
+    end
+
     it "A user selects a subset of nodes to be bootstrapped", js: true do
       # select master minion0.k8s.local
       find(".minion_#{minions[0].id} .master-btn").click

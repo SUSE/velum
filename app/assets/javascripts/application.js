@@ -25,3 +25,5 @@
 $('body').on('click', '[disabled], .disabled', function (e) {
   e.preventDefault();
 });
+
+const PUBLIC_CLOUDS = ['azure', 'ec2', 'gce'];

@@ -30,4 +30,15 @@ RSpec.describe SaltController, type: :controller do
       end
     end
   end
+
+  describe "POST /minions/*/remove-minion" do
+
+    it "is not implemented in public cloud" do
+      create(:ec2_pillar)
+
+      post :remove_minion, minion_id: master_minion
+      expect(response).to have_http_status(:not_implemented)
+    end
+  end
+
 end

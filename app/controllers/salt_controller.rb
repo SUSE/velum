@@ -1,6 +1,7 @@
 require "velum/salt"
 # SaltController holds methods for triggering updates of nodes
 class SaltController < ApplicationController
+  before_action :not_implemented_in_public_cloud
   skip_before_action :redirect_to_setup
 
   def update
@@ -40,7 +41,15 @@ class SaltController < ApplicationController
     end
   end
 
+  private
+
   def minion_id_param
     params.require(:minion_id)
+  end
+
+  # Public Cloud frameworks do not currently support removing nodes
+  def not_implemented_in_public_cloud
+    return unless in_public_cloud?
+    render nothing: true, status: :not_implemented
   end
 end

@@ -45,4 +45,8 @@ class ApplicationController < ActionController::Base
       format.any { head :not_found }
     end
   end
+
+  def in_public_cloud?
+    Rails.application.config.public_clouds.include? Pillar.value(pillar: :cloud_framework)
+  end
 end
