@@ -10,13 +10,13 @@ p Enable the use of External SSL Certificates for CaaSP and Kubernetes services.
 
   br
   = render template: 'settings/external_cert/_form', 
-  locals: { f: f , _service_name: "Velum" , _cert: @velum_cert, _key: @velum_key, _cert_file_field: :velum_cert , _key_file_field: :velum_key, _heading: "headingOne", _collapse: "collapseOne", _subjectaltnames: @subject_alt_names[:velum] }
+  locals: { f: f , _service_name: "Velum" , _cert: @velum_cert, _key: @velum_key, _cert_file_field: :velum_cert , _key_file_field: :velum_key, _heading: "headingVelum", _collapse: "collapseVelum", _subjectaltnames: @subject_alt_names[:velum] }
   br
   = render template: 'settings/external_cert/_form', 
-  locals: { f: f , _service_name: "Kubernetes API" , _cert: @kubeapi_cert, _key: @kubeapi_key, _cert_file_field: :kubeapi_cert , _key_file_field: :kubeapi_key, _heading: "headingTwo", _collapse: "collapseTwo", _subjectaltnames: @subject_alt_names[:kubeapi] }
+  locals: { f: f , _service_name: "Kubernetes API" , _cert: @kubeapi_cert, _key: @kubeapi_key, _cert_file_field: :kubeapi_cert , _key_file_field: :kubeapi_key, _heading: "headingKubeAPI", _collapse: "collapseKubeAPI", _subjectaltnames: @subject_alt_names[:kubeapi] }
   br
   = render template: 'settings/external_cert/_form', 
-  locals: { f: f , _service_name: "Dex" , _cert: @dex_cert, _key: @dex_key, _cert_file_field: :dex_cert , _key_file_field: :dex_key, _heading: "headingThree", _collapse: "collapseThree", _subjectaltnames: @subject_alt_names[:dex] }
+  locals: { f: f , _service_name: "Dex" , _cert: @dex_cert, _key: @dex_key, _cert_file_field: :dex_cert , _key_file_field: :dex_key, _heading: "headingDex", _collapse: "collapseDex", _subjectaltnames: @subject_alt_names[:dex] }
 
   .clearfix.text-right.steps-container
     = submit_tag "Save", id: "save", class: "btn btn-primary pull-right"

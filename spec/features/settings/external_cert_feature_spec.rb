@@ -41,238 +41,258 @@ describe "Feature: External Cerificate settings", js: true do
     login_as user, scope: :user
   end
 
-  # describe "#index" do
-  #   before do
-  #     visit settings_external_cert_index_path
-  #   end
+  describe "#index" do
+    before do
+      visit settings_external_cert_index_path
+    end
 
-  #   # Success Conditions
+    # Success Conditions
 
-  #   it "correctly shows notice messages" do
-  #     # Does not contain 'expect(page).to have_http_status' assertion because of a
-  #     # race condition that detects the redirect http status and not the final status.
-  #     # This problem occurs when this assertion is before any Capybara actions.
-  #     expect(page).to have_content("Enable the use of External SSL Certificates for " \
-  #     "CaaSP and Kubernetes services. Certificates and matching keys must be in armored " \
-  #     "PEM format.")
-  #     expect(page).to have_content("Certificate not available, please upload a certificate",
-  #     count: 3)
-  #     expect(page).to have_content("Key not available, please upload a key", count: 3)
-  #   end
+    it "correctly shows notice messages" do
+      # Does not contain 'expect(page).to have_http_status' assertion because of a
+      # race condition that detects the redirect http status and not the final status.
+      # This problem occurs when this assertion is before any Capybara actions.
+      expect(page).to have_content("Enable the use of External SSL Certificates for " \
+      "CaaSP and Kubernetes services. Certificates and matching keys must be in armored " \
+      "PEM format.")
+      expect(page).to have_content("Certificate not available, please upload a certificate",
+      count: 3)
+      expect(page).to have_content("Key not available, please upload a key", count: 3)
+    end
 
-  #   it "saves the form with nothing attached" do
-  #     click_button("Save")
-  #     expect(page).to have_http_status(:success)
-  #     expect(page).to have_content(success_message)
-  #   end
+    it "saves the form with nothing attached" do
+      click_button("Save")
+      expect(page).to have_http_status(:success)
+      expect(page).to have_content(success_message)
+    end
 
-  #   it "sucessfully uploads velum cert/key" do
-  #     attach_file("external_certificate_velum_cert", ssl_cert_file_a)
-  #     attach_file("external_certificate_velum_key", ssl_key_file_a)
+    it "sucessfully uploads velum cert/key" do
+      attach_file("external_certificate_velum_cert", ssl_cert_file_a)
+      attach_file("external_certificate_velum_key", ssl_key_file_a)
 
-  #     click_button("Save")
-  #     expect(page).to have_http_status(:success)
-  #     expect(page).to have_content(success_message)
-  #   end
+      click_button("Save")
+      expect(page).to have_http_status(:success)
+      expect(page).to have_content(success_message)
+    end
 
-  #   it "sucessfully uploads kubeAPI cert/key" do
-  #     attach_file("external_certificate_kubeapi_cert", ssl_cert_file_a)
-  #     attach_file("external_certificate_kubeapi_key", ssl_key_file_a)
+    it "sucessfully uploads kubeAPI cert/key" do
+      attach_file("external_certificate_kubeapi_cert", ssl_cert_file_a)
+      attach_file("external_certificate_kubeapi_key", ssl_key_file_a)
 
-  #     click_button("Save")
-  #     expect(page).to have_http_status(:success)
-  #     expect(page).to have_content(success_message)
-  #   end
+      click_button("Save")
+      expect(page).to have_http_status(:success)
+      expect(page).to have_content(success_message)
+    end
 
-  #   it "sucessfully uploads dex cert/key" do
-  #     attach_file("external_certificate_dex_cert", ssl_cert_file_a)
-  #     attach_file("external_certificate_dex_key", ssl_key_file_a)
+    it "sucessfully uploads dex cert/key" do
+      attach_file("external_certificate_dex_cert", ssl_cert_file_a)
+      attach_file("external_certificate_dex_key", ssl_key_file_a)
 
-  #     click_button("Save")
-  #     expect(page).to have_http_status(:success)
-  #     expect(page).to have_content(success_message)
-  #   end
+      click_button("Save")
+      expect(page).to have_http_status(:success)
+      expect(page).to have_content(success_message)
+    end
 
-  #   it "sucessfully uploads velum, kubeAPI, and dex cert/key" do
-  #     attach_file("external_certificate_velum_cert", ssl_cert_file_a)
-  #     attach_file("external_certificate_velum_key", ssl_key_file_a)
-  #     attach_file("external_certificate_kubeapi_cert", ssl_cert_file_a)
-  #     attach_file("external_certificate_kubeapi_key", ssl_key_file_a)
-  #     attach_file("external_certificate_dex_cert", ssl_cert_file_a)
-  #     attach_file("external_certificate_dex_key", ssl_key_file_a)
+    it "sucessfully uploads velum, kubeAPI, and dex cert/key" do
+      attach_file("external_certificate_velum_cert", ssl_cert_file_a)
+      attach_file("external_certificate_velum_key", ssl_key_file_a)
+      attach_file("external_certificate_kubeapi_cert", ssl_cert_file_a)
+      attach_file("external_certificate_kubeapi_key", ssl_key_file_a)
+      attach_file("external_certificate_dex_cert", ssl_cert_file_a)
+      attach_file("external_certificate_dex_key", ssl_key_file_a)
 
-  #     click_button("Save")
-  #     expect(page).to have_http_status(:success)
-  #     expect(page).to have_content(success_message)
-  #   end
+      click_button("Save")
+      expect(page).to have_http_status(:success)
+      expect(page).to have_content(success_message)
+    end
 
-  #   it "sucessfully lists Subject Alternative Names" do
-  #     attach_file("external_certificate_velum_cert", ssl_cert_file_b)
-  #     attach_file("external_certificate_velum_key", ssl_key_file_b)
+    it "sucessfully lists Subject Alternative Names" do
+      attach_file("external_certificate_velum_cert", ssl_cert_file_b)
+      attach_file("external_certificate_velum_key", ssl_key_file_b)
 
-  #     click_button("Save")
-  #     expect(page).to have_http_status(:success)
-  #     expect(page).to have_content("ftp.example.com")
-  #   end
+      click_button("Save")
+      expect(page).to have_http_status(:success)
+      expect(page).to have_content("ftp.example.com")
+    end
 
-  #   it "uploads velum cert with a weak RSA bit length key (<= 2048)" do
-  #     attach_file("external_certificate_velum_cert", weak_key_cert)
-  #     attach_file("external_certificate_velum_key", key_for_weak_key_cert)
+    it "uploads velum cert with a weak RSA bit length key (<= 2048)" do
+      attach_file("external_certificate_velum_cert", weak_key_cert)
+      attach_file("external_certificate_velum_key", key_for_weak_key_cert)
 
-  #     click_button("Save")
-  #     expect(page).to have_http_status(:success)
-  #     expect(page).to have_content("RSA key bit length should be greater than or equal to 2048")
-  #   end
+      click_button("Save")
+      expect(page).to have_http_status(:success)
+      expect(page).to have_content("RSA key bit length should be greater than or equal to 2048")
+    end
 
-  #   it "uploads velum cert with a weak hash algorithm (sha1)" do
-  #     attach_file("external_certificate_velum_cert", weak_hash_cert)
-  #     attach_file("external_certificate_velum_key", key_for_weak_hash_cert)
+    it "uploads velum cert with a weak hash algorithm (sha1)" do
+      attach_file("external_certificate_velum_cert", weak_hash_cert)
+      attach_file("external_certificate_velum_key", key_for_weak_hash_cert)
 
-  #     click_button("Save")
-  #     expect(page).to have_http_status(:success)
-  #     expect(page).to have_content("Certificate includes a weak signature hash algorithm")
-  #   end
+      click_button("Save")
+      expect(page).to have_http_status(:success)
+      expect(page).to have_content("Certificate includes a weak signature hash algorithm")
+    end
 
-  #   # Failure Conditions
+    it "page contains required Velum hostnames" do
 
-  #   it "uploads malformed velum certificate" do
-  #     attach_file("external_certificate_velum_cert", ssl_cert_file_malformed)
-  #     attach_file("external_certificate_velum_key", ssl_key_file_a)
+      # find("collapseVelum").click
+      # click_link('#collapseVelum')
+      find('a[href="#collapseVelum"]').click
+      expect(page).to have_http_status(:success)
+      expect(page).to have_content("bf2fc52b4f5e4d8c9903573e3c55f4a4.infra.caasp.local", wait: 1)
+    end
 
-  #     click_button("Save")
-  #     expect(page).to have_http_status(:unprocessable_entity)
-  #     expect(page).to have_content("Invalid Velum certificate, check format and try again")
-  #   end
+    it "is missing required SubjectAltNames in certificate" do
+      attach_file("external_certificate_velum_cert", ssl_cert_file_b)
+      attach_file("external_certificate_velum_key", ssl_key_file_b)
 
-  #   it "uploads malformed velum key" do
-  #     attach_file("external_certificate_velum_cert", ssl_cert_file_a)
-  #     attach_file("external_certificate_velum_key", ssl_key_file_malformed)
+      click_button("Save")
+      expect(page).to have_http_status(:success)
+      expect(page).to have_content("Missing the following hostnames in the certificate: " \
+        "admin.devenv.caasp.suse.net 10.17.1.0 admin admin.infra.caasp.local " \
+        "bf2fc52b4f5e4d8c9903573e3c55f4a4 bf2fc52b4f5e4d8c9903573e3c55f4a4.infra.caasp.local")
+    end
 
-  #     click_button("Save")
-  #     expect(page).to have_http_status(:unprocessable_entity)
-  #     expect(page).to have_content("Invalid Velum key, check format and try again.")
-  #   end
+    # Failure Conditions
 
-  #   it "uploads malformed kubeAPI certificate" do
-  #     attach_file("external_certificate_kubeapi_cert", ssl_cert_file_malformed)
-  #     attach_file("external_certificate_kubeapi_key", ssl_key_file_a)
+    it "uploads malformed velum certificate" do
+      attach_file("external_certificate_velum_cert", ssl_cert_file_malformed)
+      attach_file("external_certificate_velum_key", ssl_key_file_a)
 
-  #     click_button("Save")
-  #     expect(page).to have_http_status(:unprocessable_entity)
-  #     expect(page).to have_content("Invalid Kubernetes API certificate, check format " \
-  #       "and try again")
-  #   end
+      click_button("Save")
+      expect(page).to have_http_status(:unprocessable_entity)
+      expect(page).to have_content("Invalid Velum certificate, check format and try again")
+    end
 
-  #   it "uploads malformed kubeAPI key" do
-  #     attach_file("external_certificate_kubeapi_cert", ssl_cert_file_a)
-  #     attach_file("external_certificate_kubeapi_key", ssl_key_file_malformed)
+    it "uploads malformed velum key" do
+      attach_file("external_certificate_velum_cert", ssl_cert_file_a)
+      attach_file("external_certificate_velum_key", ssl_key_file_malformed)
 
-  #     click_button("Save")
-  #     expect(page).to have_http_status(:unprocessable_entity)
-  #     expect(page).to have_content("Invalid Kubernetes API key, check format and try " \
-  #       "again.")
-  #   end
+      click_button("Save")
+      expect(page).to have_http_status(:unprocessable_entity)
+      expect(page).to have_content("Invalid Velum key, check format and try again.")
+    end
 
-  #   it "uploads malformed dex certificate" do
-  #     attach_file("external_certificate_dex_cert", ssl_cert_file_malformed)
-  #     attach_file("external_certificate_dex_key", ssl_key_file_a)
+    it "uploads malformed kubeAPI certificate" do
+      attach_file("external_certificate_kubeapi_cert", ssl_cert_file_malformed)
+      attach_file("external_certificate_kubeapi_key", ssl_key_file_a)
 
-  #     click_button("Save")
-  #     expect(page).to have_http_status(:unprocessable_entity)
-  #     expect(page).to have_content("Invalid Dex certificate, check format and try again")
-  #   end
+      click_button("Save")
+      expect(page).to have_http_status(:unprocessable_entity)
+      expect(page).to have_content("Invalid Kubernetes API certificate, check format " \
+        "and try again")
+    end
 
-  #   it "uploads malformed dex key" do
-  #     attach_file("external_certificate_dex_cert", ssl_cert_file_a)
-  #     attach_file("external_certificate_dex_key", ssl_key_file_malformed)
+    it "uploads malformed kubeAPI key" do
+      attach_file("external_certificate_kubeapi_cert", ssl_cert_file_a)
+      attach_file("external_certificate_kubeapi_key", ssl_key_file_malformed)
 
-  #     click_button("Save")
-  #     expect(page).to have_http_status(:unprocessable_entity)
-  #     expect(page).to have_content("Invalid Dex key, check format and try again.")
-  #   end
+      click_button("Save")
+      expect(page).to have_http_status(:unprocessable_entity)
+      expect(page).to have_content("Invalid Kubernetes API key, check format and try " \
+        "again.")
+    end
 
-  #   it "uploads only velum certificate" do
-  #     attach_file("external_certificate_velum_cert", ssl_cert_file_a)
+    it "uploads malformed dex certificate" do
+      attach_file("external_certificate_dex_cert", ssl_cert_file_malformed)
+      attach_file("external_certificate_dex_key", ssl_key_file_a)
 
-  #     click_button("Save")
-  #     expect(page).to have_http_status(:unprocessable_entity)
-  #     expect(page).to have_content("Error with Velum, certificate and key must be uploaded " \
-  #       "together.")
-  #   end
+      click_button("Save")
+      expect(page).to have_http_status(:unprocessable_entity)
+      expect(page).to have_content("Invalid Dex certificate, check format and try again")
+    end
 
-  #   it "uploads only velum key" do
-  #     attach_file("external_certificate_velum_key", ssl_key_file_a)
+    it "uploads malformed dex key" do
+      attach_file("external_certificate_dex_cert", ssl_cert_file_a)
+      attach_file("external_certificate_dex_key", ssl_key_file_malformed)
 
-  #     click_button("Save")
-  #     expect(page).to have_http_status(:unprocessable_entity)
-  #     expect(page).to have_content("Error with Velum, certificate and key must be uploaded " \
-  #       "together.")
-  #   end
+      click_button("Save")
+      expect(page).to have_http_status(:unprocessable_entity)
+      expect(page).to have_content("Invalid Dex key, check format and try again.")
+    end
 
-  #   it "uploads only velum, kubeAPI, and dex certificates" do
-  #     attach_file("external_certificate_velum_cert", ssl_cert_file_a)
-  #     attach_file("external_certificate_kubeapi_cert", ssl_cert_file_a)
-  #     attach_file("external_certificate_dex_cert", ssl_cert_file_a)
+    it "uploads only velum certificate" do
+      attach_file("external_certificate_velum_cert", ssl_cert_file_a)
 
-  #     click_button("Save")
-  #     expect(page).to have_http_status(:unprocessable_entity)
-  #     expect(page).to have_content("Error with Velum, certificate and key must be uploaded " \
-  #       "together.")
-  #   end
+      click_button("Save")
+      expect(page).to have_http_status(:unprocessable_entity)
+      expect(page).to have_content("Error with Velum, certificate and key must be uploaded " \
+        "together.")
+    end
 
-  #   it "uploads only velum, kubeAPI, and dex keys" do
-  #     attach_file("external_certificate_velum_key", ssl_key_file_a)
-  #     attach_file("external_certificate_kubeapi_key", ssl_key_file_a)
-  #     attach_file("external_certificate_dex_key", ssl_key_file_a)
+    it "uploads only velum key" do
+      attach_file("external_certificate_velum_key", ssl_key_file_a)
 
-  #     click_button("Save")
-  #     expect(page).to have_http_status(:unprocessable_entity)
-  #     expect(page).to have_content("Error with Velum, certificate and key must be uploaded " \
-  #       "together.")
-  #   end
+      click_button("Save")
+      expect(page).to have_http_status(:unprocessable_entity)
+      expect(page).to have_content("Error with Velum, certificate and key must be uploaded " \
+        "together.")
+    end
 
-  #   it "uploads mismatched velum cert/key 1" do
-  #     attach_file("external_certificate_velum_cert", ssl_cert_file_a)
-  #     attach_file("external_certificate_velum_key", ssl_key_file_b)
+    it "uploads only velum, kubeAPI, and dex certificates" do
+      attach_file("external_certificate_velum_cert", ssl_cert_file_a)
+      attach_file("external_certificate_kubeapi_cert", ssl_cert_file_a)
+      attach_file("external_certificate_dex_cert", ssl_cert_file_a)
 
-  #     click_button("Save")
-  #     expect(page).to have_http_status(:unprocessable_entity)
-  #     expect(page).to have_content("Certificate/Key pair invalid.  Ensure Certificate and Key " \
-  #       "are matching.")
-  #   end
+      click_button("Save")
+      expect(page).to have_http_status(:unprocessable_entity)
+      expect(page).to have_content("Error with Velum, certificate and key must be uploaded " \
+        "together.")
+    end
 
-  #   it "uploads mismatched velum cert/key 2" do
-  #     attach_file("external_certificate_velum_cert", ssl_cert_file_b)
-  #     attach_file("external_certificate_velum_key", ssl_key_file_a)
+    it "uploads only velum, kubeAPI, and dex keys" do
+      attach_file("external_certificate_velum_key", ssl_key_file_a)
+      attach_file("external_certificate_kubeapi_key", ssl_key_file_a)
+      attach_file("external_certificate_dex_key", ssl_key_file_a)
 
-  #     click_button("Save")
-  #     expect(page).to have_http_status(:unprocessable_entity)
-  #     expect(page).to have_content("Certificate/Key pair invalid.  Ensure Certificate and Key " \
-  #       "are matching.")
-  #   end
+      click_button("Save")
+      expect(page).to have_http_status(:unprocessable_entity)
+      expect(page).to have_content("Error with Velum, certificate and key must be uploaded " \
+        "together.")
+    end
 
-  #   it "uploads mismatched velum, kubeAPI, and dex cert/key" do
-  #     attach_file("external_certificate_velum_cert", ssl_cert_file_a)
-  #     attach_file("external_certificate_velum_key", ssl_key_file_b)
-  #     attach_file("external_certificate_kubeapi_cert", ssl_cert_file_a)
-  #     attach_file("external_certificate_kubeapi_key", ssl_key_file_b)
-  #     attach_file("external_certificate_dex_cert", ssl_cert_file_a)
-  #     attach_file("external_certificate_dex_key", ssl_key_file_b)
+    it "uploads mismatched velum cert/key 1" do
+      attach_file("external_certificate_velum_cert", ssl_cert_file_a)
+      attach_file("external_certificate_velum_key", ssl_key_file_b)
 
-  #     click_button("Save")
-  #     expect(page).to have_http_status(:unprocessable_entity)
-  #     expect(page).to have_content("Certificate/Key pair invalid.  Ensure Certificate and Key " \
-  #       "are matching.")
-  #   end
+      click_button("Save")
+      expect(page).to have_http_status(:unprocessable_entity)
+      expect(page).to have_content("Certificate/Key pair invalid.  Ensure Certificate and Key " \
+        "are matching.")
+    end
 
-  #   it "uploads velum cert with invalid date range" do
-  #     attach_file("external_certificate_velum_cert", expired_cert)
-  #     attach_file("external_certificate_velum_key", key_for_expired_cert)
+    it "uploads mismatched velum cert/key 2" do
+      attach_file("external_certificate_velum_cert", ssl_cert_file_b)
+      attach_file("external_certificate_velum_key", ssl_key_file_a)
 
-  #     click_button("Save")
-  #     expect(page).to have_http_status(:unprocessable_entity)
-  #     expect(page).to have_content("Certificate out of valid date range")
-  #   end
-  # end
+      click_button("Save")
+      expect(page).to have_http_status(:unprocessable_entity)
+      expect(page).to have_content("Certificate/Key pair invalid.  Ensure Certificate and Key " \
+        "are matching.")
+    end
+
+    it "uploads mismatched velum, kubeAPI, and dex cert/key" do
+      attach_file("external_certificate_velum_cert", ssl_cert_file_a)
+      attach_file("external_certificate_velum_key", ssl_key_file_b)
+      attach_file("external_certificate_kubeapi_cert", ssl_cert_file_a)
+      attach_file("external_certificate_kubeapi_key", ssl_key_file_b)
+      attach_file("external_certificate_dex_cert", ssl_cert_file_a)
+      attach_file("external_certificate_dex_key", ssl_key_file_b)
+
+      click_button("Save")
+      expect(page).to have_http_status(:unprocessable_entity)
+      expect(page).to have_content("Certificate/Key pair invalid.  Ensure Certificate and Key " \
+        "are matching.")
+    end
+
+    it "uploads velum cert with invalid date range" do
+      attach_file("external_certificate_velum_cert", expired_cert)
+      attach_file("external_certificate_velum_key", key_for_expired_cert)
+
+      click_button("Save")
+      expect(page).to have_http_status(:unprocessable_entity)
+      expect(page).to have_content("Certificate out of valid date range")
+    end
+  end
 end
 # rubocop:enable RSpec/ExampleLength

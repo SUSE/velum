@@ -1,0 +1,12 @@
+# Used by external_cert_controller.rb to create a mock salt pillar hash
+dashboard_external_fqdn: "admin.devenv.caasp.suse.net"
+dashboard: "10.17.1.0"
+internal_infra_domain: "infra.caasp.local"
+api:
+  server:
+    external_fqdn: "kube-api-x3.devenv.caasp.suse.net"
+    extra_names:
+    extra_ips:
+  cluster_ip: "172.24.0.1"
+dns: 
+  domain: "cluster.local"

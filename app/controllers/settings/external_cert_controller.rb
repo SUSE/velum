@@ -1,6 +1,6 @@
-# :nocov:
 require "openssl"
 require "velum/salt"
+require "resolv"
 
 # Settings::ExternalCertController allows users to install their own SSL Certificates
 # and Private Keys for encrypted external communication
@@ -44,13 +44,13 @@ class Settings::ExternalCertController < SettingsController
       redirect_to settings_external_cert_index_path, notice: "External Certificate " \
       "settings successfully saved."
       return
-      # ---- :nocov: Temporary blocking nocov statement until tests are completed
+      # :nocov: Temporary blocking nocov statement until tests are completed
       # An error here would require a failure in connection to velum->salt
       # or a corruption in mapping of values in the salt pillar
     else
       set_instance_variables
       render action: :index, status: :unprocessable_entity
-      # ---- :nocov: Temporary blocking nocov statement until tests are completed
+      # :nocov: Temporary blocking nocov statement until tests are completed
     end
   end
   # rubocop:enable Metrics/AbcSize
@@ -187,17 +187,20 @@ class Settings::ExternalCertController < SettingsController
     else
       cert = read_cert(cert_string)
       unless cert
-        # ---- :nocov: Temporary blocking nocov statement until tests are completed
+        # :nocov: Temporary blocking nocov statement until tests are completed
         # Cert has aleady been valiated when entered, an error here would require a failure
         # in connection from velum to salt or an unintended change in the salt pillar
         params[:Message] = { Error: "Failed to parse stored certificate, please check format and " \
         "upload again" }
         return params
-        # ---- :nocov: Temporary blocking nocov statement until tests are completed
+        # :nocov: Temporary blocking nocov statement until tests are completed
       end
       fingerprint = cert_fingerprint(cert)
+      san_hash = get_san_hash(cert)
+      altnames = san_hash[:altnames] || []
+      ip_altnames = san_hash[:ip_altnames] || []
 
-      params["Subject Alternative Name".to_sym] = get_san_array(cert)
+      params["Subject Alternative Name".to_sym] = altnames + ip_altnames
       params["Subject Name".to_sym] = cert.subject.to_s.tr("/", " ")
       params["Issuer Name".to_sym] = cert.issuer.to_s.tr("/", " ")
       params["Signature Algorithm".to_sym] = cert.signature_algorithm
@@ -222,7 +225,7 @@ class Settings::ExternalCertController < SettingsController
     params = {}
     if !key_string
       params[:Message] = { Notice: "Key not available, please upload a key" }
-      # ---- :nocov: Temporary blocking nocov statement until tests are completed
+      # :nocov: Temporary blocking nocov statement until tests are completed
       # Key has aleady been valiated when entered, an error here would require a failure
       # in connection from velum to salt or an unintended change in the salt pillar
     else
@@ -238,7 +241,7 @@ class Settings::ExternalCertController < SettingsController
         false # returns false
       end
       params["Valid Key"] = key_valid
-      # ---- :nocov: Temporary blocking nocov statement until tests are completed
+      # :nocov: Temporary blocking nocov statement until tests are completed
     end
     params
   end
@@ -268,29 +271,38 @@ class Settings::ExternalCertController < SettingsController
   end
 
   # Get SubjectAltName field of a certificate
-  def get_san_array(cert)
+  def get_san_hash(cert)
     subject_alt_name = cert.extensions.find { |e| e.oid == "subjectAltName" }
-    return nil unless subject_alt_name
-    # subject_alt_name.value.gsub("DNS:", "").gsub("IP:", "").delete(",").split(" ")
+    return { error: 1 } unless subject_alt_name
 
     asn_san = OpenSSL::ASN1.decode(subject_alt_name)
     asn_san_sequence = OpenSSL::ASN1.decode(asn_san.value[1].value)
 
-    address_array = []
-    asn_san_sequence.each do |asn_data|
-      temp_val = asn_data.value
-      begin
-        # If the address is an IP, it is represented as string-encoded byte array
-        # here.  As far as ruby is concerned it is the same type and encoding as
-        # DNS entries.  There is no convenient way to distinguish the difference
-        # other than to parse with IPAddr.ntop and catch the exception for DNS.
-        address_array << IPAddr.ntop(temp_val)
-      rescue IPAddr::AddressFamilyError
-        address_array << temp_val
+    # Ruby OpenSSL library does not unfortunately have constants for the DNS
+    # altnames versus IP based altnames
+    # See verify_certificate_identity in
+    # https://github.com/ruby/openssl/blob/master/lib/openssl/ssl.rb
+
+    # There are actually 9 types, as defined by RFC5280 :
+    # ( https://tools.ietf.org/html/rfc5280#section-4.2.1.6 )
+    # DNS string hostnames are type 2 ( dNSName )
+    # Both ipv4 and ipv6 addresses are type 7 ( iPAddress )
+    # Email addresses are stored as type 1 ( rfc822Name )
+
+    altnames = []
+    ip_altnames = []
+    asn_san_sequence.each do |altname|
+      val = altname.value
+      case altname.tag
+      when 2
+        altnames << val
+      when 7
+        # Pushes IP address string in canonical format
+        ip_altnames << IPAddr.new(IPAddr.ntop(val)).to_string
       end
     end
 
-    address_array
+    { error: 0, altnames: altnames, ip_altnames: ip_altnames }
   end
 
   # Check if a certificate has a vaild date
@@ -315,18 +327,34 @@ class Settings::ExternalCertController < SettingsController
                       (#{WEAK_SIGNATURE_HASHES.join(", ")})")
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   # Checks the Certificate's SubjectAltName list against list of hostnames required by the cluster
   def warning_subjectaltname(cert, warning_messages, required_san_array, service_name)
     missing_cert_base_msg = "Warning: #{service_name} is missing the following hostnames " \
     "in its certificate:  "
-    cert_san_array = get_san_array(cert)
+
+    cent_san_hash = get_san_hash(cert)
+    altnames = cent_san_hash[:altnames] || []
+    ip_altnames = cent_san_hash[:ip_altnames] || []
+    cert_san_array = altnames + ip_altnames
+
     missing_hostnames = []
 
     if !cert_san_array
       warning_messages.push(missing_cert_base_msg + required_san_array.join(" "))
     else
       required_san_array.each do |i|
-        missing_hostnames << i unless cert_san_array.include?(i)
+        temp_san = case i
+                   when Resolv::IPv4::Regex
+                     # Return IP address in canonical form
+                     IPAddr.new(i).to_string
+                   when Resolv::IPv6::Regex
+                     # Return IP address in canonical form
+                     IPAddr.new(i).to_string
+                   else
+                     i
+        end
+        missing_hostnames << i unless cert_san_array.include?(temp_san)
       end
     end
 
@@ -334,6 +362,7 @@ class Settings::ExternalCertController < SettingsController
     warning_messages.push("Missing the following hostnames in the certificate: " \
       "#{missing_hostnames.join(" ")}")
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   # # Placeholder for trust chain validation
   # def trust_chain_verify(_cert)
@@ -343,13 +372,16 @@ class Settings::ExternalCertController < SettingsController
   # Returns host info via Salt Grains
   def hosts_info
     minion_hash = {}
-    minions = Velum::Salt.minions
+    minions = if ENV["RAILS_ENV"] != "test"
+      Velum::Salt.minions
+    else
+      YAML.load_file(::Rails.root.join("config", "ext_cert_minion.yaml"))
+    end
 
     minions.each_key do |i|
       machine_id = minions[i]["machine_id"]
       node_name = minions[i]["nodename"]
       roles = minions[i]["roles"]
-      # minion_hash[i.to_sym] = minions[i]["machine_id"]
       minion_hash[i.to_sym] = { machine_id: machine_id, node_name: node_name, roles: roles }
     end
     minion_hash
@@ -357,36 +389,16 @@ class Settings::ExternalCertController < SettingsController
 
   # Returns Salt Pillar for admin node
   def pillar_items
-    pillar = Velum::Salt.call(
-      action:  "pillar.items",
-      targets: "admin"
-    )
-    return nil unless pillar[0].is_a? Net::HTTPSuccess
-    pillar[1]["return"][0]["admin"]
-
-    # if ENV["RAILS_ENV"] != "test"
-    #   pillar = Velum::Salt.call(
-    #     action:  "pillar.items",
-    #     targets: "admin"
-    #   )
-    #   return nil unless pillar[0].is_a? Net::HTTPSuccess
-    #   pillar[1]["return"][0]["admin"]
-    # else
-    #   {
-    #     "dashboard_external_fqdn" => "abcd",
-    #     "dashboard"               => "efg",
-    #     "internal_infra_domain"   => "hijk",
-    #     "api"                     => {
-    #       "server"     => {
-    #         "external_fqdn" => "lmn",
-    #         "extra_names"   => "opq",
-    #         "extra_ips"     => "rst"
-    #       },
-    #       "cluster_ip" => "uvw"
-    #     }
-    #   }
-    # end
-    # return pillar
+    if ENV["RAILS_ENV"] != "test"
+      pillar = Velum::Salt.call(
+        action:  "pillar.items",
+        targets: "admin"
+      )
+      return nil unless pillar[0].is_a? Net::HTTPSuccess
+      pillar[1]["return"][0]["admin"]
+    else
+      YAML.load_file(::Rails.root.join("config", "ext_cert_pillar.yaml"))
+    end
   end
 
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
@@ -497,4 +509,3 @@ class Settings::ExternalCertController < SettingsController
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 end
 # rubocop:enable Metrics/ClassLength
-# :nocov:
