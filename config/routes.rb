@@ -27,7 +27,7 @@ Rails.application.routes.draw do
 
   get "/oidc", to: "oidc#index"
   get "/oidc/done", to: "oidc#done"
-  get "/oidc/kubeconfig", to: "oidc#kubeconfig"
+  post "/oidc/kubeconfig", to: "oidc#kubeconfig"
 
   namespace :orchestrations do
     resource :bootstrap, only: :create, controller: :bootstrap

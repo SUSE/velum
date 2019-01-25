@@ -16,7 +16,8 @@ p
   | Alternatively, you can also save it to your home in `~/.kube/config`, `kubectl` will automatically
   |  read this file without the need to specify the <strong>KUBECONFIG</strong> environment variable.
 
-p= link_to "Click here if the download has not started automatically.", @redirect_target
+= form_tag @redirect_target, method: "post"
+  button type="submit" class="btn btn-primary" Click here if the download has not started automatically.
 
 h2 Option 2: Manually configure kubeconfig file
 
@@ -49,5 +50,5 @@ pre
 = content_for :page_javascript do
   javascript:
     $(function() {
-      window.location.href = "#{@redirect_target}"
+      document.querySelector('form').submit();
     });
