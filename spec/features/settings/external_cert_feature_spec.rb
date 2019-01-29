@@ -134,12 +134,10 @@ describe "Feature: External Cerificate settings", js: true do
     end
 
     it "page contains required Velum hostnames" do
-
-      # find("collapseVelum").click
-      # click_link('#collapseVelum')
       find('a[href="#collapseVelum"]').click
+
       expect(page).to have_http_status(:success)
-      expect(page).to have_content("bf2fc52b4f5e4d8c9903573e3c55f4a4.infra.caasp.local", wait: 1)
+      expect(page).to have_content("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.infra.caasp.local", wait: 1)
     end
 
     it "is missing required SubjectAltNames in certificate" do
@@ -148,9 +146,20 @@ describe "Feature: External Cerificate settings", js: true do
 
       click_button("Save")
       expect(page).to have_http_status(:success)
-      expect(page).to have_content("Missing the following hostnames in the certificate: " \
-        "admin.devenv.caasp.suse.net 10.17.1.0 admin admin.infra.caasp.local " \
-        "bf2fc52b4f5e4d8c9903573e3c55f4a4 bf2fc52b4f5e4d8c9903573e3c55f4a4.infra.caasp.local")
+      expect(page).to have_content("Warning, Velum is missing the following hostnames in its " \
+        "certificate: admin.devenv.caasp.suse.net 10.17.1.0 admin admin.infra.caasp.local " \
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.infra.caasp.local")
+    end
+
+    it "is has no SubjectAltNames in certificate" do
+      attach_file("external_certificate_velum_cert", ssl_cert_file_a)
+      attach_file("external_certificate_velum_key", ssl_key_file_a)
+
+      click_button("Save")
+      expect(page).to have_http_status(:success)
+      expect(page).to have_content("Warning, Velum is missing the following hostnames in its " \
+        "certificate: admin.devenv.caasp.suse.net 10.17.1.0 admin admin.infra.caasp.local " \
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.infra.caasp.local")
     end
 
     # Failure Conditions

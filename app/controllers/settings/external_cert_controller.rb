@@ -44,13 +44,13 @@ class Settings::ExternalCertController < SettingsController
       redirect_to settings_external_cert_index_path, notice: "External Certificate " \
       "settings successfully saved."
       return
-      # :nocov: Temporary blocking nocov statement until tests are completed
+      # :nocov:
       # An error here would require a failure in connection to velum->salt
       # or a corruption in mapping of values in the salt pillar
     else
       set_instance_variables
       render action: :index, status: :unprocessable_entity
-      # :nocov: Temporary blocking nocov statement until tests are completed
+      # :nocov:
     end
   end
   # rubocop:enable Metrics/AbcSize
@@ -187,13 +187,13 @@ class Settings::ExternalCertController < SettingsController
     else
       cert = read_cert(cert_string)
       unless cert
-        # :nocov: Temporary blocking nocov statement until tests are completed
+        # :nocov:
         # Cert has aleady been valiated when entered, an error here would require a failure
         # in connection from velum to salt or an unintended change in the salt pillar
         params[:Message] = { Error: "Failed to parse stored certificate, please check format and " \
         "upload again" }
         return params
-        # :nocov: Temporary blocking nocov statement until tests are completed
+        # :nocov:
       end
       fingerprint = cert_fingerprint(cert)
       san_hash = get_san_hash(cert)
@@ -225,7 +225,7 @@ class Settings::ExternalCertController < SettingsController
     params = {}
     if !key_string
       params[:Message] = { Notice: "Key not available, please upload a key" }
-      # :nocov: Temporary blocking nocov statement until tests are completed
+      # :nocov:
       # Key has aleady been valiated when entered, an error here would require a failure
       # in connection from velum to salt or an unintended change in the salt pillar
     else
@@ -241,7 +241,7 @@ class Settings::ExternalCertController < SettingsController
         false # returns false
       end
       params["Valid Key"] = key_valid
-      # :nocov: Temporary blocking nocov statement until tests are completed
+      # :nocov:
     end
     params
   end
@@ -327,40 +327,31 @@ class Settings::ExternalCertController < SettingsController
                       (#{WEAK_SIGNATURE_HASHES.join(", ")})")
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity
   # Checks the Certificate's SubjectAltName list against list of hostnames required by the cluster
   def warning_subjectaltname(cert, warning_messages, required_san_array, service_name)
-    missing_cert_base_msg = "Warning: #{service_name} is missing the following hostnames " \
-    "in its certificate:  "
-
     cent_san_hash = get_san_hash(cert)
     altnames = cent_san_hash[:altnames] || []
     ip_altnames = cent_san_hash[:ip_altnames] || []
     cert_san_array = altnames + ip_altnames
-
     missing_hostnames = []
 
-    if !cert_san_array
-      warning_messages.push(missing_cert_base_msg + required_san_array.join(" "))
-    else
-      required_san_array.each do |i|
-        temp_san = case i
-                   when Resolv::IPv4::Regex
-                     # Return IP address in canonical form
-                     IPAddr.new(i).to_string
-                   when Resolv::IPv6::Regex
-                     # Return IP address in canonical form
-                     IPAddr.new(i).to_string
-                   else
-                     i
-        end
-        missing_hostnames << i unless cert_san_array.include?(temp_san)
+    # Convert all IP addresses to canonical form
+    required_san_array.each do |i|
+      temp_san = case i
+                 when Resolv::IPv4::Regex
+                   IPAddr.new(i).to_string
+                 when Resolv::IPv6::Regex
+                   IPAddr.new(i).to_string
+                 else
+                   i
       end
+      missing_hostnames << i unless cert_san_array.include?(temp_san)
     end
 
     return if missing_hostnames.empty?
-    warning_messages.push("Missing the following hostnames in the certificate: " \
-      "#{missing_hostnames.join(" ")}")
+    warning_messages.push("Warning, #{service_name} is missing the following hostnames in its " \
+      "certificate: #{missing_hostnames.join(" ")}")
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
@@ -373,7 +364,10 @@ class Settings::ExternalCertController < SettingsController
   def hosts_info
     minion_hash = {}
     minions = if ENV["RAILS_ENV"] != "test"
+      # :nocov:
+      # Production condition, corresponding test condition below
       Velum::Salt.minions
+      # :nocov:
     else
       YAML.load_file(::Rails.root.join("config", "ext_cert_minion.yaml"))
     end
@@ -390,12 +384,15 @@ class Settings::ExternalCertController < SettingsController
   # Returns Salt Pillar for admin node
   def pillar_items
     if ENV["RAILS_ENV"] != "test"
+      # :nocov:
+      # Production condition, corresponding test condition below
       pillar = Velum::Salt.call(
         action:  "pillar.items",
         targets: "admin"
       )
       return nil unless pillar[0].is_a? Net::HTTPSuccess
       pillar[1]["return"][0]["admin"]
+      # :nocov:
     else
       YAML.load_file(::Rails.root.join("config", "ext_cert_pillar.yaml"))
     end
@@ -407,12 +404,15 @@ class Settings::ExternalCertController < SettingsController
     begin
       host_info = hosts_info
     rescue NoMethodError
+      # :nocov:
+      # Protects for failure of HTTP call to Salt
       error_hash = { error: "Error retrieving node information, please refresh page to try again" }
       return {
         VELUM_HASH_KEY   => error_hash,
         KUBEAPI_HASH_KEY => error_hash,
         DEX_HASH_KEY     => error_hash
       }
+      # :nocov:
     end
 
     pillar = pillar_items
@@ -454,6 +454,8 @@ class Settings::ExternalCertController < SettingsController
         pillar["api"]["server"]["extra_ips"]
       ]
     rescue NoMethodError
+      # :nocov:
+      # Protects for failure of HTTP call to Salt
       error_hash = {
         error: "Error retrieving pillar information, please refresh page to try again"
       }
@@ -462,6 +464,7 @@ class Settings::ExternalCertController < SettingsController
         KUBEAPI_HASH_KEY => error_hash,
         DEX_HASH_KEY     => error_hash
       }
+      # :nocov:
     end
 
     # Add host-specific hostnames
@@ -487,12 +490,15 @@ class Settings::ExternalCertController < SettingsController
         end
       end
     rescue TypeError
+      # :nocov:
+      # Protects for failure due to incomplete results from Salt request
       error_hash = { error: "Error retrieving node information, please refresh page to try again" }
       return {
         VELUM_HASH_KEY   => error_hash,
         KUBEAPI_HASH_KEY => error_hash,
         DEX_HASH_KEY     => error_hash
       }
+      # :nocov:
     end
 
     # Remove empty entries
