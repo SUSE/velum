@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181715075511) do
+ActiveRecord::Schema.define(version: 20182106194300) do
 
   create_table "certificate_services", force: :cascade do |t|
     t.integer  "certificate_id", limit: 4
@@ -193,4 +193,15 @@ ActiveRecord::Schema.define(version: 20181715075511) do
   end
 
   add_index "dex_connectors_ldap", ["id"], name: "index_dex_connectors_ldap_on_id", unique: true, using: :btree
+
+  create_table "dex_connectors_oidc", force: :cascade do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "name"
+    t.string   "provider_url",       limit: 2048
+    t.string   "client_id"
+    t.string   "client_secret"
+    t.string   "callback_url",       limit: 2048
+    t.boolean  "basic_auth",                     default: true, null: false
+  end
 end
