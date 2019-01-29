@@ -133,6 +133,35 @@ describe "Feature: External Cerificate settings", js: true do
       expect(page).to have_content("Certificate includes a weak signature hash algorithm")
     end
 
+    it "page contains required Velum hostnames" do
+      find('a[href="#collapseVelum"]').click
+
+      expect(page).to have_http_status(:success)
+      expect(page).to have_content("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.infra.caasp.local", wait: 1)
+    end
+
+    it "is missing required SubjectAltNames in certificate" do
+      attach_file("external_certificate_velum_cert", ssl_cert_file_b)
+      attach_file("external_certificate_velum_key", ssl_key_file_b)
+
+      click_button("Save")
+      expect(page).to have_http_status(:success)
+      expect(page).to have_content("Warning, Velum is missing the following hostnames in its " \
+        "certificate: admin.devenv.caasp.suse.net 10.17.1.0 admin admin.infra.caasp.local " \
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.infra.caasp.local")
+    end
+
+    it "is has no SubjectAltNames in certificate" do
+      attach_file("external_certificate_velum_cert", ssl_cert_file_a)
+      attach_file("external_certificate_velum_key", ssl_key_file_a)
+
+      click_button("Save")
+      expect(page).to have_http_status(:success)
+      expect(page).to have_content("Warning, Velum is missing the following hostnames in its " \
+        "certificate: admin.devenv.caasp.suse.net 10.17.1.0 admin admin.infra.caasp.local " \
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.infra.caasp.local")
+    end
+
     # Failure Conditions
 
     it "uploads malformed velum certificate" do
