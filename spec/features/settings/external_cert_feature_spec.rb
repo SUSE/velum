@@ -8,33 +8,36 @@ describe "Feature: External Cerificate settings", js: true do
   let!(:user) { create(:user) }
   let!(:fixture_path) { RSpec.configuration.fixture_path }
 
-  # ssl_cert_file_a and ssl_key_file_a are a valid cert/key pair
-  let(:ssl_cert_file_a) { File.join(fixture_path, "ext_cert_ssl_a.pem") }
-  let(:ssl_key_file_a) { File.join(fixture_path, "ext_cert_key_a.pem") }
+  # Valid set A
+  let(:crt_a) { File.join(fixture_path, "external_certs/a.crt") }
+  let(:key_a) { File.join(fixture_path, "external_certs/a.key") }
 
-  # ssl_cert_file_b and ssl_key_file_b are another valid cert/key pair
-  let(:ssl_cert_file_b) { File.join(fixture_path, "ext_cert_ssl_b.pem") }
-  let(:ssl_key_file_b) { File.join(fixture_path, "ext_cert_key_b.pem") }
+  # Valid set B
+  let(:crt_b) { File.join(fixture_path, "external_certs/b.crt") }
+  let(:key_b) { File.join(fixture_path, "external_certs/b.key") }
 
-  # ssl_cert_file_malformed and ssl_key_file_malformed are both invalid files
-  # and are not able to be unmarshaled into OpenSSL objects
-  let(:ssl_cert_file_malformed) { File.join(fixture_path, "ext_cert_ssl_mal.pem") }
-  let(:ssl_key_file_malformed) { File.join(fixture_path, "ext_cert_key_mal.pem") }
+  # *** Following sets of certs and keys are valid except for the stated ways ***
 
-  # expired_cert and key_for_expired_cert are a cert/key pair that are valid
-  # in every way except the date range
-  let(:expired_cert) { File.join(fixture_path, "expired_cert.pem") }
-  let(:key_for_expired_cert) { File.join(fixture_path, "key_for_expired_cert.pem") }
+  # Malformed. Both are malformed
+  let(:crt_malformed) { File.join(fixture_path, "external_certs/malformed.crt") }
+  let(:key_malformed) { File.join(fixture_path, "external_certs/malformed.key") }
 
-  # weak_key_cert and key_for_weak_key_cert are a cert/key pair that are valid
-  # in every way except 1028 bit key length
-  let(:weak_key_cert) { File.join(fixture_path, "weak_key_cert.pem") }
-  let(:key_for_weak_key_cert) { File.join(fixture_path, "key_for_weak_key_cert.pem") }
+  # Expired
+  let(:crt_expired) { File.join(fixture_path, "external_certs/expired.crt") }
+  let(:key_expired) { File.join(fixture_path, "external_certs/expired.key") }
 
-  # sha1_signing_hash_cert and key_for_sha1_signing_hash_cert are a cert/key pair that are valid
-  # in every way except a weak hash algorithm
-  let(:weak_hash_cert) { File.join(fixture_path, "sha1_signing_hash_cert.pem") }
-  let(:key_for_weak_hash_cert) { File.join(fixture_path, "key_for_sha1_signing_hash_cert.pem") }
+  # Weak - 1024 bit keylength
+  let(:crt_weak) { File.join(fixture_path, "external_certs/weak.crt") }
+  let(:key_weak) { File.join(fixture_path, "external_certs/weak.key") }
+
+  # Weak Message Digest - Using SHA1
+  let(:) { File.join(fixture_path, "external_certs/sha1_digest.crt") }
+  let(:key_sha1) { File.join(fixture_path, "external_certs/sha1_digest.key") }
+
+  # CAs for chain validation
+  let(:crt_root) { File.join(fixture_path, "external_certs/ca_root.crt") }
+  let(:crt_intermed) { File.join(fixture_path, "external_certs/ca_intermed.crt") }
+  let(:crt_intermed2) { File.join(fixture_path, "external_certs/ca_intermed2.crt") }
 
   before do
     setup_done
@@ -67,8 +70,8 @@ describe "Feature: External Cerificate settings", js: true do
     end
 
     it "sucessfully uploads velum cert/key" do
-      attach_file("external_certificate_velum_cert", ssl_cert_file_a)
-      attach_file("external_certificate_velum_key", ssl_key_file_a)
+      attach_file("external_certificate_velum_cert", crt_a)
+      attach_file("external_certificate_velum_key", key_a)
 
       click_button("Save")
       expect(page).to have_http_status(:success)
@@ -76,8 +79,8 @@ describe "Feature: External Cerificate settings", js: true do
     end
 
     it "sucessfully uploads kubeAPI cert/key" do
-      attach_file("external_certificate_kubeapi_cert", ssl_cert_file_a)
-      attach_file("external_certificate_kubeapi_key", ssl_key_file_a)
+      attach_file("external_certificate_kubeapi_cert", crt_a)
+      attach_file("external_certificate_kubeapi_key", key_a)
 
       click_button("Save")
       expect(page).to have_http_status(:success)
@@ -85,8 +88,8 @@ describe "Feature: External Cerificate settings", js: true do
     end
 
     it "sucessfully uploads dex cert/key" do
-      attach_file("external_certificate_dex_cert", ssl_cert_file_a)
-      attach_file("external_certificate_dex_key", ssl_key_file_a)
+      attach_file("external_certificate_dex_cert", crt_a)
+      attach_file("external_certificate_dex_key", key_a)
 
       click_button("Save")
       expect(page).to have_http_status(:success)
@@ -94,12 +97,12 @@ describe "Feature: External Cerificate settings", js: true do
     end
 
     it "sucessfully uploads velum, kubeAPI, and dex cert/key" do
-      attach_file("external_certificate_velum_cert", ssl_cert_file_a)
-      attach_file("external_certificate_velum_key", ssl_key_file_a)
-      attach_file("external_certificate_kubeapi_cert", ssl_cert_file_a)
-      attach_file("external_certificate_kubeapi_key", ssl_key_file_a)
-      attach_file("external_certificate_dex_cert", ssl_cert_file_a)
-      attach_file("external_certificate_dex_key", ssl_key_file_a)
+      attach_file("external_certificate_velum_cert", crt_a)
+      attach_file("external_certificate_velum_key", key_a)
+      attach_file("external_certificate_kubeapi_cert", crt_a)
+      attach_file("external_certificate_kubeapi_key", key_a)
+      attach_file("external_certificate_dex_cert", crt_a)
+      attach_file("external_certificate_dex_key", key_a)
 
       click_button("Save")
       expect(page).to have_http_status(:success)
@@ -107,8 +110,8 @@ describe "Feature: External Cerificate settings", js: true do
     end
 
     it "sucessfully lists Subject Alternative Names" do
-      attach_file("external_certificate_velum_cert", ssl_cert_file_b)
-      attach_file("external_certificate_velum_key", ssl_key_file_b)
+      attach_file("external_certificate_velum_cert", crt_b)
+      attach_file("external_certificate_velum_key", key_b)
 
       click_button("Save")
       expect(page).to have_http_status(:success)
@@ -116,8 +119,8 @@ describe "Feature: External Cerificate settings", js: true do
     end
 
     it "uploads velum cert with a weak RSA bit length key (<= 2048)" do
-      attach_file("external_certificate_velum_cert", weak_key_cert)
-      attach_file("external_certificate_velum_key", key_for_weak_key_cert)
+      attach_file("external_certificate_velum_cert", crt_weak)
+      attach_file("external_certificate_velum_key", key_weak)
 
       click_button("Save")
       expect(page).to have_http_status(:success)
@@ -125,8 +128,8 @@ describe "Feature: External Cerificate settings", js: true do
     end
 
     it "uploads velum cert with a weak hash algorithm (sha1)" do
-      attach_file("external_certificate_velum_cert", weak_hash_cert)
-      attach_file("external_certificate_velum_key", key_for_weak_hash_cert)
+      attach_file("external_certificate_velum_cert", crt_sha1)
+      attach_file("external_certificate_velum_key", key_sha1)
 
       click_button("Save")
       expect(page).to have_http_status(:success)
@@ -141,8 +144,8 @@ describe "Feature: External Cerificate settings", js: true do
     end
 
     it "is missing required SubjectAltNames in certificate" do
-      attach_file("external_certificate_velum_cert", ssl_cert_file_b)
-      attach_file("external_certificate_velum_key", ssl_key_file_b)
+      attach_file("external_certificate_velum_cert", crt_b)
+      attach_file("external_certificate_velum_key", key_b)
 
       click_button("Save")
       expect(page).to have_http_status(:success)
@@ -152,8 +155,8 @@ describe "Feature: External Cerificate settings", js: true do
     end
 
     it "is has no SubjectAltNames in certificate" do
-      attach_file("external_certificate_velum_cert", ssl_cert_file_a)
-      attach_file("external_certificate_velum_key", ssl_key_file_a)
+      attach_file("external_certificate_velum_cert", crt_a)
+      attach_file("external_certificate_velum_key", key_a)
 
       click_button("Save")
       expect(page).to have_http_status(:success)
@@ -165,8 +168,8 @@ describe "Feature: External Cerificate settings", js: true do
     # Failure Conditions
 
     it "uploads malformed velum certificate" do
-      attach_file("external_certificate_velum_cert", ssl_cert_file_malformed)
-      attach_file("external_certificate_velum_key", ssl_key_file_a)
+      attach_file("external_certificate_velum_cert", crt_malformed)
+      attach_file("external_certificate_velum_key", key_a)
 
       click_button("Save")
       expect(page).to have_http_status(:unprocessable_entity)
@@ -174,8 +177,8 @@ describe "Feature: External Cerificate settings", js: true do
     end
 
     it "uploads malformed velum key" do
-      attach_file("external_certificate_velum_cert", ssl_cert_file_a)
-      attach_file("external_certificate_velum_key", ssl_key_file_malformed)
+      attach_file("external_certificate_velum_cert", crt_a)
+      attach_file("external_certificate_velum_key", key_malformed)
 
       click_button("Save")
       expect(page).to have_http_status(:unprocessable_entity)
@@ -183,8 +186,8 @@ describe "Feature: External Cerificate settings", js: true do
     end
 
     it "uploads malformed kubeAPI certificate" do
-      attach_file("external_certificate_kubeapi_cert", ssl_cert_file_malformed)
-      attach_file("external_certificate_kubeapi_key", ssl_key_file_a)
+      attach_file("external_certificate_kubeapi_cert", crt_malformed)
+      attach_file("external_certificate_kubeapi_key", key_a)
 
       click_button("Save")
       expect(page).to have_http_status(:unprocessable_entity)
@@ -193,8 +196,8 @@ describe "Feature: External Cerificate settings", js: true do
     end
 
     it "uploads malformed kubeAPI key" do
-      attach_file("external_certificate_kubeapi_cert", ssl_cert_file_a)
-      attach_file("external_certificate_kubeapi_key", ssl_key_file_malformed)
+      attach_file("external_certificate_kubeapi_cert", crt_a)
+      attach_file("external_certificate_kubeapi_key", key_malformed)
 
       click_button("Save")
       expect(page).to have_http_status(:unprocessable_entity)
@@ -203,8 +206,8 @@ describe "Feature: External Cerificate settings", js: true do
     end
 
     it "uploads malformed dex certificate" do
-      attach_file("external_certificate_dex_cert", ssl_cert_file_malformed)
-      attach_file("external_certificate_dex_key", ssl_key_file_a)
+      attach_file("external_certificate_dex_cert", crt_malformed)
+      attach_file("external_certificate_dex_key", key_a)
 
       click_button("Save")
       expect(page).to have_http_status(:unprocessable_entity)
@@ -212,8 +215,8 @@ describe "Feature: External Cerificate settings", js: true do
     end
 
     it "uploads malformed dex key" do
-      attach_file("external_certificate_dex_cert", ssl_cert_file_a)
-      attach_file("external_certificate_dex_key", ssl_key_file_malformed)
+      attach_file("external_certificate_dex_cert", crt_a)
+      attach_file("external_certificate_dex_key", key_malformed)
 
       click_button("Save")
       expect(page).to have_http_status(:unprocessable_entity)
@@ -221,7 +224,7 @@ describe "Feature: External Cerificate settings", js: true do
     end
 
     it "uploads only velum certificate" do
-      attach_file("external_certificate_velum_cert", ssl_cert_file_a)
+      attach_file("external_certificate_velum_cert", crt_a)
 
       click_button("Save")
       expect(page).to have_http_status(:unprocessable_entity)
@@ -230,7 +233,7 @@ describe "Feature: External Cerificate settings", js: true do
     end
 
     it "uploads only velum key" do
-      attach_file("external_certificate_velum_key", ssl_key_file_a)
+      attach_file("external_certificate_velum_key", key_a)
 
       click_button("Save")
       expect(page).to have_http_status(:unprocessable_entity)
@@ -239,9 +242,9 @@ describe "Feature: External Cerificate settings", js: true do
     end
 
     it "uploads only velum, kubeAPI, and dex certificates" do
-      attach_file("external_certificate_velum_cert", ssl_cert_file_a)
-      attach_file("external_certificate_kubeapi_cert", ssl_cert_file_a)
-      attach_file("external_certificate_dex_cert", ssl_cert_file_a)
+      attach_file("external_certificate_velum_cert", crt_a)
+      attach_file("external_certificate_kubeapi_cert", crt_a)
+      attach_file("external_certificate_dex_cert", crt_a)
 
       click_button("Save")
       expect(page).to have_http_status(:unprocessable_entity)
@@ -250,9 +253,9 @@ describe "Feature: External Cerificate settings", js: true do
     end
 
     it "uploads only velum, kubeAPI, and dex keys" do
-      attach_file("external_certificate_velum_key", ssl_key_file_a)
-      attach_file("external_certificate_kubeapi_key", ssl_key_file_a)
-      attach_file("external_certificate_dex_key", ssl_key_file_a)
+      attach_file("external_certificate_velum_key", key_a)
+      attach_file("external_certificate_kubeapi_key", key_a)
+      attach_file("external_certificate_dex_key", key_a)
 
       click_button("Save")
       expect(page).to have_http_status(:unprocessable_entity)
@@ -261,8 +264,8 @@ describe "Feature: External Cerificate settings", js: true do
     end
 
     it "uploads mismatched velum cert/key 1" do
-      attach_file("external_certificate_velum_cert", ssl_cert_file_a)
-      attach_file("external_certificate_velum_key", ssl_key_file_b)
+      attach_file("external_certificate_velum_cert", crt_a)
+      attach_file("external_certificate_velum_key", key_b)
 
       click_button("Save")
       expect(page).to have_http_status(:unprocessable_entity)
@@ -271,8 +274,8 @@ describe "Feature: External Cerificate settings", js: true do
     end
 
     it "uploads mismatched velum cert/key 2" do
-      attach_file("external_certificate_velum_cert", ssl_cert_file_b)
-      attach_file("external_certificate_velum_key", ssl_key_file_a)
+      attach_file("external_certificate_velum_cert", crt_b)
+      attach_file("external_certificate_velum_key", key_a)
 
       click_button("Save")
       expect(page).to have_http_status(:unprocessable_entity)
@@ -281,12 +284,12 @@ describe "Feature: External Cerificate settings", js: true do
     end
 
     it "uploads mismatched velum, kubeAPI, and dex cert/key" do
-      attach_file("external_certificate_velum_cert", ssl_cert_file_a)
-      attach_file("external_certificate_velum_key", ssl_key_file_b)
-      attach_file("external_certificate_kubeapi_cert", ssl_cert_file_a)
-      attach_file("external_certificate_kubeapi_key", ssl_key_file_b)
-      attach_file("external_certificate_dex_cert", ssl_cert_file_a)
-      attach_file("external_certificate_dex_key", ssl_key_file_b)
+      attach_file("external_certificate_velum_cert", crt_a)
+      attach_file("external_certificate_velum_key", key_b)
+      attach_file("external_certificate_kubeapi_cert", crt_a)
+      attach_file("external_certificate_kubeapi_key", key_b)
+      attach_file("external_certificate_dex_cert", crt_a)
+      attach_file("external_certificate_dex_key", key_b)
 
       click_button("Save")
       expect(page).to have_http_status(:unprocessable_entity)
@@ -295,8 +298,8 @@ describe "Feature: External Cerificate settings", js: true do
     end
 
     it "uploads velum cert with invalid date range" do
-      attach_file("external_certificate_velum_cert", expired_cert)
-      attach_file("external_certificate_velum_key", key_for_expired_cert)
+      attach_file("external_certificate_velum_cert", crt_expired)
+      attach_file("external_certificate_velum_key", key_expired)
 
       click_button("Save")
       expect(page).to have_http_status(:unprocessable_entity)
