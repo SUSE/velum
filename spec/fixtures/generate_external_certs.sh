@@ -101,7 +101,7 @@ function gen_start_end() { # $1 good/expired
   if [ $1 = "good" ]
   then
     START_DATE=$(TZ=UTC date +"%Y%m%d%H%M%SZ" -d "-1 day")
-    END_DATE=$(TZ=UTC date +"%Y%m%d%H%M%SZ" -d "+100 days")
+    END_DATE=$(TZ=UTC date +"%Y%m%d%H%M%SZ" -d "+5 years")
   else
     START_DATE=$(TZ=UTC date +"%Y%m%d%H%M%SZ" -d "-10 day")
     END_DATE=$(TZ=UTC date +"%Y%m%d%H%M%SZ" -d "-5 days")
@@ -202,7 +202,7 @@ function create_site_crt_selfsigned() { # $1 domain, $2 message_digest, $3 rsa_b
 # alt_names section is not allowed. It is done this way so the file can be copied and a list of altnames
 # be appended to the end of the copy.
 function generate_conf() { # $1 ca_name
-  cat >$DIR_CONF/ca_$1.conf <<EOL
+  cat >$DIR_CONF/ca_$1.conf << EOL
 [ca]
 default_ca = default
 [default]
@@ -236,37 +236,102 @@ subjectAltName = @alt_names
 EOL
 }
 
+read -r -d '' ALTNAMES_VELUM_LN << EOM
+admin.devenv.caasp.suse.net
+admin
+admin.infra.caasp.local
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.infra.caasp.local
+testdomain.com
+EOM
+IP_ALTNAMES_VELUM=10.17.1.0
+
+read -r -d '' ALTNAMES_KUBEAPI_LN << EOM
+kubernetes
+kubernetes.default
+kubernetes.default.svc
+kubernetes.default.svc.cluster.local
+api
+api.infra.caasp.local
+kube-api-x1.devenv.caasp.suse.net
+master-0
+master-0.infra.caasp.local
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.infra.caasp.local
+EOM
+IP_ALTNAMES_KUBEAPI=172.24.0.1
+
+read -r -d '' ALTNAMES_DEX_LN << EOM
+dex
+dex.kube-system
+dex.kube-system.svc
+dex.kube-system.svc.infra.caasp.local
+dex.kube-system.svc.cluster.local
+kubernetes
+kubernetes.default
+kubernetes.default.svc
+api
+api.infra.caasp.local
+kube-api-x1.devenv.caasp.suse.net
+master-0
+master-0.infra.caasp.local
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.infra.caasp.local
+EOM
+IP_ALTNAMES_DEX=172.24.0.1
+
+ALTNAMES_VELUM=$(echo "$ALTNAMES_VELUM_LN" | tr "\n" -)
+ALTNAMES_KUBEAPI=$(echo "$ALTNAMES_KUBEAPI_LN" | tr "\n" -)
+ALTNAMES_DEX=$(echo "$ALTNAMES_DEX_LN" | tr "\n" -)
+
+# Strip extra dashes at end of line
+ALTNAMES_VELUM="${ALTNAMES_VELUM%?}"
+ALTNAMES_KUBEAPI="${ALTNAMES_KUBEAPI%?}"
+ALTNAMES_DEX="${ALTNAMES_DEX%?}"
+
 SITE_SUBJ="/ST=WA/O=Test/OU=Test Unit/CN=test.com"
-SITE_ALTNAMES=test.com-blah.com
-SITE_IP_ALTNAMES=127.0.0.1-13::17
+ALTNAMES_BAD=test.com-blah.com
+IP_ALTNAMES_BAD=127.0.0.1-13::17
 
 init
 init_root_ca    root               "/CN=US/O=US/OU=US Unit"
 init_sub_ca     intermed root      "/CN=US2/O=US2/OU=US2 Unit"
 init_sub_ca     intermed2 intermed "/CN=US3/O=US3/OU=US3 Unit"
-create_site_crt a       intermed2 sha256 2048 good    "/CN=a$SITE_SUBJ" $SITE_ALTNAMES $SITE_IP_ALTNAMES
-create_site_crt b       intermed2 sha256 2048 good    "/CN=b$SITE_SUBJ" $SITE_ALTNAMES $SITE_IP_ALTNAMES
-create_site_crt weak    intermed2 sha256 1024 good    "/CN=weak$SITE_SUBJ" $SITE_ALTNAMES $SITE_IP_ALTNAMES
-create_site_crt sha1    intermed2 sha1   2048 good    "/CN=sha1$SITE_SUBJ" $SITE_ALTNAMES $SITE_IP_ALTNAMES
-create_site_crt expired intermed2 sha256 2048 expired "/CN=expired$SITE_SUBJ" $SITE_ALTNAMES $SITE_IP_ALTNAMES
-create_site_crt badalt  intermed2 sha256 2048 expired "/CN=badalt$SITE_SUBJ" $SITE_ALTNAMES $SITE_IP_ALTNAMES
+create_site_crt va      intermed2 sha256 2048 good    "/CN=va$SITE_SUBJ"      $ALTNAMES_VELUM   $IP_ALTNAMES_VELUM
+create_site_crt vb      intermed2 sha256 2048 good    "/CN=vb$SITE_SUBJ"      $ALTNAMES_VELUM   $IP_ALTNAMES_VELUM
+create_site_crt ka      intermed2 sha256 2048 good    "/CN=ka$SITE_SUBJ"      $ALTNAMES_KUBEAPI $IP_ALTNAMES_KUBEAPI
+create_site_crt kb      intermed2 sha256 2048 good    "/CN=kb$SITE_SUBJ"      $ALTNAMES_KUBEAPI $IP_ALTNAMES_KUBEAPI
+create_site_crt da      intermed2 sha256 2048 good    "/CN=da$SITE_SUBJ"      $ALTNAMES_DEX     $IP_ALTNAMES_DEX
+create_site_crt db      intermed2 sha256 2048 good    "/CN=db$SITE_SUBJ"      $ALTNAMES_DEX     $IP_ALTNAMES_DEX 
+create_site_crt weak    intermed2 sha256 1024 good    "/CN=weak$SITE_SUBJ"    $ALTNAMES_VELUM   $IP_ALTNAMES_VELUM
+create_site_crt sha1    intermed2 sha1   2048 good    "/CN=sha1$SITE_SUBJ"    $ALTNAMES_VELUM   $IP_ALTNAMES_VELUM
+create_site_crt expired intermed2 sha256 2048 expired "/CN=expired$SITE_SUBJ" $ALTNAMES_VELUM   $IP_ALTNAMES_VELUM
+create_site_crt badalt  intermed2 sha256 2048 good    "/CN=badalt$SITE_SUBJ"  $ALTNAMES_BAD     $IP_ALTNAMES_BAD
 
 cp $DIR_CERTS/ca_root.crt external_certs/ca_root.crt
 cp $DIR_CERTS/ca_intermed.crt external_certs/ca_intermed.crt
 cp $DIR_CERTS/ca_intermed2.crt external_certs/ca_intermed2.crt
 
-cp $DIR_CERTS/site_a.crt external_certs/a.crt
-cp $DIR_CERTS/site_b.crt external_certs/b.crt
+cp $DIR_CERTS/site_va.crt external_certs/velum_a.crt
+cp $DIR_CERTS/site_vb.crt external_certs/velum_b.crt
+cp $DIR_CERTS/site_ka.crt external_certs/kubeapi_a.crt
+cp $DIR_CERTS/site_kb.crt external_certs/kubeapi_b.crt
+cp $DIR_CERTS/site_da.crt external_certs/dex_a.crt
+cp $DIR_CERTS/site_db.crt external_certs/dex_b.crt
 cp $DIR_CERTS/site_weak.crt external_certs/weak.crt
 cp $DIR_CERTS/site_sha1.crt external_certs/sha1_digest.crt
 cp $DIR_CERTS/site_expired.crt external_certs/expired.crt
 cp $DIR_CERTS/site_badalt.crt external_certs/badalt.crt
 
-cp $DIR_KEYS/site_a.key external_certs/a.key
-cp $DIR_KEYS/site_b.key external_certs/b.key
+cp $DIR_KEYS/site_va.key external_certs/velum_a.key
+cp $DIR_KEYS/site_vb.key external_certs/velum_b.key
+cp $DIR_KEYS/site_ka.key external_certs/kubeapi_a.key
+cp $DIR_KEYS/site_kb.key external_certs/kubeapi_b.key
+cp $DIR_KEYS/site_da.key external_certs/dex_a.key
+cp $DIR_KEYS/site_db.key external_certs/dex_b.key
 cp $DIR_KEYS/site_weak.key external_certs/weak.key
 cp $DIR_KEYS/site_sha1.key external_certs/sha1_digest.key
 cp $DIR_KEYS/site_expired.key external_certs/expired.key
 cp $DIR_KEYS/site_badalt.key external_certs/badalt.key
 
-#cleanup
+cleanup

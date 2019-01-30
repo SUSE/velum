@@ -1,0 +1,74 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 1 (0x1)
+    Signature Algorithm: sha256WithRSAEncryption
+        Issuer: O=US3, OU=US3 Unit, CN=US3
+        Validity
+            Not Before: Jan 29 18:07:50 2019 GMT
+            Not After : Jan 30 18:07:50 2024 GMT
+        Subject: ST=WA, O=Test, OU=Test Unit, CN=va, CN=test.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:d1:e9:56:f1:b2:da:7f:4c:f3:8b:b9:f8:2e:ff:
+                    22:21:b0:a9:ee:d9:08:8d:19:3d:b4:ee:dd:df:44:
+                    45:61:45:46:b3:2b:c4:4a:ed:aa:ca:cf:89:3b:ef:
+                    03:c3:4c:3c:ee:2b:07:a7:63:1d:94:2d:23:0a:b4:
+                    0e:c4:26:9f:f3:dd:f4:cd:83:a0:de:63:da:b1:60:
+                    33:f8:f1:8e:98:69:1e:94:a2:a1:21:42:d4:ea:b8:
+                    a5:77:2e:ba:25:f4:10:bc:66:85:a6:30:23:a5:a3:
+                    57:93:b8:9a:6f:eb:11:d0:54:e2:36:b4:62:f0:c9:
+                    cf:80:58:c2:6f:31:08:38:4d:15:02:41:b2:31:84:
+                    ea:7b:9d:f6:05:a4:4b:9f:3f:83:fe:43:c3:1a:61:
+                    a5:eb:17:cd:4e:53:ed:02:c0:32:68:04:c3:b1:a7:
+                    cd:30:38:d0:b9:44:57:bd:47:cc:10:aa:16:36:e3:
+                    03:fd:d5:a3:2f:49:77:2d:40:14:a8:9f:a1:2d:ac:
+                    7a:13:d5:28:66:2a:fc:fe:6c:a4:a8:20:95:86:7b:
+                    cd:77:af:a1:12:f5:8f:e0:fa:76:2e:41:a2:e0:d7:
+                    7b:b6:92:fe:5a:9c:61:bc:a6:1f:50:2c:d9:65:d0:
+                    ac:2c:0b:7f:e5:e1:1e:15:cf:13:82:02:8e:77:46:
+                    bd:79
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Subject Alternative Name: 
+                DNS:admin.devenv.caasp.suse.net, DNS:admin, DNS:admin.infra.caasp.local, DNS:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, DNS:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.infra.caasp.local, DNS:testdomain.com, IP Address:10.17.1.0
+    Signature Algorithm: sha256WithRSAEncryption
+         87:47:f3:a5:43:33:a6:dc:a5:62:18:cb:61:98:1f:13:f3:26:
+         0d:48:51:4e:d3:a6:ff:08:fb:0e:9b:ed:57:b7:fc:a4:41:e6:
+         eb:b7:64:99:fd:1a:0a:b6:c9:3f:a0:9b:60:22:ef:69:b2:69:
+         33:33:f7:ba:cd:8f:75:7b:8f:b3:40:aa:0d:4f:22:d2:30:9e:
+         41:f0:a5:c9:54:e4:49:1f:d8:6c:32:50:3d:6e:fb:c8:08:43:
+         19:33:a4:1a:e6:6f:6a:af:9b:53:62:c5:0e:80:17:58:6e:5c:
+         0d:41:ad:56:ba:9b:d7:d1:60:91:95:ad:17:32:68:2e:59:a6:
+         27:84:09:dc:b7:1e:69:bf:3e:99:e5:70:65:a3:4d:b1:96:5c:
+         0e:99:6c:af:d8:67:46:8d:be:e0:8a:8c:45:61:11:76:1b:36:
+         83:23:a3:6a:56:f7:7d:25:7d:cb:69:c3:68:63:83:4f:7b:f2:
+         19:aa:83:5a:54:69:fe:99:18:b2:f0:1e:bd:14:45:c6:ee:57:
+         c1:26:0a:d4:b7:f9:fd:6b:34:a6:3f:2b:6f:10:f9:6d:89:b0:
+         09:16:e2:a7:49:9c:c3:f6:ee:90:2d:9d:2d:1d:e5:6c:ee:09:
+         99:0d:6f:e0:4e:a4:97:5e:38:f2:b9:11:fc:fc:93:69:b4:7f:
+         86:30:ce:79
+-----BEGIN CERTIFICATE-----
+MIIDuTCCAqGgAwIBAgIBATANBgkqhkiG9w0BAQsFADAvMQwwCgYDVQQKDANVUzMx
+ETAPBgNVBAsMCFVTMyBVbml0MQwwCgYDVQQDDANVUzMwIhgPMjAxOTAxMjkxODA3
+NTBaGA8yMDI0MDEzMDE4MDc1MFowUDELMAkGA1UECAwCV0ExDTALBgNVBAoMBFRl
+c3QxEjAQBgNVBAsMCVRlc3QgVW5pdDELMAkGA1UEAwwCdmExETAPBgNVBAMMCHRl
+c3QuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0elW8bLaf0zz
+i7n4Lv8iIbCp7tkIjRk9tO7d30RFYUVGsyvESu2qys+JO+8Dw0w87isHp2MdlC0j
+CrQOxCaf8930zYOg3mPasWAz+PGOmGkelKKhIULU6rildy66JfQQvGaFpjAjpaNX
+k7iab+sR0FTiNrRi8MnPgFjCbzEIOE0VAkGyMYTqe532BaRLnz+D/kPDGmGl6xfN
+TlPtAsAyaATDsafNMDjQuURXvUfMEKoWNuMD/dWjL0l3LUAUqJ+hLax6E9UoZir8
+/mykqCCVhnvNd6+hEvWP4Pp2LkGi4Nd7tpL+WpxhvKYfUCzZZdCsLAt/5eEeFc8T
+ggKOd0a9eQIDAQABo4G6MIG3MIG0BgNVHREEgawwgamCG2FkbWluLmRldmVudi5j
+YWFzcC5zdXNlLm5ldIIFYWRtaW6CF2FkbWluLmluZnJhLmNhYXNwLmxvY2FsgiBh
+YWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYYIyYWFhYWFhYWFhYWFhYWFh
+YWFhYWFhYWFhYWFhYWFhYWEuaW5mcmEuY2Fhc3AubG9jYWyCDnRlc3Rkb21haW4u
+Y29thwQKEQEAMA0GCSqGSIb3DQEBCwUAA4IBAQCHR/OlQzOm3KViGMthmB8T8yYN
+SFFO06b/CPsOm+1Xt/ykQebrt2SZ/RoKtsk/oJtgIu9psmkzM/e6zY91e4+zQKoN
+TyLSMJ5B8KXJVORJH9hsMlA9bvvICEMZM6Qa5m9qr5tTYsUOgBdYblwNQa1WupvX
+0WCRla0XMmguWaYnhAnctx5pvz6Z5XBlo02xllwOmWyv2GdGjb7gioxFYRF2GzaD
+I6NqVvd9JX3LacNoY4NPe/IZqoNaVGn+mRiy8B69FEXG7lfBJgrUt/n9azSmPytv
+EPltibAJFuKnSZzD9u6QLZ0tHeVs7gmZDW/gTqSXXjjyuRH8/JNptH+GMM55
+-----END CERTIFICATE-----

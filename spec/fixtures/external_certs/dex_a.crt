@@ -1,0 +1,79 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 5 (0x5)
+    Signature Algorithm: sha256WithRSAEncryption
+        Issuer: O=US3, OU=US3 Unit, CN=US3
+        Validity
+            Not Before: Jan 29 18:07:51 2019 GMT
+            Not After : Jan 30 18:07:51 2024 GMT
+        Subject: ST=WA, O=Test, OU=Test Unit, CN=da, CN=test.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:c2:35:79:0e:c1:cb:2d:3c:4c:a0:78:12:90:6e:
+                    aa:c0:81:13:83:dc:d7:7c:39:76:ae:3a:db:85:40:
+                    87:b4:8d:4d:2d:83:c6:e5:57:e7:1d:5d:5d:b3:b6:
+                    70:e4:c3:9c:d6:15:9d:f6:57:92:10:52:81:01:4d:
+                    6e:98:fe:5b:d1:e0:46:49:d7:31:c1:d5:34:a7:18:
+                    f2:62:ed:7c:fc:0a:f3:68:4c:eb:21:de:61:e2:29:
+                    05:73:a2:5c:79:75:c1:62:cc:4b:4e:73:19:62:eb:
+                    6e:45:fc:7f:05:0d:c8:cc:bf:f4:c8:14:28:40:9c:
+                    9e:a8:8a:fb:7c:87:29:e6:7d:b6:d2:f5:4f:3f:8c:
+                    37:f7:f8:1a:c4:53:c5:2c:c9:9a:49:80:8d:73:bd:
+                    45:57:c4:3d:42:a7:ef:93:7b:f3:5d:8c:b0:85:7f:
+                    26:25:d9:c1:fe:04:b7:60:4c:9e:d0:45:b6:c7:55:
+                    ad:af:de:f0:49:24:f0:50:72:33:8e:4a:e7:84:4c:
+                    3b:e5:9d:a9:10:58:bd:3c:bd:25:d0:57:db:09:f3:
+                    f0:56:0b:47:16:34:8f:c7:87:78:62:4b:0a:98:89:
+                    88:aa:1a:89:b0:0f:10:5d:17:fc:14:cd:27:8e:01:
+                    20:b3:fe:63:0c:b6:76:73:e1:d6:51:e1:f1:eb:b4:
+                    b6:cd
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Subject Alternative Name: 
+                DNS:dex, DNS:dex.kube, DNS:system, DNS:dex.kube, DNS:system.svc, DNS:dex.kube, DNS:system.svc.infra.caasp.local, DNS:dex.kube, DNS:system.svc.cluster.local, DNS:kubernetes, DNS:kubernetes.default, DNS:kubernetes.default.svc, DNS:api, DNS:api.infra.caasp.local, DNS:kube, DNS:api, DNS:x1.devenv.caasp.suse.net, DNS:master, DNS:0, DNS:master, DNS:0.infra.caasp.local, DNS:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb, DNS:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.infra.caasp.local, IP Address:172.24.0.1
+    Signature Algorithm: sha256WithRSAEncryption
+         3c:36:a8:99:e1:d1:1d:72:6c:81:04:a5:4a:9c:a8:9c:c2:ca:
+         d1:46:e0:9e:b3:ae:51:4b:b3:da:0d:6d:b8:b7:a2:3b:ed:33:
+         74:ef:e5:5d:9a:25:f3:5c:87:72:40:46:fe:7b:01:ee:64:43:
+         c1:da:46:70:eb:2e:a4:cc:f5:6e:6d:bd:e6:55:d4:92:06:e8:
+         92:53:ce:3b:fb:ed:86:d9:9f:8c:aa:da:8f:7a:73:5e:fc:73:
+         1b:e8:51:85:37:6b:8e:a4:47:b7:ad:e4:50:19:d9:ce:cf:bb:
+         fc:24:2e:98:26:02:2c:a3:16:2e:36:e9:dc:e3:35:d8:d3:36:
+         85:fd:73:f4:96:af:23:3a:a3:ad:98:8f:2b:99:c3:6e:e5:d6:
+         0a:83:2d:2a:fe:94:9b:e4:91:76:8d:34:89:57:94:0a:59:47:
+         a5:86:3b:1b:7b:9e:8a:87:21:b7:43:1f:b5:12:7b:1f:bb:a0:
+         b4:c6:87:5f:c0:d5:2f:ae:78:59:9e:de:22:aa:a8:cb:4d:de:
+         d6:61:ee:69:6e:6f:e3:a4:7d:95:52:e4:03:8c:ac:be:19:88:
+         e5:bc:0f:1b:83:28:4b:70:42:fd:88:3a:d2:72:d6:f6:0c:dc:
+         c1:4f:50:2c:c8:d4:20:47:27:0f:21:62:31:b0:23:1b:f8:5c:
+         05:a6:b6:0c
+-----BEGIN CERTIFICATE-----
+MIIEizCCA3OgAwIBAgIBBTANBgkqhkiG9w0BAQsFADAvMQwwCgYDVQQKDANVUzMx
+ETAPBgNVBAsMCFVTMyBVbml0MQwwCgYDVQQDDANVUzMwIhgPMjAxOTAxMjkxODA3
+NTFaGA8yMDI0MDEzMDE4MDc1MVowUDELMAkGA1UECAwCV0ExDTALBgNVBAoMBFRl
+c3QxEjAQBgNVBAsMCVRlc3QgVW5pdDELMAkGA1UEAwwCZGExETAPBgNVBAMMCHRl
+c3QuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwjV5DsHLLTxM
+oHgSkG6qwIETg9zXfDl2rjrbhUCHtI1NLYPG5VfnHV1ds7Zw5MOc1hWd9leSEFKB
+AU1umP5b0eBGSdcxwdU0pxjyYu18/ArzaEzrId5h4ikFc6JceXXBYsxLTnMZYutu
+Rfx/BQ3IzL/0yBQoQJyeqIr7fIcp5n220vVPP4w39/gaxFPFLMmaSYCNc71FV8Q9
+Qqfvk3vzXYywhX8mJdnB/gS3YEye0EW2x1Wtr97wSSTwUHIzjkrnhEw75Z2pEFi9
+PL0l0FfbCfPwVgtHFjSPx4d4YksKmImIqhqJsA8QXRf8FM0njgEgs/5jDLZ2c+HW
+UeHx67S2zQIDAQABo4IBizCCAYcwggGDBgNVHREEggF6MIIBdoIDZGV4gghkZXgu
+a3ViZYIGc3lzdGVtgghkZXgua3ViZYIKc3lzdGVtLnN2Y4IIZGV4Lmt1YmWCHHN5
+c3RlbS5zdmMuaW5mcmEuY2Fhc3AubG9jYWyCCGRleC5rdWJlghhzeXN0ZW0uc3Zj
+LmNsdXN0ZXIubG9jYWyCCmt1YmVybmV0ZXOCEmt1YmVybmV0ZXMuZGVmYXVsdIIW
+a3ViZXJuZXRlcy5kZWZhdWx0LnN2Y4IDYXBpghVhcGkuaW5mcmEuY2Fhc3AubG9j
+YWyCBGt1YmWCA2FwaYIYeDEuZGV2ZW52LmNhYXNwLnN1c2UubmV0ggZtYXN0ZXKC
+ATCCBm1hc3RlcoITMC5pbmZyYS5jYWFzcC5sb2NhbIIgYmJiYmJiYmJiYmJiYmJi
+YmJiYmJiYmJiYmJiYmJiYmKCMmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJi
+YmJiLmluZnJhLmNhYXNwLmxvY2FshwSsGAABMA0GCSqGSIb3DQEBCwUAA4IBAQA8
+NqiZ4dEdcmyBBKVKnKicwsrRRuCes65RS7PaDW24t6I77TN07+VdmiXzXIdyQEb+
+ewHuZEPB2kZw6y6kzPVubb3mVdSSBuiSU847++2G2Z+MqtqPenNe/HMb6FGFN2uO
+pEe3reRQGdnOz7v8JC6YJgIsoxYuNunc4zXY0zaF/XP0lq8jOqOtmI8rmcNu5dYK
+gy0q/pSb5JF2jTSJV5QKWUelhjsbe56KhyG3Qx+1Ensfu6C0xodfwNUvrnhZnt4i
+qqjLTd7WYe5pbm/jpH2VUuQDjKy+GYjlvA8bgyhLcEL9iDrSctb2DNzBT1AsyNQg
+RycPIWIxsCMb+FwFprYM
+-----END CERTIFICATE-----

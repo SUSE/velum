@@ -1,57 +1,63 @@
 Certificate:
     Data:
         Version: 3 (0x2)
-        Serial Number: 1 (0x1)
+        Serial Number: 7 (0x7)
     Signature Algorithm: sha256WithRSAEncryption
-        Issuer: C=US, ST=WA, O=SUSE, OU=CaaSP, CN=less than 2048 bit key
+        Issuer: O=US3, OU=US3 Unit, CN=US3
         Validity
-            Not Before: Jan 11 00:57:33 2019 GMT
-            Not After : Oct 26 00:57:33 2292 GMT
-        Subject: C=US, ST=WA, O=SUSE, OU=CaaSP, CN=less than 2048 bit key
+            Not Before: Jan 29 18:07:51 2019 GMT
+            Not After : Jan 30 18:07:51 2024 GMT
+        Subject: ST=WA, O=Test, OU=Test Unit, CN=weak, CN=test.com
         Subject Public Key Info:
             Public Key Algorithm: rsaEncryption
                 Public-Key: (1024 bit)
                 Modulus:
-                    00:c8:2e:c0:71:8e:9d:97:f2:6e:83:b4:78:ed:85:
-                    f5:fb:7f:18:cf:7c:cd:76:4b:8a:f6:3a:f5:6a:a5:
-                    e2:1f:d6:43:59:70:54:b2:91:f6:dc:c2:4f:f6:21:
-                    5a:0b:fa:e4:6d:81:f0:3e:fe:6d:26:62:e0:c1:10:
-                    57:c5:1f:03:aa:c5:fa:8c:49:b5:bc:d7:f1:73:76:
-                    8d:6d:a1:c9:2f:75:f4:e3:e6:e6:e3:b2:4d:5d:d9:
-                    44:21:a2:20:53:52:69:39:52:fd:01:7c:d5:2f:1e:
-                    d4:99:46:7e:6e:01:b5:d3:89:bb:82:1e:eb:6c:70:
-                    7d:69:63:74:fc:ab:d4:72:f9
+                    00:be:eb:a3:14:52:a2:3e:a3:d7:5c:63:9e:f2:dc:
+                    a6:92:ba:41:54:a3:13:06:7b:34:c1:b1:d7:61:11:
+                    42:66:e2:49:26:7d:bb:e1:51:44:a4:71:92:8b:c3:
+                    28:30:cd:b5:d6:4d:30:09:4a:c1:02:80:56:7a:b6:
+                    52:f7:45:58:7a:df:bc:fe:7c:8c:fe:d1:c2:48:76:
+                    95:1a:73:5d:f5:99:70:96:7f:d2:e4:d1:e6:8e:31:
+                    8e:b7:5d:02:61:2d:fc:80:1b:10:0b:59:8f:77:e8:
+                    ae:b6:47:ba:80:ea:1d:41:e2:d3:4b:7e:cf:02:7e:
+                    07:b3:b8:22:0d:31:88:e1:d1
                 Exponent: 65537 (0x10001)
         X509v3 extensions:
-            X509v3 Subject Key Identifier: 
-                07:B9:EE:57:D8:8A:2E:6C:4E:33:FA:CB:43:0F:BB:34:A4:46:88:D8
-            X509v3 Authority Key Identifier: 
-                keyid:07:B9:EE:57:D8:8A:2E:6C:4E:33:FA:CB:43:0F:BB:34:A4:46:88:D8
-
-            X509v3 Basic Constraints: critical
-                CA:TRUE
+            X509v3 Subject Alternative Name: 
+                DNS:admin.devenv.caasp.suse.net, DNS:admin, DNS:admin.infra.caasp.local, DNS:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, DNS:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.infra.caasp.local, DNS:testdomain.com, IP Address:10.17.1.0
     Signature Algorithm: sha256WithRSAEncryption
-         2d:f7:e6:5f:d3:88:2d:c9:89:7d:a4:61:c5:3f:2f:fd:d2:34:
-         f3:9d:34:52:c4:d9:d1:c0:1e:f7:c4:80:9d:c6:ad:d0:25:67:
-         d7:a4:36:93:35:0b:a5:63:5b:41:7a:66:eb:bc:3f:21:18:72:
-         c3:3f:62:c0:76:19:4a:cc:52:72:7f:87:a4:87:6d:83:45:39:
-         52:3c:41:b6:35:70:58:88:42:f2:67:27:8a:5a:7d:56:e9:0d:
-         41:39:68:c2:2c:1e:5f:a6:86:52:2d:eb:f8:d9:72:03:01:90:
-         00:51:2f:86:5b:dc:11:72:80:44:96:83:c7:37:fa:41:f8:6a:
-         17:d4
+         53:bc:1b:69:79:74:fc:a3:0f:ca:ec:a0:58:14:8c:05:9f:94:
+         29:a2:86:2c:12:9c:e8:be:4f:73:ca:72:6d:32:44:ee:e1:4b:
+         ae:4d:16:8c:dc:48:b7:65:66:ff:22:a2:8d:0e:4f:cc:6c:42:
+         6e:95:e9:da:6f:1d:60:99:b6:3f:cb:2d:7f:dd:5a:a7:ab:ce:
+         02:c5:b9:94:86:5d:e9:b5:8a:87:a3:ac:34:6b:97:7a:8d:09:
+         51:c9:fd:55:6c:97:25:a5:d2:5e:5a:d0:dd:e2:74:1e:a5:95:
+         69:82:9d:b2:c7:d4:ff:d3:27:d1:ea:d0:6c:5a:69:78:28:e5:
+         1f:f6:d8:db:a1:4d:64:87:c6:7e:82:7c:29:19:d7:ba:94:f2:
+         e5:15:18:8b:d4:75:f7:ea:50:00:d6:69:9c:90:97:39:7a:72:
+         cc:a1:1f:f5:1c:c9:5a:19:c9:df:a2:b5:2a:62:b2:88:b2:b9:
+         5e:de:78:8d:23:da:f5:3b:7a:3f:14:d6:fd:40:1d:b2:5a:1d:
+         3c:30:8f:c7:c8:37:7a:a1:d5:09:60:31:73:3a:71:80:ed:c3:
+         55:57:38:e0:47:7d:62:f8:42:85:93:3f:26:83:36:7a:db:af:
+         b2:a4:43:c4:d0:29:0a:6c:c1:92:9a:b7:e3:7d:77:82:a5:53:
+         b9:6e:ca:db
 -----BEGIN CERTIFICATE-----
-MIICfzCCAeigAwIBAgIBATANBgkqhkiG9w0BAQsFADBaMQswCQYDVQQGEwJVUzEL
-MAkGA1UECAwCV0ExDTALBgNVBAoMBFNVU0UxDjAMBgNVBAsMBUNhYVNQMR8wHQYD
-VQQDDBZsZXNzIHRoYW4gMjA0OCBiaXQga2V5MCAXDTE5MDExMTAwNTczM1oYDzIy
-OTIxMDI2MDA1NzMzWjBaMQswCQYDVQQGEwJVUzELMAkGA1UECAwCV0ExDTALBgNV
-BAoMBFNVU0UxDjAMBgNVBAsMBUNhYVNQMR8wHQYDVQQDDBZsZXNzIHRoYW4gMjA0
-OCBiaXQga2V5MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDILsBxjp2X8m6D
-tHjthfX7fxjPfM12S4r2OvVqpeIf1kNZcFSykfbcwk/2IVoL+uRtgfA+/m0mYuDB
-EFfFHwOqxfqMSbW81/Fzdo1tockvdfTj5ubjsk1d2UQhoiBTUmk5Uv0BfNUvHtSZ
-Rn5uAbXTibuCHutscH1pY3T8q9Ry+QIDAQABo1MwUTAdBgNVHQ4EFgQUB7nuV9iK
-LmxOM/rLQw+7NKRGiNgwHwYDVR0jBBgwFoAUB7nuV9iKLmxOM/rLQw+7NKRGiNgw
-DwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOBgQAt9+Zf04gtyYl9pGHF
-Py/90jTznTRSxNnRwB73xICdxq3QJWfXpDaTNQulY1tBembrvD8hGHLDP2LAdhlK
-zFJyf4ekh22DRTlSPEG2NXBYiELyZyeKWn1W6Q1BOWjCLB5fpoZSLev42XIDAZAA
-US+GW9wRcoBEloPHN/pB+GoX1A==
+MIIDNzCCAh+gAwIBAgIBBzANBgkqhkiG9w0BAQsFADAvMQwwCgYDVQQKDANVUzMx
+ETAPBgNVBAsMCFVTMyBVbml0MQwwCgYDVQQDDANVUzMwIhgPMjAxOTAxMjkxODA3
+NTFaGA8yMDI0MDEzMDE4MDc1MVowUjELMAkGA1UECAwCV0ExDTALBgNVBAoMBFRl
+c3QxEjAQBgNVBAsMCVRlc3QgVW5pdDENMAsGA1UEAwwEd2VhazERMA8GA1UEAwwI
+dGVzdC5jb20wgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAL7roxRSoj6j11xj
+nvLcppK6QVSjEwZ7NMGx12ERQmbiSSZ9u+FRRKRxkovDKDDNtdZNMAlKwQKAVnq2
+UvdFWHrfvP58jP7Rwkh2lRpzXfWZcJZ/0uTR5o4xjrddAmEt/IAbEAtZj3forrZH
+uoDqHUHi00t+zwJ+B7O4Ig0xiOHRAgMBAAGjgbowgbcwgbQGA1UdEQSBrDCBqYIb
+YWRtaW4uZGV2ZW52LmNhYXNwLnN1c2UubmV0ggVhZG1pboIXYWRtaW4uaW5mcmEu
+Y2Fhc3AubG9jYWyCIGFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhgjJh
+YWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYS5pbmZyYS5jYWFzcC5sb2Nh
+bIIOdGVzdGRvbWFpbi5jb22HBAoRAQAwDQYJKoZIhvcNAQELBQADggEBAFO8G2l5
+dPyjD8rsoFgUjAWflCmihiwSnOi+T3PKcm0yRO7hS65NFozcSLdlZv8ioo0OT8xs
+Qm6V6dpvHWCZtj/LLX/dWqerzgLFuZSGXem1ioejrDRrl3qNCVHJ/VVslyWl0l5a
+0N3idB6llWmCnbLH1P/TJ9Hq0GxaaXgo5R/22NuhTWSHxn6CfCkZ17qU8uUVGIvU
+dffqUADWaZyQlzl6csyhH/UcyVoZyd+itSpisoiyuV7eeI0j2vU7ej8U1v1AHbJa
+HTwwj8fIN3qh1QlgMXM6cYDtw1VXOOBHfWL4QoWTPyaDNnrbr7KkQ8TQKQpswZKa
+t+N9d4KlU7luyts=
 -----END CERTIFICATE-----

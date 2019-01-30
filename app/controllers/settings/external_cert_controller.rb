@@ -153,9 +153,11 @@ class Settings::ExternalCertController < SettingsController
       # Check if a certificate has a vaild date
       return false unless valid_cert_date?(cert)
 
-      # Moved to another task
-      # Check the trust chain is valid
-      # return false unless trust_chain_verify(cert)
+      trust_error = trust_chain_verify(cert)
+      unless trust_error == nil
+        message = "Certificate verification failed: " + trust_error
+        return render_failure_event(message)
+      end
 
       # Everything's good!
       true
@@ -355,10 +357,52 @@ class Settings::ExternalCertController < SettingsController
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
-  # # Placeholder for trust chain validation
-  # def trust_chain_verify(_cert)
-  #   true
-  # end
+  def trust_chain_verify(_cert)
+    return _trust_chain_verify(_cert,_build_system_wide_certs_store())
+  end
+
+  def _build_system_wide_certs_store
+    cert_store = OpenSSL::X509::Store.new
+
+    system_certs = SystemCertificate.all
+    for system_cert in system_certs
+      cert = system_cert.certificate
+      cert_text = cert.certificate#get_certificate_text
+      cert_obj = read_cert(cert_text)
+      next unless cert_obj
+      cert_store.add_cert(cert_obj)
+    end
+
+    cert_store
+  end
+
+  def _trust_chain_verify(cert_obj,cert_store)
+    verify_error = ''
+
+    # setup callback
+    cert_store.verify_callback = proc do |preverify_ok, ssl_context|
+      begin
+        if preverify_ok != true || ssl_context.error != 0
+          cert_being_checked = ssl_context.chain[ssl_context.error_depth]
+          failed_cert_subject = cert_being_checked.subject
+          err_msg = "SSL Verification failed: #{ssl_context.error_string} (#{ssl_context.error}) while verifying #{failed_cert_subject}"
+          verify_error += err_msg
+          false
+        else
+          true
+        end
+      rescue Exception => e
+        verify_error += err_msg
+        false
+      end
+    end
+
+    if cert_store.verify( cert_obj ) == true
+      nil
+    else
+      verify_error
+    end
+  end
 
   # Returns host info via Salt Grains
   def hosts_info
