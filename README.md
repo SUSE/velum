@@ -31,7 +31,7 @@ and much more.
 
 ## Development
 
-You can start a Velum development environment by following the instructions in [caasp-kvm](https://github.com/kubic-project/automation).
+You can start a Velum development environment by following the instructions in following repository [automation](https://github.com/kubic-project/automation).
 
 ## Testing
 
