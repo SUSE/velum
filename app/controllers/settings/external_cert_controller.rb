@@ -114,7 +114,7 @@ class Settings::ExternalCertController < SettingsController
     }
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
   # Validates certificate and key prior to uploading
   def upload_validate(key_cert_map_elem)
     # Do nothing if both cert/key are empty
@@ -154,7 +154,7 @@ class Settings::ExternalCertController < SettingsController
       return false unless valid_cert_date?(cert)
 
       trust_error = trust_chain_verify(cert)
-      unless trust_error == nil
+      unless trust_error.nil?
         message = "Certificate verification failed: " + trust_error
         return render_failure_event(message)
       end
@@ -163,7 +163,7 @@ class Settings::ExternalCertController < SettingsController
       true
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
 
   # Checks for warning conditions prior to uploading
   def get_warning_message(key_cert_map)
@@ -357,17 +357,17 @@ class Settings::ExternalCertController < SettingsController
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
-  def trust_chain_verify(_cert)
-    return _trust_chain_verify(_cert,_build_system_wide_certs_store())
+  def trust_chain_verify(cert)
+    _trust_chain_verify(cert, _build_system_wide_certs_store)
   end
 
   def _build_system_wide_certs_store
     cert_store = OpenSSL::X509::Store.new
 
     system_certs = SystemCertificate.all
-    for system_cert in system_certs
+    system_certs.each do |system_cert|
       cert = system_cert.certificate
-      cert_text = cert.certificate#get_certificate_text
+      cert_text = cert.certificate
       cert_obj = read_cert(cert_text)
       next unless cert_obj
       cert_store.add_cert(cert_obj)
@@ -376,8 +376,9 @@ class Settings::ExternalCertController < SettingsController
     cert_store
   end
 
-  def _trust_chain_verify(cert_obj,cert_store)
-    verify_error = ''
+  # rubocop:disable Lint/RescueException
+  def _trust_chain_verify(cert_obj, cert_store)
+    verify_error = ""
 
     # setup callback
     cert_store.verify_callback = proc do |preverify_ok, ssl_context|
@@ -385,24 +386,26 @@ class Settings::ExternalCertController < SettingsController
         if preverify_ok != true || ssl_context.error != 0
           cert_being_checked = ssl_context.chain[ssl_context.error_depth]
           failed_cert_subject = cert_being_checked.subject
-          err_msg = "SSL Verification failed: #{ssl_context.error_string} (#{ssl_context.error}) while verifying #{failed_cert_subject}"
+          err_msg = "SSL Verification failed: #{ssl_context.error_string}"\
+                    " (#{ssl_context.error}) while verifying #{failed_cert_subject}"
           verify_error += err_msg
           false
         else
           true
         end
-      rescue Exception => e
+      rescue Exception
         verify_error += err_msg
         false
       end
     end
 
-    if cert_store.verify( cert_obj ) == true
+    if cert_store.verify(cert_obj) == true
       nil
     else
       verify_error
     end
   end
+  # rubocop:enable Lint/RescueException
 
   # Returns host info via Salt Grains
   def hosts_info

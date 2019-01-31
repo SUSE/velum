@@ -90,6 +90,7 @@ function site_request_conf() { # $1 file, $2 bits
 [req_distinguished_name]
 EOL
   
+  echo -e "[no_ext]\nsubjectKeyIdentifier = hash\n" >> $1
   echo -e "[req_ext]\nsubjectAltName = @alt_names\n" >> $1
   echo -e "[alt_names]" >> $1
 }
@@ -119,7 +120,18 @@ function create_site_crt() { # $1 domain, $2 ca, $3 message_digest, $4 rsa_bits,
   if [ "$7" != "0" ]; then append_altnames    $7 $FILE; fi
   if [ "$8" != "0" ]; then append_ip_altnames $8 $FILE; fi
   
-  openssl req -new -sha256 -key $DIR_KEYS/site_$1.key -subj "$6" -out $CSR_DIR/site_$1.csr -config $FILE
+  EXTS=req_ext
+  if [ "$7" == "0" ] && [ "$8" == "0" ]; then EXTS=no_ext; fi
+  echo EXTS=$EXTS
+  
+  openssl req -new \
+    -sha256 \
+    -reqexts $EXTS \
+    -key $DIR_KEYS/site_$1.key \
+    -subj "$6" \
+    -out $CSR_DIR/site_$1.csr \
+    -config $FILE
+
   # It is possible to specify altnames the following way instead of constructing a conf file.
   # There are additional ways beyond this using new features of latest openssl as well.
   #openssl req -new -sha256 \
@@ -147,7 +159,7 @@ function create_site_crt() { # $1 domain, $2 ca, $3 message_digest, $4 rsa_bits,
   
   openssl ca -batch \
     -config $DIR_CONF/site_$1.conf \
-    -extensions req_ext \
+    -extensions $EXTS \
     -out $DIR_CERTS/site_$1.crt \
     -md $3 \
     -startdate $START_DATE -enddate $END_DATE \
@@ -164,7 +176,7 @@ function create_site_crt_selfsigned() { # $1 domain, $2 message_digest, $3 rsa_b
   site_request_conf $FILE $3
   if [ "$6" != "0" ]; then append_altnames    $6 $FILE; fi
   if [ "$7" != "0" ]; then append_ip_altnames $7 $FILE; fi
-  
+
   openssl rsa -in $DIR_KEYS/site_$1.key -out $DIR_KEYS/site_rsa_$1.key
   openssl req -new -sha256 -key $DIR_KEYS/site_$1.key -subj "$5" -out $CSR_DIR/site_$1.csr -config $FILE
 
@@ -178,7 +190,7 @@ function create_site_crt_selfsigned() { # $1 domain, $2 message_digest, $3 rsa_b
   if [ "$7" != "0" ]; then append_ip_altnames $7 $DIR_CONF/site_$1.conf; fi
   
   gen_start_end $4
-  
+
   #openssl x509 -req \
   #  -in $CSR_DIR/site_$1.csr \
   #  -$2 \
@@ -230,6 +242,8 @@ emailAddress = optional
 subjectKeyIdentifier=hash
 authorityKeyIdentifier=keyid:always,issuer
 basicConstraints = critical,CA:true
+[no_ext]
+subjectKeyIdentifier = hash
 [req_ext]
 subjectAltName = @alt_names
 [alt_names]
@@ -307,6 +321,7 @@ create_site_crt weak    intermed2 sha256 1024 good    "/CN=weak$SITE_SUBJ"    $A
 create_site_crt sha1    intermed2 sha1   2048 good    "/CN=sha1$SITE_SUBJ"    $ALTNAMES_VELUM   $IP_ALTNAMES_VELUM
 create_site_crt expired intermed2 sha256 2048 expired "/CN=expired$SITE_SUBJ" $ALTNAMES_VELUM   $IP_ALTNAMES_VELUM
 create_site_crt badalt  intermed2 sha256 2048 good    "/CN=badalt$SITE_SUBJ"  $ALTNAMES_BAD     $IP_ALTNAMES_BAD
+create_site_crt noalt   intermed2 sha256 2048 good    "/CN=noalt$SITE_SUBJ"   0                 0
 
 cp $DIR_CERTS/ca_root.crt external_certs/ca_root.crt
 cp $DIR_CERTS/ca_intermed.crt external_certs/ca_intermed.crt
@@ -322,6 +337,7 @@ cp $DIR_CERTS/site_weak.crt external_certs/weak.crt
 cp $DIR_CERTS/site_sha1.crt external_certs/sha1_digest.crt
 cp $DIR_CERTS/site_expired.crt external_certs/expired.crt
 cp $DIR_CERTS/site_badalt.crt external_certs/badalt.crt
+cp $DIR_CERTS/site_noalt.crt external_certs/noalt.crt
 
 cp $DIR_KEYS/site_va.key external_certs/velum_a.key
 cp $DIR_KEYS/site_vb.key external_certs/velum_b.key
@@ -333,5 +349,6 @@ cp $DIR_KEYS/site_weak.key external_certs/weak.key
 cp $DIR_KEYS/site_sha1.key external_certs/sha1_digest.key
 cp $DIR_KEYS/site_expired.key external_certs/expired.key
 cp $DIR_KEYS/site_badalt.key external_certs/badalt.key
+cp $DIR_KEYS/site_noalt.key external_certs/noalt.key
 
 cleanup

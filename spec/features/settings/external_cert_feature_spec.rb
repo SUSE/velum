@@ -19,7 +19,7 @@ describe "Feature: External Cerificate settings", js: true do
   # Valid Kubeapi set A
   let(:crt_k_a) { File.join(fixture_path, "external_certs/kubeapi_a.crt") }
   let(:key_k_a) { File.join(fixture_path, "external_certs/kubeapi_a.key") }
-  
+
   # Valid Kubeapi set B
   let(:crt_k_b) { File.join(fixture_path, "external_certs/kubeapi_b.crt") }
   let(:key_k_b) { File.join(fixture_path, "external_certs/kubeapi_b.key") }
@@ -27,7 +27,7 @@ describe "Feature: External Cerificate settings", js: true do
   # Valid Dex set A
   let(:crt_d_a) { File.join(fixture_path, "external_certs/dex_a.crt") }
   let(:key_d_a) { File.join(fixture_path, "external_certs/dex_a.key") }
-  
+
   # Valid Dex set B
   let(:crt_d_b) { File.join(fixture_path, "external_certs/dex_b.crt") }
   let(:key_d_b) { File.join(fixture_path, "external_certs/dex_b.key") }
@@ -58,7 +58,11 @@ describe "Feature: External Cerificate settings", js: true do
   # Bad Subject Alternative Names
   let(:crt_v_badalt) { File.join(fixture_path, "external_certs/badalt.crt") }
   let(:key_v_badalt) { File.join(fixture_path, "external_certs/badalt.key") }
-  
+
+  # No Subject Alternative Names
+  let(:crt_v_noalt) { File.join(fixture_path, "external_certs/noalt.crt") }
+  let(:key_v_noalt) { File.join(fixture_path, "external_certs/noalt.key") }
+
   before do
     setup_done
     login_as user, scope: :user
@@ -80,7 +84,10 @@ describe "Feature: External Cerificate settings", js: true do
 
     it "fails with only the root CA" do
       # Set only the root of the cert chain
-      SystemCertificate.create_system_certificate( name: :root, certificate: File.open(crt_root,"r") )
+      SystemCertificate.create_system_certificate(
+        name:        :root,
+        certificate: File.open(crt_root, "r")
+      )
 
       # Sanity check
       system_certificate = SystemCertificate.find_by(name: "root")
@@ -97,12 +104,22 @@ describe "Feature: External Cerificate settings", js: true do
     end
   end
 
+  # rubocop:disable RSpec/ExpectInHook
   describe "#index with valid chain" do
     before do
       # Set the full cert chain
-      SystemCertificate.create_system_certificate( name: :root, certificate: File.open(crt_root,"r") )
-      SystemCertificate.create_system_certificate( name: :intermed, certificate: File.open(crt_intermed,"r") )
-      SystemCertificate.create_system_certificate( name: :intermed2, certificate: File.open(crt_intermed2,"r") )
+      SystemCertificate.create_system_certificate(
+        name:        :root,
+        certificate: File.open(crt_root, "r")
+      )
+      SystemCertificate.create_system_certificate(
+        name:        :intermed,
+        certificate: File.open(crt_intermed, "r")
+      )
+      SystemCertificate.create_system_certificate(
+        name:        :intermed2,
+        certificate: File.open(crt_intermed2, "r")
+      )
 
       # Sanity checks
       system_certificate = SystemCertificate.find_by(name: "root")
@@ -114,6 +131,7 @@ describe "Feature: External Cerificate settings", js: true do
 
       visit settings_external_cert_index_path
     end
+    # rubocop:enable RSpec/ExpectInHook
 
     # Success Conditions
 
@@ -205,7 +223,8 @@ describe "Feature: External Cerificate settings", js: true do
     it "page contains required Velum hostnames" do
       find('a[href="#collapseVelum"]').click
 
-      expect(page).to have_http_status(:success)
+      # This line does not belong as it will ocasionally fail with code 304 not modified
+      # expect(page).to have_http_status(:success)
       expect(page).to have_content("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.infra.caasp.local", wait: 1)
     end
 
@@ -221,8 +240,8 @@ describe "Feature: External Cerificate settings", js: true do
     end
 
     it "is has no SubjectAltNames in certificate" do
-      attach_file("external_certificate_velum_cert", crt_v_badalt)
-      attach_file("external_certificate_velum_key", key_v_badalt)
+      attach_file("external_certificate_velum_cert", crt_v_noalt)
+      attach_file("external_certificate_velum_key", key_v_noalt)
 
       click_button("Save")
       expect(page).to have_http_status(:success)
