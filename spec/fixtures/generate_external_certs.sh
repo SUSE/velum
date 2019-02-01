@@ -19,7 +19,7 @@ function init() {
 }
 
 function cleanup() {
-  rm -rf $ROOT_DIR
+  rm -vrf $ROOT_DIR
 }
 
 function init_ca() { # $1 ca_name
