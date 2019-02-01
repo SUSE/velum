@@ -384,7 +384,7 @@ class Settings::ExternalCertController < SettingsController
     # setup callback
     cert_store.verify_callback = proc do |preverify_ok, ssl_context|
       begin
-        if preverify_ok != true || ssl_context.error != 0
+        if preverify_ok != true or ssl_context.error != 0
           cert_being_checked = ssl_context.chain[ssl_context.error_depth]
           failed_cert_subject = cert_being_checked.subject
           err_msg = "SSL Verification failed: #{ssl_context.error_string}"\
