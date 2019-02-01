@@ -4,7 +4,7 @@
 # The files there are used by the spec/features/settings/external_cert_feature_spec test
 
 function init() {
-  ROOT_DIR=/tmp/ca_gen
+  ROOT_DIR=$( mktemp -d )
   CSR_DIR=$ROOT_DIR/csr
   DIR_CERTS=$ROOT_DIR/certs
   DIR_CONF=$ROOT_DIR/conf
