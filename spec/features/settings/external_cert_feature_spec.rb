@@ -202,7 +202,7 @@ describe "Feature: External Cerificate settings", js: true do
       expect(page).to have_content("testdomain.com")
     end
 
-    it "uploads velum cert with a weak RSA bit length key (<= 2048)" do
+    it "uploads velum cert with a weak RSA bit length key (< 2048)" do
       attach_file("external_certificate_velum_cert", crt_v_weak)
       attach_file("external_certificate_velum_key", key_v_weak)
 

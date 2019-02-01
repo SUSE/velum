@@ -4,26 +4,22 @@
 # The files there are used by the spec/features/settings/external_cert_feature_spec test
 
 function init() {
-  mkdir -p /tmp/ca_gen/csr
-  CSR_DIR=/tmp/ca_gen/csr
+  ROOT_DIR=/tmp/ca_gen
+  CSR_DIR=$ROOT_DIR/csr
+  DIR_CERTS=$ROOT_DIR/certs
+  DIR_CONF=$ROOT_DIR/conf
+  DIR_KEYS=$ROOT_DIR/keys
+  DIR_CADATA=$ROOT_DIR/cadata
   
-  mkdir -p /tmp/ca_gen/certs
-  DIR_CERTS=/tmp/ca_gen/certs
-  
-  mkdir -p /tmp/ca_gen/conf
-  DIR_CONF=/tmp/ca_gen/conf
-  
-  mkdir -p /tmp/ca_gen/keys
-  DIR_KEYS=/tmp/ca_gen/keys
-  
-  mkdir -p /tmp/ca_gen/cadata
-  DIR_CADATA=/tmp/ca_gen/cadata
-  
-  echo "dir cadata: $DIR_CADATA"
+  mkdir -p $CSR_DIR
+  mkdir -p $DIR_CERTS
+  mkdir -p $DIR_CONF
+  mkdir -p $DIR_KEYS
+  mkdir -p $DIR_CADATA
 }
 
 function cleanup() {
-  rm -rf /tmp/ca_gen
+  rm -rf $ROOT_DIR
 }
 
 function init_ca() { # $1 ca_name
@@ -33,12 +29,16 @@ function init_ca() { # $1 ca_name
   mkdir -p $DIR_CADATA/$1/db.certs
   rm $DIR_CADATA/$1/db.certs/* 2>/dev/null
   
-  # Create / clear index file of certs
+  # Delete both db.index and db.index.attr if they exist
   rm $DIR_CADATA/$1/db.inde* 2>/dev/null
-  touch $DIR_CADATA/$1/db.index
   
-  # Other basic needed files
+  # Create blank db.index to start off CA empty
+  touch $DIR_CADATA/$1/db.index
+
+  # Create db.index.attr with default contents
   echo unique_subject = yes > $DIR_CADATA/$1/db.index.attr
+
+  # Serial can start at 1 because serials are unique per CA
   echo 01 > $DIR_CADATA/$1/db.serial
   
   # Create the keyfile for the CA
@@ -63,6 +63,7 @@ function init_sub_ca() { # $1 ca_name, $2 parent_ca, $3 subject
 }
 
 function append_altnames() { # $1 altnames, $2 filename
+  # Split up dash delimited string into array
   IFS='-' read -r -a altnames <<< "$1"
   for index in "${!altnames[@]}"
   do
@@ -71,6 +72,7 @@ function append_altnames() { # $1 altnames, $2 filename
 }
 
 function append_ip_altnames() { # $1 altnames, $2 filename
+  # Split up dash delimited string into array
   IFS='-' read -r -a altnames <<< "$1"
   for index in "${!altnames[@]}"
   do
@@ -96,7 +98,7 @@ EOL
 }
 
 function gen_start_end() { # $1 good/expired
-  # Right now we are just using harded good/bad for the date range validity.
+  # Right now we are just using hardcoded good/bad for the date range validity.
   # For most purposes it would be better to expose the clean text specification
   # of both start and end as parameters.
   if [ $1 = "good" ]
@@ -131,22 +133,9 @@ function create_site_crt() { # $1 domain, $2 ca, $3 message_digest, $4 rsa_bits,
     -subj "$6" \
     -out $CSR_DIR/site_$1.csr \
     -config $FILE
-
-  # It is possible to specify altnames the following way instead of constructing a conf file.
-  # There are additional ways beyond this using new features of latest openssl as well.
-  #openssl req -new -sha256 \
-  #  -key keys/site_$1.key \
-  #  -subj "$6" \
-  #  -reqexts SAN \
-  #  -config <(cat /etc/ssl/openssl.cnf \
-  #   <(printf "\n[SAN]\nsubjectAltName=DNS:example.com,DNS:www.example.com")) \
-  #  -out $CSR_DIR/site_$1.csr
   
-  # Cleanest way to see the actual contents of the CSR to verify it was created correctly.
+  # Easy way to see contents of the CSR for debugging
   #openssl req -in $CSR_DIR/site_$1.csr -text -noout
-  
-  # Unclean very raw way to see the contents of the CSR
-  # openssl asn1parse < $CSR_DIR/site_$1.csr
   
   gen_start_end $5
   
@@ -182,22 +171,11 @@ function create_site_crt_selfsigned() { # $1 domain, $2 message_digest, $3 rsa_b
 
   cp $DIR_CONF/ca_dummy.conf $DIR_CONF/site_$1.conf
   
-  # Generate an extensions file; not extending default config since x509 command doesn't have a way to specify a
-  # full config file that I see.
-  #echo -e "[req_ext]\nsubjectAltName = @alt_names\n" >> conf/site_$1.conf
-  #echo -e "[alt_names]" >> conf/site_$1.conf
+  # Append the altnames to the configuration file
   if [ "$6" != "0" ]; then append_altnames    $6 $DIR_CONF/site_$1.conf; fi
   if [ "$7" != "0" ]; then append_ip_altnames $7 $DIR_CONF/site_$1.conf; fi
   
   gen_start_end $4
-
-  #openssl x509 -req \
-  #  -in $CSR_DIR/site_$1.csr \
-  #  -$2 \
-  #  -extensions req_ext \
-  #  -out certs/site_$1.crt \
-  #  -signkey keys/site_rsa_$1.key \
-  #  -extfile conf/site_$1.conf
   
   openssl ca -batch \
     -config $DIR_CONF/site_$1.conf \
@@ -228,7 +206,6 @@ default_days = 365
 default_crl_days = 30
 default_md = sha256
 preserve = no
-RANDFILE = $DIR_CADATA/$1/db.random
 policy = default_policy
 [default_policy]
 countryName = optional
@@ -250,6 +227,7 @@ subjectAltName = @alt_names
 EOL
 }
 
+# Read multiline block into variable
 read -r -d '' ALTNAMES_VELUM_LN << EOM
 admin.devenv.caasp.suse.net
 admin
@@ -260,6 +238,7 @@ testdomain.com
 EOM
 IP_ALTNAMES_VELUM=10.17.1.0
 
+# Read multiline block into variable
 read -r -d '' ALTNAMES_KUBEAPI_LN << EOM
 kubernetes
 kubernetes.default
@@ -275,6 +254,7 @@ bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.infra.caasp.local
 EOM
 IP_ALTNAMES_KUBEAPI=172.24.0.1
 
+# Read multiline block into variable
 read -r -d '' ALTNAMES_DEX_LN << EOM
 dex
 dex.kube-system
@@ -308,47 +288,35 @@ ALTNAMES_BAD=test.com-blah.com
 IP_ALTNAMES_BAD=127.0.0.1-13::17
 
 init
-init_root_ca    root               "/CN=US/O=US/OU=US Unit"
-init_sub_ca     intermed root      "/CN=US2/O=US2/OU=US2 Unit"
-init_sub_ca     intermed2 intermed "/CN=US3/O=US3/OU=US3 Unit"
-create_site_crt va      intermed2 sha256 2048 good    "/CN=va$SITE_SUBJ"      $ALTNAMES_VELUM   $IP_ALTNAMES_VELUM
-create_site_crt vb      intermed2 sha256 2048 good    "/CN=vb$SITE_SUBJ"      $ALTNAMES_VELUM   $IP_ALTNAMES_VELUM
-create_site_crt ka      intermed2 sha256 2048 good    "/CN=ka$SITE_SUBJ"      $ALTNAMES_KUBEAPI $IP_ALTNAMES_KUBEAPI
-create_site_crt kb      intermed2 sha256 2048 good    "/CN=kb$SITE_SUBJ"      $ALTNAMES_KUBEAPI $IP_ALTNAMES_KUBEAPI
-create_site_crt da      intermed2 sha256 2048 good    "/CN=da$SITE_SUBJ"      $ALTNAMES_DEX     $IP_ALTNAMES_DEX
-create_site_crt db      intermed2 sha256 2048 good    "/CN=db$SITE_SUBJ"      $ALTNAMES_DEX     $IP_ALTNAMES_DEX 
-create_site_crt weak    intermed2 sha256 1024 good    "/CN=weak$SITE_SUBJ"    $ALTNAMES_VELUM   $IP_ALTNAMES_VELUM
-create_site_crt sha1    intermed2 sha1   2048 good    "/CN=sha1$SITE_SUBJ"    $ALTNAMES_VELUM   $IP_ALTNAMES_VELUM
-create_site_crt expired intermed2 sha256 2048 expired "/CN=expired$SITE_SUBJ" $ALTNAMES_VELUM   $IP_ALTNAMES_VELUM
-create_site_crt badalt  intermed2 sha256 2048 good    "/CN=badalt$SITE_SUBJ"  $ALTNAMES_BAD     $IP_ALTNAMES_BAD
-create_site_crt noalt   intermed2 sha256 2048 good    "/CN=noalt$SITE_SUBJ"   0                 0
+init_root_ca    root                 "/CN=US/O=US/OU=US Unit"
+init_sub_ca     intermed    root     "/CN=US2/O=US2/OU=US2 Unit"
+init_sub_ca     intermed2   intermed "/CN=US3/O=US3/OU=US3 Unit"
+create_site_crt velum_a     intermed2 sha256 2048 good    "/CN=va$SITE_SUBJ"      $ALTNAMES_VELUM   $IP_ALTNAMES_VELUM
+create_site_crt velum_b     intermed2 sha256 2048 good    "/CN=vb$SITE_SUBJ"      $ALTNAMES_VELUM   $IP_ALTNAMES_VELUM
+create_site_crt kubeapi_a   intermed2 sha256 2048 good    "/CN=ka$SITE_SUBJ"      $ALTNAMES_KUBEAPI $IP_ALTNAMES_KUBEAPI
+create_site_crt kubeapi_b   intermed2 sha256 2048 good    "/CN=kb$SITE_SUBJ"      $ALTNAMES_KUBEAPI $IP_ALTNAMES_KUBEAPI
+create_site_crt dex_a       intermed2 sha256 2048 good    "/CN=da$SITE_SUBJ"      $ALTNAMES_DEX     $IP_ALTNAMES_DEX
+create_site_crt dex_b       intermed2 sha256 2048 good    "/CN=db$SITE_SUBJ"      $ALTNAMES_DEX     $IP_ALTNAMES_DEX 
+create_site_crt weak        intermed2 sha256 1024 good    "/CN=weak$SITE_SUBJ"    $ALTNAMES_VELUM   $IP_ALTNAMES_VELUM
+create_site_crt sha1_digest intermed2 sha1   2048 good    "/CN=sha1$SITE_SUBJ"    $ALTNAMES_VELUM   $IP_ALTNAMES_VELUM
+create_site_crt expired     intermed2 sha256 2048 expired "/CN=expired$SITE_SUBJ" $ALTNAMES_VELUM   $IP_ALTNAMES_VELUM
+create_site_crt badalt      intermed2 sha256 2048 good    "/CN=badalt$SITE_SUBJ"  $ALTNAMES_BAD     $IP_ALTNAMES_BAD
+create_site_crt noalt       intermed2 sha256 2048 good    "/CN=noalt$SITE_SUBJ"   0                 0
 
-cp $DIR_CERTS/ca_root.crt external_certs/ca_root.crt
-cp $DIR_CERTS/ca_intermed.crt external_certs/ca_intermed.crt
-cp $DIR_CERTS/ca_intermed2.crt external_certs/ca_intermed2.crt
+for cert in $DIR_CERTS/ca_*.crt; do
+  mv "$cert" "external_certs/$(basename "$cert")"
+done
 
-cp $DIR_CERTS/site_va.crt external_certs/velum_a.crt
-cp $DIR_CERTS/site_vb.crt external_certs/velum_b.crt
-cp $DIR_CERTS/site_ka.crt external_certs/kubeapi_a.crt
-cp $DIR_CERTS/site_kb.crt external_certs/kubeapi_b.crt
-cp $DIR_CERTS/site_da.crt external_certs/dex_a.crt
-cp $DIR_CERTS/site_db.crt external_certs/dex_b.crt
-cp $DIR_CERTS/site_weak.crt external_certs/weak.crt
-cp $DIR_CERTS/site_sha1.crt external_certs/sha1_digest.crt
-cp $DIR_CERTS/site_expired.crt external_certs/expired.crt
-cp $DIR_CERTS/site_badalt.crt external_certs/badalt.crt
-cp $DIR_CERTS/site_noalt.crt external_certs/noalt.crt
+for cert in $DIR_CERTS/site_*.crt; do
+  BASE=$(basename "$cert")
+  BASE=$(echo $BASE|sed -r "s/site_//")
+  mv "$cert" "external_certs/$BASE"
+done
 
-cp $DIR_KEYS/site_va.key external_certs/velum_a.key
-cp $DIR_KEYS/site_vb.key external_certs/velum_b.key
-cp $DIR_KEYS/site_ka.key external_certs/kubeapi_a.key
-cp $DIR_KEYS/site_kb.key external_certs/kubeapi_b.key
-cp $DIR_KEYS/site_da.key external_certs/dex_a.key
-cp $DIR_KEYS/site_db.key external_certs/dex_b.key
-cp $DIR_KEYS/site_weak.key external_certs/weak.key
-cp $DIR_KEYS/site_sha1.key external_certs/sha1_digest.key
-cp $DIR_KEYS/site_expired.key external_certs/expired.key
-cp $DIR_KEYS/site_badalt.key external_certs/badalt.key
-cp $DIR_KEYS/site_noalt.key external_certs/noalt.key
+for key in $DIR_KEYS/site_*.key; do
+  BASE=$(basename "$key")
+  BASE=$(echo $BASE|sed -r "s/site_//")
+  mv "$key" "external_certs/$BASE"
+done
 
 cleanup

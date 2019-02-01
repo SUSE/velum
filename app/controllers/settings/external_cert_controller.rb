@@ -369,6 +369,7 @@ class Settings::ExternalCertController < SettingsController
       cert = system_cert.certificate
       cert_text = cert.certificate
       cert_obj = read_cert(cert_text)
+      # Certs must pass parsing to get into the SystemCertificate table; so we ignore failing parse
       next unless cert_obj
       cert_store.add_cert(cert_obj)
     end
