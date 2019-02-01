@@ -400,7 +400,7 @@ class Settings::ExternalCertController < SettingsController
       end
     end
 
-    if cert_store.verify(cert_obj) == true
+    if cert_store.verify(cert_obj)
       nil
     else
       verify_error
