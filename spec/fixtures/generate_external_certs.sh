@@ -39,7 +39,7 @@ init_ca() { # $1 ca_name
   echo unique_subject = yes > $DIR_CADATA/$1/db.index.attr
 
   # Serial can start at 1 because serials are unique per CA
-  echo 01 > $DIR_CADATA/$1/db.serial
+  echo "01" > $DIR_CADATA/$1/db.serial
   
   # Create the keyfile for the CA
   openssl genrsa -out $DIR_KEYS/ca_$1.key 2>/dev/null
