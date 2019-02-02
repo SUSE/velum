@@ -107,7 +107,7 @@ gen_start_end() { # $1 good/expired
   # Right now we are just using hardcoded good/bad for the date range validity.
   # For most purposes it would be better to expose the clean text specification
   # of both start and end as parameters.
-  if [ $1 = "good" ]
+  if [[ $1 == "good" ]]
   then
     START_DATE=$(TZ=UTC date +"%Y%m%d%H%M%SZ" -d "-1 day")
     END_DATE=$(TZ=UTC date +"%Y%m%d%H%M%SZ" -d "+5 years")
@@ -149,11 +149,11 @@ create_site_crt() {
   
   FILE=$ROOT_DIR/site_${args[domain]}.req.conf
   site_request_conf $FILE ${args[rsa_bits]}
-  if [ "${args[alts]}"    != "0" ]; then append_altnames    ${args[alts]}    $FILE; fi
-  if [ "${args[ip_alts]}" != "0" ]; then append_ip_altnames ${args[ip_alts]} $FILE; fi
+  if [[ "${args[alts]}"    != "0" ]]; then append_altnames    ${args[alts]}    $FILE; fi
+  if [[ "${args[ip_alts]}" != "0" ]]; then append_ip_altnames ${args[ip_alts]} $FILE; fi
   
   EXTS=req_ext
-  if [ "${args[alts]}" == "0" ] && [ "${args[ip_alts]}" == "0" ]; then EXTS=no_ext; fi
+  if [[ "${args[alts]}" == "0" ]] && [[ "${args[ip_alts]}" == "0" ]]; then EXTS=no_ext; fi
   echo EXTS=$EXTS
   
   openssl req -new \
@@ -173,8 +173,8 @@ create_site_crt() {
   # It ignores them. They have to be re-specified. It may be pointless to specify them in the CSR as a result.
   # The altnames can be copied from the request potentially, by using the "copy_extensions = copy" option of openssl conf
   cp $DIR_CONF/ca_${args[ca]}.conf $DIR_CONF/site_${args[domain]}.conf
-  if [ "${args[alts]}"    != "0" ]; then append_altnames    ${args[alts]}    $DIR_CONF/site_${args[domain]}.conf; fi
-  if [ "${args[ip_alts]}" != "0" ]; then append_ip_altnames ${args[ip_alts]} $DIR_CONF/site_${args[domain]}.conf; fi
+  if [[ "${args[alts]}"    != "0" ]]; then append_altnames    ${args[alts]}    $DIR_CONF/site_${args[domain]}.conf; fi
+  if [[ "${args[ip_alts]}" != "0" ]]; then append_ip_altnames ${args[ip_alts]} $DIR_CONF/site_${args[domain]}.conf; fi
   
   openssl ca -batch \
     -config     $DIR_CONF/site_${args[domain]}.conf \
@@ -208,8 +208,8 @@ create_site_crt_selfsigned() {
 
   FILE=/tmp/ca_gen/site_${args[domain]}.req.conf
   site_request_conf $FILE ${args[rsa_bits]}
-  if [ "${args[alts]}"    != "0" ]; then append_altnames    ${args[alts]}    $FILE; fi
-  if [ "${args[ip_alts]}" != "0" ]; then append_ip_altnames ${args[ip_alts]} $FILE; fi
+  if [[ "${args[alts]}"    != "0" ]]; then append_altnames    ${args[alts]}    $FILE; fi
+  if [[ "${args[ip_alts]}" != "0" ]]; then append_ip_altnames ${args[ip_alts]} $FILE; fi
 
   openssl rsa \
     -in  $DIR_KEYS/site_${args[domain]}.key \
@@ -224,8 +224,8 @@ create_site_crt_selfsigned() {
   cp $DIR_CONF/ca_dummy.conf $DIR_CONF/site_${args[domain]}.conf
   
   # Append the altnames to the configuration file
-  if [ "${args[alts]}"    != "0" ]; then append_altnames    ${args[alts]}    $DIR_CONF/site_${args[domain]}.conf; fi
-  if [ "${args[ip_alts]}" != "0" ]; then append_ip_altnames ${args[ip_alts]} $DIR_CONF/site_${args[domain]}.conf; fi
+  if [[ "${args[alts]}"    != "0" ]]; then append_altnames    ${args[alts]}    $DIR_CONF/site_${args[domain]}.conf; fi
+  if [[ "${args[ip_alts]}" != "0" ]]; then append_ip_altnames ${args[ip_alts]} $DIR_CONF/site_${args[domain]}.conf; fi
   
   gen_start_end ${args[date]}
   
