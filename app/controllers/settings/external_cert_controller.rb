@@ -344,7 +344,10 @@ class Settings::ExternalCertController < SettingsController
                  when Resolv::IPv4::Regex
                    IPAddr.new(i).to_string
                  when Resolv::IPv6::Regex
+                   # :nocov:
+                   # We aren't using IPv6 in production so we are skipping tests for this
                    IPAddr.new(i).to_string
+                   # :nocov:
                  else
                    i
       end
@@ -395,8 +398,11 @@ class Settings::ExternalCertController < SettingsController
           true
         end
       rescue Exception
+        # :nocov:
+        # There are no known ways to trigger this so skipping coverage tests
         verify_error += err_msg
         false
+        # :nocov:
       end
     end
 
