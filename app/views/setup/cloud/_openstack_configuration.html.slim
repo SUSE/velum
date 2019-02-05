@@ -63,3 +63,13 @@
     .form-group
       = f.label :cloud_openstack_bs_version, "Cinder Block Storage API version"
       = f.text_field :cloud_openstack_bs_version, value: @cloud_openstack_bs_version, class: "form-control"
+    .form-group
+      = f.label :cloud_openstack_ignore_vol_az, "Ignore Cinder availability zone"
+      br
+        .btn-group.btn-group-toggle data-toggle="buttons"
+          = label_tag :cloud_openstack_ignore_vol_az, nil, class: "btn btn-default #{'btn-primary active' if @cloud_openstack_ignore_vol_az == "true"}"
+            = f.radio_button :cloud_openstack_ignore_vol_az, "true", checked: @cloud_openstack_ignore_vol_az == "true"
+            | True
+          = label_tag :cloud_openstack_ignore_vol_az, nil, class: "btn btn-default #{'btn-primary active' if @cloud_openstack_ignore_vol_az == "false"}"
+            = f.radio_button :cloud_openstack_ignore_vol_az, "false", checked: @cloud_openstack_ignore_vol_az == "false"
+            | False
