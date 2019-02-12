@@ -24,7 +24,10 @@ p
   | You can manually configure a client by running these commands:
 
 pre
-  | # Create a file containing the Kubernetes API CA Certificate
+  | # Make sure that the ~/.kube directory exists
+    mkdir -p ~/.kube
+
+    # Create a file containing the Kubernetes API CA Certificate
     echo "#{Base64.strict_encode64 @ca_crt}" \
       | base64 -d > ~/.kube/#{@cluster_name}-ca.crt
 
