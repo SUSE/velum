@@ -4,7 +4,7 @@ class SystemCertificate < ActiveRecord::Base
   has_one :certificate_service, as: :service, dependent: :destroy
   has_one :certificate, through: :certificate_service
 
-  validates :name, presence: true, uniqueness: true
+  validates :name, presence: true, uniqueness: true, system_certificate_name: true
 
   class << self
     # Create a new SystemCertificate from parameters
