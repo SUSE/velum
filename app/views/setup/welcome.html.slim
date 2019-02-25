@@ -25,6 +25,7 @@ h1 Initial #{product_name} Configuration
             = f.check_box "tiller", { checked: @tiller }, "true", "false"
             | Install Tiller (Helm's server component)
 
+  = render partial: 'setup/settings/cni_plugin', locals: { f: f }
   .panel.panel-default
     .panel-heading.clearfix
       h3.panel-title Overlay network settings

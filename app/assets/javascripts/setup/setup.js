@@ -33,6 +33,12 @@ $(function () {
     $($(this).data('element')).collapse('show');
   });
 
+  $(document).on('click', '.cni-btn-group .btn', function () {
+    $('.flannel-desc, .cilium-desc').collapse('hide');
+    $($(this).data('element')).collapse('show');
+  });
+
+
   function toggleOpenStackSettings() {
     if ($('input[name="settings[cloud_provider]"]').val() === 'openstack') {
       openstackSettings.settingsEnabled();
