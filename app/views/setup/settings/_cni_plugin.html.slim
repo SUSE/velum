@@ -1,0 +1,36 @@
+.panel.panel-default
+  .panel-heading
+    h3.panel-title
+      | CNI Plugin
+      | &nbsp;
+      i class='glyphicon glyphicon-info-sign' title="Software that Kubernetes uses to manage the containers."
+  .panel-body
+    p The choice of CNI plugin is completely transparent to end-users of the
+      cluster. Neither Kubernetes manifests nor container images need to be changed.
+
+    .form-group
+      = f.label :cni, "Choose the cni"
+      br
+        .btn-group.btn-group-toggle.cni-btn-group data-toggle="buttons"
+          = label_tag :cni_plugin, nil, class: "flannel btn btn-default #{'btn-primary active' if @cni == "flannel"}", data: { element: '.flannel-desc' }
+            = f.radio_button :cni_plugin, "flannel", checked: @cni == "flannel"
+            | flannel
+          = label_tag :cni_plugin, nil, class: "cilium btn btn-default #{'btn-primary active' if @cni == "cilium"}", data: { element: '.cilium-desc' }
+            = f.radio_button :cni_plugin, "cilium", checked: @cni == "cilium"
+            | cilium
+
+      .flannel-desc.collapse class="#{'in' if @cni == "flannel"}"
+        | <em>Flannel</em> (<strong>default</strong>) is a production-ready cni plugin, fully supported by SUSE.
+
+      .cilium-desc.collapse class="#{'in' if @cni == "cilium"}"
+        p <em>cilium</em> is open source software for providing and transparently securing
+          network connectivity and loadbalancing between application workloads such as
+          application containers or processes. Cilium operates at Layer 3/4 to provide
+          traditional networking and security services.
+
+        .alert.alert-warning role="alert"
+          span NOTE: cilium is a <em>technology feature preview</em>. SUSE welcomes your
+              feedback on cilium. As a preview, cilium is <strong>not supported</strong>.
+              Previews may be functionally incomplete, unstable or in other ways not suitable
+              for production use. They are mainly included to give customers a chance to test
+              new technologies within an enterprise environment.

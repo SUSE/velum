@@ -57,6 +57,8 @@ class SetupController < ApplicationController
     # container runtime setting
     @cri = Pillar.value(pillar: :container_runtime) || "docker"
 
+    @cni = Pillar.value(pillar: :cni_plugin) || "flannel"
+
     # allow adding system certificate: required if a user uses CPI with a
     # self-signed certificate
     @system_certificate = if session[:system_certificate_name].present?
