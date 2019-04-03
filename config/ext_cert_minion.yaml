@@ -1,0 +1,9 @@
+# Used by external_cert_controller.rb to create a mock salt minion hash
+key1:
+  machine_id: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  nodename: "admin"
+  roles: "admin"
+key2:
+  machine_id: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  nodename: "master-0"
+  roles: "kube-master"

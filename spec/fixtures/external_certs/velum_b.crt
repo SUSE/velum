@@ -1,0 +1,74 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 2 (0x2)
+    Signature Algorithm: sha256WithRSAEncryption
+        Issuer: O=US3, OU=US3 Unit, CN=US3
+        Validity
+            Not Before: Jan 29 23:59:02 2019 GMT
+            Not After : Jan 30 23:59:02 2024 GMT
+        Subject: ST=WA, O=Test, OU=Test Unit, CN=vb, CN=test.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:aa:6e:25:8f:81:42:38:5c:b8:27:4f:34:be:76:
+                    f7:0a:20:8c:23:e2:9c:20:83:9d:f3:01:37:de:b0:
+                    34:25:3e:89:14:bc:ba:98:bd:e8:28:82:6f:1a:c1:
+                    ec:b3:00:dc:fb:77:40:d6:51:7a:cd:5b:2f:a1:24:
+                    2f:ac:cc:c3:41:58:de:86:a3:60:34:7c:34:34:f0:
+                    1d:19:34:3a:09:11:a5:ef:99:eb:8e:5d:e7:e7:09:
+                    f2:ec:c8:88:e8:a1:ab:95:ce:e8:23:4d:f4:bb:45:
+                    bb:83:8b:84:5a:aa:e9:a5:28:96:bb:5e:43:fb:98:
+                    8b:22:d7:d0:e0:5a:de:d4:43:1b:94:30:ab:77:70:
+                    f3:8e:61:38:98:99:ee:d3:5a:f1:b0:50:a4:38:d7:
+                    31:d9:91:10:42:7d:67:a6:64:db:af:d7:68:42:2c:
+                    ba:a3:6c:00:30:20:ca:d9:a4:f6:b6:49:7c:c6:a6:
+                    d8:73:39:71:b0:dc:8f:e5:0c:3f:66:53:ed:53:69:
+                    ac:56:57:ed:b4:48:41:2a:ae:00:6e:40:62:78:67:
+                    fe:18:86:a3:83:31:90:ca:fd:d7:b4:18:21:a8:67:
+                    5a:60:2e:68:2d:02:7f:4e:ee:e5:93:b2:b9:15:b3:
+                    e8:62:c5:17:71:5d:8e:db:7b:3b:7a:cb:b9:be:b7:
+                    da:b5
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Subject Alternative Name: 
+                DNS:admin.devenv.caasp.suse.net, DNS:admin, DNS:admin.infra.caasp.local, DNS:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, DNS:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.infra.caasp.local, DNS:testdomain.com, IP Address:10.17.1.0
+    Signature Algorithm: sha256WithRSAEncryption
+         a0:1a:0a:8a:b2:f6:ff:27:b9:22:56:91:ac:77:2f:ac:12:cb:
+         7f:dd:92:aa:9f:de:d3:b1:e0:2f:49:30:46:96:2d:a3:a4:11:
+         6d:80:5b:ac:04:ee:50:c7:10:20:73:3b:f3:f7:0e:65:b8:e5:
+         43:66:68:65:5c:7b:27:8b:20:2e:e1:0f:98:24:ed:7a:f7:97:
+         9b:8b:a6:a5:d1:2c:63:8d:10:34:d2:84:81:de:c3:31:75:1b:
+         81:38:27:f3:0a:9e:c6:b5:46:cf:08:99:f7:a7:77:69:a2:9b:
+         a2:f9:56:e9:3c:90:4b:14:b3:23:7d:df:28:96:0d:e9:16:6c:
+         65:f8:16:75:04:d7:16:0c:a9:d0:3e:65:7a:fc:53:0a:7e:63:
+         b0:c4:cf:44:b7:eb:50:d3:23:68:af:7a:f9:58:b5:be:c5:ba:
+         0d:ef:53:af:9d:4b:36:5a:63:20:70:ee:4d:1c:8f:df:20:39:
+         78:52:da:83:37:37:5f:fd:07:60:0c:f9:f2:5f:9b:55:fe:41:
+         ac:ab:88:c0:ef:21:02:84:70:e1:27:90:44:7f:7c:1e:24:46:
+         b5:e7:7d:9e:f3:ab:2d:de:80:33:ce:de:c0:90:0b:1b:9b:c2:
+         75:79:03:29:fa:0e:20:97:c5:ed:95:0f:04:c8:a6:40:5e:3b:
+         60:ee:9a:88
+-----BEGIN CERTIFICATE-----
+MIIDuTCCAqGgAwIBAgIBAjANBgkqhkiG9w0BAQsFADAvMQwwCgYDVQQKDANVUzMx
+ETAPBgNVBAsMCFVTMyBVbml0MQwwCgYDVQQDDANVUzMwIhgPMjAxOTAxMjkyMzU5
+MDJaGA8yMDI0MDEzMDIzNTkwMlowUDELMAkGA1UECAwCV0ExDTALBgNVBAoMBFRl
+c3QxEjAQBgNVBAsMCVRlc3QgVW5pdDELMAkGA1UEAwwCdmIxETAPBgNVBAMMCHRl
+c3QuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqm4lj4FCOFy4
+J080vnb3CiCMI+KcIIOd8wE33rA0JT6JFLy6mL3oKIJvGsHsswDc+3dA1lF6zVsv
+oSQvrMzDQVjehqNgNHw0NPAdGTQ6CRGl75nrjl3n5wny7MiI6KGrlc7oI030u0W7
+g4uEWqrppSiWu15D+5iLItfQ4Fre1EMblDCrd3DzjmE4mJnu01rxsFCkONcx2ZEQ
+Qn1npmTbr9doQiy6o2wAMCDK2aT2tkl8xqbYczlxsNyP5Qw/ZlPtU2msVlfttEhB
+Kq4AbkBieGf+GIajgzGQyv3XtBghqGdaYC5oLQJ/Tu7lk7K5FbPoYsUXcV2O23s7
+esu5vrfatQIDAQABo4G6MIG3MIG0BgNVHREEgawwgamCG2FkbWluLmRldmVudi5j
+YWFzcC5zdXNlLm5ldIIFYWRtaW6CF2FkbWluLmluZnJhLmNhYXNwLmxvY2FsgiBh
+YWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYYIyYWFhYWFhYWFhYWFhYWFh
+YWFhYWFhYWFhYWFhYWFhYWEuaW5mcmEuY2Fhc3AubG9jYWyCDnRlc3Rkb21haW4u
+Y29thwQKEQEAMA0GCSqGSIb3DQEBCwUAA4IBAQCgGgqKsvb/J7kiVpGsdy+sEst/
+3ZKqn97TseAvSTBGli2jpBFtgFusBO5QxxAgczvz9w5luOVDZmhlXHsniyAu4Q+Y
+JO1695ebi6al0SxjjRA00oSB3sMxdRuBOCfzCp7GtUbPCJn3p3dpopui+VbpPJBL
+FLMjfd8olg3pFmxl+BZ1BNcWDKnQPmV6/FMKfmOwxM9Et+tQ0yNor3r5WLW+xboN
+71OvnUs2WmMgcO5NHI/fIDl4UtqDNzdf/QdgDPnyX5tV/kGsq4jA7yEChHDhJ5BE
+f3weJEa1532e86st3oAzzt7AkAsbm8J1eQMp+g4gl8XtlQ8EyKZAXjtg7pqI
+-----END CERTIFICATE-----

@@ -70,7 +70,7 @@ describe "Feature: Mirrors settings", js: true do
       click_button("Save")
 
       last_mirror = RegistryMirror.last
-      expect(page).not_to have_content("Certificate")
+      expect(page).not_to have_css(".details-value-certificate")
       expect(page).to have_content("Mirror was successfully created.")
       expect(page).to have_current_path(settings_registry_mirror_path(last_mirror))
     end
@@ -136,12 +136,12 @@ describe "Feature: Mirrors settings", js: true do
 
     it "does not show the certificate textarea if url is not secure" do
       fill_in "URL", with: "http://google.com"
-      expect(page).not_to have_content("Certificate")
+      expect(page).not_to have_selector("#registry_mirror_certificate")
     end
 
     it "shows the certificate textarea if url is secure" do
       fill_in "URL", with: "https://google.com"
-      expect(page).to have_content("Certificate")
+      expect(page).to have_selector("#registry_mirror_certificate")
     end
   end
 
@@ -170,7 +170,8 @@ describe "Feature: Mirrors settings", js: true do
       click_button("Save")
 
       expect(page).to have_content("Mirror was successfully updated.")
-      expect(page).not_to have_content("Certificate")
+      expect(page).not_to have_css(".details-value-certificate")
+
     end
 
     it "shows an error message if model validation fails" do
@@ -199,12 +200,12 @@ describe "Feature: Mirrors settings", js: true do
 
     it "does not show the certificate textarea if url is not secure" do
       fill_in "URL", with: "http://google.com"
-      expect(page).not_to have_content("Certificate")
+      expect(page).not_to have_css(".details-value-certificate")
     end
 
     it "shows the certificate textarea if url is secure" do
       fill_in "URL", with: "https://google.com"
-      expect(page).to have_content("Certificate")
+      expect(page).to have_selector("#registry_mirror_certificate")
     end
   end
 

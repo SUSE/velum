@@ -5,8 +5,6 @@ aside.settings-sidebar-section
       = link_to "Remote Registries", settings_registries_path
     li class="#{active_class?(settings_registry_mirrors_path?)}"
       = link_to "Mirrors", settings_registry_mirrors_path
-    li class="#{active_class?(settings_system_certificates_path?)}"
-      = link_to "System wide certificates", settings_system_certificates_path
   h5.title External Authentication
   ul.list
     li class="#{active_class?(settings_dex_connector_ldaps_path?)}"
@@ -19,3 +17,9 @@ aside.settings-sidebar-section
       = link_to "Compute Resources Reservations", settings_kubelet_compute_resources_reservations_path
     li class="#{active_class?(settings_auditing_index_path?)}"
       = link_to "Auditing", settings_auditing_index_path
+  h5.title Certificates
+  ul.list
+    li class="#{active_class?(settings_system_certificates_path?)}"
+      = link_to "System wide certificates", settings_system_certificates_path
+    li class="#{active_class?(settings_external_cert_index_path?)}"
+      = link_to "External Certificates", settings_external_cert_index_path

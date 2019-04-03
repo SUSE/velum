@@ -1,0 +1,63 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 7 (0x7)
+    Signature Algorithm: sha256WithRSAEncryption
+        Issuer: O=US3, OU=US3 Unit, CN=US3
+        Validity
+            Not Before: Jan 29 23:59:03 2019 GMT
+            Not After : Jan 30 23:59:03 2024 GMT
+        Subject: ST=WA, O=Test, OU=Test Unit, CN=weak, CN=test.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (1024 bit)
+                Modulus:
+                    00:ab:5f:43:39:28:6a:bb:d1:1d:26:aa:9d:df:fa:
+                    61:86:bb:7e:89:f3:04:64:2e:af:b8:f4:48:b4:6b:
+                    25:21:ed:12:af:6f:ab:05:42:54:51:a5:c9:58:1e:
+                    75:43:ad:40:65:8f:6d:2e:4a:cc:12:15:f1:11:bf:
+                    1f:63:e0:21:94:da:47:87:41:93:ee:ec:30:69:81:
+                    e9:31:46:c6:5c:1d:b5:b9:1e:01:d2:fc:d2:7a:91:
+                    e6:25:12:69:f3:98:4f:3f:9e:1e:56:b0:be:34:96:
+                    ac:af:89:cd:f3:9b:26:e1:b3:14:11:c1:d4:fe:f9:
+                    ba:da:64:54:cc:30:ef:18:cd
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Subject Alternative Name: 
+                DNS:admin.devenv.caasp.suse.net, DNS:admin, DNS:admin.infra.caasp.local, DNS:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, DNS:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.infra.caasp.local, DNS:testdomain.com, IP Address:10.17.1.0
+    Signature Algorithm: sha256WithRSAEncryption
+         00:c2:7a:cf:81:97:8d:e9:a1:50:90:95:0f:f1:d1:93:e3:2a:
+         ab:80:c9:96:5b:95:32:ec:e6:75:52:a4:6d:fb:21:31:b4:44:
+         6f:d3:58:30:2d:d1:2f:9f:e1:9b:42:be:cb:7d:5d:ff:cb:db:
+         75:24:7b:9c:a1:69:e8:ca:65:f5:68:9d:49:b4:44:26:57:6e:
+         60:38:b4:7a:dd:a8:87:06:50:c3:35:5f:76:36:85:42:b7:37:
+         4a:bc:87:f5:53:47:c4:8d:c2:bf:5d:a2:2c:2b:9a:24:20:b2:
+         0e:25:8f:e5:30:17:b1:5a:68:90:89:de:ad:1f:6a:8d:d1:f5:
+         59:75:44:05:75:27:87:8e:f5:2e:46:af:71:53:6c:4b:27:b4:
+         64:5f:0b:15:78:ae:26:73:80:ae:7c:1e:8b:17:9f:0e:26:5e:
+         aa:59:06:2f:15:bf:14:a4:f9:c5:0c:47:e6:1e:38:ed:51:0b:
+         09:b5:98:10:34:40:ef:bd:56:ef:ba:88:9a:a6:27:9e:f6:9c:
+         50:ac:b4:0b:66:cf:5f:a5:f8:8d:a9:4f:79:bd:db:12:44:92:
+         3a:ec:f5:a0:06:a8:82:a4:f1:5b:ee:95:0d:ef:8c:9d:e3:92:
+         2e:ad:01:c4:a7:fc:aa:8a:3f:40:00:64:e5:7d:90:9f:81:c0:
+         61:ca:fa:11
+-----BEGIN CERTIFICATE-----
+MIIDNzCCAh+gAwIBAgIBBzANBgkqhkiG9w0BAQsFADAvMQwwCgYDVQQKDANVUzMx
+ETAPBgNVBAsMCFVTMyBVbml0MQwwCgYDVQQDDANVUzMwIhgPMjAxOTAxMjkyMzU5
+MDNaGA8yMDI0MDEzMDIzNTkwM1owUjELMAkGA1UECAwCV0ExDTALBgNVBAoMBFRl
+c3QxEjAQBgNVBAsMCVRlc3QgVW5pdDENMAsGA1UEAwwEd2VhazERMA8GA1UEAwwI
+dGVzdC5jb20wgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAKtfQzkoarvRHSaq
+nd/6YYa7fonzBGQur7j0SLRrJSHtEq9vqwVCVFGlyVgedUOtQGWPbS5KzBIV8RG/
+H2PgIZTaR4dBk+7sMGmB6TFGxlwdtbkeAdL80nqR5iUSafOYTz+eHlawvjSWrK+J
+zfObJuGzFBHB1P75utpkVMww7xjNAgMBAAGjgbowgbcwgbQGA1UdEQSBrDCBqYIb
+YWRtaW4uZGV2ZW52LmNhYXNwLnN1c2UubmV0ggVhZG1pboIXYWRtaW4uaW5mcmEu
+Y2Fhc3AubG9jYWyCIGFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhgjJh
+YWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYS5pbmZyYS5jYWFzcC5sb2Nh
+bIIOdGVzdGRvbWFpbi5jb22HBAoRAQAwDQYJKoZIhvcNAQELBQADggEBAADCes+B
+l43poVCQlQ/x0ZPjKquAyZZblTLs5nVSpG37ITG0RG/TWDAt0S+f4ZtCvst9Xf/L
+23Uke5yhaejKZfVonUm0RCZXbmA4tHrdqIcGUMM1X3Y2hUK3N0q8h/VTR8SNwr9d
+oiwrmiQgsg4lj+UwF7FaaJCJ3q0fao3R9Vl1RAV1J4eO9S5Gr3FTbEsntGRfCxV4
+riZzgK58HosXnw4mXqpZBi8VvxSk+cUMR+YeOO1RCwm1mBA0QO+9Vu+6iJqmJ572
+nFCstAtmz1+l+I2pT3m92xJEkjrs9aAGqIKk8VvulQ3vjJ3jki6tAcSn/KqKP0AA
+ZOV9kJ+BwGHK+hE=
+-----END CERTIFICATE-----

@@ -1,0 +1,60 @@
+.panel.panel-default
+  .panel-heading
+    h3.panel-title #{_service_name} SSL Certificate and Key
+  .panel-body
+    - if _cert
+      .cert-table
+        h5.cert-parse-heading Current #{_service_name} SSL Certificate Info:
+        - if _cert.has_key?(:Message)
+          - message_key = _cert[:Message].keys.first
+          - message_value = _cert[:Message][message_key]
+          .cert-element 
+            <strong>#{message_key}</strong>:  <span>#{message_value}</span>
+        -else
+          table
+            - _cert.each do |k, v|
+              tr
+                td.field = k.to_s
+                td.value = v.to_s
+    - else
+      .cert-table
+        p No #{_service_name} certificates found.  Please add a certificate.
+    br
+    .form-group.form-group-certificate
+      p Select "Choose File" to upload a new #{_service_name} SSL Certificate:
+      = f.file_field _cert_file_field, required: false
+
+    #accordion.panel-group aria-multiselectable="true" role="tablist" 
+    .panel.panel-default
+      .panel-heading.active role="tab" id=_heading
+        h4.panel-title
+          a.collapsed aria-controls=_collapse aria-expanded="false" data-parent="#accordion" data-toggle="collapse" href="##{_collapse}" role="button" 
+            | Show list of required Subject Alternative Names for #{_service_name}
+      .panel-collapse.collapse aria-labelledby=_heading role="tabpanel" id=_collapse
+        .panel-body
+          ul
+            - _subjectaltnames.each do |name|
+              li #{name}
+
+    hr
+    - if _key
+      .cert-table
+        h5.cert-parse-heading Current #{_service_name} SSL Key Info:
+        - if _key.has_key?(:Message)
+          - message_key = _key[:Message].keys.first
+          - message_value = _key[:Message][message_key]
+          .cert-element 
+            <strong>#{message_key}</strong>:  <span>#{message_value}</span>
+        - else
+          table
+            - _key.each do |k, v|
+              tr
+                td.field = k.to_s
+                td.value = v.to_s
+    - else
+      .cert-table
+        p No #{_service_name} SSL Key found.  Please add an SSL key.
+    br
+    .form-group.form-group-certificate
+      p Select "Choose File" to upload a new #{_service_name} SSL Key:
+      = f.file_field _key_file_field, required: false

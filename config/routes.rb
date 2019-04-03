@@ -75,6 +75,7 @@ Rails.application.routes.draw do
     resources :ldap_test
     resources :dex_connector_ldaps, path: :ldap_connectors
     resources :dex_connector_oidcs, path: :oidc_connectors
+    resources :external_cert, only: [:index, :create]
   end
 end
 # rubocop:enable Metrics/BlockLength
